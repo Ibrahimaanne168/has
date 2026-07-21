@@ -1,0 +1,273 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Enseignants — HAS{% endblock %}
+{% block topbar_title %}Enseignants{% endblock %}
+
+{% block content %}
+  <div class="am-page">
+    <div class="am-page-head">
+      <div class="am-heading">
+        <h1>Enseignants</h1>
+        <p>Gérez les comptes des enseignants de l'établissement</p>
+      </div>
+      <span class="am-count-pill"><i class="fa-solid fa-chalkboard-user"></i>{{ enseignants|length }} compte{{ 's' if enseignants|length != 1 else '' }}</span>
+    </div>
+
+    <div class="am-section">
+      <div class="am-toolbar">
+        <div class="am-search" id="enseignants-search-wrap">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="enseignants-search" placeholder="Rechercher un nom, un login, une matière…" autocomplete="off">
+          <button type="button" class="am-clear" id="enseignants-search-clear" aria-label="Effacer la recherche">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="am-table-wrap">
+        <table class="am-table" id="enseignants-table">
+          <thead>
+            <tr>
+              <th scope="col">Enseignant</th>
+              <th scope="col">Filières</th>
+              <th scope="col">Matières</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for e in enseignants %}
+            <tr data-search="{{ (e.prenom ~ ' ' ~ e.nom ~ ' ' ~ e.login ~ ' ' ~ (e.matieres_noms or ''))|lower }}">
+              <td class="am-cell-identity">
+                <div class="am-identity">
+                  <span class="am-avatar-chip">{{ e.prenom[0]|upper }}{{ e.nom[0]|upper }}</span>
+                  <div class="am-identity-body">
+                    <div class="am-identity-name">{{ e.prenom }} {{ e.nom }}</div>
+                    <div class="am-identity-login">@{{ e.login }}</div>
+                  </div>
+                </div>
+              </td>
+              <td data-label="Filières"><span class="am-cell-value">{{ e.filieres_noms or '—' }}</span></td>
+              <td data-label="Matières"><span class="am-cell-value">{{ e.matieres_noms or '—' }}</span></td>
+              <td class="am-cell-actions" data-label="Actions">
+                <div class="am-actions">
+                  <a href="{{ url_for('admin.enseignants', edit=e.id) }}" class="icon-link" title="Modifier" aria-label="Modifier">
+                    <i class="fa-solid fa-pen"></i>
+                  </a>
+                  <form action="{{ url_for('admin.supprimer_enseignant', enseignant_id=e.id) }}" method="post"
+                        onsubmit="return confirm('Supprimer ce compte enseignant ?');">
+                    <button type="submit" class="icon-link danger" title="Supprimer" aria-label="Supprimer">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            {% else %}
+            <tr class="am-row-empty">
+              <td colspan="5">
+                <div class="am-empty">
+                  <i class="fa-solid fa-chalkboard-user"></i>
+                  <strong>Aucun enseignant pour le moment</strong>
+                  <span>Ajoutez le premier compte enseignant ci-dessous.</span>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <p class="am-empty" id="enseignants-no-match" style="display:none;">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <strong>Aucun résultat</strong>
+          <span>Essayez un autre nom, login ou matière.</span>
+        </p>
+      </div>
+
+      {% if not edit_enseignant %}
+      <details class="details-toggle details-spacing">
+        <summary class="am-add-toggle"><i class="fa-solid fa-plus"></i> Ajouter un enseignant</summary>
+        <form action="{{ url_for('admin.ajouter_enseignant') }}" method="post" enctype="multipart/form-data" class="am-form-card am-add-panel">
+          <div class="am-form-row">
+            <div class="am-field">
+              <label>Prénom</label>
+              <input type="text" name="prenom" required>
+            </div>
+            <div class="am-field">
+              <label>Nom</label>
+              <input type="text" name="nom" required>
+            </div>
+          </div>
+          <div class="am-form-row">
+            <div class="am-field">
+              <label>Login</label>
+              <input type="text" name="login" required>
+            </div>
+          </div>
+          <div class="am-form-row">
+            <div class="am-field">
+              <label>Téléphone</label>
+              <input type="text" name="telephone">
+            </div>
+            <div class="am-field">
+              <label>Mot de passe</label>
+              <div class="am-password-field">
+                <input id="enseignant-password-create" type="password" name="password" autocomplete="new-password" required>
+                <button type="button" class="password-toggle" data-password-toggle="enseignant-password-create" aria-label="Afficher le mot de passe">
+                  <i class="fa-solid fa-eye"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="am-field">
+            <label>Filières encadrées</label>
+            <select name="filieres" multiple size="5">
+              {% for f in filieres %}
+              <option value="{{ f.id }}">{{ f.nom }}</option>
+              {% endfor %}
+            </select>
+            <span class="am-field-hint">Maintenez Ctrl (ou Cmd) pour sélectionner plusieurs filières.</span>
+          </div>
+          <div class="am-field">
+            <label>Matières enseignées</label>
+            <select name="matieres" multiple size="5">
+              {% for m in matieres %}
+              <option value="{{ m.id }}">{{ m.nom }}</option>
+              {% endfor %}
+            </select>
+            <span class="am-field-hint">Maintenez Ctrl (ou Cmd) pour sélectionner plusieurs matières.</span>
+          </div>
+          <div class="am-field">
+            <label>Biographie</label>
+            <textarea name="biographie" rows="3"></textarea>
+          </div>
+          <div class="am-field">
+            <label>Photo de profil</label>
+            <input type="file" name="photo" accept="image/*">
+            <span class="am-field-hint">JPG, PNG ou WEBP. Optionnel.</span>
+          </div>
+          <div class="am-form-actions">
+            <button type="submit" class="btn btn-primary btn-block"><i class="fa-solid fa-plus"></i> Créer le compte</button>
+          </div>
+        </form>
+      </details>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if edit_enseignant %}
+  <a href="{{ url_for('admin.enseignants') }}" class="am-edit-scrim" aria-label="Fermer"></a>
+  <div class="am-edit-sheet">
+    <div class="am-edit-banner">
+      Modification de {{ edit_enseignant.prenom }} {{ edit_enseignant.nom }}
+      <a href="{{ url_for('admin.enseignants') }}"><i class="fa-solid fa-xmark"></i> Fermer</a>
+    </div>
+    <form action="{{ url_for('admin.modifier_enseignant', enseignant_id=edit_enseignant.id) }}" method="post" enctype="multipart/form-data" class="am-form-card">
+      <div class="am-form-row">
+        <div class="am-field">
+          <label>Prénom</label>
+          <input type="text" name="prenom" value="{{ edit_enseignant.prenom }}" required>
+        </div>
+        <div class="am-field">
+          <label>Nom</label>
+          <input type="text" name="nom" value="{{ edit_enseignant.nom }}" required>
+        </div>
+      </div>
+      <div class="am-form-row">
+        <div class="am-field">
+          <label>Login</label>
+          <input type="text" name="login" value="{{ edit_enseignant.login }}" required>
+        </div>
+      </div>
+      <div class="am-form-row">
+        <div class="am-field">
+          <label>Téléphone</label>
+          <input type="text" name="telephone" value="{{ edit_enseignant.telephone or '' }}">
+        </div>
+        <div class="am-field">
+          <label>Mot de passe actuel</label>
+          <input type="text" value="••••••••••" readonly>
+          <span class="am-field-hint">Le mot de passe actuel est stocké de façon sécurisée et ne peut pas être affiché en clair.</span>
+        </div>
+      </div>
+      <div class="am-form-row">
+        <div class="am-field">
+          <label>Nouveau mot de passe</label>
+          <div class="am-password-field">
+            <input id="enseignant-password-edit" type="password" name="password" autocomplete="new-password" placeholder="Laisser vide pour ne pas changer">
+            <button type="button" class="password-toggle" data-password-toggle="enseignant-password-edit" aria-label="Afficher le mot de passe">
+              <i class="fa-solid fa-eye"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="am-field">
+        <label>Filières encadrées</label>
+        <select name="filieres" multiple size="5">
+          {% for f in filieres %}
+          {% if f.id in filieres_selectionnees %}
+          <option value="{{ f.id }}" selected>{{ f.nom }}</option>
+          {% else %}
+          <option value="{{ f.id }}">{{ f.nom }}</option>
+          {% endif %}
+          {% endfor %}
+        </select>
+        <span class="am-field-hint">Maintenez Ctrl (ou Cmd) pour sélectionner plusieurs filières.</span>
+      </div>
+      <div class="am-field">
+        <label>Matières enseignées</label>
+        <select name="matieres" multiple size="5">
+          {% for m in matieres %}
+          {% if m.id in matieres_selectionnees %}
+          <option value="{{ m.id }}" selected>{{ m.nom }}</option>
+          {% else %}
+          <option value="{{ m.id }}">{{ m.nom }}</option>
+          {% endif %}
+          {% endfor %}
+        </select>
+        <span class="am-field-hint">Maintenez Ctrl (ou Cmd) pour sélectionner plusieurs matières.</span>
+      </div>
+      <div class="am-field">
+        <label>Biographie</label>
+        <textarea name="biographie" rows="3">{{ edit_enseignant.biographie or '' }}</textarea>
+      </div>
+      <div class="am-field">
+        <label>Photo de profil (remplace si fournie)</label>
+        <input type="file" name="photo" accept="image/*">
+      </div>
+      <div class="am-form-actions">
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        <a href="{{ url_for('admin.enseignants') }}" class="btn btn-outline">Annuler</a>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+
+  <script>
+    (function () {
+      var input = document.getElementById('enseignants-search');
+      var wrap = document.getElementById('enseignants-search-wrap');
+      var clearBtn = document.getElementById('enseignants-search-clear');
+      var rows = document.querySelectorAll('#enseignants-table tbody tr[data-search]');
+      var noMatch = document.getElementById('enseignants-no-match');
+      if (!input) return;
+
+      function applyFilter() {
+        var q = input.value.trim().toLowerCase();
+        wrap.classList.toggle('has-value', q.length > 0);
+        var visible = 0;
+        rows.forEach(function (row) {
+          var match = row.dataset.search.indexOf(q) !== -1;
+          row.style.display = match ? '' : 'none';
+          if (match) visible++;
+        });
+        if (noMatch) noMatch.style.display = (q.length > 0 && visible === 0) ? 'flex' : 'none';
+      }
+
+      input.addEventListener('input', applyFilter);
+      clearBtn.addEventListener('click', function () {
+        input.value = '';
+        applyFilter();
+        input.focus();
+      });
+    })();
+  </script>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Messages — HAS{% endblock %}
+{% block topbar_title %}Messages{% endblock %}
+
+{% block content %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin-management.css') }}">
+
+  <div class="am-page">
+    <div class="am-page-head">
+      <div class="am-heading">
+        <h1>Messages</h1>
+        <p>Messages reçus via le formulaire de contact</p>
+      </div>
+      <span class="am-count-pill"><i class="fa-solid fa-envelope"></i>{{ messages|length }} message{{ 's' if messages|length != 1 else '' }}</span>
+    </div>
+
+    {% for m in messages %}
+    <div class="am-message-card">
+      <div class="am-message-head">
+        <h2>{{ m.sujet }} {% if not m.lu %}<span class="am-status is-featured">Non lu</span>{% endif %}</h2>
+        <form action="{{ url_for('admin.supprimer_message', message_id=m.id) }}" method="post"
+              onsubmit="return confirm('Supprimer ce message ?');">
+          <button type="submit" class="icon-link danger" title="Supprimer" aria-label="Supprimer">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </form>
+      </div>
+
+      <div class="am-message-sender">
+        <span class="am-avatar-chip">{{ m.prenom[0]|upper }}{{ m.nom[0]|upper }}</span>
+        <div class="am-message-sender-body">
+          <div class="am-message-sender-name">{{ m.prenom }} {{ m.nom }}</div>
+          <div class="am-message-sender-sub">{{ m.telephone or 'Pas de téléphone' }} · Destinataire : {{ m.destinataire_type }}</div>
+        </div>
+      </div>
+
+      <p class="am-message-body">{{ m.message }}</p>
+
+      {% if m.reponse %}
+      <div class="am-message-reply">
+        <div class="am-message-reply-label">Votre réponse</div>
+        <p class="am-message-body">{{ m.reponse }}</p>
+      </div>
+      {% endif %}
+
+      <form action="{{ url_for('admin.repondre_message', message_id=m.id) }}" method="post" class="am-reply-form">
+        <div class="am-field">
+          <label>{{ "Modifier la réponse" if m.reponse else "Répondre" }}</label>
+          <textarea name="reponse" rows="3" placeholder="Votre réponse...">{{ m.reponse or '' }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm am-btn-align-start">Envoyer</button>
+      </form>
+    </div>
+    {% else %}
+    <div class="am-section">
+      <div class="am-empty">
+        <i class="fa-solid fa-envelope"></i>
+        <strong>Aucun message pour le moment</strong>
+        <span>Les messages reçus via le formulaire de contact apparaîtront ici.</span>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+{% endblock %}

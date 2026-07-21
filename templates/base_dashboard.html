@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Halil Académie Scientifique{% endblock %}</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-management.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/etudiant-management.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/professeur-management.css') }}">
+
+{% block extra_css %}{% endblock %}
+</head>
+<body>
+
+  <!-- Sidebar (desktop) -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="topbar-logo">HAS</div>
+      <span>Halil Académie<br>Scientifique</span>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Navigation principale">
+      {% if session['role'] == 'admin' %}
+        <a href="{{ url_for('admin.dashboard') }}" class="{{ 'active' if request.endpoint == 'admin.dashboard' }}"><i class="fa-solid fa-house"></i> Tableau de bord</a>
+        <a href="{{ url_for('admin.etudiants') }}" class="{{ 'active' if request.endpoint == 'admin.etudiants' }}"><i class="fa-solid fa-user-graduate"></i> Étudiants</a>
+        <a href="{{ url_for('admin.enseignants')}}" class="{{ 'active' if request.endpoint == 'admin.enseignants' }}"><i class="fa-solid fa-chalkboard-user"></i> Enseignants</a>
+        <a href="{{ url_for('admin.filieres') }}" class="{{ 'active' if request.endpoint == 'admin.filieres' }}"><i class="fa-solid fa-sitemap"></i> Filières &amp; classes</a>
+        <a href="{{ url_for('admin.cours') }}" class="{{ 'active' if request.endpoint == 'admin.cours' }}"><i class="fa-solid fa-book-open"></i> Cours</a>
+        <a href="{{ url_for('admin.edt') }}" class="{{ 'active' if request.endpoint == 'admin.edt' }}"><i class="fa-solid fa-calendar-days"></i> Emploi du temps</a>
+        <a href="{{ url_for('admin.communiques') }}" class="{{ 'active' if request.endpoint == 'admin.communiques' }}"><i class="fa-solid fa-bullhorn"></i> Communiqués</a>
+        <a href="{{ url_for('admin.messages') }}" class="{{ 'active' if request.endpoint == 'admin.messages' }}"><i class="fa-solid fa-envelope"></i> Messages</a>
+        <a href="{{ url_for('admin.profil') }}" class="{{ 'active' if request.endpoint == 'admin.profil' }}"><i class="fa-solid fa-user"></i> Profil</a>
+
+      {% elif session['role'] == 'enseignant' %}
+        <a href="{{ url_for('professeur.dashboard') }}" class="{{ 'active' if request.endpoint == 'professeur.dashboard' }}"><i class="fa-solid fa-house"></i> Tableau de bord</a>
+        <a href="{{ url_for('professeur.cours') }}" class="{{ 'active' if request.endpoint == 'professeur.cours' }}"><i class="fa-solid fa-book-open"></i> Mes cours</a>
+        <a href="{{ url_for('professeur.edt') }}" class="{{ 'active' if request.endpoint == 'professeur.edt' }}"><i class="fa-solid fa-calendar-days"></i> Emploi du temps</a>
+        <a href="{{ url_for('professeur.communiques') }}" class="{{ 'active' if request.endpoint == 'professeur.communiques' }}"><i class="fa-solid fa-bullhorn"></i> Communiqués</a>
+        <a href="{{ url_for('professeur.messages') }}" class="{{ 'active' if request.endpoint == 'professeur.messages' }}"><i class="fa-solid fa-envelope"></i> Messages</a>
+        <a href="{{ url_for('professeur.profil') }} " class="{{ 'active' if request.endpoint == 'professeur.profil' }}"><i class="fa-solid fa-user"></i> Profil</a>
+
+      {% else %}
+        <a href="{{ url_for('etudiant.dashboard') }}" class="{{ 'active' if request.endpoint == 'etudiant.dashboard' }}"><i class="fa-solid fa-house"></i> Tableau de bord</a>
+        <a href="{{ url_for('etudiant.cours') }}" class="{{ 'active' if request.endpoint == 'etudiant.cours' }}"><i class="fa-solid fa-book-open"></i> Mes cours</a>
+        <a href="{{ url_for('etudiant.edt') }}" class="{{ 'active' if request.endpoint == 'etudiant.edt' }}"><i class="fa-solid fa-calendar-days"></i> Emploi du temps</a>
+        <a href="{{ url_for('etudiant.communiques') }}" class="{{ 'active' if request.endpoint == 'etudiant.communiques' }}"><i class="fa-solid fa-bullhorn"></i> Communiqués</a>
+        <a href="{{ url_for('etudiant.messages') }}" class="{{ 'active' if request.endpoint == 'etudiant.messages' }}"><i class="fa-solid fa-envelope"></i> Messages</a>
+        <a href="{{ url_for('etudiant.profil') }}" class="{{ 'active' if request.endpoint == 'etudiant.profil' }}"><i class="fa-solid fa-user"></i> Profil</a>
+      {% endif %}
+    </nav>
+
+    <div class="sidebar-foot">
+      <div class="avatar avatar-sm">
+        {% if session.get('photo') %}
+          <img src="{{ url_for('static', filename=session['photo']|replace('/static/', '')|replace('static/', '')) }}" alt="">
+        {% else %}
+          {{ session['prenom'][0] }}{{ session['nom'][0] }}
+        {% endif %}
+      </div>
+      <div>
+        <div class="name">{{ session['prenom'] }} {{ session['nom'] }}</div>
+        <div class="role">
+          {% if session['role'] == 'admin' %}Administrateur
+          {% elif session['role'] == 'enseignant' %}Enseignant
+          {% else %}Étudiant{% endif %}
+        </div>
+      </div>
+      <a href="{{ url_for('public.logout') }}" class="logout" aria-label="Se déconnecter" title="Se déconnecter"><i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i></a>
+    </div>
+  </aside>
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="topbar-brand">
+      <div class="topbar-logo">HAS</div>
+      <span>{% block topbar_title %}Espace personnel{% endblock %}</span>
+    </div>
+    <div class="topbar-actions">
+      {% set notif_url = url_for('admin.notifications') if session['role'] == 'admin' else url_for('professeur.notifications') if session['role'] == 'enseignant' else url_for('etudiant.notifications') %}
+      <a href="{{ notif_url }}" class="icon-btn" aria-label="Notifications">
+        <i class="fa-solid fa-bell"></i>
+        {% if nb_notifications_non_lues %}<span class="dot"></span>{% endif %}
+      </a>
+      <div class="avatar">
+        {% if session.get('photo') %}
+          <img src="{{ url_for('static', filename=session['photo']|replace('/static/', '')|replace('static/', '')) }}" alt="">
+        {% else %}
+          {{ session['prenom'][0] }}{{ session['nom'][0] }}
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for msg in messages %}
+          <div class="section" >{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Nav basse (mobile) : 4 destinations principales + "Plus" -->
+  <nav class="bottom-nav" aria-label="Navigation mobile">
+    {% if session['role'] == 'admin' %}
+      <a href="{{ url_for('admin.dashboard') }}" class="{{ 'active' if request.endpoint == 'admin.dashboard' }}"><i class="fa-solid fa-house"></i>Accueil</a>
+      <a href="{{ url_for('admin.enseignants') }}" class="{{ 'active' if request.endpoint == 'admin.enseignants' }}"><i class="fa-solid fa-chalkboard-user"></i> Enseignants</a>
+      <a href="{{ url_for('admin.edt') }}" class="{{ 'active' if request.endpoint == 'admin.edt' }}"><i class="fa-solid fa-calendar-days"></i> Emploi du temps</a>
+      <a href="{{ url_for('admin.communiques') }}" class="{{ 'active' if request.endpoint == 'admin.communiques' }}"><i class="fa-solid fa-bullhorn"></i> Communiqués</a>
+
+
+    {% elif session['role'] == 'enseignant' %}
+      <a href="{{ url_for('professeur.dashboard') }}" class="{{ 'active' if request.endpoint == 'professeur.dashboard' }}"><i class="fa-solid fa-house"></i>Accueil</a>
+      <a href="{{ url_for('professeur.cours') }}" class="{{ 'active' if request.endpoint == 'professeur.cours' }}"><i class="fa-solid fa-book-open"></i>Cours</a>
+      <a href="{{ url_for('professeur.edt') }}" class="{{ 'active' if request.endpoint == 'professeur.edt' }}"><i class="fa-solid fa-calendar-days"></i>EDT</a>
+      <a href="{{ url_for('professeur.messages') }}" class="{{ 'active' if request.endpoint == 'professeur.messages' }}"><i class="fa-solid fa-envelope"></i>Messages</a>
+      <a href="{{ url_for('professeur.profil') }}" class="{{ 'active' if request.endpoint == 'professeur.profil' }}"><i class="fa-solid fa-user"></i>Profil</a>
+
+    {% else %}
+      <a href="{{ url_for('etudiant.dashboard') }}" class="{{ 'active' if request.endpoint == 'etudiant.dashboard' }}"><i class="fa-solid fa-house"></i>Accueil</a>
+      <a href="{{ url_for('etudiant.cours') }}" class="{{ 'active' if request.endpoint == 'etudiant.cours' }}"><i class="fa-solid fa-book-open"></i>Cours</a>
+      <a href="{{ url_for('etudiant.edt') }}" class="{{ 'active' if request.endpoint == 'etudiant.edt' }}"><i class="fa-solid fa-calendar-days"></i>EDT</a>
+      <a href="{{ url_for('etudiant.messages') }}" class="{{ 'active' if request.endpoint == 'etudiant.messages' }}"><i class="fa-solid fa-envelope"></i>Messages</a>
+    {% endif %}
+
+    <label for="more-menu-toggle" class="bottom-nav-more"><i class="fa-solid fa-ellipsis"></i>Plus</label>
+  </nav>
+
+  <!-- Menu "Plus" (mobile) : reste des pages + profil + déconnexion -->
+  <input type="checkbox" id="more-menu-toggle" class="more-menu-input">
+  <label for="more-menu-toggle" class="more-menu-scrim" aria-hidden="true"></label>
+  <div class="more-menu-panel">
+    <div class="more-menu-handle"></div>
+
+    <div class="more-menu-user">
+      <div class="avatar avatar-sm">
+        {% if session.get('photo') %}
+          <img src="{{ url_for('static', filename=session['photo']|replace('/static/', '')|replace('static/', '')) }}" alt="">
+        {% else %}
+          {{ session['prenom'][0] }}{{ session['nom'][0] }}
+        {% endif %}
+      </div>
+      <div>
+        <div class="more-menu-name">{{ session['prenom'] }} {{ session['nom'] }}</div>
+        <div class="more-menu-role">
+          {% if session['role'] == 'admin' %}Administrateur
+          {% elif session['role'] == 'enseignant' %}Enseignant
+          {% else %}Étudiant{% endif %}
+        </div>
+      </div>
+    </div>
+
+    <nav class="more-menu-links" aria-label="Navigation supplementaire">
+      {% if session['role'] == 'admin' %}
+        <a href="{{ url_for('admin.etudiants') }}" class="{{ 'active' if request.endpoint == 'admin.etudiants' }}"><i class="fa-solid fa-user-graduate"></i>Étudiants</a>
+        <a href="{{ url_for('admin.filieres') }}"><i class="fa-solid fa-sitemap"></i> Filières &amp; classes</a>
+        <a href="{{ url_for('admin.cours') }}" class="{{ 'active' if request.endpoint == 'admin.cours' }}"><i class="fa-solid fa-book-open"></i>Cours</a>
+        <a href="{{ url_for('admin.messages') }}" class="{{ 'active' if request.endpoint == 'admin.messages' }}"><i class="fa-solid fa-envelope"></i> Messages</a>
+        <a href="{{ url_for('admin.profil') }}"><i class="fa-solid fa-user"></i> Profil</a>
+
+      {% elif session['role'] == 'enseignant' %}
+        <a href="{{ url_for('professeur.communiques') }}"><i class="fa-solid fa-bullhorn"></i> Communiqués</a>
+
+      {% else %}
+        <a href="{{ url_for('etudiant.communiques') }}"><i class="fa-solid fa-bullhorn"></i> Communiqués</a>
+        <a href="{{ url_for('etudiant.profil') }}"><i class="fa-solid fa-user"></i> Profil</a>
+      {% endif %}
+    </nav>
+
+    <a href="{{ url_for('public.logout') }}" class="more-menu-logout">
+      <i class="fa-solid fa-arrow-right-from-bracket"></i> Déconnexion
+    </a>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

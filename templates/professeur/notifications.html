@@ -1,0 +1,41 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Notifications — HAS{% endblock %}
+{% block topbar_title %}Notifications{% endblock %}
+
+{% block content %}
+<div class="am-page">
+
+    <div class="am-page-head">
+        <div class="am-heading">
+            <h1>Notifications</h1>
+            <p>Messages reçus, communiqués et autres alertes.</p>
+        </div>
+    </div>
+
+    {% if notifications %}
+    <div class="am-section">
+        <div class="pm-list">
+            {% for n in notifications %}
+            <a href="{{ url_for('professeur.lire_notification', notification_id=n.id) }}" class="pm-list-item {{ 'pm-list-item--unread' if not n.lu }}">
+                <i class="fa-solid {% if n.type == 'message' %}fa-envelope{% elif n.type == 'communique' %}fa-bullhorn{% elif n.type == 'cours' %}fa-book-open{% elif n.type == 'emploi_du_temps' %}fa-calendar-days{% else %}fa-circle-info{% endif %}"></i>
+                <div class="pm-list-item-body">
+                    <span class="pm-list-item-title">{{ n.contenu }}</span>
+                </div>
+                {% if not n.lu %}<span class="am-chip">Nouveau</span>{% endif %}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <div class="am-section">
+        <div class="am-empty">
+            <i class="fa-solid fa-bell"></i>
+            <strong>Aucune notification</strong>
+            <span>Vous serez prévenu ici dès qu'un message ou une actualité vous concerne.</span>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

@@ -1,0 +1,212 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Communiqués — HAS{% endblock %}
+{% block topbar_title %}Communiqués{% endblock %}
+
+{% block content %}
+  <div class="am-page">
+    <div class="am-page-head">
+      <div class="am-heading">
+        <h1>Communiqués</h1>
+        <p>Gérez les communiqués publiés sur la plateforme</p>
+      </div>
+      <span class="am-count-pill"><i class="fa-solid fa-bullhorn"></i>{{ communiques|length }} publié{{ 's' if communiques|length != 1 else '' }}</span>
+    </div>
+
+    <div class="am-section">
+      <div class="am-toolbar">
+        <div class="am-search" id="communiques-search-wrap">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="communiques-search" placeholder="Rechercher un titre…" autocomplete="off">
+          <button type="button" class="am-clear" id="communiques-search-clear" aria-label="Effacer la recherche">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="am-table-wrap">
+        <table class="am-table" id="communiques-table">
+          <thead>
+            <tr>
+              <th scope="col">Communiqué</th>
+              <th scope="col">Publication</th>
+              <th scope="col">Mis en avant</th>
+              <th scope="col">Statut</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for c in communiques %}
+            <tr data-search="{{ c.titre|lower }}">
+              <td class="am-cell-identity">
+                <div class="am-identity">
+                  <span class="am-avatar-chip"><i class="fa-solid fa-bullhorn"></i></span>
+                  <div class="am-identity-body">
+                    <div class="am-identity-name">{{ c.titre }}</div>
+                  </div>
+                </div>
+              </td>
+              <td data-label="Publication">
+                <span class="am-cell-value">{{ c.date_publication.strftime('%d/%m/%Y') if c.date_publication else '—' }}</span>
+              </td>
+              <td data-label="Mis en avant">
+                {% if c.mis_en_avant %}<span class="am-status is-featured">Oui</span>{% else %}<span class="am-cell-value">—</span>{% endif %}
+              </td>
+              <td data-label="Statut">
+                {% if c.archive %}<span class="am-status is-archived">Archivé</span>{% else %}<span class="am-status is-live">Publié</span>{% endif %}
+              </td>
+              <td class="am-cell-actions" data-label="Actions">
+                <div class="am-actions">
+                  <a href="{{ url_for('admin.communiques', edit=c.id) }}" class="icon-link" title="Modifier" aria-label="Modifier">
+                    <i class="fa-solid fa-pen"></i>
+                  </a>
+                  <form action="{{ url_for('admin.supprimer_communique', communique_id=c.id) }}" method="post"
+                        onsubmit="return confirm('Supprimer ce communiqué ?');">
+                    <button type="submit" class="icon-link danger" title="Supprimer" aria-label="Supprimer">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            {% else %}
+            <tr class="am-row-empty">
+              <td colspan="5">
+                <div class="am-empty">
+                  <i class="fa-solid fa-bullhorn"></i>
+                  <strong>Aucun communiqué pour le moment</strong>
+                  <span>Publiez le premier communiqué ci-dessous.</span>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <p class="am-empty" id="communiques-no-match" style="display:none;">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <strong>Aucun résultat</strong>
+          <span>Essayez un autre titre.</span>
+        </p>
+      </div>
+
+      {% if not edit_communique %}
+      <details class="details-toggle details-spacing">
+        <summary class="am-add-toggle"><i class="fa-solid fa-plus"></i> Publier un communiqué</summary>
+        <form action="{{ url_for('admin.ajouter_communique') }}" method="post" enctype="multipart/form-data" class="am-form-card am-add-panel">
+          <div class="am-field">
+            <label>Titre</label>
+            <input type="text" name="titre" required>
+          </div>
+          <div class="am-field">
+            <label>Contenu</label>
+            <textarea name="contenu" rows="5" required></textarea>
+          </div>
+          <div class="am-form-row">
+            <div class="am-field">
+              <label>Image</label>
+              <input type="file" name="image">
+            </div>
+            <div class="am-field">
+              <label>Fichier PDF</label>
+              <input type="file" name="fichier_pdf">
+            </div>
+          </div>
+          <div class="am-form-row">
+            <div class="am-field">
+              <label>Date de publication</label>
+              <input type="date" name="date_publication">
+            </div>
+            <div class="am-field">
+              <label>Options</label>
+              <div class="am-checkbox-group">
+                <label class="am-checkbox"><input type="checkbox" name="mis_en_avant"> Mettre en avant</label>
+                <label class="am-checkbox"><input type="checkbox" name="archive"> Archiver</label>
+              </div>
+            </div>
+          </div>
+          <div class="am-form-actions">
+            <button type="submit" class="btn btn-primary btn-block"><i class="fa-solid fa-plus"></i> Publier</button>
+          </div>
+        </form>
+      </details>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if edit_communique %}
+  <a href="{{ url_for('admin.communiques') }}" class="am-edit-scrim" aria-label="Fermer"></a>
+  <div class="am-edit-sheet">
+    <div class="am-edit-banner">
+      Modification de « {{ edit_communique.titre }} »
+      <a href="{{ url_for('admin.communiques') }}"><i class="fa-solid fa-xmark"></i> Fermer</a>
+    </div>
+    <form action="{{ url_for('admin.modifier_communique', communique_id=edit_communique.id) }}" method="post" enctype="multipart/form-data" class="am-form-card">
+      <div class="am-field">
+        <label>Titre</label>
+        <input type="text" name="titre" value="{{ edit_communique.titre }}" required>
+      </div>
+      <div class="am-field">
+        <label>Contenu</label>
+        <textarea name="contenu" rows="5" required>{{ edit_communique.contenu }}</textarea>
+      </div>
+      <div class="am-form-row">
+        <div class="am-field">
+          <label>Image (remplace l'existante si fournie)</label>
+          <input type="file" name="image">
+        </div>
+        <div class="am-field">
+          <label>Fichier PDF (remplace l'existant si fourni)</label>
+          <input type="file" name="fichier_pdf">
+        </div>
+      </div>
+      <div class="am-form-row">
+        <div class="am-field">
+          <label>Date de publication</label>
+          <input type="date" name="date_publication" value="{{ edit_communique.date_publication }}">
+        </div>
+        <div class="am-field">
+          <label>Options</label>
+          <div class="am-checkbox-group">
+            <label class="am-checkbox"><input type="checkbox" name="mis_en_avant" {% if edit_communique.mis_en_avant %}checked{% endif %}> Mettre en avant</label>
+            <label class="am-checkbox"><input type="checkbox" name="archive" {% if edit_communique.archive %}checked{% endif %}> Archiver</label>
+          </div>
+        </div>
+      </div>
+      <div class="am-form-actions">
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        <a href="{{ url_for('admin.communiques') }}" class="btn btn-outline">Annuler</a>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+
+  <script>
+    (function () {
+      var input = document.getElementById('communiques-search');
+      var wrap = document.getElementById('communiques-search-wrap');
+      var clearBtn = document.getElementById('communiques-search-clear');
+      var rows = document.querySelectorAll('#communiques-table tbody tr[data-search]');
+      var noMatch = document.getElementById('communiques-no-match');
+      if (!input) return;
+
+      function applyFilter() {
+        var q = input.value.trim().toLowerCase();
+        wrap.classList.toggle('has-value', q.length > 0);
+        var visible = 0;
+        rows.forEach(function (row) {
+          var match = row.dataset.search.indexOf(q) !== -1;
+          row.style.display = match ? '' : 'none';
+          if (match) visible++;
+        });
+        if (noMatch) noMatch.style.display = (q.length > 0 && visible === 0) ? 'flex' : 'none';
+      }
+
+      input.addEventListener('input', applyFilter);
+      clearBtn.addEventListener('click', function () {
+        input.value = '';
+        applyFilter();
+        input.focus();
+      });
+    })();
+  </script>
+{% endblock %}

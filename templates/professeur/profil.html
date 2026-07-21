@@ -1,0 +1,170 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Mon profil — HAS{% endblock %}
+{% block topbar_title %}Mon profil{% endblock %}
+
+{% block content %}
+<div class="am-page">
+
+    <div class="am-page-head">
+        <div class="am-heading">
+            <h1>Mon profil</h1>
+            <p>Gérez vos informations personnelles et votre biographie.</p>
+        </div>
+    </div>
+
+    <div class="am-section" id="prof-view">
+        <div class="am-profile-header">
+            <div class="am-avatar-xl">
+                {% if prof.photo %}
+                <img src="{{ url_for('static', filename=prof.photo|replace('/static/', '')|replace('static/', '')) }}" alt="">
+                {% else %}
+                {{ prof.prenom[0] }}{{ prof.nom[0] }}
+                {% endif %}
+            </div>
+
+            <div class="am-field am-field-grow">
+                <h2>{{ prof.prenom }} {{ prof.nom }}</h2>
+                {% if prof.telephone %}
+                <p class="am-field-hint">{{ prof.telephone }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="am-form-row">
+            <div class="am-field">
+                <label>Filières encadrées</label>
+                <div class="am-chip-group pm-chip-group-left">
+                    {% for f in filieres_prof %}
+                    <span class="am-chip">{{ f.nom }}</span>
+                    {% else %}
+                    <span class="am-field-hint">Aucune filière assignée pour le moment.</span>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="am-field">
+                <label>Matières enseignées</label>
+                <div class="am-chip-group pm-chip-group-left">
+                    {% for m in matieres_prof %}
+                    <span class="am-chip is-muted">{{ m.nom }}</span>
+                    {% else %}
+                    <span class="am-field-hint">Aucune matière assignée pour le moment.</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <span class="am-field-hint">Les filières et matières sont gérées par l'administration.</span>
+
+        <div class="am-field">
+            <label>Biographie</label>
+            <div class="am-profile-text">{{ prof.biographie or 'Aucune biographie fournie.' }}</div>
+        </div>
+
+        <div class="am-form-actions">
+            <button type="button" class="btn-primary" id="edit-profile-btn">
+                <i class="fa-solid fa-pen"></i> Modifier mon profil
+            </button>
+        </div>
+    </div>
+
+    <div class="am-section" id="prof-edit" style="display:none;">
+        <form method="post" action="{{ url_for('professeur.profil') }}" enctype="multipart/form-data">
+
+            <div class="am-profile-header am-profile-edit">
+                <div class="am-avatar-xl">
+                    {% if prof.photo %}
+                    <img src="{{ url_for('static', filename=prof.photo|replace('/static/', '')|replace('static/', '')) }}" alt="">
+                    {% else %}
+                    {{ prof.prenom[0] }}{{ prof.nom[0] }}
+                    {% endif %}
+                </div>
+
+                <div class="am-field am-field-grow">
+                    <label for="photo">Photo de profil</label>
+                    <input type="file" id="photo" name="photo" accept="image/*">
+                    <span class="am-field-hint">JPG, PNG ou WEBP.</span>
+                </div>
+            </div>
+
+            <div class="am-form-row">
+                <div class="am-field">
+                    <label for="nom">Nom</label>
+                    <input type="text" id="nom" name="nom" required value="{{ prof.nom }}">
+                </div>
+                <div class="am-field">
+                    <label for="prenom">Prénom</label>
+                    <input type="text" id="prenom" name="prenom" required value="{{ prof.prenom }}">
+                </div>
+            </div>
+
+            <div class="am-form-row">
+                <div class="am-field">
+                    <label for="telephone">Téléphone</label>
+                    <input type="tel" id="telephone" name="telephone" value="{{ prof.telephone or '' }}">
+                </div>
+            </div>
+
+            <div class="am-form-row">
+                <div class="am-field">
+                    <label>Filières encadrées</label>
+                    <div class="am-chip-group pm-chip-group-left">
+                        {% for f in filieres_prof %}
+                        <span class="am-chip">{{ f.nom }}</span>
+                        {% else %}
+                        <span class="am-field-hint">Aucune filière assignée pour le moment.</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="am-field">
+                    <label>Matières enseignées</label>
+                    <div class="am-chip-group pm-chip-group-left">
+                        {% for m in matieres_prof %}
+                        <span class="am-chip is-muted">{{ m.nom }}</span>
+                        {% else %}
+                        <span class="am-field-hint">Aucune matière assignée pour le moment.</span>
+                        {% endfor %}S
+                    </div>
+                </div>
+            </div>
+            <span class="am-field-hint">Les filières et matières sont gérées par l'administration.</span>
+
+            <div class="am-field">
+                <label for="biographie">Biographie</label>
+                <textarea id="biographie" name="biographie" rows="5" placeholder="Quelques mots sur votre parcours...">{{ prof.biographie or '' }}</textarea>
+            </div>
+
+            <div class="am-form-actions">
+                <button type="submit" class="btn-primary">
+                    <i class="fa-solid fa-floppy-disk"></i> Enregistrer
+                </button>
+                <button type="button" class="btn-outline" id="cancel-profile-edit">
+                    Annuler
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var viewSection = document.getElementById('prof-view');
+        var editSection = document.getElementById('prof-edit');
+        var editBtn = document.getElementById('edit-profile-btn');
+        var cancelBtn = document.getElementById('cancel-profile-edit');
+
+        if (!viewSection || !editSection || !editBtn || !cancelBtn) { return; }
+
+        editBtn.addEventListener('click', function () {
+            viewSection.style.display = 'none';
+            editSection.style.display = 'block';
+        });
+
+        cancelBtn.addEventListener('click', function () {
+            editSection.style.display = 'none';
+            viewSection.style.display = 'block';
+        });
+    });
+</script>
+{% endblock %}

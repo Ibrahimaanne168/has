@@ -1,0 +1,326 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Filières & classes — HAS{% endblock %}
+{% block topbar_title %}Filières & classes{% endblock %}
+
+{% block content %}
+  <div class="am-page">
+    <div class="am-page-head">
+      <div class="am-heading">
+        <h1>Filières &amp; classes</h1>
+        <p>Gérez les filières, les classes et les matières de l'établissement</p>
+      </div>
+    </div>
+
+    <nav class="am-subnav">
+      <a href="#section-filieres" class="is-active">Filières <span class="am-subnav-count">{{ filieres|length }}</span></a>
+      <a href="#section-classes">Classes <span class="am-subnav-count">{{ classes|length }}</span></a>
+      <a href="#section-matieres">Matières <span class="am-subnav-count">{{ matieres|length }}</span></a>
+    </nav>
+
+    <!-- ================= FILIÈRES ================= -->
+    <div class="am-section" id="section-filieres">
+      <div class="am-section-head">
+        <h2><i class="fa-solid fa-diagram-project text-orange"></i> Filières <span class="mini-count">{{ filieres|length }}</span></h2>
+      </div>
+
+      {% if edit_filiere %}
+      <div class="am-edit-banner">
+        Modification de « {{ edit_filiere.nom }} »
+        <a href="{{ url_for('admin.filieres') }}#section-filieres"><i class="fa-solid fa-xmark"></i> Annuler</a>
+      </div>
+      {% endif %}
+
+      <div class="am-table-wrap">
+        <table class="am-table">
+          <thead>
+            <tr>
+              <th scope="col">Filière</th>
+              <th scope="col">Description</th>
+              <th scope="col">Classes</th>
+              <th scope="col">Matières</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for f in filieres %}
+            <tr>
+              <td class="am-cell-identity">
+                <div class="am-identity">
+                  <span class="am-avatar-chip">{{ f.nom[0]|upper }}</span>
+                  <div class="am-identity-body">
+                    <div class="am-identity-name">{{ f.nom }}</div>
+                  </div>
+                </div>
+              </td>
+              <td data-label="Description"><span class="am-cell-value">{{ f.description or '—' }}</span></td>
+              <td data-label="Classes"><span class="am-chip is-muted">{{ f.nb_classes }}</span></td>
+              <td data-label="Matières"><span class="am-chip is-muted">{{ f.nb_matieres }}</span></td>
+              <td class="am-cell-actions" data-label="Actions">
+                <div class="am-actions">
+                  <a href="{{ url_for('admin.filieres', edit_filiere=f.id) }}#section-filieres" class="icon-link" title="Modifier" aria-label="Modifier">
+                    <i class="fa-solid fa-pen"></i>
+                  </a>
+                  <form action="{{ url_for('admin.supprimer_filiere', filiere_id=f.id) }}" method="post"
+                        onsubmit="return confirm('Supprimer cette filière ? Cela supprimera aussi ses classes et matières liées.');">
+                    <button type="submit" class="icon-link danger" title="Supprimer" aria-label="Supprimer">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            {% else %}
+            <tr class="am-row-empty">
+              <td colspan="5">
+                <div class="am-empty">
+                  <i class="fa-solid fa-diagram-project"></i>
+                  <strong>Aucune filière pour le moment</strong>
+                  <span>Créez la première filière ci-dessous.</span>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <form action="{{ url_for('admin.ajouter_filiere') if not edit_filiere else url_for('admin.modifier_filiere', filiere_id=edit_filiere.id) }}"
+            method="post" class="am-form-card details-spacing">
+        <div class="am-form-row">
+          <div class="am-field">
+            <label>Nom</label>
+            <input type="text" name="nom" value="{{ edit_filiere.nom if edit_filiere else '' }}" placeholder="ex. MPI" required>
+          </div>
+          <div class="am-field">
+            <label>Description</label>
+            <input type="text" name="description" value="{{ edit_filiere.description if edit_filiere else '' }}" placeholder="ex. Mathématiques Physique et Informatique">
+          </div>
+        </div>
+        <div class="am-form-actions">
+          <button type="submit" class="btn btn-primary btn-sm">
+            {% if edit_filiere %}Enregistrer{% else %}<i class="fa-solid fa-plus"></i> Ajouter{% endif %}
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- ================= CLASSES ================= -->
+    <div class="am-section" id="section-classes">
+      <div class="am-section-head">
+        <h2><i class="fa-solid fa-people-roof text-orange"></i> Classes <span class="mini-count">{{ classes|length }}</span></h2>
+      </div>
+
+      {% if edit_classe %}
+      <div class="am-edit-banner">
+        Modification de « {{ edit_classe.nom }} »
+        <a href="{{ url_for('admin.filieres') }}#section-classes"><i class="fa-solid fa-xmark"></i> Annuler</a>
+      </div>
+      {% endif %}
+
+      <div class="am-table-wrap">
+        <table class="am-table">
+          <thead>
+            <tr>
+              <th scope="col">Classe</th>
+              <th scope="col">Filière</th>
+              <th scope="col">Niveau</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for c in classes %}
+            <tr>
+              <td class="am-cell-identity">
+                <div class="am-identity">
+                  <span class="am-avatar-chip">{{ c.nom[0]|upper }}</span>
+                  <div class="am-identity-body">
+                    <div class="am-identity-name">{{ c.nom }}</div>
+                  </div>
+                </div>
+              </td>
+              <td data-label="Filière"><span class="am-chip">{{ c.filiere_nom }}</span></td>
+              <td data-label="Niveau"><span class="am-cell-value">{{ c.niveau or '—' }}</span></td>
+              <td class="am-cell-actions" data-label="Actions">
+                <div class="am-actions">
+                  <a href="{{ url_for('admin.filieres', edit_classe=c.id) }}#section-classes" class="icon-link" title="Modifier" aria-label="Modifier">
+                    <i class="fa-solid fa-pen"></i>
+                  </a>
+                  <form action="{{ url_for('admin.supprimer_classe', classe_id=c.id) }}" method="post"
+                        onsubmit="return confirm('Supprimer cette classe ?');">
+                    <button type="submit" class="icon-link danger" title="Supprimer" aria-label="Supprimer">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            {% else %}
+            <tr class="am-row-empty">
+              <td colspan="4">
+                <div class="am-empty">
+                  <i class="fa-solid fa-people-roof"></i>
+                  <strong>Aucune classe pour le moment</strong>
+                  <span>Créez la première classe ci-dessous.</span>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <form action="{{ url_for('admin.ajouter_classe') if not edit_classe else url_for('admin.modifier_classe', classe_id=edit_classe.id) }}"
+            method="post" class="am-form-card details-spacing">
+        <div class="am-form-row">
+          <div class="am-field">
+            <label>Filière</label>
+            <select name="filiere_id" required>
+              {% for f in filieres %}
+              {% if edit_classe and f.id == edit_classe.filiere_id %}
+              <option value="{{ f.id }}" selected>{{ f.nom }}</option>
+              {% else %}
+              <option value="{{ f.id }}">{{ f.nom }}</option>
+              {% endif %}
+              {% endfor %}
+            </select>
+          </div>
+          <div class="am-field">
+            <label>Nom</label>
+            <input type="text" name="nom" value="{{ edit_classe.nom if edit_classe else '' }}" placeholder="ex. L1 MPI" required>
+          </div>
+          <div class="am-field">
+            <label>Niveau</label>
+            <input type="text" name="niveau" value="{{ edit_classe.niveau if edit_classe else '' }}" placeholder="ex. Licence 1">
+          </div>
+        </div>
+        <div class="am-form-actions">
+          <button type="submit" class="btn btn-primary btn-sm">
+            {% if edit_classe %}Enregistrer{% else %}<i class="fa-solid fa-plus"></i> Ajouter{% endif %}
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- ================= MATIÈRES ================= -->
+    <div class="am-section" id="section-matieres">
+      <div class="am-section-head">
+        <h2><i class="fa-solid fa-book-open text-orange"></i> Matières <span class="mini-count">{{ matieres|length }}</span></h2>
+      </div>
+
+      {% if edit_matiere %}
+      <div class="am-edit-banner">
+        Modification de « {{ edit_matiere.nom }} »
+        <a href="{{ url_for('admin.filieres') }}#section-matieres"><i class="fa-solid fa-xmark"></i> Annuler</a>
+      </div>
+      {% endif %}
+
+      <div class="am-table-wrap">
+        <table class="am-table">
+          <thead>
+            <tr>
+              <th scope="col">Matière</th>
+              <th scope="col">Classes</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for m in matieres %}
+            <tr>
+              <td class="am-cell-identity">
+                <div class="am-identity">
+                  <span class="am-avatar-chip">{{ m.nom[0]|upper }}</span>
+                  <div class="am-identity-body">
+                    <div class="am-identity-name">{{ m.nom }}</div>
+                  </div>
+                </div>
+              </td>
+              <td data-label="Classes"><span class="am-chip">{{ m.classes_noms or '—' }}</span></td>
+              <td class="am-cell-actions" data-label="Actions">
+                <div class="am-actions">
+                  <a href="{{ url_for('admin.filieres', edit_matiere=m.id) }}#section-matieres" class="icon-link" title="Modifier" aria-label="Modifier">
+                    <i class="fa-solid fa-pen"></i>
+                  </a>
+                  <form action="{{ url_for('admin.supprimer_matiere', matiere_id=m.id) }}" method="post"
+                        onsubmit="return confirm('Supprimer cette matière ?');">
+                    <button type="submit" class="icon-link danger" title="Supprimer" aria-label="Supprimer">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            {% else %}
+            <tr class="am-row-empty">
+              <td colspan="3">
+                <div class="am-empty">
+                  <i class="fa-solid fa-book-open"></i>
+                  <strong>Aucune matière pour le moment</strong>
+                  <span>Créez la première matière ci-dessous.</span>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <form action="{{ url_for('admin.ajouter_matiere') if not edit_matiere else url_for('admin.modifier_matiere', matiere_id=edit_matiere.id) }}"
+            method="post" class="am-form-card details-spacing">
+        <div class="am-form-row">
+          <div class="am-field">
+            <label>Classes</label>
+            <select name="classe_ids" multiple size="5" required>
+              {% for cl in classes %}
+              {% if edit_matiere and cl.id in edit_matiere_classes %}
+              <option value="{{ cl.id }}" selected>{{ cl.filiere_nom }} / {{ cl.nom }}</option>
+              {% else %}
+              <option value="{{ cl.id }}">{{ cl.filiere_nom }} / {{ cl.nom }}</option>
+              {% endif %}
+              {% endfor %}
+            </select>
+          </div>
+          <div class="am-field">
+            <label>Nom</label>
+            <input type="text" name="nom" value="{{ edit_matiere.nom if edit_matiere else '' }}" placeholder="ex. Algorithmique" required>
+          </div>
+        </div>
+        <div class="am-form-actions">
+          <button type="submit" class="btn btn-primary btn-sm">
+            {% if edit_matiere %}Enregistrer{% else %}<i class="fa-solid fa-plus"></i> Ajouter{% endif %}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var links = document.querySelectorAll('.am-subnav a');
+      var sections = Array.prototype.map.call(links, function (a) {
+        return document.querySelector(a.getAttribute('href'));
+      });
+
+      function setActive(hash) {
+        links.forEach(function (a) {
+          a.classList.toggle('is-active', a.getAttribute('href') === hash);
+        });
+      }
+
+      links.forEach(function (a) {
+        a.addEventListener('click', function () { setActive(a.getAttribute('href')); });
+      });
+
+      if (window.location.hash) setActive(window.location.hash);
+
+      if ('IntersectionObserver' in window) {
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) setActive('#' + entry.target.id);
+          });
+        }, { rootMargin: '-45% 0px -50% 0px' });
+        sections.forEach(function (s) { if (s) observer.observe(s); });
+      }
+    })();
+  </script>
+{% endblock %}

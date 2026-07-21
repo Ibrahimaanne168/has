@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}Présentation — HAS{% endblock %}
+
+{% block content %}
+
+<section class="hero hero-compact">
+    <div class="hero-inner">
+        <div class="hero-text">
+            <span class="eyebrow">Qui sommes-nous</span>
+            <h1>Halil Académie Scientifique</h1>
+            <p>Une académie fondée sur l'exigence académique, l'accompagnement personnalisé et une ambition claire : faire réussir chaque étudiant.</p>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-inner two-col">
+        <div>
+            <span class="eyebrow">Notre parcours</span>
+            <h2>Notre histoire</h2>
+            <p>
+                HAS est partie d'une idée simple : aider nos cadets et les faire aimer les sciences. Depuis sa création, l'académie a grandi et s'est structurée pour offrir un enseignement de qualité, adapté aux besoins de chaque étudiant. Notre équipe pédagogique est composée de professeurs expérimentés, passionnés par leur matière et engagés dans la réussite de leurs étudiants.
+            </p>
+        </div>
+
+        <div>
+            <span class="eyebrow">Notre ambition</span>
+            <h2>Ce qui nous anime</h2>
+            <p>
+                À HAS, nous mettons l’accent sur la compréhension des concepts, le développement de l’esprit critique et l’acquisition de compétences solides en mathématiques, physique, informatique, économie et gestion. Notre équipe pédagogique s’investit pleinement pour accompagner chaque étudiant vers l’atteinte de ses objectifs académiques et professionnels.
+            </p>
+        </div>
+    </div>
+</section>
+
+<section class="section section-alt">
+    <div class="section-inner">
+
+        <span class="eyebrow">Ce qui nous guide</span>
+        <h2>Nos valeurs</h2>
+
+        <div class="values-grid">
+
+            <div class="value-card">
+                <i class="fa-solid fa-medal"></i>
+                <h3>Excellence</h3>
+                <p>Un niveau d'exigence élevé dans chaque cours, chaque séance de préparation et chaque suivi.</p>
+            </div>
+
+            <div class="value-card">
+                <i class="fa-solid fa-scale-balanced"></i>
+                <h3>Rigueur</h3>
+                <p>Une méthode de travail structurée, fondée sur la discipline et la constance dans l'effort.</p>
+            </div>
+
+            <div class="value-card">
+                <i class="fa-solid fa-lightbulb"></i>
+                <h3>Innovation</h3>
+                <p>Des méthodes pédagogiques modernes, adaptées aux réalités et aux besoins de chaque étudiant.</p>
+            </div>
+
+            <div class="value-card">
+                <i class="fa-solid fa-people-group"></i>
+                <h3>Proximité</h3>
+                <p>Un accompagnement personnalisé, à l'écoute de chaque étudiant tout au long de son parcours.</p>
+            </div>
+
+            <div class="value-card">
+                <i class="fa-solid fa-handshake"></i>
+                <h3>Intégrité</h3>
+                <p>Une relation de confiance construite avec les étudiants, les familles et nos partenaires.</p>
+            </div>
+
+            <div class="value-card">
+                <i class="fa-solid fa-rocket"></i>
+                <h3>Esprit d'équipe</h3>
+                <p>Une équipe pédagogique soudée, engagée collectivement dans la réussite de chaque étudiant.</p>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-inner">
+
+        <span class="eyebrow">HAS en chiffres</span>
+        <h2>Notre impact</h2>
+
+        <div class="stats-grid">
+
+            <div class="stat-item">
+                <span class="stat-number">500+</span>
+                <span class="stat-label">Étudiants accompagnés</span>
+            </div>
+
+            <div class="stat-item">
+                <span class="stat-number">20+</span>
+                <span class="stat-label">Enseignants qualifiés</span>
+            </div>
+
+            <div class="stat-item">
+                <span class="stat-number">5</span>
+                <span class="stat-label">Filières scientifiques</span>
+            </div>
+
+            <div class="stat-item">
+                <span class="stat-number">95%</span>
+                <span class="stat-label">Taux de satisfaction</span>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<section class="section section-alt">
+    <div class="section-inner">
+
+        <span class="eyebrow">Comment nous fonctionnons</span>
+        <h2>Notre organisation</h2>
+
+        <div class="org-grid">
+
+            <div class="org-card">
+                <i class="fa-solid fa-building-columns"></i>
+                <h3>Direction</h3>
+                <p>Définit la vision stratégique de l'académie et veille à la qualité globale des enseignements.</p>
+            </div>
+
+            <div class="org-card">
+                <i class="fa-solid fa-chalkboard-user"></i>
+                <h3>Responsables pédagogiques</h3>
+                <p>Coordonnent les programmes de chaque filière et assurent le suivi pédagogique des étudiants.</p>
+            </div>
+
+            <div class="org-card">
+                <i class="fa-solid fa-user-graduate"></i>
+                <h3>Corps enseignant</h3>
+                <p>Des professeurs qualifiés, spécialisés dans leurs matières, dédiés à la réussite des étudiants.</p>
+            </div>
+
+            <div class="org-card">
+                <i class="fa-solid fa-headset"></i>
+                <h3>Administration</h3>
+                <p>Accompagne les étudiants et les familles au quotidien dans toutes les démarches pratiques.</p>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<section class="section presentation-cta">
+    <div class="section-inner cta-inner">
+        <div>
+            <h2>Envie de nous rejoindre ?</h2>
+            <p>Contactez notre équipe pour toute question sur votre parcours.</p>
+        </div>
+        <div class="cta-actions">
+            <a href="{{ url_for('public.contact') }}" class="btn-secondary">Nous contacter</a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

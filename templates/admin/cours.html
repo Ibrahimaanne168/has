@@ -1,0 +1,249 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Cours — HAS{% endblock %}
+{% block topbar_title %}Cours{% endblock %}
+
+{% block content %}
+  <div class="am-page">
+    <div class="am-page-head">
+      <div class="am-heading">
+        <h1>Cours</h1>
+        <p>Gérez les cours publiés sur la plateforme</p>
+      </div>
+      <span class="am-count-pill"><i class="fa-solid fa-book"></i>{{ cours|length }} cours</span>
+    </div>
+
+    <div class="am-section">
+      <div class="am-toolbar">
+        <div class="am-search" id="cours-search-wrap">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="cours-search" placeholder="Rechercher un titre, une matière, un enseignant…" autocomplete="off">
+          <button type="button" class="am-clear" id="cours-search-clear" aria-label="Effacer la recherche">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="am-table-wrap">
+        <table class="am-table" id="cours-table">
+          <thead>
+            <tr>
+              <th scope="col">Cours</th>
+              <th scope="col">Matière</th>
+              <th scope="col">Enseignant</th>
+              <th scope="col">Classes</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for c in cours %}
+            <tr data-search="{{ (c.titre ~ ' ' ~ c.matiere_nom ~ ' ' ~ c.ens_prenom ~ ' ' ~ c.ens_nom ~ ' ' ~ (c.classes_noms or ''))|lower }}">
+              <td class="am-cell-identity">
+                <div class="am-identity">
+                  <span class="am-avatar-chip"><i class="fa-solid fa-book-open"></i></span>
+                  <div class="am-identity-body">
+                    <div class="am-identity-name">{{ c.titre }}</div>
+                    <div class="am-identity-login">{{ c.classes_noms or 'Aucune classe' }}</div>
+                  </div>
+                </div>
+              </td>
+              <td data-label="Matière"><span class="am-chip">{{ c.matiere_nom }}</span></td>
+              <td data-label="Enseignant"><span class="am-cell-value">{{ c.ens_prenom }} {{ c.ens_nom }}</span></td>
+              <td data-label="Classes"><span class="am-chip is-muted">{{ c.classes_noms or c.classe_nom }}</span></td>
+              <td class="am-cell-actions" data-label="Actions">
+                <div class="am-actions">
+                  <a href="{{ url_for('admin.cours', edit=c.id) }}" class="icon-link" title="Modifier" aria-label="Modifier">
+                    <i class="fa-solid fa-pen"></i>
+                  </a>
+                  <form action="{{ url_for('admin.supprimer_cours', cours_id=c.id) }}" method="post"
+                        onsubmit="return confirm('Supprimer ce cours ?');">
+                    <button type="submit" class="icon-link danger" title="Supprimer" aria-label="Supprimer">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            {% else %}
+            <tr class="am-row-empty">
+              <td colspan="5">
+                <div class="am-empty">
+                  <i class="fa-solid fa-book"></i>
+                  <strong>Aucun cours pour le moment</strong>
+                  <span>Ajoutez le premier cours ci-dessous.</span>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <p class="am-empty" id="cours-no-match" style="display:none;">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <strong>Aucun résultat</strong>
+          <span>Essayez un autre titre, matière ou enseignant.</span>
+        </p>
+      </div>
+
+      {% if not edit_cours %}
+      <details class="details-toggle am-add-toggle-panel">
+        <summary class="am-add-toggle"><i class="fa-solid fa-plus"></i> Ajouter un cours</summary>
+        <form action="{{ url_for('admin.ajouter_cours') }}" method="post" class="am-form-card am-add-panel details-spacing">
+          <div class="am-field">
+            <label>Titre</label>
+            <input type="text" name="titre" required>
+          </div>
+          <div class="am-field">
+            <label>Description</label>
+            <textarea name="description" rows="3"></textarea>
+          </div>
+          <div class="am-field">
+            <label>Classes concernées</label>
+            <select name="classes" multiple size="5" required>
+              {% for cl in classes %}
+              <option value="{{ cl.id }}">{{ cl.nom }}</option>
+              {% endfor %}
+            </select>
+            <span class="am-field-hint">Maintenez Ctrl (ou Cmd) pour sélectionner plusieurs classes.</span>
+          </div>
+          <div class="am-form-row">
+            <div class="am-field">
+              <label>Matière</label>
+              <select name="matiere_id" required>
+                {% for m in matieres %}
+                <option value="{{ m.id }}">{{ m.nom }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="am-field">
+              <label>Enseignant</label>
+              <select name="enseignant_id" required>
+                {% for e in enseignants %}
+                <option value="{{ e.id }}">{{ e.prenom }} {{ e.nom }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="am-form-row">
+            <div class="am-field">
+              <label>Niveau</label>
+              <input type="text" name="niveau" placeholder="ex. Licence 2">
+            </div>
+            <div class="am-field">
+              <label>Lien externe</label>
+              <input type="url" name="lien_externe" placeholder="https://...">
+            </div>
+          </div>
+          <div class="am-form-actions">
+            <button type="submit" class="btn btn-primary btn-block"><i class="fa-solid fa-plus"></i> Ajouter</button>
+          </div>
+        </form>
+      </details>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if edit_cours %}
+  <a href="{{ url_for('admin.cours') }}" class="am-edit-scrim" aria-label="Fermer"></a>
+  <div class="am-edit-sheet">
+    <div class="am-edit-banner">
+      Modification de « {{ edit_cours.titre }} »
+      <a href="{{ url_for('admin.cours') }}"><i class="fa-solid fa-xmark"></i> Fermer</a>
+    </div>
+    <form action="{{ url_for('admin.modifier_cours', cours_id=edit_cours.id) }}" method="post" class="am-form-card">
+      <div class="am-field">
+        <label>Titre</label>
+        <input type="text" name="titre" value="{{ edit_cours.titre }}" required>
+      </div>
+      <div class="am-field">
+        <label>Description</label>
+        <textarea name="description" rows="3">{{ edit_cours.description or '' }}</textarea>
+      </div>
+      <div class="am-form-row">
+        <div class="am-field">
+          <label>Classes concernées</label>
+          <select name="classes" multiple size="5" required>
+            {% for cl in classes %}
+            {% if cl.id in classes_selectionnees %}
+            <option value="{{ cl.id }}" selected>{{ cl.nom }}</option>
+            {% else %}
+            <option value="{{ cl.id }}">{{ cl.nom }}</option>
+            {% endif %}
+            {% endfor %}
+          </select>
+          <span class="am-field-hint">Maintenez Ctrl (ou Cmd) pour sélectionner plusieurs classes.</span>
+        </div>
+      </div>
+      <div class="am-form-row">
+        <div class="am-field">
+          <label>Matière</label>
+          <select name="matiere_id" required>
+            {% for m in matieres %}
+            {% if m.id == edit_cours.matiere_id %}
+            <option value="{{ m.id }}" selected>{{ m.nom }}</option>
+            {% else %}
+            <option value="{{ m.id }}">{{ m.nom }}</option>
+            {% endif %}
+            {% endfor %}
+          </select>
+        </div>
+        <div class="am-field">
+          <label>Enseignant</label>
+          <select name="enseignant_id" required>
+            {% for e in enseignants %}
+            {% if e.id == edit_cours.enseignant_id %}
+            <option value="{{ e.id }}" selected>{{ e.prenom }} {{ e.nom }}</option>
+            {% else %}
+            <option value="{{ e.id }}">{{ e.prenom }} {{ e.nom }}</option>
+            {% endif %}
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="am-form-row">
+        <div class="am-field">
+          <label>Niveau</label>
+          <input type="text" name="niveau" value="{{ edit_cours.niveau or '' }}">
+        </div>
+        <div class="am-field">
+          <label>Lien externe</label>
+          <input type="url" name="lien_externe" value="{{ edit_cours.lien_externe or '' }}">
+        </div>
+      </div>
+      <div class="am-form-actions">
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        <a href="{{ url_for('admin.cours') }}" class="btn btn-outline">Annuler</a>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+
+  <script>
+    (function () {
+      var input = document.getElementById('cours-search');
+      var wrap = document.getElementById('cours-search-wrap');
+      var clearBtn = document.getElementById('cours-search-clear');
+      var rows = document.querySelectorAll('#cours-table tbody tr[data-search]');
+      var noMatch = document.getElementById('cours-no-match');
+      if (!input) return;
+
+      function applyFilter() {
+        var q = input.value.trim().toLowerCase();
+        wrap.classList.toggle('has-value', q.length > 0);
+        var visible = 0;
+        rows.forEach(function (row) {
+          var match = row.dataset.search.indexOf(q) !== -1;
+          row.style.display = match ? '' : 'none';
+          if (match) visible++;
+        });
+        if (noMatch) noMatch.style.display = (q.length > 0 && visible === 0) ? 'flex' : 'none';
+      }
+
+      input.addEventListener('input', applyFilter);
+      clearBtn.addEventListener('click', function () {
+        input.value = '';
+        applyFilter();
+        input.focus();
+      });
+    })();
+  </script>
+{% endblock %}

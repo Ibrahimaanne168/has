@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}Accueil — HAS{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+    <div class="hero-inner">
+        <div class="hero-text">
+            <span class="eyebrow">Structures cientifique</span>
+            <h1>Former les esprits qui feront la science de demain.</h1>
+            <p>HAS accompagne étudiants dans un cadre d'excellence, entre rigueur académique et esprit d'innovation.</p>
+            <div class="hero-actions">
+                <a href="{{ url_for('public.professeurs') }}" class="btn-primary">Découvrir nos professeurs</a>
+                <a href="{{ url_for('public.presentation') }}" class="btn-secondary">Qui sommes-nous</a>
+            </div>
+        </div>
+
+        <div class="hero-seal">
+            <svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="120" cy="120" r="112" class="seal-ring-outer"/>
+                <circle cx="120" cy="120" r="96" class="seal-ring-inner"/>
+                <text x="120" y="70" text-anchor="middle" class="seal-text-top">HALIL ACADÉMIE</text>
+                <text x="120" y="182" text-anchor="middle" class="seal-text-bottom">SCIENTIFIQUE</text>
+                <text x="120" y="132" text-anchor="middle" class="seal-year">H·A·S</text>
+            </svg>
+        </div>
+    </div>
+</section>
+
+<section class="section section-alt">
+    <div class="section-inner two-col">
+        <div>
+            <span class="eyebrow">Notre raison d'être</span>
+            <h2>Mission</h2>
+            <p>
+                La mission de Halil Académie Scientifique est d’offrir un enseignement de qualité à travers des cours de renforcement, des séances de préparation aux examens, un accompagnement personnalisé et des formations adaptées aux besoins des étudiants. HAS s’engage à développer les compétences scientifiques, analytiques et professionnelles de chaque apprenant afin de favoriser leur réussite universitaire et leur insertion dans le monde professionnel.            </p>
+        </div>
+
+        <div>
+            <span class="eyebrow">Notre horizon</span>
+            <h2>Vision</h2>
+            <p>
+                Être une académie scientifique de référence au Sénégal et en Afrique, reconnue pour l’excellence de son accompagnement pédagogique, la qualité de ses formations et sa contribution à la réussite académique, professionnelle et scientifique des étudiants dans les domaines des mathématiques, de la physique, de l’informatique, de l’économie et de la gestion.
+            </p>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-inner director-block">
+
+        <div class="director-photo">
+            <img src="{{ url_for('static', filename='images/directeur.jpg') }}" alt="Direction de HAS">
+        </div>
+
+        <div class="director-text">
+            <span class="eyebrow">Message du directeur</span>
+
+            <blockquote>
+                Chers étudiants, chers partenaires et chers visiteurs,
+                Bienvenue à Halil Académie Scientifique (HAS).
+                Notre ambition est simple : offrir à chaque étudiant les meilleures conditions pour réussir son parcours universitaire. Nous sommes convaincus que l’excellence n’est pas réservée à quelques-uns ; elle est le fruit d’un travail rigoureux, d’un encadrement de qualité et d’une volonté constante de progresser.
+                <br> <br>
+                Je remercie tous ceux qui nous accordent leur confiance et j’invite chaque étudiant à faire de HAS un véritable partenaire de sa réussite.
+                <br> <br>
+                Ensemble, bâtissons l’excellence scientifique d’aujourd’hui pour relever les défis de demain.
+            </blockquote>
+
+            <p class="director-name">
+                Papa Ibrahima SAMB
+            </p>
+
+        </div>
+
+    </div>
+</section>
+
+<section class="section section-alt">
+    <div class="section-inner">
+
+        <span class="eyebrow">La structure en images</span>
+        <h2>Images</h2>
+
+        <div class="photo-grid">
+
+            <div class="photo-item">
+                <img src="{{ url_for('static', filename='images/image1.jpg') }}" alt="Photo HAS">
+            </div>
+
+            <div class="photo-item">
+                <img src="{{ url_for('static', filename='images/image2.jpg') }}" alt="Photo HAS">
+            </div>
+
+            <div class="photo-item">
+                <img src="{{ url_for('static', filename='images/image3.jpg') }}" alt="Photo HAS">
+            </div>
+
+        </div>
+
+
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-inner">
+
+        <span class="eyebrow">Ce que vous pouvez étudier</span>
+        <h2>Les filières</h2>
+
+        <div class="filieres-grid">
+
+            {% for filiere in filieres %}
+
+            <div class="filiere-card">
+                <i class="fa-solid fa-flask"></i>
+                <h3>{{ filiere.nom }}</h3>
+                <p>{{ filiere.description }}</p>
+            </div>
+
+            {% else %}
+
+            <p class="empty-state">
+                Les filières seront bientôt publiées.
+            </p>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+</section>
+
+<section class="section section-alt">
+
+    <div class="section-inner">
+
+        <span class="eyebrow">Nos engagements</span>
+
+        <h2>Pourquoi choisir HAS ?</h2>
+
+        <div class="partenaires-row">
+
+            <div class="partenaire-logo">
+                <h3>📚 Formation de qualité</h3>
+            </div>
+
+            <div class="partenaire-logo">
+                <h3>🧪 Enseignement scientifique</h3>
+            </div>
+
+            <div class="partenaire-logo">
+                <h3>🎓 Encadrement pédagogique</h3>
+            </div>
+
+            <div class="partenaire-logo">
+                <h3>🚀 Innovation et Excellence</h3>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends "base_dashboard.html" %}
+{% block title %}Mon profil — HAS{% endblock %}
+
+{% block topbar_title %}Mon profil{% endblock %}
+
+{% block content %}
+  <div class="am-page">
+    <div class="am-page-head">
+      <div class="am-heading">
+        <h1>Mon profil</h1>
+        <p>Gérez vos informations de compte</p>
+      </div>
+    </div>
+
+    {% if not edit_mode %}
+    <!-- ================= VUE (lecture seule) ================= -->
+    <div class="am-section">
+      <div class="am-profile-header">
+        <div class="am-avatar-xl">
+          {% if user.photo %}
+            <img src="{{ url_for('static', filename=user.photo) }}" alt="Photo de profil">
+          {% else %}
+            {{ user.prenom[0]|upper }}{{ user.nom[0]|upper }}
+          {% endif %}
+        </div>
+        <div>
+          <div class="am-profile-name">{{ user.prenom }} {{ user.nom }}</div>
+          <span class="am-profile-role"><i class="fa-solid fa-shield-halved"></i> Administrateur</span>
+        </div>
+      </div>
+
+      <div class="am-info-grid">
+        <div class="am-info-item">
+          <label>Login</label>
+          <div>{{ user.login }}</div>
+        </div>
+        <div class="am-info-item">
+          <label>Téléphone</label>
+          <div>{{ user.telephone or "Non renseigné" }}</div>
+        </div>
+      </div>
+
+      <div class="am-actions-tight">
+        <a href="{{ url_for('admin.profil', edit=1) }}" class="btn btn-primary btn-sm">
+          <i class="fa-solid fa-pen"></i> Modifier mon profil
+        </a>
+      </div>
+    </div>
+
+    {% else %}
+    <!-- ================= ÉDITION ================= -->
+    <div class="am-section">
+      <div class="am-edit-banner">
+        Modification du profil
+        <a href="{{ url_for('admin.profil') }}"><i class="fa-solid fa-xmark"></i> Annuler</a>
+      </div>
+
+      <form action="{{ url_for('admin.modifier_profil') }}" method="post" enctype="multipart/form-data" class="am-form-card">
+        <div class="am-profile-header am-profile-edit">
+          <div class="am-avatar-xl">
+            {% if user.photo %}
+              <img src="{{ url_for('static', filename=user.photo) }}" alt="Photo de profil">
+            {% else %}
+              {{ user.prenom[0]|upper }}{{ user.nom[0]|upper }}
+            {% endif %}
+          </div>
+          <div class="am-field am-field-grow">
+            <label>Photo de profil</label>
+            <input type="file" name="photo">
+          </div>
+        </div>
+
+        <div class="am-form-row">
+          <div class="am-field">
+            <label>Prénom</label>
+            <input type="text" name="prenom" value="{{ user.prenom }}" required>
+          </div>
+          <div class="am-field">
+            <label>Nom</label>
+            <input type="text" name="nom" value="{{ user.nom }}" required>
+          </div>
+        </div>
+
+        <div class="am-form-row">
+          <div class="am-field">
+            <label>Téléphone</label>
+            <input type="text" name="telephone" value="{{ user.telephone or '' }}">
+          </div>
+        </div>
+
+        <div class="am-field">
+          <label>Login</label>
+          <input type="text" value="{{ user.login }}" disabled>
+        </div>
+
+        <div class="am-field">
+          <label>Nouveau mot de passe</label>
+          <div class="am-password-field">
+            <input id="admin-profile-password" type="password" name="password" autocomplete="new-password" placeholder="Laisser vide pour ne pas changer">
+            <button type="button" class="password-toggle" data-password-toggle="admin-profile-password" aria-label="Afficher le mot de passe">
+              <i class="fa-solid fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="am-form-actions">
+          <button type="submit" class="btn btn-primary">Enregistrer</button>
+          <a href="{{ url_for('admin.profil') }}" class="btn btn-outline">Annuler</a>
+        </div>
+      </form>
+    </div>
+    {% endif %}
+  </div>
+{% endblock %}

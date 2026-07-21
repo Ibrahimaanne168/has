@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Nos Professeurs — HAS{% endblock %}
+
+{% block content %}
+
+<section class="hero hero-compact">
+    <div class="hero-inner">
+        <div class="hero-text">
+            <span class="eyebrow">L'équipe pédagogique</span>
+            <h1>Nos Professeurs</h1>
+            <p>Un corps enseignant expérimenté, engagé auprès de chaque étudiant pour construire des bases solides et une réussite durable.</p>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-inner">
+
+        <form class="prof-search" method="get" action="{{ url_for('public.professeurs') }}">
+
+            <div class="prof-search-field prof-search-field--text">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input
+                    type="text"
+                    name="nom"
+                    placeholder="Rechercher un professeur..."
+                    value="{{ request.args.get('nom', '') }}"
+                >
+            </div>
+
+            <div class="prof-search-field">
+                <i class="fa-solid fa-book"></i>
+                <select name="matiere">
+                    <option value="">Toutes les matières</option>
+                    {% for matiere in matieres %}
+                    <option value="{{ matiere.id }}" {% if request.args.get('matiere')|string == matiere.id|string %}selected{% endif %}>
+                        {{ matiere.nom }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="prof-search-field">
+                <i class="fa-solid fa-graduation-cap"></i>
+                <select name="filiere">
+                    <option value="">Toutes les filières</option>
+                    {% for filiere in filieres %}
+                    <option value="{{ filiere.id }}" {% if request.args.get('filiere')|string == filiere.id|string %}selected{% endif %}>
+                        {{ filiere.nom }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit" class="prof-search-btn">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <span>Rechercher</span>
+            </button>
+
+            {% if request.args.get('nom') or request.args.get('matiere') or request.args.get('filiere') %}
+            <a href="{{ url_for('public.professeurs') }}" class="prof-search-reset">
+                <i class="fa-solid fa-xmark"></i> Réinitialiser
+            </a>
+            {% endif %}
+
+        </form>
+
+        <div class="prof-grid">
+
+            {% for prof in professeurs %}
+
+            <article class="prof-card">
+
+                <div class="prof-card-photo">
+                    {% if prof.user.photo %}
+                    <img src="{{ url_for('static', filename=prof.user.photo|replace('/static/', '')|replace('static/', '')) }}" alt="{{ prof.user.prenom }} {{ prof.user.nom }}">
+                    {% else %}
+                    <div class="prof-card-photo-placeholder">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="prof-card-body">
+
+                    <h3 class="prof-card-name">{{ prof.user.prenom }} {{ prof.user.nom }}</h3>
+
+                    {% if prof.matieres %}
+                    <div class="prof-card-matieres">
+                        {% for matiere in prof.matieres %}
+                        <span class="prof-tag">{{ matiere.nom }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    {% if prof.biographie %}
+                    <p class="prof-card-bio">{{ prof.biographie|truncate(140) }}</p>
+                    {% endif %}
+
+                    <div class="prof-card-contact">
+                        {% if prof.user.telephone %}
+                        <a href="tel:{{ prof.user.telephone }}" class="prof-contact-item">
+                            <i class="fa-solid fa-phone"></i>
+                            <span>{{ prof.user.telephone }}</span>
+                        </a>
+                        {% endif %}
+                    </div>
+
+                </div>
+
+            </article>
+
+            {% else %}
+
+            <p class="empty-state">
+                Aucun professeur ne correspond à votre recherche.
+            </p>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

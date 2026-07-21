@@ -1,0 +1,97 @@
+{# =========================================================
+   etudiant/messages.html
+   Dépend de etudiant-management.css. Adaptez {% extends %} et les
+   blocs ("title" / "content") à votre base_dashboard.html si besoin.
+   ========================================================= #}
+{% extends "base_dashboard.html" %}
+
+{% block title %}Messages{% endblock %}
+
+{% block content %}
+<div class="am-page">
+
+    <div class="am-page-head">
+        <div class="am-heading">
+            <h1>Messages</h1>
+            <p>Contactez l'administration, la direction ou un enseignant</p>
+        </div>
+        <span class="am-count-pill"><i class="fa-solid fa-paper-plane"></i> {{ messages|length }} envoyé{{ 's' if messages|length > 1 else '' }}</span>
+    </div>
+
+    <section class="am-section">
+        <div class="am-section-head">
+            <h2><i class="fa-solid fa-pen"></i> Nouveau message</h2>
+        </div>
+        <form class="am-form-card" method="post" action="{{ url_for('etudiant.envoyer_message') }}">
+            <div class="am-form-row">
+                <div class="am-field">
+                    <label for="destinataire_type">Destinataire</label>
+                    <select id="destinataire_type" name="destinataire_type" required onchange="document.getElementById('bloc-enseignant').hidden = this.value !== 'enseignant';">
+                        <option value="administration">Administration</option>
+                        <option value="direction">Direction</option>
+                        <option value="responsable_pedagogique">Responsable pédagogique</option>
+                        <option value="enseignant">Un enseignant</option>
+                    </select>
+                </div>
+                <div class="am-field" id="bloc-enseignant" hidden>
+                    <label for="destinataire_id">Enseignant</label>
+                    <select id="destinataire_id" name="destinataire_id">
+                        {% for e in enseignants %}
+                        <option value="{{ e.id }}">{{ e.prenom }} {{ e.nom }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="am-field">
+                <label for="sujet">Sujet</label>
+                <input type="text" id="sujet" name="sujet" required placeholder="Objet de votre message">
+            </div>
+
+            <div class="am-field">
+                <label for="message">Message</label>
+                <textarea id="message" name="message" rows="4" required></textarea>
+            </div>
+
+            <div class="am-form-actions">
+                <button type="submit" class="btn-primary"><i class="fa-solid fa-paper-plane"></i> Envoyer</button>
+            </div>
+        </form>
+    </section>
+
+    <section class="am-section">
+        <div class="am-section-head">
+            <h2><i class="fa-solid fa-clock-rotate-left"></i> Mes messages</h2>
+            <span class="mini-count">{{ messages|length }}</span>
+        </div>
+
+        <div class="am-card-list">
+            {% for m in messages %}
+            <article class="am-message-card {{ 'is-unread' if not m.reponse }}">
+                <div class="am-message-top">
+                    <span class="am-message-subject">{{ m.sujet }}</span>
+                    <span class="am-chip is-muted">{{ m.destinataire_type.replace('_', ' ')|capitalize }}</span>
+                </div>
+                <div class="am-message-body">{{ m.message }}</div>
+
+                {% if m.reponse %}
+                <div class="am-message-reply">
+                    <strong>Réponse reçue</strong>
+                    {{ m.reponse }}
+                </div>
+                {% else %}
+                <p class="am-message-waiting"><i class="fa-solid fa-hourglass-half"></i> En attente de réponse</p>
+                {% endif %}
+            </article>
+            {% else %}
+            <div class="am-empty">
+                <i class="fa-solid fa-envelope"></i>
+                <strong>Aucun message envoyé</strong>
+                <span>Utilisez le formulaire ci-dessus pour contacter l'administration.</span>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+</div>
+{% endblock %}

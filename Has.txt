@@ -1,0 +1,59 @@
+HAS/
+│
+├── app.py
+├── config.py
+├── database/
+│   └── has.sql
+│
+├── static/
+│   ├── css/
+│   ├── js/
+│   ├── images/
+│   └── uploads/
+│       ├── cours/
+│       ├── edt/
+│       ├── professeurs/
+│       └── communiques/
+│
+├── templates/
+│   │
+│   ├── base.html
+│   ├── login.html
+│   │
+│   ├── public/
+│   │   ├── accueil.html
+│   │   ├── presentation.html
+│   │   ├── filieres.html
+│   │   ├── professeurs.html
+│   │   ├── galerie.html
+│   │   └── contact.html
+│   │
+│   ├── admin/
+│   │   ├── dashboard.html
+│   │   ├── enseignants.html
+│   │   ├── etudiants.html
+│   │   ├── cours.html
+│   │   ├── edt.html
+│   │   ├── communiques.html
+│   │   ├── messages.html
+│   │   └── profil.html
+│   │
+│   ├── professeur/
+│   │   ├── dashboard.html
+│   │   ├── cours.html
+│   │   ├── messages.html
+│   │   └── profil.html
+│   │
+│   └── etudiant/
+│       ├── dashboard.html
+│       ├── cours.html
+│       ├── edt.html
+│       ├── communiques.html
+│       ├── messages.html
+│       └── profil.html
+│
+└── routes/
+    ├── admin.py
+    ├── professeur.py
+    ├── etudiant.py
+    └── public.py

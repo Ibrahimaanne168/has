@@ -1,0 +1,393 @@
+/* =========================================================
+   HAS - Halil Académie Scientifique
+   Style de connexion - Mobile First
+   Palette : Orange (#FF6B00) & Bleu Saphir (#0F52BA)
+   ========================================================= */
+
+:root {
+    --orange: #ff6b00;
+    --orange-light: #ff8a3d;
+    --orange-dark: #d95700;
+    --saphir: #0f52ba;
+    --saphir-dark: #0a3a85;
+    --saphir-light: #3f7fd6;
+    --white: #ffffff;
+    --gray-text: #5a6472;
+    --error-red: #e74c3c;
+
+    --radius: 18px;
+    --transition: 0.25s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+
+    /* Fond dégradé orange -> bleu saphir avec un effet doux */
+    background: linear-gradient(160deg, var(--saphir-dark) 0%, var(--saphir) 45%, var(--orange) 130%);
+    background-attachment: fixed;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Petites touches lumineuses en arrière-plan */
+body::before,
+body::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    z-index: 0;
+    opacity: 0.55;
+}
+
+body::before {
+    width: 220px;
+    height: 220px;
+    background: var(--orange-light);
+    top: -60px;
+    left: -60px;
+}
+
+body::after {
+    width: 260px;
+    height: 260px;
+    background: var(--saphir-light);
+    bottom: -80px;
+    right: -60px;
+}
+
+/* ---------------- Conteneur principal ---------------- */
+.login-container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 380px;
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(10px);
+    border-radius: var(--radius);
+    padding: 40px 28px 32px;
+    text-align: center;
+    box-shadow:
+        0 20px 45px rgba(15, 82, 186, 0.25),
+        0 8px 20px rgba(255, 107, 0, 0.12);
+    animation: fadeUp 0.6s var(--transition);
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(24px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ---------------- Logo & titres ---------------- */
+.logo {
+    width: 84px;
+    height: 84px;
+    object-fit: contain;
+    border-radius: 50%;
+    padding: 6px;
+    background: var(--white);
+    border: 3px solid var(--orange);
+    box-shadow: 0 6px 16px rgba(15, 82, 186, 0.2);
+    margin-bottom: 14px;
+}
+
+.login-container h1 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    background: linear-gradient(90deg, var(--saphir) 0%, var(--orange) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 4px;
+}
+
+.login-container p {
+    font-size: 0.85rem;
+    color: var(--gray-text);
+    margin-bottom: 28px;
+    letter-spacing: 0.3px;
+}
+
+/* ---------------- Formulaire ---------------- */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.input-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-box i {
+    position: absolute;
+    left: 16px;
+    font-size: 1rem;
+    color: var(--saphir);
+    transition: color var(--transition);
+}
+
+.input-box input {
+    width: 100%;
+    padding: 14px 16px 14px 44px;
+    border: 2px solid #e3e8f0;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    background: #f7f9fc;
+    color: #1f2937;
+    transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+}
+
+.input-box-password input {
+    padding-right: 48px;
+}
+
+.input-box-password .password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 9px;
+    background: rgba(15, 82, 186, 0.08);
+    color: var(--saphir);
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.input-box-password .password-toggle:hover,
+.input-box-password .password-toggle:focus-visible {
+    color: var(--orange);
+    background: rgba(255, 107, 0, 0.12);
+    outline: none;
+}
+
+.input-box input::placeholder {
+    color: #9aa4b2;
+}
+
+.input-box input:focus {
+    outline: none;
+    border-color: var(--orange);
+    background: var(--white);
+    box-shadow: 0 0 0 4px rgba(255, 107, 0, 0.12);
+}
+
+.input-box input:focus + i,
+.input-box:focus-within i {
+    color: var(--orange);
+}
+
+/* ---------------- Options (se souvenir / mot de passe oublié) ---------------- */
+.form-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    margin-top: -6px;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--gray-text);
+    cursor: pointer;
+    user-select: none;
+}
+
+.remember-me input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+    accent-color: var(--orange);
+    cursor: pointer;
+}
+
+.forgot-link {
+    color: var(--saphir);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color var(--transition);
+}
+
+.forgot-link:hover,
+.forgot-link:focus-visible {
+    color: var(--orange);
+    text-decoration: underline;
+}
+
+/* ---------------- Bouton ---------------- */
+button[type="submit"] {
+    margin-top: 6px;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--white);
+    cursor: pointer;
+    background: linear-gradient(90deg, var(--saphir) 0%, var(--orange) 100%);
+    background-size: 200% 100%;
+    background-position: left;
+    box-shadow: 0 10px 22px rgba(15, 82, 186, 0.3);
+    transition: background-position var(--transition), transform var(--transition), box-shadow var(--transition);
+}
+
+button[type="submit"]:hover,
+button[type="submit"]:focus-visible {
+    background-position: right;
+    box-shadow: 0 12px 26px rgba(255, 107, 0, 0.35);
+}
+
+button[type="submit"]:active {
+    transform: scale(0.97);
+}
+
+/* ---------------- Message flash ---------------- */
+.message {
+    margin-top: 20px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--error-red);
+    background: rgba(231, 76, 60, 0.1);
+    border: 1px solid rgba(231, 76, 60, 0.3);
+    animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* ---------------- Pied de page ---------------- */
+.login-footer {
+    margin-top: 24px;
+    font-size: 0.75rem;
+    color: #9aa4b2;
+}
+
+.login-footer a {
+    color: var(--saphir);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.login-footer a:hover {
+    color: var(--orange);
+    text-decoration: underline;
+}
+
+/* =========================================================
+   Responsive - Tablette et Desktop
+   ========================================================= */
+@media (min-width: 480px) {
+    .login-container {
+        max-width: 420px;
+        padding: 48px 40px 36px;
+    }
+
+    .logo {
+        width: 96px;
+        height: 96px;
+    }
+
+    .login-container h1 {
+        font-size: 2rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .login-container {
+        max-width: 440px;
+        padding: 52px 44px 40px;
+        border-radius: 24px;
+    }
+
+    .input-box input,
+    button[type="submit"] {
+        font-size: 1rem;
+    }
+}
+
+/* =========================================================
+   Ajout pour la page "Mot de passe oublié"
+   À coller à la fin de ton login.css existant
+   ========================================================= */
+
+.btn-whatsapp {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 6px;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--white);
+    text-decoration: none;
+    cursor: pointer;
+    background: linear-gradient(90deg, var(--saphir) 0%, var(--orange) 100%);
+    background-size: 200% 100%;
+    background-position: left;
+    box-shadow: 0 10px 22px rgba(15, 82, 186, 0.3);
+    transition: background-position var(--transition), transform var(--transition), box-shadow var(--transition);
+}
+
+.btn-whatsapp:hover,
+.btn-whatsapp:focus-visible {
+    background-position: right;
+    box-shadow: 0 12px 26px rgba(255, 107, 0, 0.35);
+}
+
+.btn-whatsapp:active {
+    transform: scale(0.97);
+}
+
+.btn-whatsapp i {
+    font-size: 1.15rem;
+}
+
+.reset-hint {
+    font-size: 0.8rem;
+    color: var(--gray-text);
+    line-height: 1.5;
+    margin: -8px 0 18px;
+}

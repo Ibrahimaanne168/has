@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mot de passe oublié — HAS</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <div class="login-container">
+    <img src="{{ url_for('static', filename='images/logo_has.jpg') }}" alt="Logo HAS" class="logo">
+    <h1>Mot de passe oublié</h1>
+    <p>Aucune réinitialisation automatique n'est disponible : contactez directement l'administration sur WhatsApp pour retrouver l'accès à votre compte.</p>
+
+    <form onsubmit="return false;">
+      <div class="input-box">
+        <i class="fa-solid fa-user"></i>
+        <input type="text" id="identifiant" placeholder="Votre identifiant (optionnel)">
+      </div>
+    </form>
+
+    <p class="reset-hint">
+      <br>
+      Indiquer votre identifiant ci-dessus aide l'administration à retrouver votre compte plus vite — ce n'est pas obligatoire.
+    </p>
+
+    {% if numero_whatsapp %}
+    <a id="whatsapp-link" href="#" target="_blank" rel="noopener" class="btn-whatsapp">
+      <i class="fa-brands fa-whatsapp"></i> Contacter l'administration sur WhatsApp
+    </a>
+    {% else %}
+    <p class="reset-hint">
+      Aucun numéro WhatsApp n'est configuré pour le moment. Merci de contacter l'administration par un autre moyen.
+    </p>
+    {% endif %}
+
+    <p class="login-footer">
+      <a href="{{ url_for('public.login') }}"><i class="fa-solid fa-arrow-left"></i> Retour à la connexion</a>
+    </p>
+  </div>
+
+  {% if numero_whatsapp %}
+  <script>
+    const numero = "{{ numero_whatsapp }}";
+    const lien = document.getElementById('whatsapp-link');
+    const champ = document.getElementById('identifiant');
+
+    function messageBase() {
+      let texte = "Bonjour, je n'arrive pas à me connecter à la plateforme HAS et je souhaite réinitialiser mon mot de passe.";
+      const identifiant = champ.value.trim();
+      if (identifiant) {
+        texte += " Mon identifiant : " + identifiant;
+      }
+      return texte;
+    }
+
+    function mettreAJourLien() {
+      lien.href = "https://wa.me/" + numero + "?text=" + encodeURIComponent(messageBase());
+    }
+
+    champ.addEventListener('input', mettreAJourLien);
+    mettreAJourLien();
+  </script>
+  {% endif %}
+
+</body>
+</html>

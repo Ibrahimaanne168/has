@@ -1,0 +1,96 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Modifier mon profil — HAS{% endblock %}
+{% block topbar_title %}Modifier mon profil{% endblock %}
+
+{% block content %}
+<div class="am-page">
+
+    <div class="am-page-head">
+        <div class="am-heading">
+            <h1>Modifier mon profil</h1>
+            <p>Mettez à jour vos informations personnelles.</p>
+        </div>
+    </div>
+
+    <div class="am-edit-banner">
+        <span><i class="fa-solid fa-pen"></i> Modification du profil</span>
+        <a href="{{ url_for('etudiant.profil') }}">Annuler</a>
+    </div>
+
+    <div class="am-section">
+        <form method="post" action="{{ url_for('etudiant.modifier_profil') }}">
+
+            <div class="am-profile-header am-profile-edit">
+                <div class="am-avatar-xl">
+                    {% if profil.photo %}
+                    <img src="{{ url_for('static', filename=profil.photo) }}" alt="">
+                    {% else %}
+                    {{ profil.prenom[0] }}{{ profil.nom[0] }}
+                    {% endif %}
+                </div>
+
+                <div class="am-field am-field-grow">
+                    <label for="photo">Photo de profil</label>
+                    <input type="file" id="photo" name="photo" accept="image/*">
+                    <span class="am-field-hint">JPG, PNG ou WEBP.</span>
+                </div>
+            </div>
+
+            <div class="am-form-row">
+                <div class="am-field">
+                    <label for="nom">Nom</label>
+                    <input type="text" id="nom" name="nom" required value="{{ profil.nom }}">
+                </div>
+                <div class="am-field">
+                    <label for="prenom">Prénom</label>
+                    <input type="text" id="prenom" name="prenom" required value="{{ profil.prenom }}">
+                </div>
+            </div>
+
+            <div class="am-form-row">
+                <div class="am-field">
+                    <label for="telephone">Téléphone</label>
+                    <input type="tel" id="telephone" name="telephone" value="{{ profil.telephone or '' }}">
+                </div>
+            </div>
+
+            <div class="am-field">
+                <label for="matricule">Matricule</label>
+                <input type="text" id="matricule" name="matricule" value="{{ profil.matricule or '' }}" disabled>
+                <span class="am-field-hint">Le matricule est géré par l'administration.</span>
+            </div>
+
+            <div class="am-form-row">
+                <div class="am-field">
+                    <label for="mot_de_passe_actuel">Mot de passe actuel</label>
+                    <div class="am-password-field">
+                        <input type="password" id="mot_de_passe_actuel" name="mot_de_passe_actuel" placeholder="Requis pour changer de mot de passe">
+                        <button type="button" class="password-toggle" data-password-toggle="mot_de_passe_actuel" aria-label="Afficher le mot de passe">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="am-field">
+                    <label for="nouveau_mot_de_passe">Nouveau mot de passe</label>
+                    <div class="am-password-field">
+                        <input type="password" id="nouveau_mot_de_passe" name="nouveau_mot_de_passe" placeholder="Laisser vide pour ne pas changer">
+                        <button type="button" class="password-toggle" data-password-toggle="nouveau_mot_de_passe" aria-label="Afficher le mot de passe">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="am-form-actions">
+                <button type="submit" class="btn-primary">
+                    <i class="fa-solid fa-floppy-disk"></i> Enregistrer
+                </button>
+                <a href="{{ url_for('etudiant.profil') }}" class="btn btn-outline">Annuler</a>
+            </div>
+
+        </form>
+    </div>
+
+</div>
+{% endblock %}

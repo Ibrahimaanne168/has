@@ -1,0 +1,76 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Modifier mon profil — HAS{% endblock %}
+{% block topbar_title %}Modifier mon profil{% endblock %}
+
+{% block content %}
+<div class="am-page">
+
+    <div class="am-page-head">
+        <div class="am-heading">
+            <h1>Modifier mon profil</h1>
+            <p>Mettez à jour vos informations personnelles.</p>
+        </div>
+    </div>
+
+    <div class="am-edit-banner">
+        <span><i class="fa-solid fa-pen"></i> Modification du profil</span>
+        <a href="{{ url_for('professeur.profil') }}">Annuler</a>
+    </div>
+
+    <div class="am-section">
+        <form method="post" action="{{ url_for('professeur.modifier_profil') }}" enctype="multipart/form-data">
+
+            <div class="am-profile-header am-profile-edit">
+                <div class="am-avatar-xl">
+                    {% if prof.photo %}
+                    <img src="{{ url_for('static', filename=prof.photo|replace('/static/', '')|replace('static/', '')) }}" alt="">
+                    {% else %}
+                    {{ prof.prenom[0] }}{{ prof.nom[0] }}
+                    {% endif %}
+                </div>
+
+                <div class="am-field am-field-grow">
+                    <label for="photo">Photo de profil</label>
+                    <input type="file" id="photo" name="photo" accept="image/*">
+                    <span class="am-field-hint">JPG, PNG ou WEBP.</span>
+                </div>
+            </div>
+
+            <div class="am-form-row">
+                <div class="am-field">
+                    <label for="nom">Nom</label>
+                    <input type="text" id="nom" name="nom" required value="{{ prof.nom }}">
+                </div>
+                <div class="am-field">
+                    <label for="prenom">Prénom</label>
+                    <input type="text" id="prenom" name="prenom" required value="{{ prof.prenom }}">
+                </div>
+            </div>
+
+            <div class="am-form-row">
+                <div class="am-field">
+                    <label for="telephone">Téléphone</label>
+                    <input type="tel" id="telephone" name="telephone" value="{{ prof.telephone or '' }}">
+                </div>
+            </div>
+
+            <div class="am-field">
+                <label for="biographie">Biographie</label>
+                <textarea id="biographie" name="biographie" rows="5" placeholder="Quelques mots sur votre parcours...">{{ prof.biographie or '' }}</textarea>
+            </div>
+
+            <span class="am-field-hint">Les filières et matières sont gérées par l'administration.</span>
+
+            <div class="am-form-actions">
+                <button type="submit" class="btn-primary">
+                    <i class="fa-solid fa-floppy-disk"></i> Enregistrer
+                </button>
+                <a href="{{ url_for('professeur.profil') }}" class="btn-outline">Annuler</a>
+            </div>
+
+        </form>
+    </div>
+
+</div>
+{% endblock %}

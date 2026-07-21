@@ -1,0 +1,104 @@
+{# =========================================================
+   etudiant/dashboard.html
+   Dépend de etudiant-management.css. Adaptez {% extends %} et les
+   blocs ("title" / "content") à votre base_dashboard.html si besoin.
+   ========================================================= #}
+{% extends "base_dashboard.html" %}
+
+{% block title %}Tableau de bord{% endblock %}
+
+{% block content %}
+<div class="am-page">
+
+    <div class="am-page-head">
+        <div class="am-heading">
+            <h1>Bonjour {{ profil.prenom }} 👋</h1>
+            <p>{{ profil.filiere_nom }} — {{ profil.classe_nom }}</p>
+        </div>
+        <span class="am-count-pill"><i class="fa-solid fa-id-card"></i> {{ profil.matricule or 'Sans matricule' }}</span>
+    </div>
+
+    <div class="et-stat-grid">
+        <a href="{{ url_for('etudiant.cours') }}" class="et-stat-card">
+            <i class="fa-solid fa-book"></i>
+            <span class="et-stat-value">{{ nb_cours }}</span>
+            <span class="et-stat-label">Cours disponibles</span>
+        </a>
+        <a href="{{ url_for('etudiant.edt') }}" class="et-stat-card">
+            <i class="fa-solid fa-calendar-days"></i>
+            <span class="et-stat-value">{{ nb_edt_actifs }}</span>
+            <span class="et-stat-label">Emploi(s) du temps actif(s)</span>
+        </a>
+        <a href="{{ url_for('etudiant.communiques') }}" class="et-stat-card">
+            <i class="fa-solid fa-bullhorn"></i>
+            <span class="et-stat-value">{{ nb_communiques }}</span>
+            <span class="et-stat-label">Communiqués</span>
+        </a>
+        <a href="{{ url_for('etudiant.messages') }}" class="et-stat-card">
+            <i class="fa-solid fa-envelope"></i>
+            <span class="et-stat-value">{{ nb_messages_attente }}</span>
+            <span class="et-stat-label">Message(s) en attente</span>
+        </a>
+    </div>
+
+    <section class="am-section">
+        <div class="am-section-head">
+            <h2><i class="fa-solid fa-bullhorn"></i> Derniers communiqués</h2>
+            <span class="mini-count">{{ derniers_communiques|length }}</span>
+        </div>
+        <div class="am-card-list">
+            {% for c in derniers_communiques %}
+            <article class="am-notice-card">
+                <div class="am-notice-head">
+                    <span class="am-notice-title">{{ c.titre }}</span>
+                </div>
+                <div class="am-notice-meta">{{ c.date_publication.strftime('%d/%m/%Y') if c.date_publication else 'Non daté' }}</div>
+            </article>
+            {% else %}
+            <div class="am-empty">
+                <i class="fa-solid fa-bullhorn"></i>
+                <strong>Rien de nouveau</strong>
+                <span>Aucun communiqué publié pour le moment.</span>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="am-section">
+        <div class="am-section-head">
+            <h2><i class="fa-solid fa-compass"></i> Accès rapide</h2>
+        </div>
+        <div class="et-shortcut-grid">
+            <a class="et-shortcut-card" href="{{ url_for('etudiant.cours') }}">
+                <i class="fa-solid fa-book-open"></i>
+                <div>
+                    <div class="et-shortcut-title">Mes cours</div>
+                    <div class="et-shortcut-sub">Consulter et télécharger</div>
+                </div>
+            </a>
+            <a class="et-shortcut-card" href="{{ url_for('etudiant.edt') }}">
+                <i class="fa-solid fa-calendar-days"></i>
+                <div>
+                    <div class="et-shortcut-title">Emploi du temps</div>
+                    <div class="et-shortcut-sub">Semaine en cours</div>
+                </div>
+            </a>
+            <a class="et-shortcut-card" href="{{ url_for('etudiant.messages') }}">
+                <i class="fa-solid fa-paper-plane"></i>
+                <div>
+                    <div class="et-shortcut-title">Envoyer un message</div>
+                    <div class="et-shortcut-sub">Administration ou enseignant</div>
+                </div>
+            </a>
+            <a class="et-shortcut-card" href="{{ url_for('etudiant.profil') }}">
+                <i class="fa-solid fa-user"></i>
+                <div>
+                    <div class="et-shortcut-title">Mon profil</div>
+                    <div class="et-shortcut-sub">Coordonnées, mot de passe</div>
+                </div>
+            </a>
+        </div>
+    </section>
+
+</div>
+{% endblock %}

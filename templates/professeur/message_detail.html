@@ -1,0 +1,50 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Message — HAS{% endblock %}
+{% block topbar_title %}Message{% endblock %}
+
+{% block content %}
+<div class="am-page">
+
+    <div class="am-page-head">
+        <div class="am-heading">
+            <h1>{{ msg.sujet }}</h1>
+            <p><a href="{{ url_for('professeur.messages') }}"><i class="fa-solid fa-arrow-left"></i> Retour aux messages</a></p>
+        </div>
+    </div>
+
+    <div class="am-message-card">
+
+        <div class="am-message-sender">
+            <div class="am-avatar-chip">{{ msg.prenom[0] }}{{ msg.nom[0] }}</div>
+            <div class="am-message-sender-body">
+                <div class="am-message-sender-name">{{ msg.prenom }} {{ msg.nom }}</div>
+                <div class="am-message-sender-sub">
+                    {% if msg.telephone %}{{ msg.telephone }}{% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="am-message-body">{{ msg.message }}</div>
+
+        {% if msg.reponse %}
+        <div class="am-message-reply">
+            <div class="am-message-reply-label">Votre réponse</div>
+            <div class="am-message-body">{{ msg.reponse }}</div>
+        </div>
+        {% else %}
+        <form class="am-reply-form" method="post" action="{{ url_for('professeur.message_detail', message_id=msg.id) }}">
+            <div class="am-field">
+                <label for="reponse">Répondre</label>
+                <textarea id="reponse" name="reponse" rows="5" placeholder="Écrivez votre réponse..." required></textarea>
+            </div>
+            <button type="submit" class="btn-primary am-btn-align-start">
+                <i class="fa-solid fa-paper-plane"></i> Envoyer la réponse
+            </button>
+        </form>
+        {% endif %}
+
+    </div>
+
+</div>
+{% endblock %}

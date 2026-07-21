@@ -1,0 +1,151 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Mes cours — HAS{% endblock %}
+{% block topbar_title %}Mes cours{% endblock %}
+
+{% block content %}
+<div class="am-page">
+
+    <div class="am-page-head">
+        <div class="am-heading">
+            <h1>Mes cours</h1>
+            <p>Déposez, modifiez ou supprimez vos supports de cours au format PDF.</p>
+        </div>
+        <span class="am-count-pill"><i class="fa-solid fa-book-open"></i> {{ cours|length }} cours</span>
+    </div>
+
+    {% if not matieres %}
+    <div class="am-section">
+        <div class="am-empty">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <strong>Aucune matière ne vous est encore assignée</strong>
+            <span>Contactez l'administration pour être rattaché à une matière avant de déposer un cours.</span>
+        </div>
+    </div>
+    {% else %}
+
+    <details class="am-section">
+        <summary class="am-add-toggle">
+            <i class="fa-solid fa-plus"></i>
+            Déposer un nouveau cours
+        </summary>
+
+        <div class="am-add-panel am-form-card">
+            <form method="post" action="{{ url_for('professeur.cours') }}" enctype="multipart/form-data">
+
+                <div class="am-form-row">
+                    <div class="am-field">
+                        <label for="titre">Titre du cours</label>
+                        <input type="text" id="titre" name="titre" required maxlength="150">
+                    </div>
+                    <div class="am-field">
+                        <label for="matiere_id">Matière</label>
+                        <select id="matiere_id" name="matiere_id" required>
+                            <option value="">Choisir...</option>
+                            {% for matiere in matieres %}
+                            <option value="{{ matiere.id }}">{{ matiere.nom }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="am-field-hint">Le cours sera automatiquement visible par toutes les classes qui suivent cette matière.</span>
+                    </div>
+                </div>
+
+                <div class="am-field">
+                    <label for="lien_externe">Lien externe (optionnel)</label>
+                    <input type="url" id="lien_externe" name="lien_externe" placeholder="https://...">
+                </div>
+
+                <div class="am-field">
+                    <label for="description">Description (optionnel)</label>
+                    <textarea id="description" name="description" rows="3"></textarea>
+                </div>
+
+                <div class="am-field">
+                    <label for="fichier">Fichier PDF</label>
+                    <input type="file" id="fichier" name="fichier" accept="application/pdf" required>
+                    <span class="am-field-hint">Format PDF uniquement.</span>
+                </div>
+
+                <div class="am-form-actions">
+                    <button type="submit" class="btn-primary">
+                        <i class="fa-solid fa-upload"></i> Déposer le cours
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </details>
+
+    {% endif %}
+
+    <form class="am-toolbar" method="get" action="{{ url_for('professeur.cours') }}">
+        <div class="am-search {{ 'has-value' if recherche }}">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" name="q" placeholder="Rechercher un cours ou une matière..." value="{{ recherche }}">
+            {% if recherche %}
+            <a href="{{ url_for('professeur.cours') }}" class="am-clear"><i class="fa-solid fa-xmark"></i></a>
+            {% endif %}
+        </div>
+    </form>
+
+    {% if cours %}
+    <div class="pm-cours-grid">
+
+        {% for c in cours %}
+        <article class="pm-cours-card">
+
+            <div class="pm-cours-icon">
+                <i class="fa-solid fa-file-pdf"></i>
+            </div>
+
+            <div class="pm-cours-body">
+                <div class="pm-cours-tags">
+                    <span class="am-chip">{{ c.matiere_nom }}</span>
+                </div>
+                <h3>{{ c.titre }}</h3>
+                {% if c.description %}
+                <p>{{ c.description|truncate(90) }}</p>
+                {% endif %}
+                <span class="pm-cours-date">
+                    <i class="fa-solid fa-users"></i>
+                    {{ c.classes_concernees or 'Aucune classe rattachée' }}
+                </span>
+            </div>
+
+            <div class="pm-cours-actions">
+                {% if c.fichier_id %}
+                <a href="{{ url_for('professeur.telecharger_fichier', fichier_id=c.fichier_id) }}" target="_blank" class="icon-link" title="Consulter le PDF">
+                    <i class="fa-solid fa-eye"></i>
+                </a>
+                {% endif %}
+                {% if c.lien_externe %}
+                <a href="{{ c.lien_externe }}" target="_blank" class="icon-link" title="Lien externe">
+                    <i class="fa-solid fa-link"></i>
+                </a>
+                {% endif %}
+                <a href="{{ url_for('professeur.modifier_cours', cours_id=c.id) }}" class="icon-link" title="Modifier">
+                    <i class="fa-solid fa-pen"></i>
+                </a>
+                <form method="post" action="{{ url_for('professeur.supprimer_cours', cours_id=c.id) }}" onsubmit="return confirm('Supprimer ce cours définitivement ?');">
+                    <button type="submit" class="icon-link danger" title="Supprimer">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </form>
+            </div>
+
+        </article>
+        {% endfor %}
+
+    </div>
+    {% else %}
+    <div class="am-section">
+        <div class="am-empty">
+            <i class="fa-solid fa-book-open"></i>
+            <strong>Aucun cours trouvé</strong>
+            <span>{% if recherche %}Aucun résultat pour « {{ recherche }} ».{% else %}Déposez votre premier cours ci-dessus.{% endif %}</span>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Tableau de bord — HAS{% endblock %}
+{% block topbar_title %}Tableau de bord{% endblock %}
+{% block notif_dot %}{% if nb_messages_non_lus > 0 %}<span class="notif-dot"></span>{% endif %}{% endblock %}
+
+{% block content %}
+<div class="am-page">
+
+    <div class="am-page-head">
+        <div class="am-heading">
+            <h1>Bonjour {{ session['prenom'] }} 👋</h1>
+            <p>Voici un aperçu de votre activité sur HAS.</p>
+        </div>
+    </div>
+
+    <div class="pm-stats-grid">
+
+        <a href="{{ url_for('professeur.cours') }}" class="pm-stat-card">
+            <i class="fa-solid fa-book-open"></i>
+            <span class="pm-stat-number">{{ nb_cours }}</span>
+            <span class="pm-stat-label">Cours déposés</span>
+        </a>
+
+        <a href="{{ url_for('professeur.messages') }}" class="pm-stat-card">
+            <i class="fa-solid fa-envelope"></i>
+            <span class="pm-stat-number">{{ nb_messages_non_lus }}</span>
+            <span class="pm-stat-label">Messages non lus</span>
+        </a>
+
+        <a href="{{ url_for('professeur.communiques') }}" class="pm-stat-card">
+            <i class="fa-solid fa-bullhorn"></i>
+            <span class="pm-stat-number">{{ nb_communiques }}</span>
+            <span class="pm-stat-label">Communiqués</span>
+        </a>
+
+    </div>
+
+    <div class="pm-dash-columns">
+
+        <div class="am-section">
+            <div class="am-section-head">
+                <h2><i class="fa-solid fa-book-open"></i> Derniers cours déposés</h2>
+                <a href="{{ url_for('professeur.cours') }}" class="mini-count">Voir tout</a>
+            </div>
+
+            {% if derniers_cours %}
+                <div class="pm-list">
+                    {% for c in derniers_cours %}
+                    <a href="{{ url_for('professeur.modifier_cours', cours_id=c.id) }}" class="pm-list-item">
+                        <i class="fa-solid fa-file-pdf"></i>
+                        <div class="pm-list-item-body">
+                            <span class="pm-list-item-title">{{ c.titre }}</span>
+                            <span class="pm-list-item-sub">{{ c.matiere_nom }} · {{ c.classe_nom }}</span>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="am-empty">
+                    <i class="fa-solid fa-book-open"></i>
+                    <strong>Aucun cours déposé</strong>
+                    <span>Commencez par déposer votre premier cours.</span>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="am-section">
+            <div class="am-section-head">
+                <h2><i class="fa-solid fa-envelope"></i> Derniers messages</h2>
+                <a href="{{ url_for('professeur.messages') }}" class="mini-count">Voir tout</a>
+            </div>
+
+            {% if derniers_messages %}
+                <div class="pm-list">
+                    {% for m in derniers_messages %}
+                    <a href="{{ url_for('professeur.message_detail', message_id=m.id) }}" class="pm-list-item">
+                        <i class="fa-solid {{ 'fa-envelope-open' if m.lu else 'fa-envelope' }}"></i>
+                        <div class="pm-list-item-body">
+                            <span class="pm-list-item-title">{{ m.prenom }} {{ m.nom }}</span>
+                            <span class="pm-list-item-sub">{{ m.sujet }}</span>
+                        </div>
+                        {% if not m.lu %}<span class="am-chip">Nouveau</span>{% endif %}
+                    </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="am-empty">
+                    <i class="fa-solid fa-envelope"></i>
+                    <strong>Aucun message</strong>
+                    <span>Vous n'avez reçu aucun message pour le moment.</span>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

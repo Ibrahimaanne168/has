@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}Contact — HAS{% endblock %}
+
+{% block content %}
+
+<section class="hero hero-compact">
+    <div class="hero-inner">
+        <div class="hero-text">
+            <span class="eyebrow">Restons en contact</span>
+            <h1>Contactez-nous</h1>
+            <p>Une recommandation, une réclamation, une demande ou une question ? Écrivez-nous, notre équipe vous répondra dans les meilleurs délais.</p>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="section-inner">
+
+        <div class="contact-wrap">
+
+            <form class="contact-form" method="post" action="{{ url_for('public.contact') }}">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nom">Nom <span class="required">*</span></label>
+                        <input type="text" id="nom" name="nom" required value="{{ request.form.get('nom', '') }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="prenom">Prénom <span class="required">*</span></label>
+                        <input type="text" id="prenom" name="prenom" required value="{{ request.form.get('prenom', '') }}">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="telephone">Téléphone</label>
+                        <input type="tel" id="telephone" name="telephone" value="{{ request.form.get('telephone', '') }}">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="type_message">Type de message <span class="required">*</span></label>
+                        <select id="type_message" name="type_message" required>
+                            <option value="">Choisir...</option>
+                            <option value="recommandation" {% if request.form.get('type_message') == 'recommandation' %}selected{% endif %}>Recommandation</option>
+                            <option value="reclamation" {% if request.form.get('type_message') == 'reclamation' %}selected{% endif %}>Réclamation</option>
+                            <option value="demande" {% if request.form.get('type_message') == 'demande' %}selected{% endif %}>Demande</option>
+                            <option value="question" {% if request.form.get('type_message') == 'question' %}selected{% endif %}>Question</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="destinataire">Destinataire <span class="required">*</span></label>
+                        <select id="destinataire" name="destinataire" required>
+                            <option value="">Choisir...</option>
+                            <option value="administration" {% if request.form.get('destinataire') == 'administration' %}selected{% endif %}>Administration</option>
+                            <option value="direction" {% if request.form.get('destinataire') == 'direction' %}selected{% endif %}>Direction</option>
+                            <option value="responsable_pedagogique" {% if request.form.get('destinataire') == 'responsable_pedagogique' %}selected{% endif %}>Responsable pédagogique</option>
+                            <option value="enseignant" {% if request.form.get('destinataire') == 'enseignant' %}selected{% endif %}>Enseignant</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group form-group--enseignant" id="groupe-enseignant">
+                    <label for="destinataire_id">Choisir l'enseignant <span class="required">*</span></label>
+                    <select id="destinataire_id" name="destinataire_id">
+                        <option value="">Sélectionner un enseignant...</option>
+                        {% for prof in enseignants %}
+                        <option value="{{ prof.user_id }}" {% if request.form.get('destinataire_id')|string == prof.user_id|string %}selected{% endif %}>
+                            {{ prof.nom }} {{ prof.prenom }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="sujet">Sujet <span class="required">*</span></label>
+                    <input type="text" id="sujet" name="sujet" required maxlength="150" value="{{ request.form.get('sujet', '') }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Message <span class="required">*</span></label>
+                    <textarea id="message" name="message" rows="6" required>{{ request.form.get('message', '') }}</textarea>
+                </div>
+
+                <button type="submit" class="contact-submit-btn">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span>Envoyer le message</span>
+                </button>
+
+            </form>
+
+            <aside class="contact-info">
+
+                <h2>Autres moyens de nous joindre</h2>
+
+                <div class="contact-info-item">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <div>
+                        <strong>Adresse</strong>
+                        <p>Dakar, Sénégal</p>
+                    </div>
+                </div>
+
+                <div class="contact-info-item">
+                    <i class="fa-solid fa-phone"></i>
+                    <div>
+                        <strong>Téléphone</strong>
+                        <p>+221 XX XXX XX XX</p>
+                    </div>
+                </div>
+
+
+            </aside>
+
+        </div>
+
+    </div>
+</section>
+
+<script>
+    (function () {
+        var destinataire = document.getElementById('destinataire');
+        var groupeEnseignant = document.getElementById('groupe-enseignant');
+        var destinataireId = document.getElementById('destinataire_id');
+
+        function toggleEnseignant() {
+            if (destinataire.value === 'enseignant') {
+                groupeEnseignant.classList.add('is-visible');
+                destinataireId.setAttribute('required', 'required');
+            } else {
+                groupeEnseignant.classList.remove('is-visible');
+                destinataireId.removeAttribute('required');
+                destinataireId.value = '';
+            }
+        }
+
+        destinataire.addEventListener('change', toggleEnseignant);
+        toggleEnseignant();
+    })();
+</script>
+
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Modifier un cours — HAS{% endblock %}
+{% block topbar_title %}Modifier le cours{% endblock %}
+
+{% block content %}
+<div class="am-page">
+
+    <div class="am-page-head">
+        <div class="am-heading">
+            <h1>Modifier le cours</h1>
+            <p>Mettez à jour les informations ou remplacez le fichier PDF.</p>
+        </div>
+    </div>
+
+    <div class="am-edit-banner">
+        <span><i class="fa-solid fa-pen"></i> Vous modifiez « {{ cours.titre }} »</span>
+        <a href="{{ url_for('professeur.cours') }}">Annuler</a>
+    </div>
+
+    <div class="am-section">
+        <form method="post" action="{{ url_for('professeur.modifier_cours', cours_id=cours.id) }}" enctype="multipart/form-data">
+
+            <div class="am-form-row">
+                <div class="am-field">
+                    <label for="titre">Titre du cours</label>
+                    <input type="text" id="titre" name="titre" required maxlength="150" value="{{ cours.titre }}">
+                </div>
+                <div class="am-field">
+                    <label for="matiere_id">Matière</label>
+                    <select id="matiere_id" name="matiere_id" required>
+                        {% for matiere in matieres %}
+                        <option value="{{ matiere.id }}" {% if matiere.id == cours.matiere_id %}selected{% endif %}>
+                            {{ matiere.nom }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <span class="am-field-hint">Changer la matière met à jour automatiquement les classes concernées.</span>
+                </div>
+            </div>
+
+            <div class="am-field">
+                <label>Classes actuellement concernées</label>
+                <div class="am-chip-group pm-chip-group-left">
+                    {% for classe in classes_actuelles %}
+                    <span class="am-chip">{{ classe.nom }}</span>
+                    {% else %}
+                    <span class="am-field-hint">Aucune classe rattachée.</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="am-field">
+                <label for="lien_externe">Lien externe</label>
+                <input type="url" id="lien_externe" name="lien_externe" value="{{ cours.lien_externe or '' }}">
+            </div>
+
+            <div class="am-field">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" rows="4">{{ cours.description or '' }}</textarea>
+            </div>
+
+            <div class="am-field">
+                <label for="fichier">Remplacer le fichier PDF (optionnel)</label>
+                <input type="file" id="fichier" name="fichier" accept="application/pdf">
+                {% if fichier_actuel %}
+                <span class="am-field-hint">Fichier actuel : {{ fichier_actuel.nom_original }}</span>
+                {% endif %}
+            </div>
+
+            <div class="am-form-actions">
+                <button type="submit" class="btn-primary">
+                    <i class="fa-solid fa-floppy-disk"></i> Enregistrer les modifications
+                </button>
+                <a href="{{ url_for('professeur.cours') }}" class="btn-outline">Annuler</a>
+            </div>
+
+        </form>
+    </div>
+
+</div>
+{% endblock %}

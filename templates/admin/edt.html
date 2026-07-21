@@ -1,0 +1,239 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Emplois du temps — HAS{% endblock %}
+{% block topbar_title %}Emplois du temps{% endblock %}
+
+{% block content %}
+  <div class="am-page">
+    <div class="am-page-head">
+      <div class="am-heading">
+        <h1>Emplois du temps</h1>
+        <p>Gérez les emplois du temps publiés par classe</p>
+      </div>
+      <span class="am-count-pill"><i class="fa-solid fa-calendar-days"></i>{{ edt|length }} publié{{ 's' if edt|length != 1 else '' }}</span>
+    </div>
+
+    <div class="am-section">
+      <div class="am-toolbar">
+        <div class="am-search" id="edt-search-wrap">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="edt-search" placeholder="Rechercher un titre, une classe…" autocomplete="off">
+          <button type="button" class="am-clear" id="edt-search-clear" aria-label="Effacer la recherche">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="am-table-wrap">
+        <table class="am-table" id="edt-table">
+          <thead>
+            <tr>
+              <th scope="col">Emploi du temps</th>
+              <th scope="col">Classes</th>
+              <th scope="col">Publication</th>
+              <th scope="col">Statut</th>
+              <th scope="col">Fichier</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for e in edt %}
+            <tr data-search="{{ ((e.titre or '') ~ ' ' ~ (e.classes or ''))|lower }}">
+              <td class="am-cell-identity">
+                <div class="am-identity">
+                  <span class="am-avatar-chip"><i class="fa-solid fa-calendar-days"></i></span>
+                  <div class="am-identity-body">
+                    <div class="am-identity-name">{{ e.titre or 'Emploi du temps' }}</div>
+                    <div class="am-identity-login">{{ e.classes or 'Aucune classe' }}</div>
+                  </div>
+                </div>
+              </td>
+              <td data-label="Classes"><span class="am-chip is-muted">{{ e.classes or '—' }}</span></td>
+              <td data-label="Publication">
+                <span class="am-cell-value">{{ e.date_publication.strftime('%d/%m/%Y') if e.date_publication else '—' }}</span>
+              </td>
+              <td data-label="Statut">
+                {% if e.actif %}<span class="am-status is-live">Actif</span>{% else %}<span class="am-status is-archived">Archivé</span>{% endif %}
+              </td>
+              <td data-label="Fichier">
+                <div class="am-file-links">
+                  {% if e.fichier_pdf %}<a href="{{ url_for('static', filename=e.fichier_pdf) }}" target="_blank" title="PDF" aria-label="Ouvrir le PDF"><i class="fa-solid fa-file-pdf"></i></a>{% endif %}
+                  {% if e.fichier_image %}<a href="{{ url_for('static', filename=e.fichier_image) }}" target="_blank" title="Image" aria-label="Ouvrir l'image"><i class="fa-solid fa-image"></i></a>{% endif %}
+                  {% if not e.fichier_pdf and not e.fichier_image %}<span class="am-file-empty">—</span>{% endif %}
+                </div>
+              </td>
+              <td class="am-cell-actions" data-label="Actions">
+                <div class="am-actions">
+                  <a href="{{ url_for('admin.edt', edit=e.id) }}" class="icon-link" title="Modifier" aria-label="Modifier">
+                    <i class="fa-solid fa-pen"></i>
+                  </a>
+                  <form action="{{ url_for('admin.supprimer_edt', edt_id=e.id) }}" method="post"
+                        onsubmit="return confirm('Supprimer cet emploi du temps ?');">
+                    <button type="submit" class="icon-link danger" title="Supprimer" aria-label="Supprimer">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            {% else %}
+            <tr class="am-row-empty">
+              <td colspan="6">
+                <div class="am-empty">
+                  <i class="fa-solid fa-calendar-days"></i>
+                  <strong>Aucun emploi du temps pour le moment</strong>
+                  <span>Ajoutez le premier emploi du temps ci-dessous.</span>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <p class="am-empty" id="edt-no-match" style="display:none;">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <strong>Aucun résultat</strong>
+          <span>Essayez un autre titre ou une autre classe.</span>
+        </p>
+      </div>
+
+      {% if not edit_edt %}
+      <details class="details-toggle details-spacing">
+        <summary class="am-add-toggle"><i class="fa-solid fa-plus"></i> Ajouter un emploi du temps</summary>
+        <form action="{{ url_for('admin.ajouter_edt') }}" method="post" enctype="multipart/form-data" class="am-form-card am-add-panel">
+          <div class="am-form-row">
+            <div class="am-field">
+              <label>Classes concernées</label>
+              <select name="classes" multiple size="6" required>
+                {% for c in classes %}
+                <option value="{{ c.id }}">{{ c.nom }}</option>
+                {% endfor %}
+              </select>
+              <span class="am-field-hint">Maintenez Ctrl (ou Cmd) pour sélectionner plusieurs classes.</span>
+            </div>
+            <div class="am-field">
+              <label>Titre</label>
+              <input type="text" name="titre" placeholder="ex. Semaine du 20 juillet">
+            </div>
+          </div>
+          <div class="am-form-row">
+            <div class="am-field">
+              <label>Date de publication</label>
+              <input type="date" name="date_publication">
+            </div>
+          </div>
+          <div class="am-form-row">
+            <div class="am-field">
+              <label>Visibilité</label>
+              <div class="am-checkbox-group">
+                <label class="am-checkbox"><input type="checkbox" name="actif" checked> Actif (visible des étudiants)</label>
+              </div>
+            </div>
+          </div>
+          <div class="am-form-row">
+            <div class="am-field">
+              <label>Fichier PDF</label>
+              <input type="file" name="fichier_pdf">
+            </div>
+            <div class="am-field">
+              <label>Image</label>
+              <input type="file" name="fichier_image">
+            </div>
+          </div>
+          <div class="am-form-actions">
+            <button type="submit" class="btn btn-primary btn-block"><i class="fa-solid fa-plus"></i> Publier</button>
+          </div>
+        </form>
+      </details>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if edit_edt %}
+  <a href="{{ url_for('admin.edt') }}" class="am-edit-scrim" aria-label="Fermer"></a>
+  <div class="am-edit-sheet">
+    <div class="am-edit-banner">
+      Modification de « {{ edit_edt.titre or 'Emploi du temps' }} »
+      <a href="{{ url_for('admin.edt') }}"><i class="fa-solid fa-xmark"></i> Fermer</a>
+    </div>
+    <form action="{{ url_for('admin.modifier_edt', edt_id=edit_edt.id) }}" method="post" enctype="multipart/form-data" class="am-form-card">
+        <div class="am-form-row">
+          <div class="am-field">
+            <label>Classes concernées</label>
+            <select name="classes" multiple size="6" required>
+              {% for c in classes %}
+              {% if c.id in edit_classes %}
+              <option value="{{ c.id }}" selected>{{ c.nom }}</option>
+              {% else %}
+              <option value="{{ c.id }}">{{ c.nom }}</option>
+              {% endif %}
+              {% endfor %}
+            </select>
+            <span class="am-field-hint">Maintenez Ctrl (ou Cmd) pour sélectionner plusieurs classes.</span>
+          </div>
+          <div class="am-field">
+            <label>Titre</label>
+            <input type="text" name="titre" value="{{ edit_edt.titre or '' }}" placeholder="ex. Semaine du 20 juillet">
+          </div>
+        </div>
+        <div class="am-form-row">
+          <div class="am-field">
+            <label>Date de publication</label>
+            <input type="date" name="date_publication" value="{{ edit_edt.date_publication }}">
+          </div>
+        </div>
+      <div class="am-form-row">
+        <div class="am-field">
+          <label>Visibilité</label>
+          <div class="am-checkbox-group">
+            <label class="am-checkbox"><input type="checkbox" name="actif" {% if edit_edt.actif %}checked{% endif %}> Actif (visible des étudiants)</label>
+          </div>
+        </div>
+      </div>
+      <div class="am-form-row">
+        <div class="am-field">
+          <label>Fichier PDF (remplace l'existant si fourni)</label>
+          <input type="file" name="fichier_pdf">
+        </div>
+        <div class="am-field">
+          <label>Image (remplace l'existante si fournie)</label>
+          <input type="file" name="fichier_image">
+        </div>
+      </div>
+      <div class="am-form-actions">
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        <a href="{{ url_for('admin.edt') }}" class="btn btn-outline">Annuler</a>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+
+  <script>
+    (function () {
+      var input = document.getElementById('edt-search');
+      var wrap = document.getElementById('edt-search-wrap');
+      var clearBtn = document.getElementById('edt-search-clear');
+      var rows = document.querySelectorAll('#edt-table tbody tr[data-search]');
+      var noMatch = document.getElementById('edt-no-match');
+      if (!input) return;
+
+      function applyFilter() {
+        var q = input.value.trim().toLowerCase();
+        wrap.classList.toggle('has-value', q.length > 0);
+        var visible = 0;
+        rows.forEach(function (row) {
+          var match = row.dataset.search.indexOf(q) !== -1;
+          row.style.display = match ? '' : 'none';
+          if (match) visible++;
+        });
+        if (noMatch) noMatch.style.display = (q.length > 0 && visible === 0) ? 'flex' : 'none';
+      }
+
+      input.addEventListener('input', applyFilter);
+      clearBtn.addEventListener('click', function () {
+        input.value = '';
+        applyFilter();
+        input.focus();
+      });
+    })();
+  </script>
+{% endblock %}

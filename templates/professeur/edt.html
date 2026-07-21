@@ -1,0 +1,120 @@
+{# =========================================================
+   professeur/edt.html
+   Vue enseignant pour l'emploi du temps (réutilise les styles
+   étudiant/admin, affiche image + PDF, mobile-first)
+   ========================================================= #}
+{% extends "base_dashboard.html" %}
+
+{% block title %}Emploi du temps — Enseignant{% endblock %}
+
+{% block content %}
+<div class="am-page">
+
+    <div class="am-page-head">
+        <div class="am-heading">
+            <h1>Emploi du temps</h1>
+            <p>Emplois du temps pour vos filières et classes</p>
+        </div>
+        <span class="am-count-pill"><i class="fa-solid fa-calendar-days"></i> {{ edt_actifs|length }} actif{{ 's' if edt_actifs|length > 1 else '' }}</span>
+    </div>
+
+    <section class="am-section">
+        <div class="am-section-head">
+            <h2><i class="fa-solid fa-calendar-check"></i> Emploi(s) du temps en vigueur</h2>
+        </div>
+
+        <div class="am-card-list">
+            {% for e in edt_actifs %}
+            <article class="et-schedule-card is-current">
+                <div class="et-schedule-top">
+                    <div>
+                        <div class="et-schedule-title">{{ e.titre or 'Emploi du temps' }}</div>
+                        <div class="et-schedule-date">
+                            Publié le {{ e.date_publication.strftime('%d/%m/%Y') if e.date_publication else 'date inconnue' }}
+                        </div>
+                    </div>
+                    <span class="am-badge am-badge-featured">En vigueur</span>
+                </div>
+
+                {% if e.fichier_image %}
+                <div class="am-file-preview">
+                    <img class="am-file-preview-image" src="{{ url_for('static', filename=e.fichier_image) }}" alt="Aperçu de l'emploi du temps">
+                </div>
+                {% endif %}
+
+                {% if e.fichier_pdf %}
+                <div class="am-file-preview">
+                    <div class="am-file-preview-pdf">
+                        <div class="am-file-preview-fallback">
+                            <i class="fa-solid fa-file-pdf"></i>
+                            <span>Aperçu du PDF ci-dessus (ou utilisez les boutons ci-dessous).</span>
+                        </div>
+                        <iframe src="{{ url_for('static', filename=e.fichier_pdf) }}" title="Aperçu de l'emploi du temps en PDF" loading="lazy"></iframe>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="am-file-actions">
+                    {% if e.fichier_pdf %}
+                    <a class="btn btn-primary btn-sm" href="{{ url_for('static', filename=e.fichier_pdf) }}" download>
+                        <i class="fa-solid fa-download"></i> Télécharger le PDF
+                    </a>
+                    <a class="btn btn-outline btn-sm" href="{{ url_for('static', filename=e.fichier_pdf) }}" target="_blank" rel="noopener">
+                        <i class="fa-solid fa-up-right-from-square"></i> Ouvrir dans un nouvel onglet
+                    </a>
+                    {% endif %}
+                    {% if e.fichier_image %}
+                    <a class="btn btn-outline btn-sm" href="{{ url_for('static', filename=e.fichier_image) }}" download>
+                        <i class="fa-solid fa-download"></i> Télécharger l'image
+                    </a>
+                    {% endif %}
+                </div>
+            </article>
+            {% else %}
+            <div class="am-empty">
+                <i class="fa-solid fa-calendar-days"></i>
+                <strong>Aucun emploi du temps actif</strong>
+                <span>Rien n'a encore été publié pour vos filières/classes.</span>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    {% if edt_historique %}
+    <section class="am-section">
+        <div class="am-section-head">
+            <h2><i class="fa-solid fa-clock-rotate-left"></i> Historique</h2>
+            <span class="mini-count">{{ edt_historique|length }}</span>
+        </div>
+        <div class="am-card-list">
+            {% for e in edt_historique %}
+            <article class="et-schedule-card">
+                <div class="et-schedule-top">
+                    <div>
+                        <div class="et-schedule-title">{{ e.titre or 'Emploi du temps' }}</div>
+                        <div class="et-schedule-date">
+                            Publié le {{ e.date_publication.strftime('%d/%m/%Y') if e.date_publication else 'date inconnue' }}
+                        </div>
+                    </div>
+                    <span class="am-badge am-badge-archived">Remplacé</span>
+                </div>
+                <div class="am-file-actions">
+                    {% if e.fichier_pdf %}
+                    <a class="btn btn-outline btn-sm" href="{{ url_for('static', filename=e.fichier_pdf) }}" download>
+                        <i class="fa-solid fa-download"></i> Télécharger le PDF
+                    </a>
+                    {% endif %}
+                    {% if e.fichier_image %}
+                    <a class="btn btn-outline btn-sm" href="{{ url_for('static', filename=e.fichier_image) }}" download>
+                        <i class="fa-solid fa-download"></i> Télécharger l'image
+                    </a>
+                    {% endif %}
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+</div>
+{% endblock %}

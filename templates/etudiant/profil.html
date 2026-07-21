@@ -1,0 +1,66 @@
+{# =========================================================
+   etudiant/profil.html
+   Dépend de etudiant-management.css. Adaptez {% extends %} et les
+   blocs ("title" / "content") à votre base_dashboard.html si besoin.
+   ========================================================= #}
+{% extends "base_dashboard.html" %}
+
+{% block title %}Mon profil{% endblock %}
+
+{% block content %}
+<div class="am-page">
+
+    <div class="am-page-head">
+        <div class="am-heading">
+            <h1>Mon profil</h1>
+            <p>Vos informations personnelles</p>
+        </div>
+    </div>
+
+    <section class="am-section">
+        <div class="et-profile-head">
+            <div class="et-profile-avatar">
+                {% if profil.photo %}
+                <img src="{{ url_for('static', filename=profil.photo) }}" alt="Photo de profil">
+                {% else %}
+                {{ profil.prenom[0] }}{{ profil.nom[0] }}
+                {% endif %}
+            </div>
+            <div>
+                <div class="et-profile-name">{{ profil.prenom }} {{ profil.nom }}</div>
+                <div class="et-profile-sub">{{ profil.filiere_nom }} — {{ profil.classe_nom }} · {{ profil.matricule or 'Sans matricule' }}</div>
+            </div>
+        </div>
+
+        <div class="am-form-card">
+            <div class="am-form-row">
+                <div class="am-field">
+                    <label>Prénom</label>
+                    <div class="am-field-read">{{ profil.prenom }}</div>
+                </div>
+                <div class="am-field">
+                    <label>Nom</label>
+                    <div class="am-field-read">{{ profil.nom }}</div>
+                </div>
+            </div>
+
+            <div class="am-form-row">
+                <div class="am-field">
+                    <label>Téléphone</label>
+                    <div class="am-field-read">{{ profil.telephone or '—' }}</div>
+                </div>
+            </div>
+
+            <div class="am-field">
+                <label>Identifiant de connexion</label>
+                <div class="am-field-read">{{ profil.login }}</div>
+            </div>
+
+            <div class="am-form-actions">
+                <a href="{{ url_for('etudiant.modifier_profil') }}" class="btn btn-primary">Modifier</a>
+            </div>
+        </div>
+    </section>
+
+</div>
+{% endblock %}

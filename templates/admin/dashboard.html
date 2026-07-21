@@ -1,0 +1,120 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Dashboard Admin — HAS{% endblock %}
+{% block topbar_title %}Espace Admin{% endblock %}
+{% block notif_dot %}{% if nb_messages > 0 %}<span class="dot"></span>{% endif %}{% endblock %}
+
+{% block content %}
+  <div class="page-head">
+    <h1>Tableau de bord</h1>
+    <p>Vue d'ensemble de la plateforme HAS</p>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon saphir"><i class="fa-solid fa-user-graduate"></i></div>
+      <div class="stat-value">{{ nb_etudiants }}</div>
+      <div class="stat-label">Étudiants</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon orange"><i class="fa-solid fa-chalkboard-user"></i></div>
+      <div class="stat-value">{{ nb_enseignants }}</div>
+      <div class="stat-label">Enseignants</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon saphir"><i class="fa-solid fa-book-open"></i></div>
+      <div class="stat-value">{{ nb_cours }}</div>
+      <div class="stat-label">Cours en ligne</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon orange"><i class="fa-solid fa-download"></i></div>
+      <div class="stat-value">{{ nb_telechargements }}</div>
+      <div class="stat-label">Fichiers déposés</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon saphir"><i class="fa-solid fa-eye"></i></div>
+      <div class="stat-value">{{ nb_visiteurs | default('—') }}</div>
+      <div class="stat-label">Visiteurs</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon orange"><i class="fa-solid fa-envelope"></i></div>
+      <div class="stat-value">{{ nb_messages }}</div>
+      <div class="stat-label">Messages</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon saphir"><i class="fa-solid fa-bullhorn"></i></div>
+      <div class="stat-value">{{ nb_communiques }}</div>
+      <div class="stat-label">Communiqués</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon orange"><i class="fa-solid fa-sitemap"></i></div>
+      <div class="stat-value">{{ nb_filieres }}</div>
+      <div class="stat-label">Filières</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <!-- Graphique : cours les plus consultés -->
+      <div class="section">
+        <div class="section-head"><h2>Cours les plus consultés</h2></div>
+        {% if cours_populaires %}
+          {% set top = cours_populaires[0].nb or 1 %}
+          {% for c in cours_populaires %}
+          <div class="bar-row">
+            <div class="bar-label">{{ c.titre }}</div>
+            <div class="bar-track"><div class="bar-fill" ></div></div>
+            <div class="bar-value">{{ c.nb }}</div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <p class="text-empty">Aucun cours pour le moment.</p>
+        {% endif %}
+      </div>
+
+      <!-- Graphique : filières les plus actives -->
+      <div class="section">
+        <div class="section-head"><h2>Filières les plus actives</h2></div>
+        {% for f in filieres_actives %}
+        <div class="bar-row">
+          <div class="bar-label">{{ f.nom }}</div>
+          <div class="bar-track"><div class="bar-fill" ></div></div>
+          <div class="bar-value">{{ f.nb }}</div>
+        </div>
+        {% else %}
+        <p class="text-empty">Aucune donnée disponible.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div>
+      <div class="section">
+        <div class="section-head">
+          <h2>Derniers messages</h2>
+          <a href="#">Tous</a>
+        </div>
+        {% for m in derniers_messages %}
+        <div class="list-item">
+          <div class="item-icon"><i class="fa-solid fa-envelope"></i></div>
+          <div class="item-body">
+            <div class="item-title">{{ m.sujet }}</div>
+            <div class="item-sub">{{ m.prenom }} {{ m.nom }} · {{ m.destinataire_type }}</div>
+          </div>
+          {% if not m.lu %}<span class="badge new">Non lu</span>{% endif %}
+        </div>
+        {% else %}
+        <p class="text-empty">Aucun message.</p>
+        {% endfor %}
+      </div>
+
+      <div class="section">
+        <div class="section-head"><h2>Action rapide</h2></div>
+        <form action="{{ url_for('admin.backup_database') }}" method="post">
+          <button type="submit" class="btn btn-primary btn-block">
+            <i class="fa-solid fa-database"></i> Sauvegarder la base de données
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

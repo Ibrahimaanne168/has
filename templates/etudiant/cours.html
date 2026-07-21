@@ -1,0 +1,102 @@
+{# =========================================================
+   etudiant/cours.html
+   Dépend de etudiant-management.css. Adaptez {% extends %} et les
+   blocs ("title" / "content") à votre base_dashboard.html si besoin.
+   ========================================================= #}
+{% extends "base_dashboard.html" %}
+
+{% block title %}Mes cours{% endblock %}
+
+{% block content %}
+<div class="am-page">
+
+    <div class="am-page-head">
+        <div class="am-heading">
+            <h1>Mes cours</h1>
+            <p>{{ profil.filiere_nom }} — {{ profil.classe_nom }}</p>
+        </div>
+        <span class="am-count-pill"><i class="fa-solid fa-book"></i> {{ cours|length }} cours</span>
+    </div>
+
+    <form class="am-toolbar" method="get">
+        <div class="am-search {{ 'has-value' if recherche }}">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" name="q" value="{{ recherche }}" placeholder="Rechercher un cours ou une matière…">
+        </div>
+        <div class="am-field am-field-inline">
+            <select class="am-select" name="matiere" onchange="this.form.submit()">
+                <option value="">Toutes les matières</option>
+                {% for m in matieres %}
+                <option value="{{ m.id }}" {{ 'selected' if matiere_filtre == m.id }}>{{ m.nom }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </form>
+
+    <section class="am-section">
+        <div class="am-section-head">
+            <h2><i class="fa-solid fa-layer-group"></i> Cours disponibles</h2>
+            <span class="mini-count">{{ cours|length }}</span>
+        </div>
+
+        <div class="am-card-list">
+            {% for c in cours %}
+            <article class="et-course-card am-card">
+                <div class="et-course-head am-card-head">
+                    <div class="am-identity">
+                        <div class="am-avatar-chip">
+                            <i class="fa-solid fa-book-open"></i>
+                        </div>
+                        <div class="am-identity-body">
+                            <div class="et-course-title am-identity-name">{{ c.titre }}</div>
+                            <div class="et-course-meta am-identity-login">
+                                {{ c.matiere_nom }}{% if c.niveau %} · {{ c.niveau }}{% endif %} · {{ c.enseignant_prenom }} {{ c.enseignant_nom }}
+                            </div>
+                        </div>
+                    </div>
+                    <form method="post" action="{{ url_for('etudiant.basculer_favori', cours_id=c.id) }}">
+                        <button type="submit" class="et-favori-btn am-action-btn {{ 'is-active' if c.est_favori }}" title="{{ 'Retirer des favoris' if c.est_favori else 'Ajouter aux favoris' }}">
+                            <i class="fa-solid fa-star"></i>
+                        </button>
+                    </form>
+                </div>
+                {% if c.description %}<p class="et-course-desc">{{ c.description }}</p>{% endif %}
+
+                {% if c.fichiers %}
+                <div class="et-file-list am-list-stack">
+                    {% for fichier in c.fichiers %}
+                    <div class="et-file-item am-list-row">
+                        <span class="et-file-name">
+                            <i class="fa-solid fa-file-lines"></i>
+                            {{ fichier.nom_original }}
+                        </span>
+                        <a class="et-download am-icon-btn" href="{{ url_for('etudiant.telecharger_fichier', fichier_id=fichier.id) }}" title="Télécharger">
+                            <i class="fa-solid fa-download"></i>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="et-no-files">Aucun support déposé pour ce cours.</p>
+                {% endif %}
+
+                {% if c.lien_externe %}
+                <div class="et-course-foot">
+                    <a class="et-link-externe" href="{{ c.lien_externe }}" target="_blank" rel="noopener">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Lien externe
+                    </a>
+                </div>
+                {% endif %}
+            </article>
+            {% else %}
+            <div class="am-empty">
+                <i class="fa-solid fa-book"></i>
+                <strong>Aucun cours</strong>
+                <span>Ajustez votre recherche, ou revenez plus tard : rien n'a encore été déposé.</span>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+</div>
+{% endblock %}

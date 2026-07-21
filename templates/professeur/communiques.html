@@ -1,0 +1,79 @@
+{# Use the same layout as student communiques (mobile-first, am-notice-card) #}
+{% extends "base_dashboard.html" %}
+
+{% block title %}Communiqués{% endblock %}
+
+{% block content %}
+<div class="am-page">
+
+    <div class="am-page-head">
+        <div class="am-heading">
+            <h1>Communiqués</h1>
+            <p>Annonces de l'administration et de la direction</p>
+        </div>
+        <span class="am-count-pill"><i class="fa-solid fa-bullhorn"></i> {{ communiques|length }}</span>
+    </div>
+
+    <section class="am-section">
+        <div class="am-card-list">
+            {% for c in communiques %}
+            <article class="am-notice-card">
+                <div class="am-notice-head">
+                    <span class="am-notice-title">{{ c.titre }}</span>
+                    {% if c.mis_en_avant %}
+                    <div class="am-notice-badges">
+                        <span class="am-badge am-badge-featured">À la une</span>
+                    </div>
+                    {% endif %}
+                </div>
+                <p class="am-notice-body">{{ c.contenu }}</p>
+                <div class="am-notice-meta">
+                    {{ c.auteur_prenom }} {{ c.auteur_nom }} · {{ c.date_publication.strftime('%d/%m/%Y') if c.date_publication else 'Non daté' }}
+                </div>
+
+                {% if c.image %}
+                <div class="am-file-preview">
+                    <img class="am-file-preview-image" src="{{ url_for('static', filename=c.image) }}" alt="{{ c.titre }}">
+                </div>
+                {% endif %}
+
+                {% if c.fichier_pdf %}
+                <div class="am-file-preview">
+                    <div class="am-file-preview-pdf">
+                        <div class="am-file-preview-fallback">
+                            <i class="fa-solid fa-file-pdf"></i>
+                            <span>Aperçu du document ci-dessus (ou utilisez le bouton ci-dessous).</span>
+                        </div>
+                        <iframe src="{{ url_for('static', filename=c.fichier_pdf) }}" title="Pièce jointe : {{ c.titre }}" loading="lazy"></iframe>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="am-file-actions">
+                    {% if c.fichier_pdf %}
+                    <a class="btn btn-primary btn-sm" href="{{ url_for('static', filename=c.fichier_pdf) }}" download>
+                        <i class="fa-solid fa-download"></i> Télécharger le PDF
+                    </a>
+                    <a class="btn btn-outline btn-sm" href="{{ url_for('static', filename=c.fichier_pdf) }}" target="_blank" rel="noopener">
+                        <i class="fa-solid fa-up-right-from-square"></i> Ouvrir dans un nouvel onglet
+                    </a>
+                    {% endif %}
+                    {% if c.image %}
+                    <a class="btn btn-outline btn-sm" href="{{ url_for('static', filename=c.image) }}" download>
+                        <i class="fa-solid fa-download"></i> Télécharger l'image
+                    </a>
+                    {% endif %}
+                </div>
+            </article>
+            {% else %}
+            <div class="am-empty">
+                <i class="fa-solid fa-bullhorn"></i>
+                <strong>Aucun communiqué</strong>
+                <span>Rien n'a encore été publié.</span>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+</div>
+{% endblock %}
