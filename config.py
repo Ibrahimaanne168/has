@@ -34,7 +34,7 @@ def _database_connection_params():
         parsed = urlparse(database_url)
         return {
             'host': parsed.hostname or os.environ.get('DB_HOST', 'localhost'),
-            'port': parsed.port or int(os.environ.get('DB_PORT', 3306)),
+            'port': int(parsed.port or os.environ.get('DB_PORT', 3306)),
             'user': parsed.username or os.environ.get('DB_USER', 'root'),
             'password': parsed.password or os.environ.get('DB_PASSWORD', ''),
             'database': parsed.path.lstrip('/') or os.environ.get('DB_NAME', 'has_platform'),
@@ -53,7 +53,7 @@ def get_db():
     params = _database_connection_params()
     return mysql.connector.connect(
         host=params['host'],
-        port=params['port'],
+        port=int(params['port']),
         user=params['user'],
         password=params['password'],
         database=params['database'],
