@@ -165,27 +165,31 @@ form {
 .input-box-password input {
     padding-right: 48px;
 }
+.input-box-password {
+    position: relative;
+}
 
 .input-box-password .password-toggle {
     position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 32px;
-    height: 32px;
-    border: none;
-    border-radius: 9px;
-    background: rgba(15, 82, 186, 0.08);
-    color: var(--saphir);
-    cursor: pointer;
-    font-size: 0.9rem;
-    padding: 0;
+    top: 0;
+    bottom: 0;
+    right: 6px;
+    margin: auto 0;       /* centrage vertical fiable, quelle que soit la hauteur de l'input */
+    width: 28px;
+    height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
+    border: none;
+    border-radius: 8px;
+    background: rgba(15, 82, 186, 0.08);
+    color: var(--saphir);
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 0;
+    line-height: 1;       /* évite qu'une line-height héritée n'agrandisse la boîte */
     z-index: 2;
 }
-
 .input-box-password .password-toggle:hover,
 .input-box-password .password-toggle:focus-visible {
     color: var(--orange);
