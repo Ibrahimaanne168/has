@@ -163,20 +163,19 @@ form {
 }
 
 .input-box-password input {
-    padding-right: 48px;
+    padding-right: 44px;
 }
 .input-box-password {
     position: relative;
 }
-
 .input-box-password .password-toggle {
     position: absolute;
     top: 0;
     bottom: 0;
-    right: 6px;
-    margin: auto 0;       /* centrage vertical fiable, quelle que soit la hauteur de l'input */
-    width: 28px;
-    height: 28px;
+    right: 12px;        /* augmenté de 6px → 12px pour dégager la courbe du border-radius */
+    margin: auto 0;
+    width: 26px;
+    height: 26px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -187,9 +186,10 @@ form {
     cursor: pointer;
     font-size: 0.85rem;
     padding: 0;
-    line-height: 1;       /* évite qu'une line-height héritée n'agrandisse la boîte */
+    line-height: 1;
     z-index: 2;
 }
+
 .input-box-password .password-toggle:hover,
 .input-box-password .password-toggle:focus-visible {
     color: var(--orange);
