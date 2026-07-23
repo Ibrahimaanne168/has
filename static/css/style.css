@@ -396,3 +396,15 @@ button[type="submit"]:active {
     line-height: 1.5;
     margin: -8px 0 18px;
 }
+
+s
+/* Désactive l'icône native "afficher le mot de passe" d'Edge */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none;
+}
+
+/* Au cas où, désactive aussi celle de Chrome (rare mais possible selon versions) */
+input[type="password"]::-webkit-credentials-auto-fill-button {
+    display: none !important;
+}
