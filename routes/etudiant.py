@@ -411,10 +411,9 @@ def messages():
     # (un étudiant doit pouvoir contacter n'importe quel professeur, pas
     # seulement ceux rattachés à sa propre filière).
     cursor.execute("""
-        SELECT e.id, u.nom, u.prenom, f.nom AS filiere_nom
+        SELECT e.id, u.nom, u.prenom
         FROM enseignants e
         JOIN users u ON u.id = e.user_id
-        LEFT JOIN filieres f ON f.id = e.filiere_id
         ORDER BY u.nom, u.prenom
     """)
     enseignants = cursor.fetchall()
