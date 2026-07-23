@@ -407,12 +407,16 @@ def messages():
     """, (profil["nom"], profil["prenom"]))
     messages_envoyes = cursor.fetchall()
 
+    # Tous les enseignants de l'établissement, peu importe leur filière
+    # (un étudiant doit pouvoir contacter n'importe quel professeur, pas
+    # seulement ceux rattachés à sa propre filière).
     cursor.execute("""
-        SELECT e.id, u.nom, u.prenom FROM enseignants e
+        SELECT e.id, u.nom, u.prenom, f.nom AS filiere_nom
+        FROM enseignants e
         JOIN users u ON u.id = e.user_id
-        WHERE e.filiere_id = %s
-        ORDER BY u.nom
-    """, (profil["filiere_id"],))
+        LEFT JOIN filieres f ON f.id = e.filiere_id
+        ORDER BY u.nom, u.prenom
+    """)
     enseignants = cursor.fetchall()
 
     cursor.close()
@@ -423,47 +427,6 @@ def messages():
         messages=messages_envoyes,
         enseignants=enseignants,
     )
-
-
-@etudiant.route("/messages/envoyer", methods=["POST"])
-def envoyer_message():
-    profil, garde = _etudiant_required()
-    if garde:
-        return garde
-
-    db = get_db()
-    cursor = db.cursor()
-
-    destinataire_type = request.form["destinataire_type"]
-    destinataire_id = request.form.get("destinataire_id") or None
-    if destinataire_type != "enseignant":
-        destinataire_id = None
-
-    cursor.execute("""
-        INSERT INTO messages_contact
-            (nom, prenom, telephone, sujet, destinataire_type, destinataire_id, message)
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
-    """, (
-        profil["nom"], profil["prenom"], profil["telephone"],
-        request.form["sujet"], destinataire_type, destinataire_id, request.form["message"]
-    ))
-
-    cursor.execute(
-        "INSERT INTO logs (user_id, action, description) VALUES (%s, %s, %s)",
-        (session["user_id"], "message_contact", f"Message envoyé : {request.form['sujet']}")
-    )
-
-    db.commit()
-    if destinataire_type == "enseignant" and destinataire_id:
-        notifier_utilisateurs(db, [int(destinataire_id)], "message", f"Nouveau message : {request.form['sujet']}", url_for("professeur.messages"))
-    else:
-        notifier_roles(db, ["admin"], "message", f"Nouveau message : {request.form['sujet']}", url_for("admin.messages"))
-    db.commit()
-    cursor.close()
-
-    flash("Message envoyé.")
-    return redirect(url_for("etudiant.messages"))
-
 
 # ============================================================
 # PROFIL
