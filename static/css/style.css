@@ -166,17 +166,17 @@ form {
     padding-right: 48px;
 }
 .input-box-password {
-    position: relative;
+    overflow: hidden;      /* filet de sécurité : rien ne peut plus dépasser visuellement */
 }
 
 .input-box-password .password-toggle {
     position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 12px;
-    margin: auto 0;       /* centrage vertical fiable, quelle que soit la hauteur de l'input */
-    width: 28px;
-    height: 28px;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    height: 70%;                    /* relatif à la hauteur réelle du parent, jamais fixe */
+    max-height: 30px;               /* plafond pour ne pas devenir énorme sur gros écrans */
+    aspect-ratio: 1 / 1;            /* garde un bouton carré peu importe la hauteur calculée */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -187,7 +187,7 @@ form {
     cursor: pointer;
     font-size: 0.85rem;
     padding: 0;
-    line-height: 1;       /* évite qu'une line-height héritée n'agrandisse la boîte */
+    line-height: 1;
     z-index: 2;
 }
 
