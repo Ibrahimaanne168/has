@@ -173,7 +173,7 @@ form {
     position: absolute;
     top: 0;
     bottom: 0;
-    right: 6px;
+    right: 12px;
     margin: auto 0;       /* centrage vertical fiable, quelle que soit la hauteur de l'input */
     width: 28px;
     height: 28px;
