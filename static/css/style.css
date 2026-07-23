@@ -174,9 +174,9 @@ form {
     top: 50%;
     right: 10px;
     transform: translateY(-50%);
-    height: 70%;                    /* relatif à la hauteur réelle du parent, jamais fixe */
-    max-height: 30px;               /* plafond pour ne pas devenir énorme sur gros écrans */
-    aspect-ratio: 1 / 1;            /* garde un bouton carré peu importe la hauteur calculée */
+    height: 70%;
+    max-height: 30px;
+    aspect-ratio: 1 / 1;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -185,10 +185,17 @@ form {
     background: rgba(15, 82, 186, 0.08);
     color: var(--saphir);
     cursor: pointer;
-    font-size: 0.85rem;
     padding: 0;
+    line-height: 0;              /* empêche la police d'ajouter un espace vertical invisible */
+    appearance: none;            /* enlève tout style natif résiduel du bouton */
+    -webkit-appearance: none;
+}
+
+.input-box-password .password-toggle i {
+    display: block;
+    font-size: 0.85rem;
     line-height: 1;
-    z-index: 2;
+    transform: translateY(0.5px); /* micro-ajustement optique si l'icône semble décalée d'1px */
 }
 
 .input-box-password .password-toggle:hover,
