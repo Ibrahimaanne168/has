@@ -37,7 +37,7 @@
                     <label for="destinataire_id">Enseignant</label>
                     <select id="destinataire_id" name="destinataire_id">
                         {% for e in enseignants %}
-                        <option value="{{ e.id }}">{{ e.prenom }} {{ e.nom }}{% endif %}</option>
+                        <option value="{{ e.id }}">{{ e.prenom }} {{ e.nom }}</option>
                         {% endfor %}
                     </select>
                 </div>
