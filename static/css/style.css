@@ -172,37 +172,24 @@ form {
 .input-box-password .password-toggle {
     position: absolute;
     top: 50%;
-    right: 10px;
+    right: 14px;
     transform: translateY(-50%);
-    height: 70%;
-    max-height: 30px;
-    aspect-ratio: 1 / 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: auto;
+    height: auto;
+    background: none;         /* plus de fond visible */
     border: none;
-    border-radius: 8px;
-    background: rgba(15, 82, 186, 0.08);
+    border-radius: 0;
     color: var(--saphir);
     cursor: pointer;
     padding: 0;
-    line-height: 0;              /* empêche la police d'ajouter un espace vertical invisible */
-    appearance: none;            /* enlève tout style natif résiduel du bouton */
-    -webkit-appearance: none;
-}
-
-.input-box-password .password-toggle i {
-    display: block;
-    font-size: 0.85rem;
+    font-size: 1rem;
     line-height: 1;
-    transform: translateY(0.5px); /* micro-ajustement optique si l'icône semble décalée d'1px */
 }
 
 .input-box-password .password-toggle:hover,
 .input-box-password .password-toggle:focus-visible {
     color: var(--orange);
-    background: rgba(255, 107, 0, 0.12);
-    outline: none;
+    background: none;         /* pas de fond au hover non plus */
 }
 
 .input-box input::placeholder {
