@@ -91,7 +91,7 @@
       <div class="section">
         <div class="section-head">
           <h2>Derniers messages</h2>
-          <a href="#">Tous</a>
+          <a href="{{ url_for('admin.messages') }}">Tous</a>
         </div>
         {% for m in derniers_messages %}
         <div class="list-item">
