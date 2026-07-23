@@ -132,11 +132,11 @@ function initPasswordToggles() {
         if (!input || !icon) return;
 
         const updateToggleState = (show) => {
-            toggle.setAttribute('aria-label', show ? 'Masquer le mot de passe' : 'Afficher le mot de passe');
-            toggle.classList.toggle('is-visible', show);
-            icon.classList.toggle('fa-eye', !show);
-            icon.classList.toggle('fa-eye-slash', show);
-        };
+             toggle.setAttribute('aria-label', show ? 'Masquer le mot de passe' : 'Afficher le mot de passe');
+             toggle.classList.toggle('is-visible', show);
+             icon.classList.toggle('fa-eye-slash', !show);   // œil barré quand CACHÉ
+             icon.classList.toggle('fa-eye', show);          // œil normal quand VISIBLE
+         };
 
         toggle.addEventListener('click', () => {
             const shouldShow = input.type === 'password';
