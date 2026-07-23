@@ -428,6 +428,47 @@ def messages():
         enseignants=enseignants,
     )
 
+
+@etudiant.route("/messages/envoyer", methods=["POST"])
+def envoyer_message():
+    profil, garde = _etudiant_required()
+    if garde:
+        return garde
+
+    db = get_db()
+    cursor = db.cursor()
+
+    destinataire_type = request.form["destinataire_type"]
+    destinataire_id = request.form.get("destinataire_id") or None
+    if destinataire_type != "enseignant":
+        destinataire_id = None
+
+    cursor.execute("""
+        INSERT INTO messages_contact
+            (nom, prenom, telephone, sujet, destinataire_type, destinataire_id, message)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+    """, (
+        profil["nom"], profil["prenom"], profil["telephone"],
+        request.form["sujet"], destinataire_type, destinataire_id, request.form["message"]
+    ))
+
+    cursor.execute(
+        "INSERT INTO logs (user_id, action, description) VALUES (%s, %s, %s)",
+        (session["user_id"], "message_contact", f"Message envoyé : {request.form['sujet']}")
+    )
+
+    db.commit()
+    if destinataire_type == "enseignant" and destinataire_id:
+        notifier_utilisateurs(db, [int(destinataire_id)], "message", f"Nouveau message : {request.form['sujet']}", url_for("professeur.messages"))
+    else:
+        notifier_roles(db, ["admin"], "message", f"Nouveau message : {request.form['sujet']}", url_for("admin.messages"))
+    db.commit()
+    cursor.close()
+
+    flash("Message envoyé.")
+    return redirect(url_for("etudiant.messages"))
+
+
 # ============================================================
 # PROFIL
 # ============================================================
