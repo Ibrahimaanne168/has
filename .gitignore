@@ -4,8 +4,16 @@ __pycache__/
 *.pyc
 */__pycache__/
 
+# Node & Next.js
+node_modules/
+.next/
+out/
+build/
+*.tsbuildinfo
+
 # Fichiers d'environnement
 .env
+.env*.local
 .venv/
 venv/
 env/
