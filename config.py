@@ -129,20 +129,21 @@ class PostgresConnectionWrapper:
 def get_db():
     """
     Retourne une connexion à la base de données :
-    - Supabase / PostgreSQL si DATABASE_URL ou SUPABASE_DB_URL est défini
+    - Neon / Supabase / PostgreSQL si DATABASE_URL ou NEON_DATABASE_URL est défini
     - MySQL en cas de variables MySQL ou fallback local
     """
-    db_url = os.environ.get("DATABASE_URL") or os.environ.get("SUPABASE_DB_URL")
+    db_url = os.environ.get("DATABASE_URL") or os.environ.get("NEON_DATABASE_URL") or os.environ.get("SUPABASE_DB_URL")
     
     if db_url:
         import psycopg2
-        # Normaliser postgres:// -> postgresql:// si nécessaire (format Render/Supabase)
+        # Normaliser postgres:// -> postgresql:// si nécessaire (format Neon/Render)
         if db_url.startswith("postgres://"):
             db_url = db_url.replace("postgres://", "postgresql://", 1)
         
         conn = psycopg2.connect(db_url, sslmode=os.environ.get("PGSSLMODE", "require"))
         conn.autocommit = True
         return PostgresConnectionWrapper(conn)
+
     
     # Fallback MySQL
     import mysql.connector
