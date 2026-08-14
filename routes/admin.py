@@ -4,9 +4,9 @@ from datetime import datetime
 from flask import Blueprint, render_template, session, redirect, url_for, flash, request, send_file
 from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
-import mysql.connector
 from config import get_db
 from routes.notifications_utils import notifier_roles, notifier_utilisateurs
+from storage_utils import upload_file, delete_file, serve_or_redirect_file, get_file_url
 
 admin = Blueprint("admin", __name__, url_prefix="/admin")
 
@@ -156,8 +156,20 @@ def backup_database():
 
     db = get_db()
     cursor = db.cursor()
-    cursor.execute("SHOW TABLES")
-    tables = [row[0] for row in cursor.fetchall()]
+
+    is_postgres = bool(os.environ.get("DATABASE_URL") or os.environ.get("SUPABASE_DB_URL"))
+
+    if is_postgres:
+        cursor.execute("""
+            SELECT table_name 
+            FROM information_schema.tables 
+            WHERE table_schema = 'public' AND table_type = 'BASE TABLE'
+            ORDER BY table_name
+        """)
+        tables = [row[0] if isinstance(row, (list, tuple)) else row['table_name'] for row in cursor.fetchall()]
+    else:
+        cursor.execute("SHOW TABLES")
+        tables = [row[0] if isinstance(row, (list, tuple)) else list(row.values())[0] for row in cursor.fetchall()]
 
     backup_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "database", "backups"))
     os.makedirs(backup_dir, exist_ok=True)
@@ -169,43 +181,58 @@ def backup_database():
         if value is None:
             return "NULL"
         if isinstance(value, bool):
-            return "1" if value else "0"
+            return "TRUE" if is_postgres else ("1" if value else "0")
         if isinstance(value, (int, float, decimal.Decimal)):
             return str(value)
         if isinstance(value, bytes):
             return "0x" + value.hex()
         text = str(value)
-        text = text.replace("\\", "\\\\").replace("'", "\\'").replace("\n", "\\n").replace("\r", "\\r")
+        text = text.replace("'", "''") if is_postgres else text.replace("\\", "\\\\").replace("'", "\\'").replace("\n", "\\n").replace("\r", "\\r")
         return f"'{text}'"
 
     with open(backup_path, "w", encoding="utf-8") as output:
-        output.write(f"-- Backup generated on {datetime.now().isoformat()}\n")
-        output.write("SET FOREIGN_KEY_CHECKS=0;\n\n")
+        output.write(f"-- Backup HAS generated on {datetime.now().isoformat()}\n")
+        output.write(f"-- Type: {'PostgreSQL / Supabase' if is_postgres else 'MySQL'}\n\n")
 
         for table in tables:
-            cursor.execute(f"SHOW CREATE TABLE `{table}`")
-            create_sql = cursor.fetchone()[1]
-            output.write(f"DROP TABLE IF EXISTS `{table}`;\n")
-            output.write(create_sql + ";\n\n")
-
-            cursor.execute(f"SELECT * FROM `{table}`")
+            quote_char = '"' if is_postgres else '`'
+            cursor.execute(f"SELECT * FROM {quote_char}{table}{quote_char}")
             rows = cursor.fetchall()
             if not rows:
                 continue
 
             columns = [desc[0] for desc in cursor.description]
-            col_list = ", ".join([f"`{col}`" for col in columns])
+            col_list = ", ".join([f"{quote_char}{col}{quote_char}" for col in columns])
 
             for row in rows:
-                values = ", ".join(escape_value(value) for value in row)
-                output.write(f"INSERT INTO `{table}` ({col_list}) VALUES ({values});\n")
+                if isinstance(row, dict):
+                    vals = [row.get(col) for col in columns]
+                else:
+                    vals = list(row)
+                values_str = ", ".join(escape_value(val) for val in vals)
+                output.write(f"INSERT INTO {quote_char}{table}{quote_char} ({col_list}) VALUES ({values_str});\n")
             output.write("\n")
 
-        output.write("SET FOREIGN_KEY_CHECKS=1;\n")
-
     cursor.close()
-    flash(f"Sauvegarde créée : {filename}")
+
+    # Sauvegarder également le backup dans Supabase Storage si configuré
+    try:
+        from storage_utils import get_supabase, SUPABASE_BUCKET
+        supabase = get_supabase()
+        if supabase:
+            with open(backup_path, "rb") as f:
+                backup_bytes = f.read()
+            supabase.storage.from_(SUPABASE_BUCKET).upload(
+                path=f"backups/{filename}",
+                file=backup_bytes,
+                file_options={"content-type": "application/sql", "upsert": "true"}
+            )
+    except Exception as e:
+        print(f"[Backup] Note: Sauvegarde cloud: {e}")
+
+    flash(f"Sauvegarde créée avec succès : {filename}")
     return redirect(url_for("admin.dashboard"))
+
 
 
 # ============================================================
@@ -722,12 +749,7 @@ def ajouter_enseignant():
     photo_path = None
     photo = request.files.get("photo")
     if photo and photo.filename:
-        from werkzeug.utils import secure_filename
-        os.makedirs(os.path.join("static", "uploads", "profs"), exist_ok=True)
-        filename = secure_filename(photo.filename)
-        save_path = os.path.join("static", "uploads", "profs", filename)
-        photo.save(save_path)
-        photo_path = f"uploads/profs/{filename}"
+        photo_path = upload_file(photo, folder="profs")
 
     cursor.execute("""
         INSERT INTO users (role_id, login, password_hash, nom, prenom, telephone)
@@ -808,13 +830,9 @@ def modifier_enseignant(enseignant_id):
     # Handle optional photo upload
     photo = request.files.get("photo")
     if photo and photo.filename:
-        from werkzeug.utils import secure_filename
-        os.makedirs(os.path.join("static", "uploads", "profs"), exist_ok=True)
-        filename = secure_filename(photo.filename)
-        save_path = os.path.join("static", "uploads", "profs", filename)
-        photo.save(save_path)
-        photo_path = f"uploads/profs/{filename}"
-        cursor.execute("UPDATE users SET photo=%s WHERE id=%s", (photo_path, user_id))
+        photo_path = upload_file(photo, folder="profs")
+        if photo_path:
+            cursor.execute("UPDATE users SET photo=%s WHERE id=%s", (photo_path, user_id))
 
     filieres_selected = request.form.getlist("filieres")
     filiere_principale = filieres_selected[0] if filieres_selected else None
@@ -1089,20 +1107,14 @@ def ajouter_edt():
     cursor = db.cursor()
 
     chemin_pdf, chemin_image = None, None
-    dossier = os.path.join("static", "uploads", "edt")
-    os.makedirs(dossier, exist_ok=True)
 
     fichier_pdf = request.files.get("fichier_pdf")
     if fichier_pdf and fichier_pdf.filename:
-        nom = secure_filename(fichier_pdf.filename)
-        fichier_pdf.save(os.path.join(dossier, nom))
-        chemin_pdf = f"uploads/edt/{nom}"
+        chemin_pdf = upload_file(fichier_pdf, folder="edt")
 
     fichier_image = request.files.get("fichier_image")
     if fichier_image and fichier_image.filename:
-        nom = secure_filename(fichier_image.filename)
-        fichier_image.save(os.path.join(dossier, nom))
-        chemin_image = f"uploads/edt/{nom}"
+        chemin_image = upload_file(fichier_image, folder="edt")
 
     # Use the first selected class as primary (jobs may concern multiple classes via edt_classe)
     classes_selected = request.form.getlist("classes")
@@ -1146,20 +1158,14 @@ def modifier_edt(edt_id):
 
     chemin_pdf = actuel["fichier_pdf"]
     chemin_image = actuel["fichier_image"]
-    dossier = os.path.join("static", "uploads", "edt")
-    os.makedirs(dossier, exist_ok=True)
 
     fichier_pdf = request.files.get("fichier_pdf")
     if fichier_pdf and fichier_pdf.filename:
-        nom = secure_filename(fichier_pdf.filename)
-        fichier_pdf.save(os.path.join(dossier, nom))
-        chemin_pdf = f"uploads/edt/{nom}"
+        chemin_pdf = upload_file(fichier_pdf, folder="edt")
 
     fichier_image = request.files.get("fichier_image")
     if fichier_image and fichier_image.filename:
-        nom = secure_filename(fichier_image.filename)
-        fichier_image.save(os.path.join(dossier, nom))
-        chemin_image = f"uploads/edt/{nom}"
+        chemin_image = upload_file(fichier_image, folder="edt")
 
     classes_selected = request.form.getlist("classes")
     primary_classe = classes_selected[0] if classes_selected else None
@@ -1240,22 +1246,15 @@ def ajouter_communique():
     db = get_db()
     cursor = db.cursor()
 
-    dossier = os.path.join("static", "uploads", "communiques")
-    os.makedirs(dossier, exist_ok=True)
-
     chemin_image, chemin_pdf = None, None
 
     image = request.files.get("image")
     if image and image.filename:
-        nom = secure_filename(image.filename)
-        image.save(os.path.join(dossier, nom))
-        chemin_image = f"uploads/communiques/{nom}"
+        chemin_image = upload_file(image, folder="communiques")
 
     fichier_pdf = request.files.get("fichier_pdf")
     if fichier_pdf and fichier_pdf.filename:
-        nom = secure_filename(fichier_pdf.filename)
-        fichier_pdf.save(os.path.join(dossier, nom))
-        chemin_pdf = f"uploads/communiques/{nom}"
+        chemin_pdf = upload_file(fichier_pdf, folder="communiques")
 
     cursor.execute("""
         INSERT INTO communiques (titre, contenu, image, fichier_pdf, auteur_id, mis_en_avant, archive, date_publication)
@@ -1285,23 +1284,16 @@ def modifier_communique(communique_id):
     cursor.execute("SELECT * FROM communiques WHERE id=%s", (communique_id,))
     actuel = cursor.fetchone()
 
-    dossier = os.path.join("static", "uploads", "communiques")
-    os.makedirs(dossier, exist_ok=True)
-
     chemin_image = actuel["image"]
     chemin_pdf = actuel["fichier_pdf"]
 
     image = request.files.get("image")
     if image and image.filename:
-        nom = secure_filename(image.filename)
-        image.save(os.path.join(dossier, nom))
-        chemin_image = f"uploads/communiques/{nom}"
+        chemin_image = upload_file(image, folder="communiques")
 
     fichier_pdf = request.files.get("fichier_pdf")
     if fichier_pdf and fichier_pdf.filename:
-        nom = secure_filename(fichier_pdf.filename)
-        fichier_pdf.save(os.path.join(dossier, nom))
-        chemin_pdf = f"uploads/communiques/{nom}"
+        chemin_pdf = upload_file(fichier_pdf, folder="communiques")
 
     cursor.execute("""
         UPDATE communiques
@@ -1417,11 +1409,7 @@ def modifier_profil():
     chemin_photo = None
     photo = request.files.get("photo")
     if photo and photo.filename:
-        dossier = os.path.join("static", "uploads", "profils")
-        os.makedirs(dossier, exist_ok=True)
-        nom = secure_filename(photo.filename)
-        photo.save(os.path.join(dossier, nom))
-        chemin_photo = f"uploads/profils/{nom}"
+        chemin_photo = upload_file(photo, folder="profils")
 
     if request.form.get("password"):
         hash_mdp = generate_password_hash(request.form["password"])

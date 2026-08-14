@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*/__pycache__/
+
+# Fichiers d'environnement
+.env
+.venv/
+venv/
+env/
+
+# IDE et OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

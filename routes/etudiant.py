@@ -4,11 +4,12 @@ from flask import (
     flash, request, send_file
 )
 from werkzeug.security import generate_password_hash, check_password_hash
-import mysql.connector
 from config import get_db
 from routes.notifications_utils import notifier_roles, notifier_utilisateurs
+from storage_utils import upload_file, delete_file, serve_or_redirect_file, get_file_url
 
 etudiant = Blueprint("etudiant", __name__, url_prefix="/etudiant")
+
 
 
 @etudiant.context_processor
@@ -300,17 +301,10 @@ def telecharger_fichier(fichier_id):
     db.commit()
     cursor.close()
 
-    # Les fichiers sont stockés dans static/uploads/cours
-    chemin = os.path.join("static", "uploads", "cours", fichier["chemin_fichier"])
-
-    if not os.path.exists(chemin):
-        flash("Le fichier n’existe plus sur le serveur.")
-        return redirect(url_for("etudiant.cours"))
-
-    return send_file(
-        chemin,
-        as_attachment=True,
-        download_name=fichier["nom_original"]
+    return serve_or_redirect_file(
+        fichier["chemin_fichier"],
+        download_name=fichier["nom_original"],
+        as_attachment=True
     )
 
 
@@ -492,6 +486,18 @@ def modifier_profil():
 
     db = get_db()
     cursor = db.cursor(dictionary=True)
+
+    # Gestion de la photo de profil
+    photo = request.files.get("photo")
+    chemin_photo = None
+    if photo and photo.filename != "":
+        ext = os.path.splitext(photo.filename)[1].lower()
+        if ext in [".jpg", ".jpeg", ".png", ".webp"]:
+            nom_fichier = f"user_{profil['user_id']}_{photo.filename}"
+            chemin_photo = upload_file(photo, folder="photos", custom_filename=nom_fichier)
+            if chemin_photo:
+                cursor.execute("UPDATE users SET photo = %s WHERE id = %s", (chemin_photo, profil["user_id"]))
+                session["photo"] = chemin_photo
 
     # Changement de mot de passe (optionnel)
     if request.form.get("nouveau_mot_de_passe"):

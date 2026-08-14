@@ -8,7 +8,10 @@ document.addEventListener('DOMContentLoaded', () => {
     initHeaderScroll();
     initFlashBanner();
     initPasswordToggles();
+    initImagePreviews();
+    initUploadForms();
 });
+
 
 /* ---------------------------------------------------------
    Menu mobile (hamburger)
@@ -147,3 +150,75 @@ function initPasswordToggles() {
         updateToggleState(false);
     });
 }
+
+/* ---------------------------------------------------------
+   Prévisualisation immédiate des photos et images
+   --------------------------------------------------------- */
+function initImagePreviews() {
+    const fileInputs = document.querySelectorAll('input[type="file"]');
+    fileInputs.forEach((input) => {
+        input.addEventListener('change', () => {
+            const file = input.files && input.files[0];
+            if (!file) return;
+
+            // Validation de taille (max 32 Mo)
+            const maxSize = 32 * 1024 * 1024;
+            if (file.size > maxSize) {
+                alert(`Le fichier sélectionné est trop volumineux (${(file.size / (1024 * 1024)).toFixed(1)} Mo). La taille maximale autorisée est de 32 Mo.`);
+                input.value = '';
+                return;
+            }
+
+            // Prévisualisation pour les images
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    // Trouver une image d'aperçu dans le conteneur parent
+                    const parentForm = input.closest('form') || input.closest('.am-section') || document;
+                    const avatarImg = parentForm.querySelector('.am-avatar-xl img, .avatar img, .preview-image');
+                    const avatarContainer = parentForm.querySelector('.am-avatar-xl, .avatar');
+                    
+                    if (avatarImg) {
+                        avatarImg.src = e.target.result;
+                    } else if (avatarContainer) {
+                        avatarContainer.innerHTML = `<img src="${e.target.result}" alt="Aperçu" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    });
+}
+
+/* ---------------------------------------------------------
+   Formulaires d'upload : État de chargement et anti-double clic
+   --------------------------------------------------------- */
+function initUploadForms() {
+    const formsWithFiles = document.querySelectorAll('form[enctype="multipart/form-data"]');
+    formsWithFiles.forEach((form) => {
+        form.addEventListener('submit', (e) => {
+            const submitBtn = form.querySelector('button[type="submit"], input[type="submit"]');
+            if (!submitBtn) return;
+
+            // Vérifier s'il y a un fichier en cours d'envoi
+            const fileInputs = form.querySelectorAll('input[type="file"]');
+            let hasFiles = false;
+            fileInputs.forEach(fi => {
+                if (fi.files && fi.files.length > 0) hasFiles = true;
+            });
+
+            if (hasFiles && !submitBtn.disabled) {
+                const originalText = submitBtn.innerHTML || submitBtn.value;
+                submitBtn.disabled = true;
+                submitBtn.style.opacity = '0.75';
+                submitBtn.style.cursor = 'wait';
+                if (submitBtn.tagName.toLowerCase() === 'button') {
+                    submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Envoi en cours...`;
+                }
+                // Soumettre le formulaire programmatiquement
+                form.submit();
+            }
+        });
+    });
+}
+

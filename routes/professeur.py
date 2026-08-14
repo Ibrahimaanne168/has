@@ -1,14 +1,19 @@
 import os
 from datetime import datetime
 from flask import Blueprint, render_template, session, redirect, url_for, flash, request, send_file
+from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
+from datetime import datetime
 from config import get_db
-from routes.notifications_utils import notifier_roles, notifier_utilisateurs
+from routes.notifications_utils import notifier_utilisateurs, notifier_roles
+from storage_utils import upload_file, delete_file, serve_or_redirect_file, get_file_url
+import os
 
 professeur = Blueprint("professeur", __name__, url_prefix="/professeur")
 
 UPLOAD_FOLDER_COURS = "static/uploads/cours"
 UPLOAD_FOLDER_PHOTOS = "static/uploads/photos"
+
 EXTENSIONS_PDF_AUTORISEES = {"pdf"}
 EXTENSIONS_IMAGE_AUTORISEES = {"jpg", "jpeg", "png", "webp"}
 
@@ -219,15 +224,14 @@ def cours():
             )
             db.commit()
 
-            os.makedirs(UPLOAD_FOLDER_COURS, exist_ok=True)
             nom_original = secure_filename(fichier.filename)
             nom_stocke = f"{cours_id}_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{nom_original}"
-            fichier.save(os.path.join(UPLOAD_FOLDER_COURS, nom_stocke))
+            chemin_stocke = upload_file(fichier, folder="cours", custom_filename=nom_stocke)
 
             cursor.execute("""
                 INSERT INTO fichiers_cours (cours_id, type_fichier, nom_original, chemin_fichier)
                 VALUES (%s, 'pdf', %s, %s)
-            """, (cours_id, nom_original, nom_stocke))
+            """, (cours_id, nom_original, chemin_stocke))
             db.commit()
 
             flash(f"Le cours a bien été déposé pour {len(classes_concernees)} classe(s).")
@@ -340,20 +344,17 @@ def modifier_cours(cours_id):
             anciens_fichiers = cursor.fetchall()
 
             for ancien in anciens_fichiers:
-                ancien_chemin = os.path.join(UPLOAD_FOLDER_COURS, ancien["chemin_fichier"])
-                if os.path.exists(ancien_chemin):
-                    os.remove(ancien_chemin)
+                delete_file(ancien["chemin_fichier"])
                 cursor.execute("DELETE FROM fichiers_cours WHERE id = %s", (ancien["id"],))
 
-            os.makedirs(UPLOAD_FOLDER_COURS, exist_ok=True)
             nom_original = secure_filename(fichier.filename)
             nom_stocke = f"{cours_id}_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{nom_original}"
-            fichier.save(os.path.join(UPLOAD_FOLDER_COURS, nom_stocke))
+            chemin_stocke = upload_file(fichier, folder="cours", custom_filename=nom_stocke)
 
             cursor.execute("""
                 INSERT INTO fichiers_cours (cours_id, type_fichier, nom_original, chemin_fichier)
                 VALUES (%s, 'pdf', %s, %s)
-            """, (cours_id, nom_original, nom_stocke))
+            """, (cours_id, nom_original, chemin_stocke))
 
         cursor.execute("""
             UPDATE cours
@@ -439,9 +440,7 @@ def supprimer_cours(cours_id):
     fichiers = cursor.fetchall()
 
     for f in fichiers:
-        chemin = os.path.join(UPLOAD_FOLDER_COURS, f["chemin_fichier"])
-        if os.path.exists(chemin):
-            os.remove(chemin)
+        delete_file(f["chemin_fichier"])
 
     cursor.execute("DELETE FROM fichiers_cours WHERE cours_id = %s", (cours_id,))
     cursor.execute("DELETE FROM favoris WHERE cours_id = %s", (cours_id,))
@@ -480,8 +479,7 @@ def telecharger_fichier(fichier_id):
         flash("Fichier introuvable.")
         return redirect(url_for("professeur.cours"))
 
-    chemin = os.path.join(UPLOAD_FOLDER_COURS, fichier["chemin_fichier"])
-    return send_file(chemin, as_attachment=False, download_name=fichier["nom_original"])
+    return serve_or_redirect_file(fichier["chemin_fichier"], download_name=fichier["nom_original"])
 
 
 # ---------------------------------------------------------------
@@ -681,10 +679,8 @@ def modifier_profil():
         chemin_photo = None
         if photo and photo.filename != "":
             if extension_autorisee(photo.filename, EXTENSIONS_IMAGE_AUTORISEES):
-                os.makedirs(UPLOAD_FOLDER_PHOTOS, exist_ok=True)
-                nom_fichier = secure_filename(f"user_{session['user_id']}_{photo.filename}")
-                photo.save(os.path.join(UPLOAD_FOLDER_PHOTOS, nom_fichier))
-                chemin_photo = f"uploads/photos/{nom_fichier}"
+                nom_fichier = f"user_{session['user_id']}_{photo.filename}"
+                chemin_photo = upload_file(photo, folder="photos", custom_filename=nom_fichier)
             else:
                 flash("Format de photo non supporté (jpg, jpeg, png, webp).")
                 return redirect(url_for("professeur.modifier_profil"))

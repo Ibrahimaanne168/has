@@ -7,32 +7,32 @@
    remplissages "doux" retirés, ombres plates, densité resserrée.
    ========================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
-
 :root {
     --am-surface: var(--white);
-    --am-surface-alt: #f7f8fa;
-    --am-ring: rgba(15, 82, 186, 0.16);
-    --am-shadow: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.04);
-    --am-shadow-lift: 0 12px 28px rgba(16, 24, 40, 0.18);
-    --am-label: #667085;
+    --am-surface-alt: #f8fafc;
+    --am-ring: rgba(30, 64, 175, 0.16);
+    --am-shadow: 0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.03);
+    --am-shadow-lift: 0 16px 32px -4px rgba(15, 23, 42, 0.14);
+    --am-label: #64748b;
 
-    --am-display: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    --am-hairline: #e7e3da;
-    --am-gold: var(--orange-dark);
-    --am-gold-soft: var(--orange-soft);
-    --am-ink-deep: #1b2333;
-    --am-accent-line: linear-gradient(90deg, var(--saphir) 0%, var(--orange) 100%);
+    --am-display: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+    --am-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --am-hairline: #e2e8f0;
+    --am-gold: #f97316;
+    --am-gold-soft: #fff7ed;
+    --am-ink-deep: #0f172a;
+    --am-accent-line: linear-gradient(90deg, #1e40af 0%, #f97316 100%);
 
-    --am-radius: 10px;
-    --am-radius-sm: 7px;
+    --am-radius: 14px;
+    --am-radius-sm: 10px;
 }
 
 .am-page,
 .am-edit-sheet,
 .am-message-card {
-    font-family: var(--am-display);
+    font-family: var(--am-body);
 }
+
 
 body {
     padding-bottom: calc(var(--bottomnav-h) + 28px + env(safe-area-inset-bottom, 0px));
