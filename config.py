@@ -29,6 +29,83 @@ class Config:
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
 
 
+def _adapt_postgres_query(query):
+    """
+    Adapte automatiquement la syntaxe MySQL vers PostgreSQL :
+    - GROUP_CONCAT(...) -> STRING_AGG(...)
+    - DATE_FORMAT(...) -> TO_CHAR(...)
+    - Booléens 0/1 -> FALSE/TRUE
+    """
+    # 1. GROUP_CONCAT conversion avec support des parenthèses imbriquées (ex: CONCAT)
+    result = []
+    idx = 0
+    upper_q = query.upper()
+    while True:
+        pos = upper_q.find("GROUP_CONCAT", idx)
+        if pos == -1:
+            result.append(query[idx:])
+            break
+        
+        result.append(query[idx:pos])
+        open_paren = query.find("(", pos)
+        if open_paren == -1:
+            result.append(query[pos:])
+            break
+            
+        depth = 1
+        curr = open_paren + 1
+        while curr < len(query) and depth > 0:
+            if query[curr] == '(':
+                depth += 1
+            elif query[curr] == ')':
+                depth -= 1
+            curr += 1
+            
+        if depth != 0:
+            result.append(query[pos:])
+            break
+            
+        inner = query[open_paren + 1 : curr - 1].strip()
+        idx = curr
+        
+        distinct = "DISTINCT " if re.match(r"^DISTINCT\s+", inner, re.I) else ""
+        inner = re.sub(r"^DISTINCT\s+", "", inner, flags=re.I).strip()
+        
+        sep_match = re.search(r"\s+SEPARATOR\s+(['\"][^'\"]*['\"])", inner, re.I)
+        if sep_match:
+            separator = sep_match.group(1)
+            inner = inner[:sep_match.start()] + inner[sep_match.end():]
+        else:
+            separator = "', '"
+            
+        order_match = re.search(r"\s+ORDER\s+BY\s+(.*)$", inner, re.I)
+        if order_match:
+            order_clause = f" ORDER BY {order_match.group(1).strip()}"
+            expr = inner[:order_match.start()].strip()
+        else:
+            order_clause = ""
+            expr = inner.strip()
+            
+        if expr.upper().startswith("CONCAT(") and expr.endswith(")"):
+            content = expr[7:-1]
+            parts = [p.strip() for p in content.split(",")]
+            expr = " || ".join(parts)
+            
+        result.append(f"STRING_AGG({distinct}{expr}, {separator}{order_clause})")
+        
+    clean_q = "".join(result)
+
+    # 2. Boolean = 0 / 1 conversion for PostgreSQL (e.g. archive = 0 -> archive = FALSE, actif = 1 -> actif = TRUE, lu = 0 -> lu = FALSE)
+    clean_q = re.sub(r'(\b(?:archive|actif|mis_en_avant|lu)\b)\s*=\s*0\b', r'\1 = FALSE', clean_q, flags=re.IGNORECASE)
+    clean_q = re.sub(r'(\b(?:archive|actif|mis_en_avant|lu)\b)\s*=\s*1\b', r'\1 = TRUE', clean_q, flags=re.IGNORECASE)
+    clean_q = re.sub(r'(\b(?:archive|actif|mis_en_avant|lu)\b)\s*!=\s*0\b', r'\1 = TRUE', clean_q, flags=re.IGNORECASE)
+    clean_q = re.sub(r'(\b(?:archive|actif|mis_en_avant|lu)\b)\s*!=\s*1\b', r'\1 = FALSE', clean_q, flags=re.IGNORECASE)
+    
+    return clean_q
+
+
+
+
 class PostgresCursorWrapper:
     def __init__(self, cursor, conn):
         self._cursor = cursor
@@ -48,7 +125,7 @@ class PostgresCursorWrapper:
         return self._cursor.rowcount
 
     def execute(self, query, params=None):
-        clean_q = query.strip()
+        clean_q = _adapt_postgres_query(query)
         is_insert = clean_q.upper().startswith("INSERT INTO")
         
         # Si c'est un INSERT et qu'il n'y a pas déjà de clause RETURNING, on ajoute RETURNING id pour récupérer lastrowid
@@ -67,15 +144,16 @@ class PostgresCursorWrapper:
                         self._lastrowid = row[0]
                 return self
             except Exception:
-                # Si la table n'a pas de colonne id, on rejoue la requête d'origine
+                # Si la table n'a pas de colonne id, on rejoue la requête adaptée
                 self._conn.rollback()
                 pass
         
         if params is not None:
-            self._cursor.execute(query, params)
+            self._cursor.execute(clean_q, params)
         else:
-            self._cursor.execute(query)
+            self._cursor.execute(clean_q)
         return self
+
 
     def executemany(self, query, params_list):
         return self._cursor.executemany(query, params_list)

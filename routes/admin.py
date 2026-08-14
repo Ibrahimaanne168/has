@@ -107,23 +107,24 @@ def dashboard():
     nb_visiteurs = cursor.fetchone()["nb"]
 
     cursor.execute("""
-        SELECT c.titre AS titre, COUNT(f.id) AS nb
+        SELECT c.id, c.titre AS titre, COUNT(f.id) AS nb
         FROM cours c
         LEFT JOIN favoris f ON f.cours_id = c.id
-        GROUP BY c.id
+        GROUP BY c.id, c.titre
         ORDER BY nb DESC
         LIMIT 4
     """)
     cours_populaires = cursor.fetchall()
 
     cursor.execute("""
-        SELECT fl.nom AS nom, COUNT(c.id) AS nb
+        SELECT fl.id, fl.nom AS nom, COUNT(c.id) AS nb
         FROM filieres fl
         JOIN cours c ON c.filiere_id = fl.id
-        GROUP BY fl.id
+        GROUP BY fl.id, fl.nom
         ORDER BY nb DESC
     """)
     filieres_actives = cursor.fetchall()
+
     max_cours = max([f["nb"] for f in filieres_actives], default=1)
 
     cursor.execute("SELECT * FROM messages_contact ORDER BY id DESC LIMIT 3")
@@ -283,9 +284,10 @@ def filieres():
         LEFT JOIN matiere_classe mc ON mc.matiere_id = m.id
         LEFT JOIN classes cl ON cl.id = mc.classe_id
         LEFT JOIN filieres f ON f.id = cl.filiere_id
-        GROUP BY m.id
+        GROUP BY m.id, m.nom
         ORDER BY m.nom
     """)
+
     matieres_liste = cursor.fetchall()
 
     # Édition en cours (pré-remplissage du formulaire) ?
@@ -682,9 +684,10 @@ def enseignants():
         JOIN users u ON u.id = e.user_id
         LEFT JOIN enseignant_filiere ef ON ef.enseignant_id = e.id
         LEFT JOIN filieres f ON f.id = ef.filiere_id
-        GROUP BY e.id
+        GROUP BY e.id, e.filiere_id, e.biographie, u.id, u.nom, u.prenom, u.login, u.telephone
         ORDER BY u.nom, u.prenom
     """)
+
     enseignants_liste = cursor.fetchall()
 
     for ens in enseignants_liste:
@@ -904,7 +907,8 @@ def cours():
     cursor = db.cursor(dictionary=True)
 
     cursor.execute("""
-        SELECT c.*, GROUP_CONCAT(DISTINCT cl.nom ORDER BY cl.nom SEPARATOR ', ') AS classes_noms,
+        SELECT c.id, c.titre, c.description, c.matiere_id, c.enseignant_id, c.filiere_id, c.classe_id, c.niveau, c.lien_externe,
+               GROUP_CONCAT(DISTINCT cl.nom ORDER BY cl.nom SEPARATOR ', ') AS classes_noms,
                m.nom AS matiere_nom, u.nom AS ens_nom, u.prenom AS ens_prenom
         FROM cours c
         LEFT JOIN cours_classe cc ON cc.cours_id = c.id
@@ -912,9 +916,10 @@ def cours():
         JOIN matieres m ON m.id = c.matiere_id
         JOIN enseignants e ON e.id = c.enseignant_id
         JOIN users u ON u.id = e.user_id
-        GROUP BY c.id
+        GROUP BY c.id, c.titre, c.description, c.matiere_id, c.enseignant_id, c.filiere_id, c.classe_id, c.niveau, c.lien_externe, m.nom, u.nom, u.prenom
         ORDER BY c.id DESC
     """)
+
     cours_liste = cursor.fetchall()
 
     cursor.execute("SELECT * FROM classes ORDER BY nom")
