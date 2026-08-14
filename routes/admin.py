@@ -192,7 +192,8 @@ def backup_database():
 
     with open(backup_path, "w", encoding="utf-8") as output:
         output.write(f"-- Backup HAS generated on {datetime.now().isoformat()}\n")
-        output.write(f"-- Type: {'PostgreSQL / Supabase' if is_postgres else 'MySQL'}\n\n")
+        output.write(f"-- Type: {'PostgreSQL / Neon' if is_postgres else 'MySQL'}\n\n")
+
 
         for table in tables:
             quote_char = '"' if is_postgres else '`'
