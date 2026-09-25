@@ -5,8 +5,10 @@ export interface User {
   nom: string;
   prenom: string;
   telephone?: string;
+  email?: string;
   photo?: string;
   role_name?: "admin" | "enseignant" | "etudiant";
+  two_factor_enabled?: boolean;
 }
 
 export interface Filiere {
