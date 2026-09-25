@@ -68,6 +68,7 @@ export function Sidebar({ role, user }: SidebarProps) {
       { label: "Mes Cours & Docs", href: "/etudiant/cours", icon: BookOpen },
       { label: "Emploi du Temps", href: "/etudiant/edt", icon: Calendar },
       { label: "Communiqués", href: "/etudiant/communiques", icon: Megaphone },
+      { label: "Messages", href: "/etudiant/messages", icon: MessageSquare },
       { label: "Mon Profil", href: "/etudiant/profil", icon: User },
     ];
   };
