@@ -54,14 +54,18 @@ export async function POST(request: NextRequest) {
 
     // Enregistrement dans Supabase verification_codes
     try {
-      await supabaseAdmin.from("verification_codes").insert({
-        email,
+      const { error: insertError } = await supabaseAdmin.from("verification_codes").insert({
+        email: email.toLowerCase().trim(),
         code,
         type: "signup_2fa",
         expires_at: expiresAt,
         verified: false,
         attempts: 0,
       });
+
+      if (insertError) {
+        console.error("[DB ERROR SIGNUP-STEP1] Échec insertion code 2FA:", insertError.message, insertError.details || "");
+      }
     } catch (dbErr) {
       console.warn("[DB WARNING] Impossible d'écrire verification_code (mode local possible):", dbErr);
     }

@@ -21,17 +21,22 @@ export async function POST(request: NextRequest) {
     const isPlaceholder = process.env.NEXT_PUBLIC_SUPABASE_URL?.includes("placeholder");
 
     if (!isPlaceholder) {
-      const { data: codeRecord } = await supabaseAdmin
+      const cleanEmail = email.toLowerCase().trim();
+      const cleanCode = code.trim();
+
+      const { data: codeRecords } = await supabaseAdmin
         .from("verification_codes")
         .select("*")
-        .eq("email", email)
-        .eq("code", code)
+        .eq("email", cleanEmail)
         .eq("type", "signup_2fa")
         .order("created_at", { ascending: false })
-        .limit(1)
-        .single();
+        .limit(5);
 
-      if (!codeRecord || !codeRecord.verified) {
+      const validRecord = codeRecords?.find(
+        (r) => String(r.code).trim() === cleanCode && r.verified === true
+      );
+
+      if (!validRecord) {
         return NextResponse.json(
           { error: "Le code 2FA n'a pas été validé au préalable. Veuillez recommencer la vérification." },
           { status: 403 }

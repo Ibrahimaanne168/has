@@ -242,6 +242,24 @@ CREATE TABLE logs (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- CODES DE VÉRIFICATION 2FA / SÉCURITÉ
+CREATE TABLE verification_codes (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email VARCHAR(150) NOT NULL,
+    code VARCHAR(10) NOT NULL,
+    type VARCHAR(50) NOT NULL DEFAULT 'signup_2fa',
+    expires_at TIMESTAMPTZ NOT NULL,
+    verified BOOLEAN DEFAULT FALSE,
+    attempts INT DEFAULT 0,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_verification_codes_email ON verification_codes(email);
+CREATE INDEX IF NOT EXISTS idx_verification_codes_created ON verification_codes(created_at DESC);
+ALTER TABLE verification_codes ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Verification codes access" ON verification_codes FOR ALL TO anon, authenticated, service_role USING (true) WITH CHECK (true);
+
+
 -- ============================================================
 -- 3. DONNÉES INITIALES (SEED DATA RÉEL)
 -- ============================================================
