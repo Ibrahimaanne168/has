@@ -41,7 +41,7 @@ export async function sendTransactionalEmail({
     const resend = new Resend(apiKey);
     const { data, error } = await resend.emails.send({
       from: senderEmail,
-      reply_to: "noreply@has-academie.online",
+      replyTo: "noreply@has-academie.online",
       to: [toEmail],
       subject,
       html: htmlContent,
