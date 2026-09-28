@@ -25,21 +25,20 @@ export default function HomePage() {
         {/* ================================================================ */}
         {/* 1. HERO — Excellence Académique & CTA                            */}
         {/* ================================================================ */}
-        <section className="bg-[#0f2744] text-white py-16 sm:py-24 lg:py-28 relative overflow-hidden border-b border-[#0f2744]">
-          <div className="max-w-5xl mx-auto px-5 sm:px-8 lg:px-10 relative z-10">
+        <section className="bg-[#0f2744] text-white py-8 sm:py-20 lg:py-24 relative overflow-hidden border-b border-[#0f2744]">
+          <div className="max-w-5xl mx-auto px-4 sm:px-8 lg:px-10 relative z-10">
             {/* Kicker */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-[#e0521c]/15 text-[#e0521c] text-[11px] font-bold tracking-wider uppercase mb-5 sm:mb-6 border border-[#e0521c]/30">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#e0521c]/15 text-[#e0521c] text-[10px] sm:text-[11px] font-bold tracking-wider uppercase mb-3 sm:mb-6 border border-[#e0521c]/30">
               <GraduationCap className="w-3.5 h-3.5" />
               <span>Renforcement Universitaire d&apos;Excellence · Sénégal</span>
             </div>
 
-            <h1 className="font-serif text-[2.25rem] leading-[1.12] sm:text-5xl lg:text-6xl font-bold text-white max-w-3xl tracking-tight">
-              Halil Académie
-              <br />
+            <h1 className="font-serif text-2xl sm:text-5xl lg:text-6xl font-bold text-white max-w-3xl tracking-tight leading-tight">
+              Halil Académie{" "}
               <span className="text-[#e0521c]">Scientifique</span>
             </h1>
 
-            <p className="mt-5 sm:mt-6 text-slate-300 text-base sm:text-lg leading-relaxed max-w-2xl font-normal">
+            <p className="mt-3 sm:mt-6 text-slate-300 text-sm sm:text-lg leading-relaxed max-w-2xl font-normal">
               Donner à chaque étudiant les clés méthodologiques et scientifiques
               de sa réussite. Accompagnement ciblé et intensif en{" "}
               <strong className="text-white font-medium">Mathématiques</strong>,{" "}
@@ -49,13 +48,13 @@ export default function HomePage() {
             </p>
 
             {/* CTAs */}
-            <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+            <div className="mt-5 sm:mt-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-4">
               <Link href="/#matieres" className="sm:w-auto">
                 <Button
                   variant="accent"
-                  size="lg"
+                  size="md"
                   rightIcon={<ArrowRight className="w-4 h-4" />}
-                  className="w-full sm:w-auto min-h-[48px] text-sm sm:text-base font-semibold shadow-none justify-center rounded-lg"
+                  className="w-full sm:w-auto min-h-[42px] sm:min-h-[48px] text-xs sm:text-base font-semibold shadow-none justify-center rounded-lg"
                 >
                   Découvrir les matières
                 </Button>
@@ -64,8 +63,8 @@ export default function HomePage() {
               <Link href="/inscription" className="sm:w-auto">
                 <Button
                   variant="outline"
-                  size="lg"
-                  className="w-full sm:w-auto min-h-[48px] text-sm sm:text-base font-semibold border-white/30 text-white hover:bg-white/10 justify-center rounded-lg"
+                  size="md"
+                  className="w-full sm:w-auto min-h-[42px] sm:min-h-[48px] text-xs sm:text-base font-semibold border-white/30 text-white hover:bg-white/10 justify-center rounded-lg"
                 >
                   Rejoindre HAS
                 </Button>
@@ -73,7 +72,7 @@ export default function HomePage() {
 
               <Link
                 href="/#mot-directeur"
-                className="text-xs sm:text-sm text-slate-300 hover:text-white transition-colors underline underline-offset-4 px-2 py-3 min-h-[48px] flex items-center justify-center sm:justify-start"
+                className="text-xs sm:text-sm text-slate-300 hover:text-white transition-colors underline underline-offset-4 px-2 py-1.5 min-h-[36px] sm:min-h-[48px] flex items-center justify-center sm:justify-start"
               >
                 Mot du Directeur
               </Link>
