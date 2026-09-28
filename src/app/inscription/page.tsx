@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   GraduationCap,
-  ShieldCheck,
   Mail,
   User,
   Lock,
@@ -328,13 +327,7 @@ export default function InscriptionPage() {
                 onChange={(e) => setEmail(e.target.value)}
               />
 
-              <div className="p-3.5 bg-slate-50 rounded-lg border border-slate-200 flex items-start gap-2.5 text-xs text-slate-600">
-                <ShieldCheck className="w-4 h-4 text-[#0f2744] shrink-0 mt-0.5" />
-                <span>
-                  L&apos;inscription autonome sur ce portail est réservée au statut <strong>Étudiant</strong>.
-                  Les accès Professeurs et Administrateurs sont créés exclusivement par la Direction.
-                </span>
-              </div>
+
 
               <Button
                 type="submit"
