@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary-50: #f0f5fa;
+  --color-primary-100: #dbe6f3;
+  --color-primary-200: #bdd2e9;
+  --color-primary-300: #91b5db;
+  --color-primary-400: #6093cb;
+  --color-primary-500: #3d75bb;
+  --color-primary-600: #2b5ca5;
+  --color-primary-700: #224987;
+  --color-primary-800: #1e3e70;
+  --color-primary-900: #0f2744;
+  --color-primary-950: #09192e;
+  --color-primary: #0f2744;
+
+  --color-accent-50: #fff8f1;
+  --color-accent-100: #feeee2;
+  --color-accent-200: #fcd9c3;
+  --color-accent-300: #fabd98;
+  --color-accent-400: #f69562;
+  --color-accent-500: #f27237;
+  --color-accent-600: #e0521c;
+  --color-accent-700: #ba3d14;
+  --color-accent-800: #943317;
+  --color-accent-900: #782d17;
+  --color-accent: #e0521c;
+
+  --font-serif: var(--font-newsreader), "Source Serif 4", Georgia, serif;
+  --font-sans: var(--font-inter), "Inter", system-ui, sans-serif;
+}
+
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, .font-academic {
+  font-family: var(--font-serif);
+}
+
+/* Custom scrollbar for chat and dashboards */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
