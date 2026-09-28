@@ -49,19 +49,25 @@ export function Navbar() {
           <nav className="hidden md:flex items-center gap-7">
             <Link
               href="/#presentation"
-              className="text-sm text-slate-600 hover:text-[#0f2744] transition-colors"
+              className="text-sm font-medium text-slate-600 hover:text-[#0f2744] transition-colors"
             >
-              L&apos;Académie
+              Présentation
+            </Link>
+            <Link
+              href="/#matieres"
+              className="text-sm font-medium text-slate-600 hover:text-[#0f2744] transition-colors"
+            >
+              Matières
             </Link>
             <Link
               href="/#mot-directeur"
-              className="text-sm text-slate-600 hover:text-[#0f2744] transition-colors"
+              className="text-sm font-medium text-slate-600 hover:text-[#0f2744] transition-colors"
             >
               Directeur
             </Link>
             <Link
               href="/#contact"
-              className="text-sm text-slate-600 hover:text-[#0f2744] transition-colors"
+              className="text-sm font-medium text-slate-600 hover:text-[#0f2744] transition-colors"
             >
               Contact
             </Link>
@@ -102,7 +108,14 @@ export function Navbar() {
               onClick={close}
               className="flex items-center px-3 py-3.5 text-[15px] font-medium text-slate-700 hover:text-[#0f2744] hover:bg-slate-50 rounded-lg transition-colors min-h-[48px]"
             >
-              L&apos;Académie
+              Présentation
+            </Link>
+            <Link
+              href="/#matieres"
+              onClick={close}
+              className="flex items-center px-3 py-3.5 text-[15px] font-medium text-slate-700 hover:text-[#0f2744] hover:bg-slate-50 rounded-lg transition-colors min-h-[48px]"
+            >
+              Matières
             </Link>
             <Link
               href="/#mot-directeur"
@@ -120,16 +133,16 @@ export function Navbar() {
             </Link>
 
             <div className="mt-3 pt-4 border-t border-slate-100 flex flex-col gap-2.5">
-              <Link href="/connexion" onClick={close}>
-                <Button variant="primary" className="w-full justify-center min-h-[48px] text-[15px]">
-                  <LogIn className="w-4 h-4 mr-2" />
-                  Connexion
-                </Button>
-              </Link>
               <Link href="/inscription" onClick={close}>
                 <Button variant="outline" className="w-full justify-center min-h-[48px] text-[15px] border-slate-200">
                   <UserPlus className="w-4 h-4 mr-2" />
                   Inscription
+                </Button>
+              </Link>
+              <Link href="/connexion" onClick={close}>
+                <Button variant="primary" className="w-full justify-center min-h-[48px] text-[15px]">
+                  <LogIn className="w-4 h-4 mr-2" />
+                  Connexion
                 </Button>
               </Link>
             </div>

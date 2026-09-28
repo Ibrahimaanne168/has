@@ -9,7 +9,6 @@ export function ContactSection() {
     fullName: "",
     email: "",
     phone: "",
-    filiere: "MPI",
     subject: "",
     message: "",
   });
@@ -32,7 +31,7 @@ export function ContactSection() {
           fullName: formData.fullName,
           email: formData.email,
           phone: formData.phone,
-          subject: `[${formData.filiere}] ${formData.subject || "Demande d'information"}`,
+          subject: formData.subject || "Demande d'information",
           message: formData.message,
         }),
       });
@@ -44,7 +43,7 @@ export function ContactSection() {
       }
 
       setSuccessMsg(data.message || "Votre message a été transmis avec succès à notre équipe.");
-      setFormData({ fullName: "", email: "", phone: "", filiere: "MPI", subject: "", message: "" });
+      setFormData({ fullName: "", email: "", phone: "", subject: "", message: "" });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Erreur de transmission";
       setErrorMsg(msg);
@@ -65,11 +64,8 @@ export function ContactSection() {
             Nous Contacter
           </h2>
           <p className="mt-3 text-slate-500 text-sm sm:text-base leading-relaxed">
-            Vous souhaitez des informations sur nos formations en{" "}
-            <strong className="text-slate-700">MPI</strong>,{" "}
-            <strong className="text-slate-700">SML</strong> ou{" "}
-            <strong className="text-slate-700">MIASS</strong> ?
-            Envoyez-nous votre message ci-dessous.
+            Une question sur nos séances de renforcement, les modalités d&apos;inscription ou notre encadrement ?
+            Envoyez-nous votre message ci-dessous, notre équipe vous répondra rapidement.
           </p>
         </div>
 
@@ -136,24 +132,6 @@ export function ContactSection() {
             />
           </div>
 
-          {/* Filière */}
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="contact-filiere" className="text-sm font-medium text-slate-700">
-              Filière concernée <span className="text-red-500" aria-hidden="true">*</span>
-            </label>
-            <select
-              id="contact-filiere"
-              value={formData.filiere}
-              onChange={(e) => setFormData({ ...formData, filiere: e.target.value })}
-              className="block w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 focus:border-[#0f2744] focus:outline-none focus:ring-2 focus:ring-[#0f2744]/20 transition-colors min-h-[48px]"
-            >
-              <option value="MPI">MPI — Mathématiques, Physique, Informatique</option>
-              <option value="SML">SML — Sciences de la Matière &amp; Logiciel</option>
-              <option value="MIASS">MIASS — Maths &amp; Informatique Appliquées</option>
-              <option value="AUTRE">Autre demande</option>
-            </select>
-          </div>
-
           {/* Objet */}
           <div className="flex flex-col gap-1.5">
             <label htmlFor="contact-subject" className="text-sm font-medium text-slate-700">
@@ -163,7 +141,7 @@ export function ContactSection() {
               id="contact-subject"
               type="text"
               required
-              placeholder="Ex. Inscription aux séances de renforcement MPI"
+              placeholder="Ex. Renseignements sur les cours de renforcement"
               value={formData.subject}
               onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
               className="block w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:border-[#0f2744] focus:outline-none focus:ring-2 focus:ring-[#0f2744]/20 transition-colors min-h-[48px]"
