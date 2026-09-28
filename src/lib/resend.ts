@@ -20,8 +20,12 @@ export async function sendTransactionalEmail({
   textContent,
 }: SendEmailParams): Promise<{ success: boolean; messageId?: string; simulated?: boolean; error?: string }> {
   const apiKey = process.env.RESEND_API_KEY;
-  // Par défaut, Resend fournit onboarding@resend.dev pour les tests si aucun domaine personnalisé n'est validé
-  const senderEmail = process.env.RESEND_SENDER_EMAIL || "Halil Académie Scientifique <onboarding@resend.dev>";
+  // Toujours formater l'expéditeur avec nom d'affichage pour Resend
+  const rawSender = process.env.RESEND_SENDER_EMAIL || "onboarding@resend.dev";
+  // Si déjà au format "Nom <email>", on le garde, sinon on ajoute le nom
+  const senderEmail = rawSender.includes("<")
+    ? rawSender
+    : `Halil Académie Scientifique <${rawSender}>`;
 
   // Si pas de clé configurée en développement, on journalise et simule l'envoi sans bloquer l'expérience
   if (!apiKey || apiKey.trim() === "" || apiKey.includes("votre-cle") || apiKey.includes("re_placeholder")) {
@@ -37,20 +41,21 @@ export async function sendTransactionalEmail({
     const resend = new Resend(apiKey);
     const { data, error } = await resend.emails.send({
       from: senderEmail,
-      to: toName ? [`${toName} <${toEmail}>`] : [toEmail],
+      to: [toEmail],
       subject,
       html: htmlContent,
       text: textContent || subject,
     });
 
     if (error) {
-      console.error("[RESEND ERROR]", error);
+      console.error("[RESEND ERROR]", JSON.stringify(error));
       return {
         success: false,
-        error: error.message || "Erreur d'envoi Resend",
+        error: `Resend: ${error.message || JSON.stringify(error)}`,
       };
     }
 
+    console.info(`[RESEND OK] Email envoyé à ${toEmail} | id: ${data?.id}`);
     return {
       success: true,
       messageId: data?.id,

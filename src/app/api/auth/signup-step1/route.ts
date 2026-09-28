@@ -66,17 +66,22 @@ export async function POST(request: NextRequest) {
       console.warn("[DB WARNING] Impossible d'écrire verification_code (mode local possible):", dbErr);
     }
 
-    // Envoi de l'email via Brevo
+    // Envoi de l'email via Resend
     const emailRes = await send2FACodeEmail(email, fullName, code);
 
     // Journalisation console pour faciliter les tests
     console.info(`[AUTHENTIFICATION 2FA] Code généré pour ${email} : ${code}`);
+
+    if (!emailRes.success && !emailRes.simulated) {
+      console.error(`[SIGNUP-STEP1] Échec envoi email à ${email}:`, emailRes.error);
+    }
 
     return NextResponse.json({
       success: true,
       message: "Un code de vérification à 6 chiffres a été envoyé par email.",
       email,
       simulated: emailRes.simulated || false,
+      emailError: process.env.NODE_ENV !== "production" ? emailRes.error : undefined,
       devCode: process.env.NODE_ENV !== "production" ? code : undefined,
     });
   } catch (err: unknown) {
