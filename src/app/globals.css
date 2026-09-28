@@ -26,8 +26,8 @@
   --color-accent-900: #782d17;
   --color-accent: #e0521c;
 
-  --font-serif: var(--font-newsreader), "Source Serif 4", Georgia, serif;
-  --font-sans: var(--font-inter), "Inter", system-ui, sans-serif;
+  --font-serif: var(--font-fraunces), "Newsreader", Georgia, serif;
+  --font-sans: var(--font-ibm-plex-sans), "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 :root {
@@ -43,11 +43,33 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-h1, h2, h3, .font-academic {
+h1, h2, h3, h4, .font-academic {
   font-family: var(--font-serif);
 }
 
-/* Custom scrollbar for chat and dashboards */
+/* Micro-typographie */
+.label-micro {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* Cartes géométriques minimalistes haut de gamme */
+.card-geometric {
+  background-color: #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  border-radius: 0.75rem; /* rounded-xl (12px) */
+  box-shadow: 0 2px 8px -2px rgba(15, 23, 42, 0.05);
+  transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-geometric:hover {
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+  border-color: rgba(203, 213, 225, 0.9);
+}
+
+/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -59,7 +81,7 @@ h1, h2, h3, .font-academic {
 
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {

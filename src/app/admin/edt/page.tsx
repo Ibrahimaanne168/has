@@ -55,7 +55,8 @@ export default function AdminEDTPage() {
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="font-serif text-2xl font-bold text-[#0f2744]">Gestion des Emplois du Temps</h1>
+            <p className="text-[11px] font-bold tracking-wider uppercase text-[#e0521c] mb-1">Administration</p>
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] leading-snug">Gestion des Emplois du Temps</h1>
             <p className="text-xs text-slate-500 mt-1">
               Publication des plannings par classe et semestre
             </p>
@@ -66,7 +67,7 @@ export default function AdminEDTPage() {
         </div>
 
         {successMsg && (
-          <div className="p-4 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center gap-3">
+          <div className="p-4 rounded-lg bg-emerald-50 border border-emerald-200/90 flex items-center gap-3 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)]">
             <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
             <p className="text-sm font-medium text-emerald-800">{successMsg}</p>
           </div>
@@ -75,7 +76,7 @@ export default function AdminEDTPage() {
         {/* Liste des EDT publiés */}
         <div className="space-y-4">
           {emplois.map((edt) => (
-            <div key={edt.id} className="bg-white p-6 rounded-xl border border-slate-200 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div key={edt.id} className="bg-white p-5 rounded-xl border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex items-center gap-4 min-w-0">
                 <div className="w-12 h-12 rounded-lg bg-[#0f2744]/10 flex items-center justify-center shrink-0">
                   <Calendar className="w-6 h-6 text-[#0f2744]" />
@@ -106,10 +107,13 @@ export default function AdminEDTPage() {
 
         {/* Modal Publication EDT */}
         {modalOpen && (
-          <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl max-w-xl w-full p-6 shadow-xl border border-slate-200">
+          <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl max-w-xl w-full p-6 shadow-xl border border-slate-200/90">
               <div className="flex items-center justify-between mb-5">
-                <h3 className="font-serif text-xl font-bold text-[#0f2744]">Publier un Emploi du Temps</h3>
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-[#e0521c] mb-1">Administration</p>
+                  <h3 className="font-serif text-xl font-bold text-[#0f2744]">Publier un Emploi du Temps</h3>
+                </div>
                 <button onClick={() => setModalOpen(false)} className="p-1.5 text-slate-400 hover:bg-slate-100 rounded-md"><X className="w-5 h-5" /></button>
               </div>
               <form onSubmit={handleCreate} className="space-y-5">
@@ -141,9 +145,9 @@ export default function AdminEDTPage() {
                   </div>
                   <Button type="button" variant="secondary" size="sm">Choisir le fichier PDF</Button>
                 </div>
-                <div className="flex justify-end gap-2">
-                  <Button type="button" variant="ghost" size="sm" onClick={() => setModalOpen(false)}>Annuler</Button>
-                  <Button type="submit" variant="accent" size="sm" leftIcon={<Save className="w-3.5 h-3.5" />}>Publier l&apos;emploi du temps</Button>
+                <div className="flex justify-end gap-2 border-t border-slate-100 pt-2">
+                  <Button type="button" variant="ghost" size="sm" className="rounded-lg text-xs" onClick={() => setModalOpen(false)}>Annuler</Button>
+                  <Button type="submit" variant="accent" size="sm" className="rounded-lg text-xs" leftIcon={<Save className="w-3.5 h-3.5" />}>Publier l&apos;emploi du temps</Button>
                 </div>
               </form>
             </div>
@@ -151,18 +155,18 @@ export default function AdminEDTPage() {
         )}
 
         {deleteConfirm && (
-          <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl max-w-sm w-full p-6 shadow-xl border border-slate-200 space-y-4">
+          <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl max-w-sm w-full p-6 shadow-xl border border-slate-200/90 space-y-4">
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center shrink-0"><AlertCircle className="w-5 h-5 text-red-600" /></div>
+                <div className="w-10 h-10 rounded-lg bg-red-50 border border-red-200/80 flex items-center justify-center shrink-0"><AlertCircle className="w-5 h-5 text-red-600" /></div>
                 <div>
                   <h3 className="font-serif text-base font-bold text-slate-900">Retirer cet emploi du temps ?</h3>
                   <p className="text-xs text-slate-600 mt-1">Les étudiants de cette classe ne pourront plus le consulter ni le télécharger.</p>
                 </div>
               </div>
-              <div className="flex justify-end gap-2">
-                <Button variant="ghost" size="sm" onClick={() => setDeleteConfirm(null)}>Annuler</Button>
-                <Button variant="danger" size="sm" onClick={() => handleDelete(deleteConfirm)}>Retirer</Button>
+              <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
+                <Button variant="ghost" size="sm" className="rounded-lg text-xs" onClick={() => setDeleteConfirm(null)}>Annuler</Button>
+                <Button variant="danger" size="sm" className="rounded-lg text-xs" onClick={() => handleDelete(deleteConfirm)}>Retirer</Button>
               </div>
             </div>
           </div>

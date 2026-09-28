@@ -50,7 +50,8 @@ export default function ProfesseurEDTPage() {
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="font-serif text-2xl font-bold text-[#0f2744]">Emplois du Temps</h1>
+            <p className="text-[11px] font-bold tracking-wider uppercase text-[#e0521c] mb-1">Espace Enseignant</p>
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] leading-snug">Mes Emplois du Temps</h1>
             <p className="text-xs text-slate-500 mt-1">
               Vos créneaux d&apos;enseignement — Année 2024-2025 • Semestre 1
             </p>
@@ -63,11 +64,11 @@ export default function ProfesseurEDTPage() {
         </div>
 
         {/* Classes encadrées */}
-        <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-xs">
+        <div className="bg-white rounded-xl border border-slate-200/90 p-5 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)]">
           <h3 className="font-serif text-base font-bold text-[#0f2744] mb-3">Classes sous ma responsabilité</h3>
           <div className="flex flex-wrap gap-2">
             {myClasses.map((cls) => (
-              <div key={cls.id} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs">
+              <div key={cls.id} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200/90 text-xs">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                 <span className="font-semibold text-slate-800">{cls.code}</span>
                 <span className="text-slate-500">— {cls.niveau}</span>
@@ -79,7 +80,7 @@ export default function ProfesseurEDTPage() {
         {/* Grille des créneaux */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {schedule.map((day) => (
-            <div key={day.day} className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs">
+            <div key={day.day} className="bg-white rounded-xl border border-slate-200/90 overflow-hidden shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)]">
               <div className="bg-[#0f2744] px-5 py-3 flex items-center justify-between">
                 <span className="font-serif text-white font-bold">{day.day}</span>
                 <span className="text-xs text-slate-300">{day.slots.length} créneau(x)</span>

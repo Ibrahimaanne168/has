@@ -51,12 +51,13 @@ export default function AdminAcademiquePage() {
     <DashboardLayout role="admin" userName="Administration HAS" userEmail="direction@halil-academie.com" matriculeOrTitle="Directeur Général">
       <div className="space-y-6">
         <div>
-          <h1 className="font-serif text-2xl font-bold text-[#0f2744]">Structure Académique</h1>
+          <p className="text-[11px] font-bold tracking-wider uppercase text-[#e0521c] mb-1">Administration Académique</p>
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] leading-snug">Structure Académique</h1>
           <p className="text-xs text-slate-500 mt-1">Filières, classes et modules de formation — Halil Académie Scientifique</p>
         </div>
 
         {successMsg && (
-          <div className="p-4 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center gap-3">
+          <div className="p-4 rounded-lg bg-emerald-50 border border-emerald-200/80 flex items-center gap-3">
             <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
             <p className="text-sm font-medium text-emerald-800">{successMsg}</p>
           </div>
@@ -80,7 +81,7 @@ export default function AdminAcademiquePage() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {filieres.map((f) => (
-                <div key={f.id} className="bg-white p-6 rounded-xl border border-slate-200 shadow-xs hover:shadow-md transition-shadow">
+                <div key={f.id} className="bg-white p-6 rounded-xl border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] hover:border-slate-300 transition-colors">
                   <div className="flex items-start justify-between gap-3 mb-3">
                     <div className="flex items-center gap-3">
                       <div className="w-11 h-11 rounded-lg bg-[#0f2744]/10 text-[#0f2744] flex items-center justify-center">
@@ -113,7 +114,7 @@ export default function AdminAcademiquePage() {
             <div className="flex justify-end">
               <Button variant="accent" size="sm" leftIcon={<Plus className="w-4 h-4" />}>Ajouter une classe</Button>
             </div>
-            <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+            <div className="bg-white rounded-xl border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
@@ -134,8 +135,8 @@ export default function AdminAcademiquePage() {
                         <td className="px-4 py-3 text-xs text-slate-500">{cls.annee_scolaire}</td>
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-2">
-                            <button className="p-1.5 text-slate-400 hover:text-[#0f2744] hover:bg-slate-100 rounded-md"><Edit2 className="w-4 h-4" /></button>
-                            <button onClick={() => setDeleteConfirm({ id: cls.id, type: "classe", name: cls.name })} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md"><Trash2 className="w-4 h-4" /></button>
+                            <button className="p-1.5 text-slate-400 hover:text-[#0f2744] hover:bg-slate-100 rounded-lg"><Edit2 className="w-4 h-4" /></button>
+                            <button onClick={() => setDeleteConfirm({ id: cls.id, type: "classe", name: cls.name })} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg"><Trash2 className="w-4 h-4" /></button>
                           </div>
                         </td>
                       </tr>
@@ -153,7 +154,7 @@ export default function AdminAcademiquePage() {
             <div className="flex justify-end">
               <Button variant="accent" size="sm" leftIcon={<Plus className="w-4 h-4" />}>Ajouter une matière</Button>
             </div>
-            <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+            <div className="bg-white rounded-xl border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
@@ -174,8 +175,8 @@ export default function AdminAcademiquePage() {
                         <td className="px-4 py-3 text-center text-xs text-slate-700 font-semibold">{m.coefficient}</td>
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-2">
-                            <button className="p-1.5 text-slate-400 hover:text-[#0f2744] hover:bg-slate-100 rounded-md"><Edit2 className="w-4 h-4" /></button>
-                            <button onClick={() => setDeleteConfirm({ id: m.id, type: "matiere", name: m.name })} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md"><Trash2 className="w-4 h-4" /></button>
+                            <button className="p-1.5 text-slate-400 hover:text-[#0f2744] hover:bg-slate-100 rounded-lg"><Edit2 className="w-4 h-4" /></button>
+                            <button onClick={() => setDeleteConfirm({ id: m.id, type: "matiere", name: m.name })} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg"><Trash2 className="w-4 h-4" /></button>
                           </div>
                         </td>
                       </tr>
@@ -189,18 +190,18 @@ export default function AdminAcademiquePage() {
 
         {/* Modal Suppression */}
         {deleteConfirm && (
-          <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl max-w-sm w-full p-6 shadow-xl border border-slate-200 space-y-4">
+          <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl max-w-sm w-full p-6 shadow-xl border border-slate-200/90 space-y-4">
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center shrink-0"><AlertCircle className="w-5 h-5 text-red-600" /></div>
+                <div className="w-10 h-10 rounded-lg bg-red-50 border border-red-200/80 flex items-center justify-center shrink-0"><AlertCircle className="w-5 h-5 text-red-600" /></div>
                 <div>
                   <h3 className="font-serif text-base font-bold text-slate-900">Supprimer « {deleteConfirm.name} »</h3>
                   <p className="text-xs text-slate-600 mt-1">Cette action est irréversible et peut affecter les étudiants et cours associés.</p>
                 </div>
               </div>
-              <div className="flex justify-end gap-2">
-                <Button variant="ghost" size="sm" onClick={() => setDeleteConfirm(null)}>Annuler</Button>
-                <Button variant="danger" size="sm" onClick={() => {
+              <div className="border-t border-slate-100 pt-3 flex justify-end gap-2">
+                <Button variant="ghost" size="sm" className="rounded-lg text-xs" onClick={() => setDeleteConfirm(null)}>Annuler</Button>
+                <Button variant="danger" size="sm" className="rounded-lg text-xs" onClick={() => {
                   if (deleteConfirm.type === "filiere") handleDeleteFiliere(deleteConfirm.id);
                   else if (deleteConfirm.type === "classe") handleDeleteClasse(deleteConfirm.id);
                   else handleDeleteMatiere(deleteConfirm.id);

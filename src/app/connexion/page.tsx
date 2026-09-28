@@ -163,12 +163,13 @@ function ConnexionForm() {
 
       {/* Formulaire Principal */}
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6 my-8">
-        <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl shadow-sm p-6 sm:p-8">
+        <div className="w-full max-w-md bg-white border border-slate-200/90 rounded-xl shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] p-6 sm:p-8">
           <div className="text-center mb-6">
             <div className="w-12 h-12 rounded-xl bg-[#0f2744]/10 text-[#0f2744] flex items-center justify-center mx-auto mb-3">
               <Lock className="w-6 h-6 text-[#0f2744]" />
             </div>
-            <h1 className="font-serif text-2xl font-bold text-[#0f2744]">
+            <p className="text-[11px] font-bold tracking-wider uppercase text-[#e0521c] mb-1">Authentification Sécurisée</p>
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] leading-snug">
               Espace Numérique de Travail
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 mt-1">
@@ -177,7 +178,7 @@ function ConnexionForm() {
           </div>
 
           {errorMsg && (
-            <div className="mb-5 p-3.5 rounded-md bg-red-50 border border-red-200 flex items-start gap-2.5">
+            <div className="mb-5 p-3.5 rounded-lg bg-red-50 border border-red-200/80 flex items-start gap-2.5">
               <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
               <p className="text-xs font-medium text-red-800">{errorMsg}</p>
             </div>
@@ -247,21 +248,21 @@ function ConnexionForm() {
               <button
                 type="button"
                 onClick={() => handleQuickDemoLogin("etudiant")}
-                className="p-2 text-center rounded-lg border border-slate-200 hover:bg-slate-50 text-xs font-medium text-slate-700 transition-colors"
+                className="p-2 text-center rounded-lg border border-slate-200/90 hover:border-slate-300 hover:bg-slate-50 text-xs font-medium text-slate-700 transition-colors"
               >
                 🎓 Étudiant
               </button>
               <button
                 type="button"
                 onClick={() => handleQuickDemoLogin("professeur")}
-                className="p-2 text-center rounded-lg border border-slate-200 hover:bg-slate-50 text-xs font-medium text-slate-700 transition-colors"
+                className="p-2 text-center rounded-lg border border-slate-200/90 hover:border-slate-300 hover:bg-slate-50 text-xs font-medium text-slate-700 transition-colors"
               >
                 👨‍🏫 Professeur
               </button>
               <button
                 type="button"
                 onClick={() => handleQuickDemoLogin("admin")}
-                className="p-2 text-center rounded-lg border border-slate-200 hover:bg-slate-50 text-xs font-medium text-slate-700 transition-colors"
+                className="p-2 text-center rounded-lg border border-slate-200/90 hover:border-slate-300 hover:bg-slate-50 text-xs font-medium text-slate-700 transition-colors"
               >
                 🛡️ Admin
               </button>
@@ -272,8 +273,8 @@ function ConnexionForm() {
 
       {/* Modal Mot de passe oublié */}
       {forgotModalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-xl border border-slate-200 space-y-4">
+        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-xl border border-slate-200/90 space-y-4">
             <h3 className="font-serif text-lg font-bold text-[#0f2744]">
               Réinitialisation de mot de passe
             </h3>
@@ -283,7 +284,7 @@ function ConnexionForm() {
             </p>
 
             {forgotSuccess ? (
-              <div className="p-3.5 rounded-md bg-emerald-50 border border-emerald-200 text-xs text-emerald-800">
+              <div className="p-3.5 rounded-lg bg-emerald-50 border border-emerald-200/80 text-xs text-emerald-800">
                 {forgotSuccess}
               </div>
             ) : (
@@ -296,11 +297,12 @@ function ConnexionForm() {
                   value={forgotEmail}
                   onChange={(e) => setForgotEmail(e.target.value)}
                 />
-                <div className="flex justify-end gap-2 pt-2">
+                <div className="border-t border-slate-100 pt-3 flex justify-end gap-2">
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
+                    className="rounded-lg text-xs"
                     onClick={() => setForgotModalOpen(false)}
                   >
                     Annuler
@@ -309,6 +311,7 @@ function ConnexionForm() {
                     type="submit"
                     variant="accent"
                     size="sm"
+                    className="rounded-lg text-xs"
                     isLoading={forgotLoading}
                   >
                     Envoyer le lien
@@ -318,10 +321,11 @@ function ConnexionForm() {
             )}
 
             {forgotSuccess && (
-              <div className="text-right">
+              <div className="border-t border-slate-100 pt-3 text-right">
                 <Button
                   variant="primary"
                   size="sm"
+                  className="rounded-lg text-xs"
                   onClick={() => {
                     setForgotModalOpen(false);
                     setForgotSuccess(null);

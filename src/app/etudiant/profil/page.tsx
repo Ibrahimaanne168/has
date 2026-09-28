@@ -56,7 +56,8 @@ export default function EtudiantProfilPage() {
     >
       <div className="space-y-6 max-w-4xl">
         <div>
-          <h1 className="font-serif text-2xl font-bold text-[#0f2744]">
+          <p className="text-[11px] font-bold tracking-wider uppercase text-[#e0521c] mb-1">Espace Étudiant</p>
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] leading-snug">
             Mon Profil Académique
           </h1>
           <p className="text-xs text-slate-500 mt-1">
@@ -65,7 +66,7 @@ export default function EtudiantProfilPage() {
         </div>
 
         {/* Coordonnées académiques certifiées (Lecture seule sécurisée) */}
-        <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs space-y-4">
+        <div className="bg-white rounded-xl border border-slate-200/90 p-6 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] space-y-4">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <h3 className="font-serif text-base font-bold text-[#0f2744]">
               Informations Officielles de l&apos;Étudiant
@@ -106,13 +107,13 @@ export default function EtudiantProfilPage() {
         </div>
 
         {/* Mise à jour du téléphone */}
-        <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs space-y-4">
+        <div className="bg-white rounded-xl border border-slate-200/90 p-6 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] space-y-4">
           <h3 className="font-serif text-base font-bold text-[#0f2744] border-b border-slate-100 pb-3">
             Coordonnées de Contact
           </h3>
 
           {infoSuccess && (
-            <div className="p-3.5 rounded-lg bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-2">
+            <div className="p-3.5 rounded-lg bg-emerald-50 border border-emerald-200/80 text-xs text-emerald-800 flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-emerald-600" />
               <span>{infoSuccess}</span>
             </div>
@@ -139,7 +140,7 @@ export default function EtudiantProfilPage() {
         </div>
 
         {/* Changement de mot de passe */}
-        <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs space-y-4">
+        <div className="bg-white rounded-xl border border-slate-200/90 p-6 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] space-y-4">
           <h3 className="font-serif text-base font-bold text-[#0f2744] border-b border-slate-100 pb-3">
             Sécurité du Compte — Modifier mon mot de passe
           </h3>

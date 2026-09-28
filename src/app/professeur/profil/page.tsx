@@ -48,14 +48,15 @@ export default function ProfesseurProfilPage() {
     >
       <div className="space-y-6 max-w-4xl">
         <div>
-          <h1 className="font-serif text-2xl font-bold text-[#0f2744]">Profil Académique</h1>
+          <p className="text-[11px] font-bold tracking-wider uppercase text-[#e0521c] mb-1">Espace Enseignant</p>
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] leading-snug">Profil Académique</h1>
           <p className="text-xs text-slate-500 mt-1">
             Votre fiche enseignant — visible par les étudiants dans le trombinoscope HAS
           </p>
         </div>
 
         {/* Identité certifiée */}
-        <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs">
+        <div className="bg-white rounded-xl border border-slate-200/90 p-6 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)]">
           <div className="flex items-center gap-4 mb-5 pb-5 border-b border-slate-100">
             <div className="w-20 h-20 rounded-xl bg-[#0f2744] flex items-center justify-center text-white shrink-0">
               <GraduationCap className="w-10 h-10 text-[#e0521c]" />
@@ -82,12 +83,12 @@ export default function ProfesseurProfilPage() {
         </div>
 
         {/* Mise à jour du profil public */}
-        <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs space-y-4">
+        <div className="bg-white rounded-xl border border-slate-200/90 p-6 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] space-y-4">
           <h3 className="font-serif text-base font-bold text-[#0f2744] border-b border-slate-100 pb-3">
             Profil Public (visible par les étudiants)
           </h3>
           {profileSuccess && (
-            <div className="p-3.5 rounded-lg bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-2">
+            <div className="p-3.5 rounded-lg bg-emerald-50 border border-emerald-200/80 text-xs text-emerald-800 flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-emerald-600" />{profileSuccess}
             </div>
           )}
@@ -113,7 +114,7 @@ export default function ProfesseurProfilPage() {
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
                 placeholder="Parcours académique, domaines d'expertise et projets de recherche..."
-                className="block w-full rounded-md border border-slate-300 bg-white p-3 text-sm text-slate-900 focus:border-[#0f2744] focus:ring-1 focus:ring-[#0f2744]"
+                className="block w-full rounded-lg border border-slate-200/90 bg-white p-3 text-sm text-slate-900 focus:border-[#0f2744] focus:ring-1 focus:ring-[#0f2744]"
               />
               <p className="text-xs text-slate-400">Cette biographie sera affichée dans la page « Corps Professoral » de l&apos;espace étudiant.</p>
             </div>
@@ -124,7 +125,7 @@ export default function ProfesseurProfilPage() {
         </div>
 
         {/* Changement de mot de passe */}
-        <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs space-y-4">
+        <div className="bg-white rounded-xl border border-slate-200/90 p-6 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] space-y-4">
           <h3 className="font-serif text-base font-bold text-[#0f2744] border-b border-slate-100 pb-3">
             Sécurité — Modifier mon mot de passe
           </h3>

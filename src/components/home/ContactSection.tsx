@@ -53,133 +53,137 @@ export function ContactSection() {
   };
 
   return (
-    <section id="contact" className="py-16 sm:py-24 bg-white border-t border-slate-100">
+    <section id="contact" className="py-16 sm:py-24 bg-[#F8FAFC] border-t border-slate-200/80">
       <div className="max-w-2xl mx-auto px-5 sm:px-8">
-        {/* En-tête */}
-        <div className="mb-10">
-          <p className="text-[#e0521c] text-xs font-bold tracking-widest uppercase mb-3">
-            Formulaire de Contact
-          </p>
-          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#0f2744] leading-snug">
-            Nous Contacter
-          </h2>
-          <p className="mt-3 text-slate-500 text-sm sm:text-base leading-relaxed">
-            Une question sur nos séances de renforcement, les modalités d&apos;inscription ou notre encadrement ?
-            Envoyez-nous votre message ci-dessous, notre équipe vous répondra rapidement.
-          </p>
+        <div className="bg-white border border-slate-200/90 rounded-xl p-6 sm:p-10 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)]">
+          {/* En-tête */}
+          <div className="mb-8">
+            <p className="text-[#e0521c] text-[11px] font-bold tracking-wider uppercase mb-2">
+              Formulaire de Contact
+            </p>
+            <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] leading-snug">
+              Nous Contacter
+            </h2>
+            <p className="mt-2 text-slate-500 text-xs sm:text-sm leading-relaxed">
+              Une question sur nos séances de renforcement, les modalités d&apos;inscription ou notre encadrement ?
+              Transmettez-nous votre demande, notre secrétariat vous répondra dans les plus brefs délais.
+            </p>
+          </div>
+
+          {/* Feedback */}
+          {successMsg && (
+            <div className="mb-6 p-4 rounded-lg bg-emerald-50 border border-emerald-200 flex items-start gap-3">
+              <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+              <p className="text-xs sm:text-sm font-medium text-emerald-800">{successMsg}</p>
+            </div>
+          )}
+          {errorMsg && (
+            <div className="mb-6 p-4 rounded-lg bg-red-50 border border-red-200 flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+              <p className="text-xs sm:text-sm font-medium text-red-800">{errorMsg}</p>
+            </div>
+          )}
+
+          {/* Formulaire */}
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4 sm:gap-5">
+            {/* Nom complet */}
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="contact-name" className="text-xs font-semibold text-slate-700">
+                Nom complet <span className="text-[#e0521c]" aria-hidden="true">*</span>
+              </label>
+              <input
+                id="contact-name"
+                type="text"
+                required
+                placeholder="Ex. Amadou Diallo"
+                value={formData.fullName}
+                onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                className="block w-full rounded-lg border border-slate-200/90 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-[#0f2744] focus:outline-none focus:ring-1 focus:ring-[#0f2744] transition-colors"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Email */}
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor="contact-email" className="text-xs font-semibold text-slate-700">
+                  Adresse email <span className="text-[#e0521c]" aria-hidden="true">*</span>
+                </label>
+                <input
+                  id="contact-email"
+                  type="email"
+                  required
+                  placeholder="amadou@exemple.com"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className="block w-full rounded-lg border border-slate-200/90 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-[#0f2744] focus:outline-none focus:ring-1 focus:ring-[#0f2744] transition-colors"
+                />
+              </div>
+
+              {/* Téléphone */}
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor="contact-phone" className="text-xs font-semibold text-slate-700">
+                  Numéro de téléphone
+                </label>
+                <input
+                  id="contact-phone"
+                  type="tel"
+                  placeholder="+221 ..."
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  className="block w-full rounded-lg border border-slate-200/90 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-[#0f2744] focus:outline-none focus:ring-1 focus:ring-[#0f2744] transition-colors"
+                />
+              </div>
+            </div>
+
+            {/* Objet */}
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="contact-subject" className="text-xs font-semibold text-slate-700">
+                Objet de votre demande <span className="text-[#e0521c]" aria-hidden="true">*</span>
+              </label>
+              <input
+                id="contact-subject"
+                type="text"
+                required
+                placeholder="Ex. Renseignements sur les cours de renforcement"
+                value={formData.subject}
+                onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                className="block w-full rounded-lg border border-slate-200/90 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-[#0f2744] focus:outline-none focus:ring-1 focus:ring-[#0f2744] transition-colors"
+              />
+            </div>
+
+            {/* Message */}
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="contact-message" className="text-xs font-semibold text-slate-700">
+                Votre message <span className="text-[#e0521c]" aria-hidden="true">*</span>
+              </label>
+              <textarea
+                id="contact-message"
+                required
+                rows={4}
+                value={formData.message}
+                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                placeholder="Précisez votre niveau universitaire, vos besoins ou toute question..."
+                className="block w-full rounded-lg border border-slate-200/90 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-[#0f2744] focus:outline-none focus:ring-1 focus:ring-[#0f2744] transition-colors resize-none"
+              />
+            </div>
+
+            {/* Bouton d'action */}
+            <Button
+              type="submit"
+              variant="accent"
+              size="lg"
+              isLoading={isLoading}
+              rightIcon={<Send className="w-4 h-4" />}
+              className="w-full justify-center min-h-[46px] text-sm font-semibold mt-2 rounded-lg"
+            >
+              Envoyer le message
+            </Button>
+
+            <p className="text-[11px] text-center text-slate-400 mt-1">
+              Halil Académie Scientifique — Dakar, Sénégal
+            </p>
+          </form>
         </div>
-
-        {/* Feedback */}
-        {successMsg && (
-          <div className="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 flex items-start gap-3">
-            <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-            <p className="text-sm font-medium text-emerald-800">{successMsg}</p>
-          </div>
-        )}
-        {errorMsg && (
-          <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-            <p className="text-sm font-medium text-red-800">{errorMsg}</p>
-          </div>
-        )}
-
-        {/* Formulaire — tous les champs empilés sur mobile, labels toujours visibles */}
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-          {/* Nom complet */}
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="contact-name" className="text-sm font-medium text-slate-700">
-              Nom complet <span className="text-red-500" aria-hidden="true">*</span>
-            </label>
-            <input
-              id="contact-name"
-              type="text"
-              required
-              placeholder="Ex. Amadou Diallo"
-              value={formData.fullName}
-              onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-              className="block w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:border-[#0f2744] focus:outline-none focus:ring-2 focus:ring-[#0f2744]/20 transition-colors min-h-[48px]"
-            />
-          </div>
-
-          {/* Email */}
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="contact-email" className="text-sm font-medium text-slate-700">
-              Adresse email <span className="text-red-500" aria-hidden="true">*</span>
-            </label>
-            <input
-              id="contact-email"
-              type="email"
-              required
-              placeholder="amadou@exemple.com"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="block w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:border-[#0f2744] focus:outline-none focus:ring-2 focus:ring-[#0f2744]/20 transition-colors min-h-[48px]"
-            />
-          </div>
-
-          {/* Téléphone */}
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="contact-phone" className="text-sm font-medium text-slate-700">
-              Numéro de téléphone
-            </label>
-            <input
-              id="contact-phone"
-              type="tel"
-              placeholder="+221 ..."
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className="block w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:border-[#0f2744] focus:outline-none focus:ring-2 focus:ring-[#0f2744]/20 transition-colors min-h-[48px]"
-            />
-          </div>
-
-          {/* Objet */}
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="contact-subject" className="text-sm font-medium text-slate-700">
-              Objet de votre demande <span className="text-red-500" aria-hidden="true">*</span>
-            </label>
-            <input
-              id="contact-subject"
-              type="text"
-              required
-              placeholder="Ex. Renseignements sur les cours de renforcement"
-              value={formData.subject}
-              onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-              className="block w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:border-[#0f2744] focus:outline-none focus:ring-2 focus:ring-[#0f2744]/20 transition-colors min-h-[48px]"
-            />
-          </div>
-
-          {/* Message */}
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="contact-message" className="text-sm font-medium text-slate-700">
-              Votre message <span className="text-red-500" aria-hidden="true">*</span>
-            </label>
-            <textarea
-              id="contact-message"
-              required
-              rows={5}
-              value={formData.message}
-              onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-              placeholder="Précisez votre niveau universitaire, vos besoins ou toute question..."
-              className="block w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:border-[#0f2744] focus:outline-none focus:ring-2 focus:ring-[#0f2744]/20 transition-colors resize-none"
-            />
-          </div>
-
-          {/* Bouton pleine largeur sur mobile */}
-          <Button
-            type="submit"
-            variant="accent"
-            size="lg"
-            isLoading={isLoading}
-            rightIcon={<Send className="w-4 h-4" />}
-            className="w-full justify-center min-h-[52px] text-base font-semibold mt-1"
-          >
-            Envoyer le message
-          </Button>
-
-          <p className="text-xs text-center text-slate-400">
-            Halil Académie Scientifique — Sénégal
-          </p>
-        </form>
       </div>
     </section>
   );

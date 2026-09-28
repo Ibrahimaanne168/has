@@ -42,14 +42,15 @@ export default function AdminAuditPage() {
     <DashboardLayout role="admin" userName="Administration HAS" userEmail="direction@halil-academie.com" matriculeOrTitle="Directeur Général">
       <div className="space-y-6">
         <div>
-          <h1 className="font-serif text-2xl font-bold text-[#0f2744]">Journal d&apos;Audit de Sécurité</h1>
+          <p className="text-[11px] font-bold tracking-wider uppercase text-[#e0521c] mb-1">Sécurité & Conformité</p>
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] leading-snug">Journal d&apos;Audit de Sécurité</h1>
           <p className="text-xs text-slate-500 mt-1">
             Traçabilité des actions sensibles — accès, créations, modifications et suppressions de comptes
           </p>
         </div>
 
         {/* Légende des types d'actions */}
-        <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-xs">
+        <div className="bg-white rounded-xl border border-slate-200/90 p-4 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)]">
           <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Types d&apos;événements journalisés</h3>
           <div className="flex flex-wrap gap-2">
             {ACTION_TYPES.map((a) => (
@@ -62,7 +63,7 @@ export default function AdminAuditPage() {
         </div>
 
         {/* Table Journal */}
-        <div className="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+        <div className="bg-white rounded-xl border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] overflow-hidden">
           <div className="p-4 border-b border-slate-100 flex items-center gap-2">
             <Shield className="w-4 h-4 text-[#0f2744]" />
             <span className="text-sm font-bold text-slate-800">

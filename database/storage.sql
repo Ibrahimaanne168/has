@@ -1,5 +1,7 @@
 -- ==============================================================================
--- CONFIGURATION SUPABASE STORAGE — HALIL ACADÉMIE SCIENTIFIQUE
+-- CONFIGURATION SUPABASE STORAGE — HALIL ACADÉMIE SCIENTIFIQUE (HAS)
+-- NOTE : Cette configuration est DÉJÀ INTÉGRÉE dans database/schema.sql !
+-- Si vous avez exécuté database/schema.sql, vous n'avez pas besoin d'exécuter ce fichier.
 -- ==============================================================================
 
 -- 1. CRÉATION DES BUCKETS
@@ -7,64 +9,28 @@ INSERT INTO storage.buckets (id, name, public) VALUES
 ('cours-supports', 'cours-supports', true),
 ('emplois-du-temps', 'emplois-du-temps', true),
 ('avatars', 'avatars', true),
-('public-gallery', 'public-gallery', true) -- Illustrations pédagogiques et fiches publiques
+('communiques', 'communiques', true),
+('public-gallery', 'public-gallery', true)
 ON CONFLICT (id) DO NOTHING;
 
--- 2. POLICIES POUR LE BUCKET cours-supports
-CREATE POLICY "Lecture publique des supports de cours"
-ON storage.objects FOR SELECT TO authenticated
-USING (bucket_id = 'cours-supports');
+-- 2. POLITIQUES RLS DU STOCKAGE
+DO $$ BEGIN
+    DROP POLICY IF EXISTS "Public Access Supports" ON storage.objects;
+    DROP POLICY IF EXISTS "Auth Upload Supports" ON storage.objects;
+    DROP POLICY IF EXISTS "Public Access EDT" ON storage.objects;
+    DROP POLICY IF EXISTS "Auth Upload EDT" ON storage.objects;
+    DROP POLICY IF EXISTS "Public Access Avatars" ON storage.objects;
+    DROP POLICY IF EXISTS "Auth Upload Avatars" ON storage.objects;
+    DROP POLICY IF EXISTS "Public Access Communiques" ON storage.objects;
+    DROP POLICY IF EXISTS "Public Access Gallery" ON storage.objects;
+EXCEPTION WHEN OTHERS THEN NULL;
+END $$;
 
-CREATE POLICY "Professeurs et admins uploadent supports de cours"
-ON storage.objects FOR INSERT TO authenticated
-WITH CHECK (
-    bucket_id = 'cours-supports' AND
-    (public.is_professeur() OR public.is_admin())
-);
-
-CREATE POLICY "Suppression supports de cours par professeurs et admins"
-ON storage.objects FOR DELETE TO authenticated
-USING (
-    bucket_id = 'cours-supports' AND
-    (public.is_professeur() OR public.is_admin())
-);
-
--- 3. POLICIES POUR LE BUCKET emplois-du-temps
-CREATE POLICY "Lecture des emplois du temps"
-ON storage.objects FOR SELECT TO authenticated
-USING (bucket_id = 'emplois-du-temps');
-
-CREATE POLICY "Admin upload emplois du temps"
-ON storage.objects FOR INSERT TO authenticated
-WITH CHECK (
-    bucket_id = 'emplois-du-temps' AND public.is_admin()
-);
-
-CREATE POLICY "Admin supprime emplois du temps"
-ON storage.objects FOR DELETE TO authenticated
-USING (
-    bucket_id = 'emplois-du-temps' AND public.is_admin()
-);
-
--- 4. POLICIES POUR LE BUCKET avatars
-CREATE POLICY "Lecture publique des avatars"
-ON storage.objects FOR SELECT
-USING (bucket_id = 'avatars');
-
-CREATE POLICY "Utilisateurs uploadent leur avatar"
-ON storage.objects FOR INSERT TO authenticated
-WITH CHECK (bucket_id = 'avatars');
-
-CREATE POLICY "Utilisateurs mettent a jour leur avatar"
-ON storage.objects FOR UPDATE TO authenticated
-USING (bucket_id = 'avatars');
-
--- 5. POLICIES POUR LE BUCKET public-gallery
-CREATE POLICY "Lecture publique de la galerie"
-ON storage.objects FOR SELECT
-USING (bucket_id = 'public-gallery');
-
-CREATE POLICY "Admin gère la galerie"
-ON storage.objects FOR ALL TO authenticated
-USING (bucket_id = 'public-gallery' AND public.is_admin())
-WITH CHECK (bucket_id = 'public-gallery' AND public.is_admin());
+CREATE POLICY "Public Access Supports" ON storage.objects FOR SELECT USING (bucket_id = 'cours-supports');
+CREATE POLICY "Auth Upload Supports" ON storage.objects FOR INSERT TO authenticated, service_role WITH CHECK (bucket_id = 'cours-supports');
+CREATE POLICY "Public Access EDT" ON storage.objects FOR SELECT USING (bucket_id = 'emplois-du-temps');
+CREATE POLICY "Auth Upload EDT" ON storage.objects FOR INSERT TO authenticated, service_role WITH CHECK (bucket_id = 'emplois-du-temps');
+CREATE POLICY "Public Access Avatars" ON storage.objects FOR SELECT USING (bucket_id = 'avatars');
+CREATE POLICY "Auth Upload Avatars" ON storage.objects FOR INSERT TO authenticated, service_role WITH CHECK (bucket_id = 'avatars');
+CREATE POLICY "Public Access Communiques" ON storage.objects FOR SELECT USING (bucket_id = 'communiques');
+CREATE POLICY "Public Access Gallery" ON storage.objects FOR SELECT USING (bucket_id = 'public-gallery');

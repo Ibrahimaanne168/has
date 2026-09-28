@@ -230,7 +230,7 @@ export default function InscriptionPage() {
 
       {/* Main Container */}
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6 my-8">
-        <div className="w-full max-w-xl bg-white border border-slate-200 rounded-2xl shadow-sm p-6 sm:p-10">
+        <div className="w-full max-w-xl bg-white border border-slate-200/90 rounded-xl shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] p-6 sm:p-10">
           {/* Fil d'Ariane des étapes */}
           <div className="mb-8">
             <div className="flex items-center justify-between relative">
@@ -264,7 +264,8 @@ export default function InscriptionPage() {
 
           {/* En-tête de section */}
           <div className="mb-6 text-center">
-            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744]">
+            <p className="text-[11px] font-bold tracking-wider uppercase text-[#e0521c] mb-1">Portail d&apos;Admission</p>
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] leading-snug">
               {step === 1 && "Inscription Étudiant — Étape 1/2"}
               {step === 2 && "Vérification de sécurité 2FA"}
               {step === 3 && "Finalisation du Compte — Étape 2/2"}
@@ -280,14 +281,14 @@ export default function InscriptionPage() {
 
           {/* Alertes d'information & d'erreur */}
           {errorMsg && (
-            <div className="mb-6 p-4 rounded-md bg-red-50 border border-red-200 flex items-start gap-3">
+            <div className="mb-6 p-4 rounded-lg bg-red-50 border border-red-200/80 flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
               <p className="text-sm font-medium text-red-800">{errorMsg}</p>
             </div>
           )}
 
           {infoMsg && (
-            <div className="mb-6 p-4 rounded-md bg-emerald-50 border border-emerald-200 flex items-start gap-3">
+            <div className="mb-6 p-4 rounded-lg bg-emerald-50 border border-emerald-200/80 flex items-start gap-3">
               <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
               <p className="text-sm font-medium text-emerald-800">{infoMsg}</p>
             </div>
@@ -498,7 +499,7 @@ export default function InscriptionPage() {
           {/* ============================================================================== */}
           {step === 4 && (
             <div className="text-center space-y-6 py-4">
-              <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
+              <div className="w-16 h-16 bg-emerald-50 border border-emerald-200/80 text-emerald-600 rounded-xl flex items-center justify-center mx-auto">
                 <CheckCircle2 className="w-10 h-10" />
               </div>
 
@@ -512,7 +513,7 @@ export default function InscriptionPage() {
                 </p>
               </div>
 
-              <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 inline-block text-left w-full max-w-sm">
+              <div className="p-4 bg-slate-50 rounded-xl border border-slate-200/90 inline-block text-left w-full max-w-sm">
                 <span className="text-xs text-slate-500 uppercase tracking-wider block">
                   Matricule officiel attribué :
                 </span>

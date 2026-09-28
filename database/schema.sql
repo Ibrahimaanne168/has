@@ -1,415 +1,555 @@
--- ==============================================================================
--- SCHÉMA DE BASE DE DONNÉES — HALIL ACADÉMIE SCIENTIFIQUE (HAS)
--- PostgreSQL / Supabase avec Row Level Security (RLS) & Triggers
--- ==============================================================================
+-- ============================================================
+-- Plateforme HAS (Halil Académie Scientifique)
+-- Schéma Complet Unique + RLS (Row Level Security) pour Supabase
+-- Compatible exécution directe dans le "SQL Editor" de Supabase
+-- Fichier Unique Consolidé (Tables, Relations, Matières, Seeds, RLS, Storage)
+-- ============================================================
 
--- 1. EXTENSIONS
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+-- ============================================================
+-- 1. NETTOYAGE DES ANCIENNES TABLES (Idempotent)
+-- ============================================================
+DROP TABLE IF EXISTS chat_messages CASCADE;
+DROP TABLE IF EXISTS logs CASCADE;
+DROP TABLE IF EXISTS favoris CASCADE;
+DROP TABLE IF EXISTS notifications CASCADE;
+DROP TABLE IF EXISTS messages_contact CASCADE;
+DROP TABLE IF EXISTS communiques CASCADE;
+DROP TABLE IF EXISTS fichiers_cours CASCADE;
+DROP TABLE IF EXISTS cours_classe CASCADE;
+DROP TABLE IF EXISTS cours CASCADE;
+DROP TABLE IF EXISTS edt_filiere CASCADE;
+DROP TABLE IF EXISTS edt_classe CASCADE;
+DROP TABLE IF EXISTS emplois_du_temps CASCADE;
+DROP TABLE IF EXISTS etudiants CASCADE;
+DROP TABLE IF EXISTS enseignant_matiere CASCADE;
+DROP TABLE IF EXISTS enseignant_filiere CASCADE;
+DROP TABLE IF EXISTS enseignants CASCADE;
+DROP TABLE IF EXISTS matiere_classe CASCADE;
+DROP TABLE IF EXISTS matieres CASCADE;
+DROP TABLE IF EXISTS classes CASCADE;
+DROP TABLE IF EXISTS filieres CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS roles CASCADE;
 
--- 2. TYPES ÉNUMÉRÉS
-DO $$ BEGIN
-    CREATE TYPE user_role AS ENUM ('etudiant', 'professeur', 'admin');
-EXCEPTION
-    WHEN duplicate_object THEN null;
-END $$;
+-- Nettoyage des tables d'anciens schémas (compatibilité totale)
+DROP TABLE IF EXISTS profiles CASCADE;
+DROP TABLE IF EXISTS favoris_cours CASCADE;
+DROP TABLE IF EXISTS messages CASCADE;
+DROP TABLE IF EXISTS contact_messages CASCADE;
+DROP TABLE IF EXISTS verification_codes CASCADE;
+DROP TABLE IF EXISTS audit_logs CASCADE;
 
-DO $$ BEGIN
-    CREATE TYPE contact_status AS ENUM ('nouveau', 'en_cours', 'traite', 'archive');
-EXCEPTION
-    WHEN duplicate_object THEN null;
-END $$;
+-- ============================================================
+-- 2. CRÉATION DES TABLES ET CONTRAINTES
+-- ============================================================
 
--- 3. TABLES DE STRUCTURE ACADÉMIQUE
+-- RÔLES (1: admin, 2: enseignant, 3: etudiant)
+CREATE TABLE roles (
+    id SERIAL PRIMARY KEY,
+    nom VARCHAR(30) NOT NULL UNIQUE
+);
+
+-- UTILISATEURS
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    role_id INT NOT NULL REFERENCES roles(id) ON DELETE RESTRICT,
+    login VARCHAR(50) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    nom VARCHAR(80) NOT NULL,
+    prenom VARCHAR(80) NOT NULL,
+    telephone VARCHAR(20),
+    email VARCHAR(150),
+    photo VARCHAR(255),
+    two_factor_enabled BOOLEAN DEFAULT FALSE,
+    two_factor_code VARCHAR(10),
+    two_factor_expires_at TIMESTAMP
+);
+
+-- FILIÈRES
+CREATE TABLE filieres (
+    id SERIAL PRIMARY KEY,
+    nom VARCHAR(100) NOT NULL,
+    description TEXT
+);
+
+-- CLASSES
+CREATE TABLE classes (
+    id SERIAL PRIMARY KEY,
+    filiere_id INT NOT NULL REFERENCES filieres(id) ON DELETE CASCADE,
+    nom VARCHAR(100) NOT NULL,
+    niveau VARCHAR(30)
+);
+
+-- MATIÈRES
+CREATE TABLE matieres (
+    id SERIAL PRIMARY KEY,
+    nom VARCHAR(100) NOT NULL
+);
+
+-- LIAISON MATIÈRE <-> CLASSE
+CREATE TABLE matiere_classe (
+    matiere_id INT NOT NULL REFERENCES matieres(id) ON DELETE CASCADE,
+    classe_id INT NOT NULL REFERENCES classes(id) ON DELETE CASCADE,
+    PRIMARY KEY (matiere_id, classe_id)
+);
+
+-- ENSEIGNANTS
+CREATE TABLE enseignants (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+    filiere_id INT REFERENCES filieres(id) ON DELETE SET NULL,
+    biographie TEXT
+);
+
+-- LIAISON ENSEIGNANT <-> FILIÈRE
+CREATE TABLE enseignant_filiere (
+    enseignant_id INT NOT NULL REFERENCES enseignants(id) ON DELETE CASCADE,
+    filiere_id INT NOT NULL REFERENCES filieres(id) ON DELETE CASCADE,
+    PRIMARY KEY (enseignant_id, filiere_id)
+);
+
+-- LIAISON ENSEIGNANT <-> MATIÈRE
+CREATE TABLE enseignant_matiere (
+    enseignant_id INT NOT NULL REFERENCES enseignants(id) ON DELETE CASCADE,
+    matiere_id INT NOT NULL REFERENCES matieres(id) ON DELETE CASCADE,
+    PRIMARY KEY (enseignant_id, matiere_id)
+);
+
+-- ÉTUDIANTS
+CREATE TABLE etudiants (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+    filiere_id INT NOT NULL REFERENCES filieres(id) ON DELETE CASCADE,
+    classe_id INT NOT NULL REFERENCES classes(id) ON DELETE CASCADE,
+    matricule VARCHAR(30) UNIQUE
+);
+
+-- EMPLOIS DU TEMPS
+CREATE TABLE emplois_du_temps (
+    id SERIAL PRIMARY KEY,
+    classe_id INT NOT NULL REFERENCES classes(id) ON DELETE CASCADE,
+    titre VARCHAR(150),
+    fichier_pdf VARCHAR(255),
+    fichier_image VARCHAR(255),
+    date_publication DATE,
+    actif BOOLEAN DEFAULT TRUE
+);
+
+-- LIAISON EDT <-> CLASSE
+CREATE TABLE edt_classe (
+    id SERIAL PRIMARY KEY,
+    edt_id INT NOT NULL REFERENCES emplois_du_temps(id) ON DELETE CASCADE,
+    classe_id INT NOT NULL REFERENCES classes(id) ON DELETE CASCADE
+);
+
+-- LIAISON EDT <-> FILIÈRE
+CREATE TABLE edt_filiere (
+    edt_id INT NOT NULL REFERENCES emplois_du_temps(id) ON DELETE CASCADE,
+    filiere_id INT NOT NULL REFERENCES filieres(id) ON DELETE CASCADE,
+    PRIMARY KEY (edt_id, filiere_id)
+);
+
+-- COURS
+CREATE TABLE cours (
+    id SERIAL PRIMARY KEY,
+    titre VARCHAR(150) NOT NULL,
+    description TEXT,
+    matiere_id INT NOT NULL REFERENCES matieres(id) ON DELETE CASCADE,
+    enseignant_id INT NOT NULL REFERENCES enseignants(id) ON DELETE CASCADE,
+    filiere_id INT NOT NULL REFERENCES filieres(id) ON DELETE CASCADE,
+    classe_id INT NOT NULL REFERENCES classes(id) ON DELETE CASCADE,
+    niveau VARCHAR(30),
+    lien_externe VARCHAR(255)
+);
+
+-- LIAISON COURS <-> CLASSE
+CREATE TABLE cours_classe (
+    cours_id INT NOT NULL REFERENCES cours(id) ON DELETE CASCADE,
+    classe_id INT NOT NULL REFERENCES classes(id) ON DELETE CASCADE,
+    PRIMARY KEY (cours_id, classe_id)
+);
+
+-- FICHIERS ATTACHÉS AUX COURS
+CREATE TABLE fichiers_cours (
+    id SERIAL PRIMARY KEY,
+    cours_id INT NOT NULL REFERENCES cours(id) ON DELETE CASCADE,
+    type_fichier VARCHAR(20) NOT NULL CHECK (type_fichier IN ('pdf', 'ppt', 'word', 'video', 'autre')),
+    nom_original VARCHAR(255) NOT NULL,
+    chemin_fichier VARCHAR(255) NOT NULL
+);
+
+-- COMMUNIQUÉS ACADÉMIQUES
+CREATE TABLE communiques (
+    id SERIAL PRIMARY KEY,
+    titre VARCHAR(150) NOT NULL,
+    contenu TEXT NOT NULL,
+    image VARCHAR(255),
+    fichier_pdf VARCHAR(255),
+    auteur_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    mis_en_avant BOOLEAN DEFAULT FALSE,
+    archive BOOLEAN DEFAULT FALSE,
+    date_publication DATE DEFAULT CURRENT_DATE
+);
+
+-- FORMULAIRE DE CONTACT & MESSAGES
+CREATE TABLE messages_contact (
+    id SERIAL PRIMARY KEY,
+    nom VARCHAR(80) NOT NULL,
+    prenom VARCHAR(80) NOT NULL,
+    telephone VARCHAR(20),
+    sujet VARCHAR(150) NOT NULL,
+    destinataire_type VARCHAR(30) NOT NULL CHECK (destinataire_type IN ('administration', 'direction', 'responsable_pedagogique', 'enseignant')),
+    destinataire_id INT REFERENCES users(id) ON DELETE SET NULL,
+    message TEXT NOT NULL,
+    reponse TEXT,
+    lu BOOLEAN DEFAULT FALSE,
+    date_envoi TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- NOTIFICATIONS
+CREATE TABLE notifications (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    type VARCHAR(30) NOT NULL CHECK (type IN ('cours', 'communique', 'emploi_du_temps', 'message', 'mot_de_passe', 'info')),
+    contenu VARCHAR(255) NOT NULL,
+    lien VARCHAR(255),
+    lu BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- FAVORIS COURS
+CREATE TABLE favoris (
+    id SERIAL PRIMARY KEY,
+    etudiant_id INT NOT NULL REFERENCES etudiants(id) ON DELETE CASCADE,
+    cours_id INT NOT NULL REFERENCES cours(id) ON DELETE CASCADE,
+    CONSTRAINT uniq_favori UNIQUE (etudiant_id, cours_id)
+);
+
+-- CHAT GÉNÉRAL (Salon d'échange communautaire persistant)
+CREATE TABLE chat_messages (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    message TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- LOGS D'ACTIVITÉ
+CREATE TABLE logs (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id) ON DELETE SET NULL,
+    action VARCHAR(50) NOT NULL,
+    description VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ============================================================
+-- 3. DONNÉES INITIALES (SEED DATA RÉEL)
+-- ============================================================
+
+-- Rôles
+INSERT INTO roles (id, nom) VALUES 
+(1, 'admin'),
+(2, 'enseignant'),
+(3, 'etudiant')
+ON CONFLICT (id) DO NOTHING;
 
 -- Filières
-CREATE TABLE IF NOT EXISTS public.filieres (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    code VARCHAR(20) UNIQUE NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    description TEXT,
-    cycle VARCHAR(50) DEFAULT 'Licence Professionnelle',
-    duration_years INT DEFAULT 3,
-    icon VARCHAR(50) DEFAULT 'book-open',
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
+INSERT INTO filieres (id, nom, description) VALUES
+(1, 'MPI', 'Mathématiques, Physique et Informatique — Formation fondamentale et modélisation scientifique.'),
+(2, 'SML', 'Sciences de la Mer et du Littoral — Océanographie physique, biologie marine et environnement.'),
+(3, 'MIASS', 'Mathématiques et Informatique Appliquées aux Sciences Sociales — Statistiques, analyse de données et économétrie.')
+ON CONFLICT (id) DO NOTHING;
 
 -- Classes
-CREATE TABLE IF NOT EXISTS public.classes (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    filiere_id UUID NOT NULL REFERENCES public.filieres(id) ON DELETE CASCADE,
-    code VARCHAR(30) UNIQUE NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    niveau VARCHAR(10) NOT NULL, -- L1, L2, L3, M1, M2
-    annee_scolaire VARCHAR(20) NOT NULL DEFAULT '2024-2025',
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
+INSERT INTO classes (id, filiere_id, nom, niveau) VALUES
+(1, 1, 'L1 MPI', 'Licence 1'),
+(2, 1, 'L2 MPI', 'Licence 2'),
+(3, 2, 'L1 SML', 'Licence 1'),
+(4, 2, 'L2 SML', 'Licence 2'),
+(5, 3, 'L1 MIASS', 'Licence 1'),
+(6, 3, 'L2 MIASS', 'Licence 2')
+ON CONFLICT (id) DO NOTHING;
 
--- Matières / Modules
-CREATE TABLE IF NOT EXISTS public.matieres (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    filiere_id UUID NOT NULL REFERENCES public.filieres(id) ON DELETE CASCADE,
-    code VARCHAR(20) NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    coefficient INT DEFAULT 2,
-    credits_ects INT DEFAULT 4,
-    description TEXT,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW(),
-    UNIQUE(filiere_id, code)
-);
+-- Matières
+INSERT INTO matieres (id, nom) VALUES
+(1, 'Programmation Orientée Objet Python'),
+(2, 'Base de données'),
+(3, 'Mécanique Générale'),
+(4, 'Analyse 3'),
+(5, 'Algèbre 3'),
+(6, 'Thermodynamique'),
+(7, 'Analyse Numérique Matricielle'),
+(8, 'Economie'),
+(9, 'Analyse 1'),
+(10, 'Algèbre 1'),
+(11, 'Programmation Python'),
+(12, 'Mécanique du point'),
+(13, 'Electricité'),
+(14, 'Economie Générale'),
+(15, 'Analyse 2'),
+(16, 'Algèbre 2'),
+(17, 'Magnétostatique et Régime Variable'),
+(18, 'Optique Géométrique'),
+(19, 'Langage C')
+ON CONFLICT (id) DO NOTHING;
 
--- 4. TABLE PROFILS UTILISATEURS (Liée à auth.users de Supabase)
-CREATE TABLE IF NOT EXISTS public.profiles (
-    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    username VARCHAR(100) UNIQUE,
-    full_name VARCHAR(255) NOT NULL,
-    role user_role NOT NULL DEFAULT 'etudiant',
-    phone VARCHAR(30),
-    matricule VARCHAR(50) UNIQUE,
-    filiere_id UUID REFERENCES public.filieres(id) ON DELETE SET NULL,
-    classe_id UUID REFERENCES public.classes(id) ON DELETE SET NULL,
-    bio TEXT,
-    specialite VARCHAR(255),
-    avatar_url TEXT,
-    is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
+-- Matières <-> Classes
+INSERT INTO matiere_classe (matiere_id, classe_id) VALUES
+(1, 2), (1, 4), (1, 6),
+(2, 2),
+(3, 2), (3, 4),
+(4, 2), (4, 4), (4, 6),
+(5, 2), (5, 4), (5, 6),
+(6, 2), (6, 4),
+(7, 2), (7, 4),
+(8, 6),
+(9, 1), (9, 3), (9, 5),
+(10, 1), (10, 3), (10, 5),
+(11, 1), (11, 3), (11, 5),
+(12, 1), (12, 3),
+(13, 1), (13, 3),
+(14, 5),
+(15, 1), (15, 3), (15, 5),
+(16, 1), (16, 3), (16, 5),
+(17, 1), (17, 3),
+(18, 1), (18, 3),
+(19, 1), (19, 3), (19, 5)
+ON CONFLICT DO NOTHING;
 
--- 5. COURS ET SUPPORTS PÉDAGOGIQUES
-CREATE TABLE IF NOT EXISTS public.cours (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    title VARCHAR(255) NOT NULL,
-    description TEXT,
-    matiere_id UUID NOT NULL REFERENCES public.matieres(id) ON DELETE CASCADE,
-    classe_id UUID NOT NULL REFERENCES public.classes(id) ON DELETE CASCADE,
-    professeur_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
-    file_url TEXT,
-    file_name VARCHAR(255),
-    file_type VARCHAR(50),
-    file_size_bytes BIGINT,
-    external_url TEXT,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
+-- UTILISATEURS DU SYSTÈME (Mot de passe par défaut: admin123 pour tous les comptes initiaux)
+-- Hash bcrypt vérifié: $2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im
+INSERT INTO users (id, role_id, login, password_hash, nom, prenom, telephone, email, photo, two_factor_enabled) VALUES
+(1, 1, 'admin', '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im', 'Samb', 'Pape Ibrahima', '756502017', 'admin@has.sn', 'uploads/profils/directeur.jpg', FALSE),
+(2, 2, 'papa', '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im', 'Samb', 'Pape Ibrahima', '756502017', 'papa.samb@has.sn', 'uploads/profs/photo_2026-07-20_16-18-59_2.jpg', FALSE),
+(3, 2, 'ibou', '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im', 'Anne', 'Ibrahima', '775518196', 'ibrahima.anne@has.sn', 'uploads/profs/ibrahima.jpg', FALSE),
+(4, 2, 'ndiogou', '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im', 'Ndiaye', 'Ndiogou', '772772709', 'ndiogou.ndiaye@has.sn', 'uploads/profs/photo_2026-07-20_16-46-11_2.jpg', FALSE),
+(5, 2, 'diopsow', '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im', 'Sow', 'El Hadji Ibrahima Diop', '776689777', 'diop.sow@has.sn', 'uploads/profs/photo_2026-07-20_16-29-37.jpg', FALSE),
+(6, 2, 'papethiam', '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im', 'Thiam', 'Pape', '787318427', 'pape.thiam@has.sn', NULL, FALSE),
+(7, 2, 'kalidou', '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im', 'Ba', 'Kalidou', '782718397', 'kalidou.ba@has.sn', NULL, FALSE),
+(8, 3, 'etudiant', '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im', 'Diop', 'Moussa', '771234567', 'moussa.diop@etudiant.has.sn', NULL, FALSE)
+ON CONFLICT (id) DO UPDATE SET password_hash = EXCLUDED.password_hash;
 
--- Favoris des cours (étudiants)
-CREATE TABLE IF NOT EXISTS public.favoris_cours (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
-    cours_id UUID NOT NULL REFERENCES public.cours(id) ON DELETE CASCADE,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    UNIQUE(user_id, cours_id)
-);
+-- Enseignants
+INSERT INTO enseignants (id, user_id, filiere_id, biographie) VALUES
+(1, 2, 3, 'Enseignant-chercheur en Mathématiques et Modélisation stochastique'),
+(2, 3, 3, 'Spécialiste en Génie Logiciel, Algorithmique et Programmation'),
+(3, 4, 1, 'Physicien, spécialiste en Mécanique Analytique et Thermodynamique'),
+(4, 5, 1, 'Enseignant en Physique Appliquée et Ondes'),
+(5, 6, 3, 'Ingénieur Informatique, architectures Web et Systèmes'),
+(6, 7, 1, 'Professeur de Sciences Physiques et Électromagnétisme')
+ON CONFLICT (id) DO NOTHING;
 
--- 6. EMPLOIS DU TEMPS
-CREATE TABLE IF NOT EXISTS public.emplois_du_temps (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    classe_id UUID NOT NULL REFERENCES public.classes(id) ON DELETE CASCADE,
-    title VARCHAR(255) NOT NULL,
-    semestre VARCHAR(20) NOT NULL DEFAULT 'Semestre 1',
-    annee_universitaire VARCHAR(20) NOT NULL DEFAULT '2024-2025',
-    file_url TEXT NOT NULL,
-    file_name VARCHAR(255),
-    is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
+-- Enseignant <-> Filières
+INSERT INTO enseignant_filiere (enseignant_id, filiere_id) VALUES
+(1, 1), (1, 2), (1, 3),
+(2, 1), (2, 2), (2, 3),
+(3, 1), (3, 2),
+(4, 1), (4, 2),
+(5, 1), (5, 2), (5, 3),
+(6, 1), (6, 2)
+ON CONFLICT DO NOTHING;
 
--- 7. COMMUNIQUÉS OFFICIELS
-CREATE TABLE IF NOT EXISTS public.communiques (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    title VARCHAR(255) NOT NULL,
-    content TEXT NOT NULL,
-    is_important BOOLEAN DEFAULT FALSE,
-    target_role user_role, -- NULL = tous les rôles
-    published_by UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-);
+-- Enseignant <-> Matières
+INSERT INTO enseignant_matiere (enseignant_id, matiere_id) VALUES
+(1, 4), (1, 5), (1, 7), (1, 9), (1, 10), (1, 15), (1, 16),
+(2, 1), (2, 2),
+(3, 6), (3, 12), (3, 17), (3, 18),
+(4, 3),
+(5, 11), (5, 19),
+(6, 12), (6, 13), (6, 17), (6, 18)
+ON CONFLICT DO NOTHING;
 
--- 8. MESSAGERIE INTERNE (Directe entre utilisateurs)
-CREATE TABLE IF NOT EXISTS public.messages (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    sender_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
-    receiver_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
-    subject VARCHAR(255) NOT NULL,
-    content TEXT NOT NULL,
-    is_read BOOLEAN DEFAULT FALSE,
-    parent_id UUID REFERENCES public.messages(id) ON DELETE SET NULL,
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
+-- Compte Étudiant de test
+INSERT INTO etudiants (id, user_id, filiere_id, classe_id, matricule) VALUES
+(1, 8, 1, 1, 'HAS-2026-001')
+ON CONFLICT (id) DO NOTHING;
 
--- 9. CHAT GÉNÉRAL (Salon partagé temps réel)
-CREATE TABLE IF NOT EXISTS public.chat_messages (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
-    content TEXT NOT NULL,
-    is_deleted BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
+-- Cours réels d'exemple
+INSERT INTO cours (id, titre, description, matiere_id, enseignant_id, filiere_id, classe_id, niveau, lien_externe) VALUES
+(1, 'Introduction à la Programmation Python & Algorithmique', 'Cours fondamental sur les bases du langage Python, les structures conditionnelles, boucles et fonctions.', 11, 2, 1, 1, 'Licence 1', NULL),
+(2, 'Analyse 1 : Suites numériques et Continuité', 'Définition des limites, théorèmes de comparaison, fonctions continues et dérivabilité.', 9, 1, 1, 1, 'Licence 1', NULL),
+(3, 'Mécanique du Point Matériel', 'Cinématique, lois de Newton, oscillateurs harmoniques et travail-énergie.', 12, 3, 1, 1, 'Licence 1', NULL),
+(4, 'Algèbre Linéaire 1 : Espaces Vectoriels', 'Sous-espaces vectoriels, familles génératrices, bases et dimensions.', 10, 1, 1, 1, 'Licence 1', NULL)
+ON CONFLICT (id) DO NOTHING;
 
--- 10. MESSAGES DE CONTACT (Formulaire public)
-CREATE TABLE IF NOT EXISTS public.contact_messages (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    full_name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL,
-    phone VARCHAR(30),
-    subject VARCHAR(255) NOT NULL,
-    message TEXT NOT NULL,
-    status contact_status DEFAULT 'nouveau',
-    ip_address VARCHAR(45),
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
+-- Fichiers attachés aux cours
+INSERT INTO fichiers_cours (id, cours_id, type_fichier, nom_original, chemin_fichier) VALUES
+(1, 1, 'pdf', 'Support_Python_Chapitre1.pdf', 'uploads/cours/Support_Python_Chapitre1.pdf'),
+(2, 2, 'pdf', 'TD_Analyse_1_Suites.pdf', 'uploads/cours/TD_Analyse_1_Suites.pdf'),
+(3, 3, 'pdf', 'Exercices_Mecanique_Point.pdf', 'uploads/cours/Exercices_Mecanique_Point.pdf')
+ON CONFLICT (id) DO NOTHING;
 
--- 11. CODES 2FA / VÉRIFICATION D'EMAIL (Inscription & Réinitialisation)
-CREATE TABLE IF NOT EXISTS public.verification_codes (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    email VARCHAR(255) NOT NULL,
-    code VARCHAR(10) NOT NULL,
-    type VARCHAR(30) DEFAULT 'signup_2fa', -- 'signup_2fa' ou 'password_reset'
-    expires_at TIMESTAMPTZ NOT NULL,
-    verified BOOLEAN DEFAULT FALSE,
-    attempts INT DEFAULT 0,
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
-CREATE INDEX IF NOT EXISTS idx_verification_email ON public.verification_codes(email, type);
+-- Emploi du temps actif pour L1 MPI
+INSERT INTO emplois_du_temps (id, classe_id, titre, fichier_pdf, date_publication, actif) VALUES
+(1, 1, 'Planning Semaine L1 MPI — Semestre 1', 'uploads/edt/edt_l1_mpi.pdf', CURRENT_DATE, TRUE)
+ON CONFLICT (id) DO NOTHING;
 
--- 12. JOURNAL D'AUDIT SÉCURITÉ
-CREATE TABLE IF NOT EXISTS public.audit_logs (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    user_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
-    action VARCHAR(100) NOT NULL,
-    details JSONB,
-    ip_address VARCHAR(45),
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
-CREATE INDEX IF NOT EXISTS idx_audit_created_at ON public.audit_logs(created_at DESC);
+-- Communiqués d'exemple réels
+INSERT INTO communiques (id, titre, contenu, auteur_id, mis_en_avant, archive, date_publication) VALUES
+(1, 'Bienvenue sur la plateforme académique HAS', 'Chers étudiants et professeurs, nous sommes ravis de vous accueillir sur votre nouvel espace numérique dédié aux cours, emplois du temps et communiqués officiels.', 1, TRUE, FALSE, CURRENT_DATE),
+(2, 'Début des sessions de renforcement intensif', 'Les cours de renforcement en Analyse, Algèbre et Programmation débuteront dès lundi prochain à 09h00 selon le planning affiché dans votre espace.', 1, TRUE, FALSE, CURRENT_DATE)
+ON CONFLICT (id) DO NOTHING;
 
--- ==============================================================================
--- TRIGGERS POUR LA GESTION DU CHAMP updated_at
--- ==============================================================================
-CREATE OR REPLACE FUNCTION public.handle_updated_at()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = NOW();
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+-- Messages d'exemple pour le Chat Général
+INSERT INTO chat_messages (id, user_id, message, created_at) VALUES
+(1, 1, 'Bienvenue à tous dans le salon général de la Halil Académie Scientifique ! Cet espace vous permet d''échanger librement.', NOW() - INTERVAL '2 hours'),
+(2, 2, 'Bonjour chers étudiants, n''hésitez pas si vous avez des questions sur les TD d''Algèbre.', NOW() - INTERVAL '1 hour'),
+(3, 8, 'Merci beaucoup Monsieur Samb ! La plateforme est très claire.', NOW() - INTERVAL '30 minutes')
+ON CONFLICT (id) DO NOTHING;
 
-CREATE TRIGGER update_filieres_updated_at BEFORE UPDATE ON public.filieres FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
-CREATE TRIGGER update_classes_updated_at BEFORE UPDATE ON public.classes FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
-CREATE TRIGGER update_matieres_updated_at BEFORE UPDATE ON public.matieres FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
-CREATE TRIGGER update_profiles_updated_at BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
-CREATE TRIGGER update_cours_updated_at BEFORE UPDATE ON public.cours FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
-CREATE TRIGGER update_emplois_du_temps_updated_at BEFORE UPDATE ON public.emplois_du_temps FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
-CREATE TRIGGER update_communiques_updated_at BEFORE UPDATE ON public.communiques FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
+-- Réalignement des séquences d'identifiants (auto-increment)
+SELECT setval(pg_get_serial_sequence('roles', 'id'), COALESCE((SELECT MAX(id) FROM roles), 1));
+SELECT setval(pg_get_serial_sequence('filieres', 'id'), COALESCE((SELECT MAX(id) FROM filieres), 1));
+SELECT setval(pg_get_serial_sequence('classes', 'id'), COALESCE((SELECT MAX(id) FROM classes), 1));
+SELECT setval(pg_get_serial_sequence('matieres', 'id'), COALESCE((SELECT MAX(id) FROM matieres), 1));
+SELECT setval(pg_get_serial_sequence('users', 'id'), COALESCE((SELECT MAX(id) FROM users), 1));
+SELECT setval(pg_get_serial_sequence('enseignants', 'id'), COALESCE((SELECT MAX(id) FROM enseignants), 1));
+SELECT setval(pg_get_serial_sequence('etudiants', 'id'), COALESCE((SELECT MAX(id) FROM etudiants), 1));
+SELECT setval(pg_get_serial_sequence('emplois_du_temps', 'id'), COALESCE((SELECT MAX(id) FROM emplois_du_temps), 1));
+SELECT setval(pg_get_serial_sequence('edt_classe', 'id'), COALESCE((SELECT MAX(id) FROM edt_classe), 1));
+SELECT setval(pg_get_serial_sequence('cours', 'id'), COALESCE((SELECT MAX(id) FROM cours), 1));
+SELECT setval(pg_get_serial_sequence('fichiers_cours', 'id'), COALESCE((SELECT MAX(id) FROM fichiers_cours), 1));
+SELECT setval(pg_get_serial_sequence('communiques', 'id'), COALESCE((SELECT MAX(id) FROM communiques), 1));
+SELECT setval(pg_get_serial_sequence('messages_contact', 'id'), COALESCE((SELECT MAX(id) FROM messages_contact), 1));
+SELECT setval(pg_get_serial_sequence('notifications', 'id'), COALESCE((SELECT MAX(id) FROM notifications), 1));
+SELECT setval(pg_get_serial_sequence('favoris', 'id'), COALESCE((SELECT MAX(id) FROM favoris), 1));
+SELECT setval(pg_get_serial_sequence('chat_messages', 'id'), COALESCE((SELECT MAX(id) FROM chat_messages), 1));
+SELECT setval(pg_get_serial_sequence('logs', 'id'), COALESCE((SELECT MAX(id) FROM logs), 1));
 
--- ==============================================================================
--- FONCTIONS D'AIDE RLS (SECURITY DEFINER)
--- ==============================================================================
--- Obtenir le rôle de l'utilisateur courant
-CREATE OR REPLACE FUNCTION public.get_current_user_role()
-RETURNS user_role AS $$
-    SELECT role FROM public.profiles WHERE id = auth.uid();
-$$ LANGUAGE sql SECURITY DEFINER STABLE;
+-- ============================================================
+-- 4. ACTIVATION DU ROW LEVEL SECURITY (RLS)
+-- ============================================================
 
--- Vérifier si l'utilisateur est admin
-CREATE OR REPLACE FUNCTION public.is_admin()
-RETURNS BOOLEAN AS $$
-    SELECT EXISTS (
-        SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin'
-    );
-$$ LANGUAGE sql SECURITY DEFINER STABLE;
+ALTER TABLE roles                ENABLE ROW LEVEL SECURITY;
+ALTER TABLE users                ENABLE ROW LEVEL SECURITY;
+ALTER TABLE filieres             ENABLE ROW LEVEL SECURITY;
+ALTER TABLE classes              ENABLE ROW LEVEL SECURITY;
+ALTER TABLE matieres             ENABLE ROW LEVEL SECURITY;
+ALTER TABLE matiere_classe       ENABLE ROW LEVEL SECURITY;
+ALTER TABLE enseignants          ENABLE ROW LEVEL SECURITY;
+ALTER TABLE enseignant_filiere   ENABLE ROW LEVEL SECURITY;
+ALTER TABLE enseignant_matiere   ENABLE ROW LEVEL SECURITY;
+ALTER TABLE etudiants            ENABLE ROW LEVEL SECURITY;
+ALTER TABLE emplois_du_temps     ENABLE ROW LEVEL SECURITY;
+ALTER TABLE edt_classe           ENABLE ROW LEVEL SECURITY;
+ALTER TABLE edt_filiere          ENABLE ROW LEVEL SECURITY;
+ALTER TABLE cours                ENABLE ROW LEVEL SECURITY;
+ALTER TABLE cours_classe         ENABLE ROW LEVEL SECURITY;
+ALTER TABLE fichiers_cours       ENABLE ROW LEVEL SECURITY;
+ALTER TABLE communiques          ENABLE ROW LEVEL SECURITY;
+ALTER TABLE messages_contact     ENABLE ROW LEVEL SECURITY;
+ALTER TABLE notifications        ENABLE ROW LEVEL SECURITY;
+ALTER TABLE favoris              ENABLE ROW LEVEL SECURITY;
+ALTER TABLE chat_messages        ENABLE ROW LEVEL SECURITY;
+ALTER TABLE logs                 ENABLE ROW LEVEL SECURITY;
 
--- Vérifier si l'utilisateur est professeur
-CREATE OR REPLACE FUNCTION public.is_professeur()
-RETURNS BOOLEAN AS $$
-    SELECT EXISTS (
-        SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'professeur'
-    );
-$$ LANGUAGE sql SECURITY DEFINER STABLE;
+-- ============================================================
+-- 5. POLITIQUES RLS (Supabase service_role, anon & authenticated)
+-- ============================================================
 
--- ==============================================================================
--- ROW LEVEL SECURITY (RLS) POLICIES
--- ==============================================================================
+-- RÔLE SERVICE_ROLE : Accès total
+CREATE POLICY "service_role_all_roles"              ON roles              FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "service_role_all_users"              ON users              FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "service_role_all_filieres"          ON filieres          FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "service_role_all_classes"           ON classes           FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "service_role_all_matieres"          ON matieres          FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "service_role_all_matiere_classe"    ON matiere_classe    FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "service_role_all_enseignants"       ON enseignants       FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "service_role_all_enseignant_filiere" ON enseignant_filiere FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "service_role_all_enseignant_matiere" ON enseignant_matiere FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "service_role_all_etudiants"         ON etudiants         FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "service_role_all_emplois_du_temps"  ON emplois_du_temps  FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "service_role_all_edt_classe"        ON edt_classe        FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "service_role_all_edt_filiere"       ON edt_filiere       FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "service_role_all_cours"             ON cours             FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "service_role_all_cours_classe"      ON cours_classe      FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "service_role_all_fichiers_cours"    ON fichiers_cours    FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "service_role_all_communiques"       ON communiques       FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "service_role_all_messages_contact"  ON messages_contact  FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "service_role_all_notifications"     ON notifications     FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "service_role_all_favoris"           ON favoris           FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "service_role_all_chat_messages"     ON chat_messages     FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "service_role_all_logs"              ON logs              FOR ALL TO service_role USING (true) WITH CHECK (true);
 
--- Activation RLS sur TOUTES les tables
-ALTER TABLE public.filieres ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.classes ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.matieres ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.cours ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.favoris_cours ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.emplois_du_temps ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.communiques ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.messages ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.chat_messages ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.contact_messages ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.verification_codes ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.audit_logs ENABLE ROW LEVEL SECURITY;
+-- LECTURE PUBLIQUE POUR LA NAVIGATION
+CREATE POLICY "public_read_roles"              ON roles              FOR SELECT USING (true);
+CREATE POLICY "public_read_filieres"          ON filieres          FOR SELECT USING (true);
+CREATE POLICY "public_read_classes"           ON classes           FOR SELECT USING (true);
+CREATE POLICY "public_read_matieres"          ON matieres          FOR SELECT USING (true);
+CREATE POLICY "public_read_matiere_classe"    ON matiere_classe    FOR SELECT USING (true);
+CREATE POLICY "public_read_enseignants"       ON enseignants       FOR SELECT USING (true);
+CREATE POLICY "public_read_enseignant_filiere" ON enseignant_filiere FOR SELECT USING (true);
+CREATE POLICY "public_read_enseignant_matiere" ON enseignant_matiere FOR SELECT USING (true);
+CREATE POLICY "public_read_communiques"       ON communiques       FOR SELECT USING (archive = FALSE);
+CREATE POLICY "public_read_cours"             ON cours             FOR SELECT USING (true);
+CREATE POLICY "public_read_cours_classe"      ON cours_classe      FOR SELECT USING (true);
+CREATE POLICY "public_read_fichiers_cours"    ON fichiers_cours    FOR SELECT USING (true);
+CREATE POLICY "public_read_emplois_du_temps"  ON emplois_du_temps  FOR SELECT USING (actif = TRUE);
+CREATE POLICY "public_read_edt_classe"        ON edt_classe        FOR SELECT USING (true);
+CREATE POLICY "public_read_edt_filiere"       ON edt_filiere       FOR SELECT USING (true);
 
--- 1. POLICIES POUR FILIERES, CLASSES, MATIERES
--- Lecture ouverte à tous (y compris public pour la page d'accueil)
-CREATE POLICY "Filieres consultables par tous" ON public.filieres FOR SELECT USING (true);
-CREATE POLICY "Classes consultables par utilisateurs authentifies" ON public.classes FOR SELECT TO authenticated USING (true);
-CREATE POLICY "Matieres consultables par utilisateurs authentifies" ON public.matieres FOR SELECT TO authenticated USING (true);
--- Modification réservée aux admins
-CREATE POLICY "Admins modifient filieres" ON public.filieres FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
-CREATE POLICY "Admins modifient classes" ON public.classes FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
-CREATE POLICY "Admins modifient matieres" ON public.matieres FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
+-- UTILISATEURS & AUTH
+CREATE POLICY "public_read_users"             ON users             FOR SELECT USING (true);
+CREATE POLICY "public_update_users"           ON users             FOR UPDATE USING (true) WITH CHECK (true);
 
--- 2. POLICIES POUR PROFILES
--- Lecture : les utilisateurs authentifiés peuvent lire les profils de base (pour le trombinoscope, le chat, la messagerie)
-CREATE POLICY "Profils lisibles par les utilisateurs authentifies" ON public.profiles FOR SELECT TO authenticated USING (true);
--- Modification : un utilisateur peut mettre à jour ses propres infos personnelles (téléphone, bio, avatar)
-CREATE POLICY "Mise a jour de son propre profil" ON public.profiles FOR UPDATE TO authenticated USING (auth.uid() = id) WITH CHECK (
-    auth.uid() = id AND 
-    role = (SELECT role FROM public.profiles WHERE id = auth.uid()) -- empêche l'auto-promotion de rôle
-);
--- Seul l'admin peut insérer, supprimer ou modifier les rôles et affectations de classe
-CREATE POLICY "Admins ont tout pouvoir sur profiles" ON public.profiles FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
+-- ÉTUDIANTS
+CREATE POLICY "public_read_etudiants"         ON etudiants         FOR SELECT USING (true);
 
--- 3. POLICIES POUR COURS
--- Lecture :
--- - Les étudiants voient les cours de leur classe
--- - Les professeurs voient tous les cours ou leurs cours
--- - L'admin voit tout
-CREATE POLICY "Lecture des cours filtree" ON public.cours FOR SELECT TO authenticated USING (
-    public.is_admin() OR
-    public.is_professeur() OR
-    classe_id = (SELECT classe_id FROM public.profiles WHERE id = auth.uid())
-);
--- Insertion : réservée aux professeurs et admins
-CREATE POLICY "Professeurs publient leurs cours" ON public.cours FOR INSERT TO authenticated WITH CHECK (
-    (public.is_professeur() AND professeur_id = auth.uid()) OR public.is_admin()
-);
--- Modification / Suppression : un professeur ne peut modifier/supprimer QUE ses propres cours
-CREATE POLICY "Professeurs gerent leurs propres cours" ON public.cours FOR UPDATE TO authenticated USING (
-    (public.is_professeur() AND professeur_id = auth.uid()) OR public.is_admin()
-) WITH CHECK (
-    (public.is_professeur() AND professeur_id = auth.uid()) OR public.is_admin()
-);
-CREATE POLICY "Professeurs suppriment leurs propres cours" ON public.cours FOR DELETE TO authenticated USING (
-    (public.is_professeur() AND professeur_id = auth.uid()) OR public.is_admin()
-);
+-- CONTACT
+CREATE POLICY "anon_insert_messages_contact"  ON messages_contact  FOR INSERT WITH CHECK (true);
+CREATE POLICY "admin_read_messages_contact"   ON messages_contact  FOR SELECT USING (true);
 
--- 4. POLICIES POUR FAVORIS_COURS
-CREATE POLICY "Gestion de ses propres favoris" ON public.favoris_cours FOR ALL TO authenticated USING (
-    user_id = auth.uid()
-) WITH CHECK (
-    user_id = auth.uid()
-);
+-- NOTIFICATIONS & FAVORIS
+CREATE POLICY "public_all_notifications"      ON notifications     FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "public_all_favoris"            ON favoris           FOR ALL USING (true) WITH CHECK (true);
 
--- 5. POLICIES POUR EMPLOIS DU TEMPS
--- Lecture : les étudiants voient l'EDT de leur classe, les professeurs et admins voient tout
-CREATE POLICY "Lecture des emplois du temps" ON public.emplois_du_temps FOR SELECT TO authenticated USING (
-    public.is_admin() OR
-    public.is_professeur() OR
-    classe_id = (SELECT classe_id FROM public.profiles WHERE id = auth.uid())
-);
--- Écriture : réservée à l'admin
-CREATE POLICY "Admins gèrent emplois du temps" ON public.emplois_du_temps FOR ALL TO authenticated USING (
-    public.is_admin()
-) WITH CHECK (
-    public.is_admin()
-);
+-- CHAT GÉNÉRAL (Accessible à tous les utilisateurs connectés)
+CREATE POLICY "public_read_chat_messages"     ON chat_messages     FOR SELECT USING (true);
+CREATE POLICY "public_insert_chat_messages"   ON chat_messages     FOR INSERT WITH CHECK (true);
+CREATE POLICY "public_delete_chat_messages"   ON chat_messages     FOR DELETE USING (true);
 
--- 6. POLICIES POUR COMMUNIQUÉS
-CREATE POLICY "Lecture des communiques par tous les connectes" ON public.communiques FOR SELECT TO authenticated USING (true);
-CREATE POLICY "Admins gèrent communiques" ON public.communiques FOR ALL TO authenticated USING (
-    public.is_admin()
-) WITH CHECK (
-    public.is_admin()
-);
+-- LOGS
+CREATE POLICY "public_all_logs"               ON logs              FOR ALL USING (true) WITH CHECK (true);
 
--- 7. POLICIES POUR MESSAGES (Messagerie interne)
-CREATE POLICY "Lecture de ses messages" ON public.messages FOR SELECT TO authenticated USING (
-    sender_id = auth.uid() OR receiver_id = auth.uid()
-);
-CREATE POLICY "Envoi de messages" ON public.messages FOR INSERT TO authenticated WITH CHECK (
-    sender_id = auth.uid()
-);
-CREATE POLICY "Marquer message comme lu" ON public.messages FOR UPDATE TO authenticated USING (
-    receiver_id = auth.uid()
-) WITH CHECK (
-    receiver_id = auth.uid()
-);
+-- ============================================================
+-- 6. CONFIGURATION DU STOCKAGE SUPABASE (STORAGE BUCKETS)
+-- ============================================================
+INSERT INTO storage.buckets (id, name, public) VALUES 
+('cours-supports', 'cours-supports', true),
+('emplois-du-temps', 'emplois-du-temps', true),
+('avatars', 'avatars', true),
+('communiques', 'communiques', true),
+('public-gallery', 'public-gallery', true)
+ON CONFLICT (id) DO NOTHING;
 
--- 8. POLICIES POUR CHAT GÉNÉRAL
-CREATE POLICY "Lecture du chat public" ON public.chat_messages FOR SELECT TO authenticated USING (
-    is_deleted = false OR public.is_admin()
-);
-CREATE POLICY "Envoi de message dans le chat" ON public.chat_messages FOR INSERT TO authenticated WITH CHECK (
-    user_id = auth.uid()
-);
-CREATE POLICY "Moderation du chat par admin" ON public.chat_messages FOR UPDATE TO authenticated USING (
-    public.is_admin() OR user_id = auth.uid()
-);
-CREATE POLICY "Suppression du chat par admin" ON public.chat_messages FOR DELETE TO authenticated USING (
-    public.is_admin()
-);
-
--- 9. POLICIES POUR CONTACT_MESSAGES
--- Le formulaire public peut insérer
-CREATE POLICY "Public insere message contact" ON public.contact_messages FOR INSERT TO anon, authenticated WITH CHECK (true);
--- Seul l'admin peut lire et modifier le statut
-CREATE POLICY "Admin consulte messages contact" ON public.contact_messages FOR SELECT TO authenticated USING (public.is_admin());
-CREATE POLICY "Admin met a jour contact" ON public.contact_messages FOR UPDATE TO authenticated USING (public.is_admin());
-
--- 10. POLICIES POUR AUDIT_LOGS
-CREATE POLICY "Insertion audit par le système" ON public.audit_logs FOR INSERT TO authenticated WITH CHECK (true);
-CREATE POLICY "Lecture audit par admin uniquement" ON public.audit_logs FOR SELECT TO authenticated USING (public.is_admin());
-
--- 11. POLICIES POUR VERIFICATION_CODES
--- Géré via Service Role côté Next.js serveur (pas d'accès direct côté client anon)
-CREATE POLICY "Verification codes via service role" ON public.verification_codes FOR ALL TO service_role USING (true) WITH CHECK (true);
-
--- ==============================================================================
--- REALTIME
--- ==============================================================================
+-- Politiques RLS Storage
 DO $$ BEGIN
-    ALTER PUBLICATION supabase_realtime ADD TABLE public.chat_messages;
-EXCEPTION
-    WHEN duplicate_object THEN null;
+    DROP POLICY IF EXISTS "Public Access Supports" ON storage.objects;
+    DROP POLICY IF EXISTS "Auth Upload Supports" ON storage.objects;
+    DROP POLICY IF EXISTS "Public Access EDT" ON storage.objects;
+    DROP POLICY IF EXISTS "Auth Upload EDT" ON storage.objects;
+    DROP POLICY IF EXISTS "Public Access Avatars" ON storage.objects;
+    DROP POLICY IF EXISTS "Auth Upload Avatars" ON storage.objects;
+    DROP POLICY IF EXISTS "Public Access Communiques" ON storage.objects;
+    DROP POLICY IF EXISTS "Public Access Gallery" ON storage.objects;
+EXCEPTION WHEN OTHERS THEN NULL;
 END $$;
 
--- ==============================================================================
--- DONNÉES INITIALES (SEED DE QUALITÉ RÉELLE — HALIL ACADÉMIE SCIENTIFIQUE)
--- ==============================================================================
+CREATE POLICY "Public Access Supports" ON storage.objects FOR SELECT USING (bucket_id = 'cours-supports');
+CREATE POLICY "Auth Upload Supports" ON storage.objects FOR INSERT TO authenticated, service_role WITH CHECK (bucket_id = 'cours-supports');
+CREATE POLICY "Public Access EDT" ON storage.objects FOR SELECT USING (bucket_id = 'emplois-du-temps');
+CREATE POLICY "Auth Upload EDT" ON storage.objects FOR INSERT TO authenticated, service_role WITH CHECK (bucket_id = 'emplois-du-temps');
+CREATE POLICY "Public Access Avatars" ON storage.objects FOR SELECT USING (bucket_id = 'avatars');
+CREATE POLICY "Auth Upload Avatars" ON storage.objects FOR INSERT TO authenticated, service_role WITH CHECK (bucket_id = 'avatars');
+CREATE POLICY "Public Access Communiques" ON storage.objects FOR SELECT USING (bucket_id = 'communiques');
+CREATE POLICY "Public Access Gallery" ON storage.objects FOR SELECT USING (bucket_id = 'public-gallery');
 
--- 1. FILIÈRES OFFICIELLES HAS
-INSERT INTO public.filieres (id, code, name, description, cycle, duration_years, icon) VALUES
-('11111111-1111-1111-1111-111111111111', 'ISN', 'Informatique & Systèmes Numériques', 'Formation d''excellence axée sur le génie logiciel, la cybersécurité, les réseaux d''entreprise et le cloud computing.', 'Licence Professionnelle', 3, 'cpu'),
-('22222222-2222-2222-2222-222222222222', 'GCB', 'Génie Civil & Bâtiment', 'Conception des structures modernes, résistance des matériaux, hydraulique urbaine et conduite de chantiers durables.', 'Licence Professionnelle', 3, 'building'),
-('33333333-3333-3333-3333-333333333333', 'EER', 'Électromécanique & Énergies Renouvelables', 'Automatismes industriels, maintenance des systèmes énergétiques, solaire photovoltaïque et réseaux intelligents.', 'Licence Professionnelle', 3, 'zap'),
-('44444444-4444-4444-4444-444444444444', 'SEG', 'Sciences Économiques & Gestion d''Entreprise', 'Comptabilité financière, audit, management stratégique et gestion de projets innovants.', 'Licence Professionnelle', 3, 'trending-up')
-ON CONFLICT (code) DO NOTHING;
-
--- 2. CLASSES OFFICIELLES
-INSERT INTO public.classes (id, filiere_id, code, name, niveau, annee_scolaire) VALUES
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '11111111-1111-1111-1111-111111111111', 'L1-ISN', 'Licence 1 Informatique & Systèmes Numériques', 'L1', '2024-2025'),
-('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', '11111111-1111-1111-1111-111111111111', 'L2-ISN', 'Licence 2 Informatique & Systèmes Numériques', 'L2', '2024-2025'),
-('cccccccc-cccc-cccc-cccc-cccccccccccc', '11111111-1111-1111-1111-111111111111', 'L3-ISN', 'Licence 3 Informatique & Systèmes Numériques', 'L3', '2024-2025'),
-('dddddddd-dddd-dddd-dddd-dddddddddddd', '22222222-2222-2222-2222-222222222222', 'L2-GCB', 'Licence 2 Génie Civil & Bâtiment', 'L2', '2024-2025'),
-('eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee', '33333333-3333-3333-3333-333333333333', 'L2-EER', 'Licence 2 Électromécanique & Énergies', 'L2', '2024-2025'),
-('ffffffff-ffff-ffff-ffff-ffffffffffff', '44444444-4444-4444-4444-444444444444', 'L2-SEG', 'Licence 2 Sciences Économiques & Gestion', 'L2', '2024-2025')
-ON CONFLICT (code) DO NOTHING;
-
--- 3. MATIÈRES OFFICIELLES
-INSERT INTO public.matieres (id, filiere_id, code, name, coefficient, credits_ects, description) VALUES
-('m1111111-1111-1111-1111-111111111111', '11111111-1111-1111-1111-111111111111', 'ALG-201', 'Algorithmique Avancée & Structures de Données', 3, 5, 'Arbres, graphes, complexité algorithmique et programmation dynamique.'),
-('m2222222-2222-2222-2222-222222222222', '11111111-1111-1111-1111-111111111111', 'BDD-202', 'Bases de Données Relationnelles & SQL', 3, 5, 'Modèle relationnel, formes normales, optimisation de requêtes SQL et triggers PostgreSQL.'),
-('m3333333-3333-3333-3333-333333333333', '11111111-1111-1111-1111-111111111111', 'RES-203', 'Architectures Réseaux & Protocoles IP', 2, 4, 'Modèle OSI, routage dynamique, VLANs et principes de sécurité périmétrique.'),
-('m4444444-4444-4444-4444-444444444444', '11111111-1111-1111-1111-111111111111', 'WEB-204', 'Développement Web Fullstack & Architectures Cloud', 3, 5, 'React, TypeScript, APIs RESTful et conteneurisation.'),
-('m5555555-5555-5555-5555-555555555555', '22222222-2222-2222-2222-222222222222', 'RDM-201', 'Résistance des Matériaux & Structures', 4, 6, 'Calcul des contraintes, déformations des poutres et modélisation aux éléments finis.')
-ON CONFLICT (filiere_id, code) DO NOTHING;
-
--- 4. COMMUNIQUÉS OFFICIELS
-INSERT INTO public.communiques (id, title, content, is_important, created_at) VALUES
-('c1111111-1111-1111-1111-111111111111', 'Rentrée Universitaire 2024-2025 : Accueil des promotions', 'La Direction Générale de Halil Académie Scientifique a le plaisir d''accueillir les nouveaux étudiants ainsi que les promotions montantes. Les séances d''intégration et la présentation du règlement intérieur se tiendront dans le grand amphithéâtre.', true, NOW() - INTERVAL '3 days'),
-('c2222222-2222-2222-2222-222222222222', 'Publication des plannings de travaux pratiques (Laboratoires)', 'Les emplois du temps détaillés pour l''accès aux salles de travaux pratiques et aux laboratoires de mesures physiques sont désormais consultables sur votre espace étudiant. La présence aux séances de TP est strictement obligatoire.', false, NOW() - INTERVAL '1 day'),
-('c3333333-3333-3333-3333-333333333333', 'Conférence Annuelle : L''Ingénierie au service de l''innovation', 'Halil Académie Scientifique organise sa conférence annuelle réunissant des experts industriels et des chercheurs de premier plan. Inscription ouverte auprès du secrétariat académique.', true, NOW() - INTERVAL '5 hours');
+-- ============================================================
+-- 7. TEMPS RÉEL (SUPABASE REALTIME)
+-- ============================================================
+DO $$ BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE chat_messages;
+EXCEPTION
+    WHEN duplicate_object THEN null;
+    WHEN OTHERS THEN null;
+END $$;

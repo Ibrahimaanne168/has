@@ -79,7 +79,8 @@ export default function ProfesseurMessagesPage() {
     >
       <div className="space-y-6">
         <div>
-          <h1 className="font-serif text-2xl font-bold text-[#0f2744]">Messagerie Académique</h1>
+          <p className="text-[11px] font-bold tracking-wider uppercase text-[#e0521c] mb-1">Messagerie</p>
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] leading-snug">Messagerie Académique</h1>
           <p className="text-xs text-slate-500 mt-1">Questions et demandes de vos étudiants</p>
         </div>
 
@@ -112,7 +113,7 @@ export default function ProfesseurMessagesPage() {
                 <div
                   key={msg.id}
                   onClick={() => setSelectedMessage(msg)}
-                  className={`p-4 rounded-xl border cursor-pointer transition-all ${selectedMessage?.id === msg.id ? "border-[#0f2744] bg-[#0f2744]/5" : "border-slate-200 bg-white hover:border-slate-300"} ${!msg.is_read && tab === "inbox" ? "border-l-4 border-l-[#e0521c]" : ""}`}
+                  className={`p-4 rounded-xl border cursor-pointer transition-all ${selectedMessage?.id === msg.id ? "border-[#0f2744] bg-[#0f2744]/5" : "border-slate-200/90 bg-white hover:border-slate-300"} ${!msg.is_read && tab === "inbox" ? "border-l-4 border-l-[#e0521c]" : ""}`}
                 >
                   <div className="flex items-center justify-between gap-2 mb-1">
                     <span className="text-xs font-bold text-slate-900 truncate">{name || "—"}</span>
@@ -131,7 +132,7 @@ export default function ProfesseurMessagesPage() {
           </div>
 
           {/* Détail */}
-          <div className="lg:col-span-7 bg-white rounded-xl border border-slate-200 p-6 min-h-[400px] shadow-xs">
+          <div className="lg:col-span-7 bg-white rounded-xl border border-slate-200/90 p-6 min-h-[400px] shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)]">
             {selectedMessage ? (
               <div className="space-y-5">
                 <div className="border-b border-slate-100 pb-4">
@@ -151,7 +152,7 @@ export default function ProfesseurMessagesPage() {
                 )}
 
                 {replyOpen && (
-                  <div className="border border-slate-200 rounded-xl p-4 space-y-3 bg-slate-50/50">
+                  <div className="border border-slate-200/90 rounded-xl p-4 space-y-3 bg-slate-50/50">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-slate-700">Votre réponse</span>
                       <button onClick={() => setReplyOpen(false)} className="text-slate-400 hover:text-slate-700">
@@ -168,7 +169,7 @@ export default function ProfesseurMessagesPage() {
                           value={replyContent}
                           onChange={(e) => setReplyContent(e.target.value)}
                           placeholder="Rédigez votre réponse académique..."
-                          className="block w-full rounded-md border border-slate-300 bg-white p-3 text-sm text-slate-900 focus:border-[#0f2744] focus:ring-1 focus:ring-[#0f2744]"
+                          className="block w-full rounded-lg border border-slate-200/90 bg-white p-3 text-sm text-slate-900 focus:border-[#0f2744] focus:ring-1 focus:ring-[#0f2744]"
                         />
                         <Button type="submit" variant="accent" size="sm" rightIcon={<Send className="w-3.5 h-3.5" />}>
                           Envoyer la réponse

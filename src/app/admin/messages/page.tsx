@@ -72,7 +72,8 @@ export default function AdminMessagesPage() {
     <DashboardLayout role="admin" userName="Administration HAS" userEmail="direction@halil-academie.com" matriculeOrTitle="Directeur Général">
       <div className="space-y-6">
         <div>
-          <h1 className="font-serif text-2xl font-bold text-[#0f2744]">Messagerie & Formulaires de Contact</h1>
+          <p className="text-[11px] font-bold tracking-wider uppercase text-[#e0521c] mb-1">Administration</p>
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] leading-snug">Messagerie & Formulaires de Contact</h1>
           <p className="text-xs text-slate-500 mt-1">
             Demandes reçues via le formulaire public — {messages.filter((m) => m.status === "nouveau").length} nouveau(x) message(s)
           </p>
@@ -82,7 +83,7 @@ export default function AdminMessagesPage() {
         <div className="flex flex-wrap gap-2">
           {[{ key: "all", label: `Tous (${messages.length})` }, { key: "nouveau", label: `Nouveaux (${messages.filter((m) => m.status === "nouveau").length})` }, { key: "en_cours", label: "En traitement" }, { key: "traite", label: "Traités" }].map((f) => (
             <button key={f.key} onClick={() => setStatusFilter(f.key)}
-              className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg border transition-colors ${statusFilter === f.key ? "bg-[#0f2744] text-white border-[#0f2744]" : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"}`}>
+              className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg border transition-colors ${statusFilter === f.key ? "bg-[#0f2744] text-white border-[#0f2744]" : "bg-white text-slate-600 border-slate-200/90 hover:bg-slate-50"}`}>
               {f.label}
             </button>
           ))}
@@ -96,7 +97,7 @@ export default function AdminMessagesPage() {
               const statusInfo = statusLabel[msg.status];
               return (
                 <div key={msg.id} onClick={() => { setSelectedMsg(msg); setReplyOpen(false); setReplySent(false); }}
-                  className={`p-4 rounded-xl border cursor-pointer transition-all ${selectedMsg?.id === msg.id ? "border-[#0f2744] bg-[#0f2744]/5" : "border-slate-200 bg-white hover:border-slate-300"} ${msg.status === "nouveau" ? "border-l-4 border-l-[#e0521c]" : ""}`}>
+                  className={`p-4 rounded-xl border cursor-pointer transition-all ${selectedMsg?.id === msg.id ? "border-[#0f2744] bg-[#0f2744]/5" : "border-slate-200/90 bg-white hover:border-slate-300"} ${msg.status === "nouveau" ? "border-l-4 border-l-[#e0521c]" : ""}`}>
                   <div className="flex items-center justify-between gap-2 mb-1.5">
                     <span className="text-xs font-bold text-slate-900">{msg.full_name}</span>
                     <Badge variant={statusInfo.variant} size="sm">{statusInfo.label}</Badge>
@@ -110,7 +111,7 @@ export default function AdminMessagesPage() {
           </div>
 
           {/* Détail */}
-          <div className="lg:col-span-7 bg-white rounded-xl border border-slate-200 p-6 min-h-[460px] shadow-xs flex flex-col">
+          <div className="lg:col-span-7 bg-white rounded-xl border border-slate-200/90 p-6 min-h-[460px] shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] flex flex-col">
             {selectedMsg ? (
               <div className="space-y-5 flex-1 flex flex-col">
                 {/* En-tête du message */}
@@ -165,7 +166,7 @@ export default function AdminMessagesPage() {
                   </div>
 
                   {replyOpen && (
-                    <div className="border border-slate-200 rounded-xl p-4 space-y-3 bg-slate-50/50">
+                    <div className="border border-slate-200/90 rounded-xl p-4 space-y-3 bg-slate-50/50">
                       <div className="text-xs font-semibold text-slate-700">Réponse à : {selectedMsg.email}</div>
                       {replySent ? (
                         <div className="flex items-center gap-2 text-emerald-700 text-sm"><CheckCircle2 className="w-4 h-4" /> Réponse envoyée via Brevo !</div>
@@ -173,10 +174,10 @@ export default function AdminMessagesPage() {
                         <form onSubmit={handleSendReply} className="space-y-3">
                           <textarea required rows={4} value={replyContent} onChange={(e) => setReplyContent(e.target.value)}
                             placeholder="Rédigez votre réponse officielle..."
-                            className="block w-full rounded-md border border-slate-300 bg-white p-3 text-sm text-slate-900 focus:border-[#0f2744] focus:ring-1 focus:ring-[#0f2744]" />
-                          <div className="flex gap-2">
-                            <Button type="submit" variant="accent" size="sm" rightIcon={<Send className="w-3.5 h-3.5" />}>Envoyer</Button>
-                            <Button type="button" variant="ghost" size="sm" onClick={() => setReplyOpen(false)}>Annuler</Button>
+                            className="block w-full rounded-lg border border-slate-200/90 bg-white p-3 text-sm text-slate-900 focus:border-[#0f2744] focus:ring-1 focus:ring-[#0f2744]" />
+                          <div className="border-t border-slate-100 pt-3 flex justify-end gap-2">
+                            <Button type="button" variant="ghost" size="sm" className="rounded-lg text-xs" onClick={() => setReplyOpen(false)}>Annuler</Button>
+                            <Button type="submit" variant="accent" size="sm" className="rounded-lg text-xs" rightIcon={<Send className="w-3.5 h-3.5" />}>Envoyer</Button>
                           </div>
                         </form>
                       )}

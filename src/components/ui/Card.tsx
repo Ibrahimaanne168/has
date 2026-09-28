@@ -9,8 +9,10 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 export function Card({ children, className = "", hoverEffect = false, ...props }: CardProps) {
   return (
     <div
-      className={`bg-white rounded-lg border border-slate-200/80 shadow-xs ${
-        hoverEffect ? "transition-all duration-200 hover:shadow-md hover:border-slate-300" : ""
+      className={`bg-white rounded-xl border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] ${
+        hoverEffect
+          ? "transition-all duration-200 hover:shadow-md hover:border-slate-300/90 hover:-translate-y-0.5"
+          : ""
       } ${className}`}
       {...props}
     >
@@ -27,7 +29,7 @@ export function CardHeader({
   className?: string;
 }) {
   return (
-    <div className={`p-5 sm:p-6 border-b border-slate-100 ${className}`}>
+    <div className={`p-5 sm:p-6 border-b border-slate-100/90 ${className}`}>
       {children}
     </div>
   );
@@ -51,7 +53,7 @@ export function CardFooter({
   className?: string;
 }) {
   return (
-    <div className={`p-4 sm:p-6 bg-slate-50/50 border-t border-slate-100 rounded-b-lg ${className}`}>
+    <div className={`p-4 sm:p-5 bg-slate-50/60 border-t border-slate-100/90 rounded-b-xl ${className}`}>
       {children}
     </div>
   );

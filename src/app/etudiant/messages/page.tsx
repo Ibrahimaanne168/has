@@ -157,7 +157,8 @@ function EtudiantMessagesContent() {
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="font-serif text-2xl font-bold text-[#0f2744]">
+            <p className="text-[11px] font-bold tracking-wider uppercase text-[#e0521c] mb-1">Messagerie HAS</p>
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] leading-snug">
               Messagerie Académique Interne
             </h1>
             <p className="text-xs text-slate-500 mt-1">
@@ -227,8 +228,8 @@ function EtudiantMessagesContent() {
                   onClick={() => setSelectedMessage(msg)}
                   className={`p-4 rounded-xl border cursor-pointer transition-all ${
                     isSelected
-                      ? "border-[#0f2744] bg-[#0f2744]/5 shadow-xs"
-                      : "border-slate-200 bg-white hover:border-slate-300"
+                      ? "border-[#0f2744] bg-[#0f2744]/5 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)]"
+                      : "border-slate-200/90 bg-white hover:border-slate-300"
                   } ${!msg.is_read && tab === "inbox" ? "font-semibold bg-blue-50/30" : ""}`}
                 >
                   <div className="flex items-center justify-between gap-2 mb-1.5">
@@ -256,7 +257,7 @@ function EtudiantMessagesContent() {
           </div>
 
           {/* Colonne Détail Message */}
-          <div className="lg:col-span-7 bg-white rounded-xl border border-slate-200 p-6 min-h-[420px] shadow-xs flex flex-col justify-between">
+          <div className="lg:col-span-7 bg-white rounded-xl border border-slate-200/90 p-6 min-h-[420px] shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] flex flex-col justify-between">
             {selectedMessage ? (
               <div className="space-y-5">
                 <div className="border-b border-slate-100 pb-4">
@@ -326,14 +327,14 @@ function EtudiantMessagesContent() {
 
         {/* Modal Nouveau Message */}
         {modalOpen && (
-          <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-slate-200 space-y-4">
+          <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-slate-200/90 space-y-4">
               <h3 className="font-serif text-xl font-bold text-[#0f2744]">
                 Nouveau Message Académique
               </h3>
 
               {sendSuccess ? (
-                <div className="p-4 rounded-lg bg-emerald-50 text-emerald-800 flex items-center gap-3">
+                <div className="p-4 rounded-lg bg-emerald-50 border border-emerald-200/80 text-emerald-800 flex items-center gap-3">
                   <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
                   <span className="text-sm font-medium">Votre message a été transmis avec succès.</span>
                 </div>
@@ -344,7 +345,7 @@ function EtudiantMessagesContent() {
                     <select
                       value={targetRecipient}
                       onChange={(e) => setTargetRecipient(e.target.value)}
-                      className="w-full text-sm border border-slate-300 rounded-md p-2.5 bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#0f2744]"
+                      className="w-full text-sm border border-slate-200/90 rounded-lg p-2.5 bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#0f2744]"
                     >
                       <optgroup label="Administration & Scolarité">
                         <option value="admin-id">Direction Générale & Scolarité</option>
@@ -375,15 +376,16 @@ function EtudiantMessagesContent() {
                       value={newContent}
                       onChange={(e) => setNewContent(e.target.value)}
                       placeholder="Exprimez clairement votre demande en respectant les convenances universitaires..."
-                      className="block w-full rounded-md border border-slate-300 bg-white p-3 text-sm text-slate-900 placeholder-slate-400 focus:border-[#0f2744] focus:ring-1 focus:ring-[#0f2744]"
+                      className="block w-full rounded-lg border border-slate-200/90 bg-white p-3 text-sm text-slate-900 placeholder-slate-400 focus:border-[#0f2744] focus:ring-1 focus:ring-[#0f2744]"
                     />
                   </div>
 
-                  <div className="flex justify-end gap-2 pt-2">
+                  <div className="border-t border-slate-100 pt-3 flex justify-end gap-2">
                     <Button
                       type="button"
                       variant="ghost"
                       size="sm"
+                      className="rounded-lg text-xs"
                       onClick={() => setModalOpen(false)}
                     >
                       Annuler
@@ -392,6 +394,7 @@ function EtudiantMessagesContent() {
                       type="submit"
                       variant="accent"
                       size="sm"
+                      className="rounded-lg text-xs"
                       rightIcon={<Send className="w-3.5 h-3.5" />}
                     >
                       Envoyer

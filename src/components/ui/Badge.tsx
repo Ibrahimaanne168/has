@@ -6,6 +6,7 @@ export interface BadgeProps {
   size?: "sm" | "md";
   className?: string;
   icon?: React.ReactNode;
+  uppercase?: boolean;
 }
 
 export function Badge({
@@ -14,21 +15,23 @@ export function Badge({
   size = "sm",
   className = "",
   icon,
+  uppercase = false,
 }: BadgeProps) {
-  const baseStyles = "inline-flex items-center font-medium rounded-full shrink-0 tracking-wide";
+  const baseStyles =
+    "inline-flex items-center font-semibold rounded-lg shrink-0 transition-colors";
 
   const sizeStyles = {
-    sm: "text-[11px] px-2.5 py-0.5 gap-1",
-    md: "text-xs px-3 py-1 gap-1.5",
+    sm: `text-[10px] px-2 py-0.5 gap-1 ${uppercase ? "uppercase tracking-wider" : "tracking-normal"}`,
+    md: `text-[11px] px-2.5 py-1 gap-1.5 ${uppercase ? "uppercase tracking-wider" : "tracking-normal"}`,
   };
 
   const variantStyles = {
-    primary: "bg-[#0f2744]/10 text-[#0f2744] border border-[#0f2744]/20",
-    accent: "bg-[#e0521c]/10 text-[#e0521c] border border-[#e0521c]/20",
-    success: "bg-emerald-50 text-emerald-700 border border-emerald-200",
-    warning: "bg-amber-50 text-amber-800 border border-amber-200",
-    danger: "bg-red-50 text-red-700 border border-red-200",
-    neutral: "bg-slate-100 text-slate-700 border border-slate-200",
+    primary: "bg-[#0f2744]/8 text-[#0f2744] border border-[#0f2744]/20",
+    accent: "bg-[#e0521c]/10 text-[#e0521c] border border-[#e0521c]/25",
+    success: "bg-emerald-50 text-emerald-800 border border-emerald-200/90",
+    warning: "bg-amber-50 text-amber-800 border border-amber-200/90",
+    danger: "bg-rose-50 text-rose-800 border border-rose-200/90",
+    neutral: "bg-slate-100/80 text-slate-700 border border-slate-200/90",
   };
 
   return (

@@ -215,9 +215,9 @@ export function ChatRoom({ currentUser, isAdmin = false }: ChatRoomProps) {
   };
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 shadow-xs flex flex-col h-[650px] overflow-hidden">
+    <div className="bg-white rounded-xl border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] flex flex-col h-[650px] overflow-hidden">
       {/* Header du Chat */}
-      <div className="p-4 sm:p-5 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+      <div className="p-4 sm:p-5 border-b border-slate-200/90 bg-slate-50 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg bg-[#0f2744] text-white flex items-center justify-center">
             <MessagesSquare className="w-5 h-5 text-[#e0521c]" />
@@ -288,7 +288,7 @@ export function ChatRoom({ currentUser, isAdmin = false }: ChatRoomProps) {
       </div>
 
       {/* Saisie de message */}
-      <div className="p-4 bg-white border-t border-slate-200">
+      <div className="p-4 bg-white border-t border-slate-200/90">
         <form onSubmit={handleSendMessage} className="flex gap-2">
           <input
             type="text"
@@ -296,7 +296,7 @@ export function ChatRoom({ currentUser, isAdmin = false }: ChatRoomProps) {
             placeholder="Écrivez votre message public aux étudiants et enseignants..."
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
-            className="flex-1 rounded-md border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-[#0f2744] focus:ring-1 focus:ring-[#0f2744] transition-colors"
+            className="flex-1 rounded-lg border border-slate-200/90 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-[#0f2744] focus:ring-1 focus:ring-[#0f2744] transition-colors"
           />
           <Button
             type="submit"
