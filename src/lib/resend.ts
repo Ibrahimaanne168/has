@@ -41,10 +41,15 @@ export async function sendTransactionalEmail({
     const resend = new Resend(apiKey);
     const { data, error } = await resend.emails.send({
       from: senderEmail,
+      reply_to: "noreply@has-academie.online",
       to: [toEmail],
       subject,
       html: htmlContent,
       text: textContent || subject,
+      headers: {
+        "X-Entity-Ref-ID": `has-${Date.now()}`,
+        "List-Unsubscribe": "<mailto:noreply@has-academie.online>",
+      },
     });
 
     if (error) {
