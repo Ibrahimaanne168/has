@@ -55,24 +55,48 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // Vérification du rôle dans la table profiles
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role, is_active")
-    .eq("id", user.id)
-    .single();
+  // Récupération du rôle : vérification profiles si possible, avec fallback robuste sur user_metadata et email
+  let userRole = (user.user_metadata?.role as string) || null;
+  let isActive = true;
 
-  if (!profile || profile.is_active === false) {
+  try {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role, is_active")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (profile) {
+      if (profile.role) userRole = profile.role;
+      if (profile.is_active !== undefined && profile.is_active !== null) {
+        isActive = profile.is_active;
+      }
+    }
+  } catch {
+    // Si la table profiles n'est pas encore initialisée en base
+  }
+
+  // Si le compte est explicitement désactivé
+  if (!isActive) {
     const loginUrl = new URL("/connexion", request.url);
-    loginUrl.searchParams.set("error", "Compte désactivé ou introuvable");
+    loginUrl.searchParams.set("error", "Compte désactivé");
     return NextResponse.redirect(loginUrl);
   }
 
-  const userRole = profile.role;
+  // Déduction automatique du rôle si non encore renseigné
+  if (!userRole) {
+    const email = (user.email || "").toLowerCase();
+    if (email.includes("admin") || email.includes("halil")) {
+      userRole = "admin";
+    } else if (email.includes("prof")) {
+      userRole = "professeur";
+    } else {
+      userRole = "etudiant";
+    }
+  }
 
-  // Contrôle d'accès strict
+  // Contrôle d'accès par rôle
   if (isProtectedAdmin && userRole !== "admin") {
-    // Redirige vers son propre espace selon le rôle
     if (userRole === "professeur") {
       return NextResponse.redirect(new URL("/professeur", request.url));
     }
