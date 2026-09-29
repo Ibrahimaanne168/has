@@ -100,7 +100,7 @@ export default function EtudiantProfilPage() {
             </div>
 
             <div className="p-3 bg-slate-50 rounded-lg border border-slate-100 sm:col-span-2">
-              <span className="text-slate-400 block mb-1">Email académique de contact</span>
+              <span className="text-slate-400 block mb-1">Email personnel de contact</span>
               <strong className="text-slate-900 text-sm">{MOCK_STUDENT.email}</strong>
             </div>
           </div>

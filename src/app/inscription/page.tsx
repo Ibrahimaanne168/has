@@ -317,12 +317,12 @@ export default function InscriptionPage() {
               />
 
               <Input
-                label="Adresse email"
+                label="Adresse email personnelle"
                 type="email"
                 required
-                placeholder="m.traore@exemple.com"
+                placeholder="exemple@email.com"
                 leftIcon={<Mail className="w-4 h-4" />}
-                helperText="Un code de confirmation vous sera envoyé via l'API sécurisée Brevo."
+                helperText="Un code de confirmation vous sera envoyé sur votre adresse email."
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />

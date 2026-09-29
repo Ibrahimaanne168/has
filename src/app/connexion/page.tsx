@@ -4,15 +4,13 @@ import React, { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
-  GraduationCap,
   Lock,
   Mail,
+  User,
   ArrowRight,
   AlertCircle,
-  CheckCircle2,
   Eye,
   EyeOff,
-  UserCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -105,16 +103,6 @@ function ConnexionForm() {
     }
   };
 
-  const handleQuickDemoLogin = (role: "etudiant" | "professeur" | "admin") => {
-    if (role === "admin") {
-      router.push("/admin");
-    } else if (role === "professeur") {
-      router.push("/professeur");
-    } else {
-      router.push("/etudiant");
-    }
-  };
-
   const handleForgotPasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setForgotLoading(true);
@@ -173,7 +161,7 @@ function ConnexionForm() {
               Espace Numérique de Travail
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              Connexion sécurisée pour Étudiants, Professeurs et Administration
+              Connectez-vous avec votre identifiant et mot de passe
             </p>
           </div>
 
@@ -186,10 +174,10 @@ function ConnexionForm() {
 
           <form onSubmit={handleLogin} className="space-y-4">
             <Input
-              label="Email académique ou Identifiant"
+              label="Identifiant"
               required
-              placeholder="mtraore ou m.traore@etudiant.halil-academie.com"
-              leftIcon={<Mail className="w-4 h-4" />}
+              placeholder="halil"
+              leftIcon={<User className="w-4 h-4" />}
               value={emailOrUsername}
               onChange={(e) => setEmailOrUsername(e.target.value)}
             />
@@ -237,37 +225,6 @@ function ConnexionForm() {
               Connexion
             </Button>
           </form>
-
-          {/* Accès Rapide Démo / Évaluation */}
-          <div className="mt-8 pt-6 border-t border-slate-200">
-            <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-3 justify-center">
-              <UserCheck className="w-3.5 h-3.5" />
-              <span className="font-semibold uppercase tracking-wider">Accès direct aux espaces :</span>
-            </div>
-            <div className="grid grid-cols-3 gap-2">
-              <button
-                type="button"
-                onClick={() => handleQuickDemoLogin("etudiant")}
-                className="p-2 text-center rounded-lg border border-slate-200/90 hover:border-slate-300 hover:bg-slate-50 text-xs font-medium text-slate-700 transition-colors"
-              >
-                🎓 Étudiant
-              </button>
-              <button
-                type="button"
-                onClick={() => handleQuickDemoLogin("professeur")}
-                className="p-2 text-center rounded-lg border border-slate-200/90 hover:border-slate-300 hover:bg-slate-50 text-xs font-medium text-slate-700 transition-colors"
-              >
-                👨‍🏫 Professeur
-              </button>
-              <button
-                type="button"
-                onClick={() => handleQuickDemoLogin("admin")}
-                className="p-2 text-center rounded-lg border border-slate-200/90 hover:border-slate-300 hover:bg-slate-50 text-xs font-medium text-slate-700 transition-colors"
-              >
-                🛡️ Admin
-              </button>
-            </div>
-          </div>
         </div>
       </main>
 
@@ -279,8 +236,8 @@ function ConnexionForm() {
               Réinitialisation de mot de passe
             </h3>
             <p className="text-xs text-slate-600 leading-relaxed">
-              Saisissez l&apos;adresse email associée à votre compte Halil Académie Scientifique. Un email
-              contenant les instructions de réinitialisation vous sera expédié via le service Brevo.
+              Saisissez l&apos;adresse email associée à votre compte. Un lien
+              de réinitialisation vous sera envoyé par email.
             </p>
 
             {forgotSuccess ? (
@@ -293,7 +250,7 @@ function ConnexionForm() {
                   label="Votre adresse email"
                   type="email"
                   required
-                  placeholder="contact@exemple.com"
+                  placeholder="exemple@email.com"
                   value={forgotEmail}
                   onChange={(e) => setForgotEmail(e.target.value)}
                 />

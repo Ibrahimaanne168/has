@@ -14,7 +14,7 @@ export const signupStep1Schema = z.object({
     .max(100, "Le nom est trop long"),
   email: z
     .string()
-    .email("Adresse email académique ou personnelle invalide")
+    .email("Adresse email invalide")
     .toLowerCase()
     .trim(),
 });
