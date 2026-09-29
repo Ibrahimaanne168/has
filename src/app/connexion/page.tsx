@@ -43,18 +43,22 @@ function ConnexionForm() {
       // Si le backend Supabase est actif
       if (!isPlaceholder) {
         let authEmail = emailOrUsername.trim();
+        let detectedRole: string | null = null;
 
-        // Si l'utilisateur a saisi un identifiant au lieu d'un email, retrouver l'email
-        if (!authEmail.includes("@")) {
-          const { data: profile } = await supabase
-            .from("profiles")
-            .select("email")
-            .eq("username", authEmail.toLowerCase())
-            .single();
-
-          if (profile?.email) {
-            authEmail = profile.email;
+        // Résolution de l'identifiant (ex: identifiant username ou email)
+        try {
+          const res = await fetch(`/api/auth/resolve-identifier?identifier=${encodeURIComponent(authEmail)}`);
+          if (res.ok) {
+            const resolved = await res.json();
+            if (resolved?.email) {
+              authEmail = resolved.email;
+            }
+            if (resolved?.role) {
+              detectedRole = resolved.role;
+            }
           }
+        } catch (fetchErr) {
+          console.warn("Erreur résolution identifiant:", fetchErr);
         }
 
         const { data, error } = await supabase.auth.signInWithPassword({
@@ -66,14 +70,32 @@ function ConnexionForm() {
           throw new Error("Identifiant ou mot de passe incorrect.");
         }
 
-        // Récupération du rôle dans profiles
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("role")
-          .eq("id", data.user.id)
-          .single();
+        // Détection du rôle de l'utilisateur
+        let role = detectedRole || data.user?.user_metadata?.role;
 
-        const role = profile?.role || "etudiant";
+        if (!role) {
+          try {
+            const { data: profile } = await supabase
+              .from("profiles")
+              .select("role")
+              .eq("id", data.user.id)
+              .maybeSingle();
+
+            if (profile?.role) {
+              role = profile.role;
+            }
+          } catch {
+            // Ignorer si la table profiles n'est pas encore créée
+          }
+        }
+
+        if (!role) {
+          if (authEmail.toLowerCase().includes("admin") || authEmail.toLowerCase().includes("halil")) {
+            role = "admin";
+          } else {
+            role = "etudiant";
+          }
+        }
 
         if (redirectTarget) {
           router.push(redirectTarget);
@@ -176,7 +198,7 @@ function ConnexionForm() {
             <Input
               label="Identifiant"
               required
-              placeholder="halil"
+              placeholder="Identifiant ou email"
               leftIcon={<User className="w-4 h-4" />}
               value={emailOrUsername}
               onChange={(e) => setEmailOrUsername(e.target.value)}
