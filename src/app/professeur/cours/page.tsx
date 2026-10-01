@@ -21,13 +21,14 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card, CardFooter } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { MOCK_PROFESSEURS, MOCK_COURS, MOCK_MATIERES, MOCK_CLASSES } from "@/lib/data/mock-data";
+import { MOCK_PROFESSEURS, MOCK_MATIERES, MOCK_CLASSES } from "@/lib/data/mock-data";
 import { Cours } from "@/lib/types";
+import { getStoredCourses, saveCourse, deleteCourse } from "@/lib/academicStorage";
 
 const CURRENT_PROF = MOCK_PROFESSEURS[0];
 
 export default function ProfesseurCoursPage() {
-  const [courses, setCourses] = useState<Cours[]>(MOCK_COURS);
+  const [courses, setCourses] = useState<Cours[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState<Cours | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
@@ -36,15 +37,22 @@ export default function ProfesseurCoursPage() {
   const [formTitle, setFormTitle] = useState("");
   const [formDescription, setFormDescription] = useState("");
   const [formMatiereId, setFormMatiereId] = useState(MOCK_MATIERES[0]?.id || "");
-  const [formClasseId, setFormClasseId] = useState(MOCK_CLASSES[1]?.id || "");
+  const [formClasseId, setFormClasseId] = useState(MOCK_CLASSES[0]?.id || "");
   const [formExternalUrl, setFormExternalUrl] = useState("");
+
+  React.useEffect(() => {
+    setCourses(getStoredCourses());
+    const handleUpdate = () => setCourses(getStoredCourses());
+    window.addEventListener("has_academic_storage_updated", handleUpdate);
+    return () => window.removeEventListener("has_academic_storage_updated", handleUpdate);
+  }, []);
 
   const openCreateModal = () => {
     setEditingCourse(null);
     setFormTitle("");
     setFormDescription("");
     setFormMatiereId(MOCK_MATIERES[0]?.id || "");
-    setFormClasseId(MOCK_CLASSES[1]?.id || "");
+    setFormClasseId(MOCK_CLASSES[0]?.id || "");
     setFormExternalUrl("");
     setModalOpen(true);
   };
@@ -65,13 +73,18 @@ export default function ProfesseurCoursPage() {
     const classe = MOCK_CLASSES.find((c) => c.id === formClasseId);
 
     if (editingCourse) {
-      setCourses((prev) =>
-        prev.map((c) =>
-          c.id === editingCourse.id
-            ? { ...c, title: formTitle, description: formDescription, matiere_id: formMatiereId, classe_id: formClasseId, external_url: formExternalUrl, matiere, classe, updated_at: new Date().toISOString() }
-            : c
-        )
-      );
+      const updated: Cours = {
+        ...editingCourse,
+        title: formTitle,
+        description: formDescription,
+        matiere_id: formMatiereId,
+        classe_id: formClasseId,
+        external_url: formExternalUrl || null,
+        matiere,
+        classe,
+        updated_at: new Date().toISOString(),
+      };
+      saveCourse(updated);
       setSuccessMsg("Le cours a été mis à jour avec succès.");
     } else {
       const newCourse: Cours = {
@@ -93,15 +106,17 @@ export default function ProfesseurCoursPage() {
         professeur: CURRENT_PROF,
         is_favorite: false,
       };
-      setCourses((prev) => [newCourse, ...prev]);
+      saveCourse(newCourse);
       setSuccessMsg("Le cours a été publié et est maintenant visible par vos étudiants.");
     }
+    setCourses(getStoredCourses());
     setModalOpen(false);
     setTimeout(() => setSuccessMsg(null), 4000);
   };
 
   const handleDelete = (courseId: string) => {
-    setCourses((prev) => prev.filter((c) => c.id !== courseId));
+    deleteCourse(courseId);
+    setCourses(getStoredCourses());
     setDeleteConfirm(null);
     setSuccessMsg("Le cours a été supprimé de votre catalogue.");
     setTimeout(() => setSuccessMsg(null), 3000);

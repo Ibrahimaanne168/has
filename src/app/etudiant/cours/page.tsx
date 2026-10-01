@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   BookOpen,
   Search,
@@ -14,15 +14,24 @@ import {
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Card, CardContent, CardFooter } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { MOCK_COURS, MOCK_MATIERES } from "@/lib/data/mock-data";
+import { MOCK_MATIERES } from "@/lib/data/mock-data";
 import { useCurrentUser } from "@/lib/useCurrentUser";
+import { getStoredCourses } from "@/lib/academicStorage";
+import { Cours } from "@/lib/types";
 
 export default function EtudiantCoursPage() {
   const { user } = useCurrentUser();
-  const [courses, setCourses] = useState(MOCK_COURS);
+  const [courses, setCourses] = useState<Cours[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedMatiere, setSelectedMatiere] = useState<string>("all");
   const [onlyFavorites, setOnlyFavorites] = useState(false);
+
+  useEffect(() => {
+    setCourses(getStoredCourses());
+    const handleUpdate = () => setCourses(getStoredCourses());
+    window.addEventListener("has_academic_storage_updated", handleUpdate);
+    return () => window.removeEventListener("has_academic_storage_updated", handleUpdate);
+  }, []);
 
   const toggleFavorite = (courseId: string) => {
     setCourses((prev) =>
@@ -109,10 +118,18 @@ export default function EtudiantCoursPage() {
 
         {/* Grille modulaire des cours (architecture stricte de carte) */}
         {filteredCourses.length === 0 ? (
-          <div className="bg-white rounded-xl border border-slate-200/90 p-12 text-center text-slate-500 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)]">
-            <BookOpen className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-            <p className="text-sm font-semibold text-slate-700">Aucun cours ne correspond aux critères sélectionnés.</p>
-            <p className="text-xs text-slate-400 mt-1">Modifiez vos filtres ou réinitialisez la recherche.</p>
+          <div className="bg-white rounded-xl border border-slate-200/90 p-12 text-center text-slate-500 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] space-y-2">
+            <BookOpen className="w-10 h-10 text-slate-300 mx-auto mb-2" />
+            <p className="font-serif text-base font-bold text-slate-800">
+              {courses.length === 0
+                ? "Aucun cours ou chapitre publié pour le moment"
+                : "Aucun cours ne correspond aux critères sélectionnés"}
+            </p>
+            <p className="text-xs text-slate-500 max-w-md mx-auto">
+              {courses.length === 0
+                ? `L'administration et vos enseignants publieront ici les syllabus, cours magistraux et fiches de TD pour votre promotion (${user.classe?.name || "Licence 1 — MPI"}).`
+                : "Modifiez vos filtres ou réinitialisez la barre de recherche pour afficher les autres cours."}
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">

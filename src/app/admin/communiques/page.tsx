@@ -8,9 +8,10 @@ import { Input } from "@/components/ui/Input";
 import { Badge } from "@/components/ui/Badge";
 import { MOCK_COMMUNIQUES } from "@/lib/data/mock-data";
 import { Communique } from "@/lib/types";
+import { getStoredCommuniques, saveCommunique, deleteCommunique } from "@/lib/academicStorage";
 
 export default function AdminCommuniquesPage() {
-  const [communiques, setCommuniques] = useState<Communique[]>(MOCK_COMMUNIQUES);
+  const [communiques, setCommuniques] = useState<Communique[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
@@ -18,6 +19,13 @@ export default function AdminCommuniquesPage() {
   const [formContent, setFormContent] = useState("");
   const [formIsImportant, setFormIsImportant] = useState(false);
   const [formTargetRole, setFormTargetRole] = useState<"" | "etudiant" | "professeur">(""); 
+
+  React.useEffect(() => {
+    setCommuniques(getStoredCommuniques());
+    const handleUpdate = () => setCommuniques(getStoredCommuniques());
+    window.addEventListener("has_academic_storage_updated", handleUpdate);
+    return () => window.removeEventListener("has_academic_storage_updated", handleUpdate);
+  }, []);
 
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,15 +39,20 @@ export default function AdminCommuniquesPage() {
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
-    setCommuniques((prev) => [newCom, ...prev]);
+    saveCommunique(newCom);
+    setCommuniques(getStoredCommuniques());
     setModalOpen(false);
-    setFormTitle(""); setFormContent(""); setFormIsImportant(false); setFormTargetRole("");
+    setFormTitle("");
+    setFormContent("");
+    setFormIsImportant(false);
+    setFormTargetRole("");
     setSuccessMsg("Le communiqué a été publié et est désormais visible par les destinataires.");
     setTimeout(() => setSuccessMsg(null), 4000);
   };
 
   const handleDelete = (id: string) => {
-    setCommuniques((prev) => prev.filter((c) => c.id !== id));
+    deleteCommunique(id);
+    setCommuniques(getStoredCommuniques());
     setDeleteConfirm(null);
     setSuccessMsg("Le communiqué a été retiré du portail.");
     setTimeout(() => setSuccessMsg(null), 3000);
@@ -66,36 +79,53 @@ export default function AdminCommuniquesPage() {
           </div>
         )}
 
-        <div className="space-y-4">
-          {communiques.map((com) => (
-            <div key={com.id} className={`bg-white p-6 rounded-xl border shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] ${com.is_important ? "border-amber-300 border-l-4 border-l-[#e0521c]" : "border-slate-200/90"}`}>
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1 min-w-0 space-y-2">
-                  <div className="flex flex-wrap items-center gap-2">
-                    {com.is_important && <Badge variant="accent" size="sm">Important</Badge>}
-                    {com.target_role && (
-                      <Badge variant="primary" size="sm">
-                        {com.target_role === "etudiant" ? "Étudiants" : "Enseignants"}
-                      </Badge>
-                    )}
-                    {!com.target_role && <Badge variant="neutral" size="sm">Tous</Badge>}
-                    <span className="text-xs text-slate-400">
-                      {new Date(com.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
-                    </span>
-                  </div>
-                  <h3 className="font-serif text-lg font-bold text-slate-900">{com.title}</h3>
-                  <p className="text-sm text-slate-600 leading-relaxed">{com.content}</p>
-                  {com.published_by && (
-                    <p className="text-xs text-slate-400">Publié par : {com.published_by}</p>
-                  )}
-                </div>
-                <button onClick={() => setDeleteConfirm(com.id)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors shrink-0" title="Retirer ce communiqué">
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
+        {communiques.length === 0 ? (
+          <div className="bg-white p-12 rounded-xl border border-dashed border-slate-300 text-center space-y-3">
+            <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-slate-400">
+              <Bell className="w-6 h-6" />
             </div>
-          ))}
-        </div>
+            <h3 className="font-serif text-lg font-bold text-slate-800">Aucun communiqué officiel publié</h3>
+            <p className="text-xs text-slate-500 max-w-md mx-auto">
+              Toutes les anciennes annonces fictives ont été purgées. Cliquez sur le bouton ci-dessus pour rédiger et publier un communiqué officiel.
+            </p>
+            <div className="pt-2">
+              <Button variant="accent" size="sm" leftIcon={<Plus className="w-4 h-4" />} onClick={() => setModalOpen(true)}>
+                Rédiger un communiqué
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {communiques.map((com) => (
+              <div key={com.id} className={`bg-white p-6 rounded-xl border shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] ${com.is_important ? "border-amber-300 border-l-4 border-l-[#e0521c]" : "border-slate-200/90"}`}>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1 min-w-0 space-y-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      {com.is_important && <Badge variant="accent" size="sm">Important</Badge>}
+                      {com.target_role && (
+                        <Badge variant="primary" size="sm">
+                          {com.target_role === "etudiant" ? "Étudiants" : "Enseignants"}
+                        </Badge>
+                      )}
+                      {!com.target_role && <Badge variant="neutral" size="sm">Tous</Badge>}
+                      <span className="text-xs text-slate-400">
+                        {new Date(com.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+                      </span>
+                    </div>
+                    <h3 className="font-serif text-base sm:text-lg font-bold text-slate-900">{com.title}</h3>
+                    <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">{com.content}</p>
+                    {com.published_by && (
+                      <p className="text-xs text-slate-400">Publié par : {com.published_by}</p>
+                    )}
+                  </div>
+                  <button onClick={() => setDeleteConfirm(com.id)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors shrink-0" title="Retirer ce communiqué">
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Modal Nouveau Communiqué */}
         {modalOpen && (

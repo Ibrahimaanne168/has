@@ -377,37 +377,7 @@ INSERT INTO enseignant_matiere (enseignant_id, matiere_id) VALUES
 ON CONFLICT DO NOTHING;
 
 
--- Cours réels d'exemple
-INSERT INTO cours (id, titre, description, matiere_id, enseignant_id, filiere_id, classe_id, niveau, lien_externe) VALUES
-(1, 'Introduction à la Programmation Python & Algorithmique', 'Cours fondamental sur les bases du langage Python, les structures conditionnelles, boucles et fonctions.', 11, 2, 1, 1, 'Licence 1', NULL),
-(2, 'Analyse 1 : Suites numériques et Continuité', 'Définition des limites, théorèmes de comparaison, fonctions continues et dérivabilité.', 9, 1, 1, 1, 'Licence 1', NULL),
-(3, 'Mécanique du Point Matériel', 'Cinématique, lois de Newton, oscillateurs harmoniques et travail-énergie.', 12, 3, 1, 1, 'Licence 1', NULL),
-(4, 'Algèbre Linéaire 1 : Espaces Vectoriels', 'Sous-espaces vectoriels, familles génératrices, bases et dimensions.', 10, 1, 1, 1, 'Licence 1', NULL)
-ON CONFLICT (id) DO NOTHING;
-
--- Fichiers attachés aux cours
-INSERT INTO fichiers_cours (id, cours_id, type_fichier, nom_original, chemin_fichier) VALUES
-(1, 1, 'pdf', 'Support_Python_Chapitre1.pdf', 'uploads/cours/Support_Python_Chapitre1.pdf'),
-(2, 2, 'pdf', 'TD_Analyse_1_Suites.pdf', 'uploads/cours/TD_Analyse_1_Suites.pdf'),
-(3, 3, 'pdf', 'Exercices_Mecanique_Point.pdf', 'uploads/cours/Exercices_Mecanique_Point.pdf')
-ON CONFLICT (id) DO NOTHING;
-
--- Emploi du temps actif pour L1 MPI
-INSERT INTO emplois_du_temps (id, classe_id, titre, fichier_pdf, date_publication, actif) VALUES
-(1, 1, 'Planning Semaine L1 MPI — Semestre 1', 'uploads/edt/edt_l1_mpi.pdf', CURRENT_DATE, TRUE)
-ON CONFLICT (id) DO NOTHING;
-
--- Communiqués d'exemple réels
-INSERT INTO communiques (id, titre, contenu, auteur_id, mis_en_avant, archive, date_publication) VALUES
-(1, 'Bienvenue sur la plateforme académique HAS', 'Chers étudiants et professeurs, nous sommes ravis de vous accueillir sur votre nouvel espace numérique dédié aux cours, emplois du temps et communiqués officiels.', 1, TRUE, FALSE, CURRENT_DATE),
-(2, 'Début des sessions de renforcement intensif', 'Les cours de renforcement en Analyse, Algèbre et Programmation débuteront dès lundi prochain à 09h00 selon le planning affiché dans votre espace.', 1, TRUE, FALSE, CURRENT_DATE)
-ON CONFLICT (id) DO NOTHING;
-
--- Messages d'exemple pour le Chat Général
-INSERT INTO chat_messages (id, user_id, message, created_at) VALUES
-(1, 1, 'Bienvenue à tous dans le salon général de la Halil Académie Scientifique ! Cet espace vous permet d''échanger librement.', NOW() - INTERVAL '2 hours'),
-(2, 2, 'Bonjour chers étudiants, n''hésitez pas si vous avez des questions sur les TD d''Algèbre.', NOW() - INTERVAL '1 hour')
-ON CONFLICT (id) DO NOTHING;
+-- (Les cours, fichiers de cours, emplois du temps et communiqués sont gérés et publiés exclusivement par l'administration via la plateforme)
 
 -- Réalignement des séquences d'identifiants (auto-increment)
 SELECT setval(pg_get_serial_sequence('roles', 'id'), COALESCE((SELECT MAX(id) FROM roles), 1));

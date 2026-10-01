@@ -1,17 +1,25 @@
 "use client";
 
-import React, { useState } from "react";
-import { Search, AlertCircle, Calendar } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Search, AlertCircle, Calendar, Bell } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Badge } from "@/components/ui/Badge";
-import { MOCK_COMMUNIQUES } from "@/lib/data/mock-data";
 import { useCurrentUser } from "@/lib/useCurrentUser";
+import { getStoredCommuniques } from "@/lib/academicStorage";
+import { Communique } from "@/lib/types";
 
 export default function EtudiantCommuniquesPage() {
   const { user } = useCurrentUser();
-  const [communiques] = useState(MOCK_COMMUNIQUES);
+  const [communiques, setCommuniques] = useState<Communique[]>([]);
   const [filterImportant, setFilterImportant] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    setCommuniques(getStoredCommuniques());
+    const handleUpdate = () => setCommuniques(getStoredCommuniques());
+    window.addEventListener("has_academic_storage_updated", handleUpdate);
+    return () => window.removeEventListener("has_academic_storage_updated", handleUpdate);
+  }, []);
 
   const filtered = communiques.filter((item) => {
     const matchesSearch =
@@ -67,49 +75,65 @@ export default function EtudiantCommuniquesPage() {
           </button>
         </div>
 
-        {/* Liste des communiqués (cartes géométriques) */}
-        <div className="space-y-4">
-          {filtered.map((item) => (
-            <div
-              key={item.id}
-              className={`bg-white rounded-xl border p-5 sm:p-6 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] transition-all duration-200 hover:shadow-md ${
-                item.is_important ? "border-amber-300/80 bg-gradient-to-r from-amber-50/15 to-white" : "border-slate-200/90"
-              }`}
-            >
-              <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
-                <div className="flex items-center gap-2">
-                  {item.is_important && (
-                    <Badge variant="accent" size="sm" uppercase>
-                      Important
-                    </Badge>
-                  )}
-                  <span className="text-[11px] text-slate-500 font-semibold tracking-wide">
-                    Émis par : {item.published_by || "Direction Générale HAS"}
-                  </span>
+        {/* Liste des communiqués ou état vide */}
+        {filtered.length === 0 ? (
+          <div className="bg-white rounded-xl border border-dashed border-slate-300 p-10 text-center space-y-2">
+            <Bell className="w-8 h-8 text-slate-300 mx-auto" />
+            <p className="font-serif text-base font-bold text-slate-800">
+              {communiques.length === 0
+                ? "Aucun communiqué officiel pour le moment"
+                : "Aucun résultat correspondant"}
+            </p>
+            <p className="text-xs text-slate-500 max-w-sm mx-auto">
+              {communiques.length === 0
+                ? "L'administration publiera les notes de service, annonces pédagogiques et informations d'examens ici."
+                : "Modifiez vos filtres ou réinitialisez la recherche."}
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {filtered.map((item) => (
+              <div
+                key={item.id}
+                className={`bg-white rounded-xl border p-5 sm:p-6 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] transition-all duration-200 hover:shadow-md ${
+                  item.is_important ? "border-amber-300/80 bg-gradient-to-r from-amber-50/15 to-white" : "border-slate-200/90"
+                }`}
+              >
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-2.5">
+                  <div className="flex items-center gap-2">
+                    {item.is_important && (
+                      <Badge variant="accent" size="sm" uppercase>
+                        Important
+                      </Badge>
+                    )}
+                    <span className="text-[11px] text-slate-500 font-semibold tracking-wide">
+                      Émis par : {item.published_by || "Direction Générale HAS"}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                    <Calendar className="w-3.5 h-3.5" />
+                    <span>
+                      {new Date(item.created_at).toLocaleDateString("fr-FR", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </span>
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-1.5 text-xs text-slate-400">
-                  <Calendar className="w-3.5 h-3.5" />
-                  <span>
-                    {new Date(item.created_at).toLocaleDateString("fr-FR", {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                    })}
-                  </span>
-                </div>
+                <h2 className="font-serif text-base sm:text-lg font-bold text-slate-900 mb-2 leading-snug">
+                  {item.title}
+                </h2>
+
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed whitespace-pre-line">
+                  {item.content}
+                </p>
               </div>
-
-              <h2 className="font-serif text-base sm:text-lg font-bold text-slate-900 mb-2 leading-snug">
-                {item.title}
-              </h2>
-
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed whitespace-pre-line">
-                {item.content}
-              </p>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </DashboardLayout>
   );

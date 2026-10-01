@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   GraduationCap,
@@ -21,10 +21,30 @@ import {
   MOCK_COMMUNIQUES,
 } from "@/lib/data/mock-data";
 import { useCurrentUser } from "@/lib/useCurrentUser";
+import { getStoredCourses, getStoredEDTs } from "@/lib/academicStorage";
+import { Cours, EmploiDuTemps } from "@/lib/types";
 
 export default function EtudiantDashboard() {
   const { user } = useCurrentUser();
-  const [courses, setCourses] = useState(MOCK_COURS);
+  const [courses, setCourses] = useState<Cours[]>([]);
+  const [hasEDT, setHasEDT] = useState(false);
+
+  useEffect(() => {
+    const loadData = () => {
+      const storedCourses = getStoredCourses();
+      setCourses(storedCourses);
+      const storedEDTs = getStoredEDTs();
+      const userEDT = storedEDTs.find(
+        (e) =>
+          e.classe_id === user.classe_id ||
+          (e.classe && user.classe && e.classe.code === user.classe.code)
+      );
+      setHasEDT(!!userEDT);
+    };
+    loadData();
+    window.addEventListener("has_academic_storage_updated", loadData);
+    return () => window.removeEventListener("has_academic_storage_updated", loadData);
+  }, [user.classe_id, user.classe]);
 
   const toggleFavorite = (courseId: string) => {
     setCourses((prev) =>
@@ -56,7 +76,7 @@ export default function EtudiantDashboard() {
 
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
               Bienvenue sur votre portail d&apos;apprentissage de Halil Académie Scientifique.
-              Consultez les nouveaux supports déposés par vos enseignants et restez à jour sur les plannings.
+              Consultez les supports officiels déposés par l&apos;administration et restez à jour sur les plannings.
             </p>
 
             <div className="pt-2 flex flex-wrap items-center gap-2.5 text-xs text-slate-200">
@@ -64,7 +84,7 @@ export default function EtudiantDashboard() {
                 Matricule : {user.matricule}
               </span>
               <span className="bg-white/10 border border-white/10 px-2.5 py-1 rounded-lg text-[11px] font-medium">
-                Classe : {user.classe?.name || "L1 MPI"}
+                Classe : {user.classe?.name || "Licence 1 — MPI"}
               </span>
               <span className="bg-white/10 border border-white/10 px-2.5 py-1 rounded-lg text-[11px] font-medium">
                 Niveau : {user.classe?.niveau || "L1"}
@@ -86,10 +106,12 @@ export default function EtudiantDashboard() {
                 Emploi du temps officiel
               </p>
               <h3 className="font-serif text-sm sm:text-base font-bold text-slate-900 leading-tight">
-                Planning de la Semaine validé
+                {hasEDT ? "Planning de la Semaine validé" : "Emploi du temps en cours de finalisation"}
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
-                Le planning officiel des cours en présentiel et séances de TD est disponible pour votre classe ({user.classe?.code || "L1-MPI"}).
+                {hasEDT
+                  ? `Le planning officiel des cours est validé et disponible pour votre classe (${user.classe?.code || "L1-MPI"}).`
+                  : `L'administration publiera prochainement le planning officiel des cours pour la classe ${user.classe?.name || "L1-MPI"}.`}
               </p>
             </div>
           </div>
@@ -110,7 +132,7 @@ export default function EtudiantDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-wider text-[#e0521c] mb-0.5">
-                Supports récents
+                Supports officiels
               </p>
               <h2 className="font-serif text-xl font-bold text-[#0f2744]">
                 Derniers Cours &amp; Travaux Dirigés
@@ -123,7 +145,18 @@ export default function EtudiantDashboard() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {courses.length === 0 ? (
+            <div className="bg-white rounded-xl border border-dashed border-slate-300 p-8 text-center space-y-2">
+              <BookOpen className="w-8 h-8 text-slate-300 mx-auto" />
+              <p className="font-serif text-sm font-bold text-slate-800">
+                Aucun cours publié pour le moment
+              </p>
+              <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                L&apos;administration et vos enseignants publieront ici les fiches de cours, TD et syllabus officiels.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {courses.slice(0, 4).map((c) => (
               <Card key={c.id} hoverEffect className="flex flex-col justify-between overflow-hidden">
                 <div className="p-5 flex-1 flex flex-col">
@@ -199,7 +232,8 @@ export default function EtudiantDashboard() {
               </Card>
             ))}
           </div>
-        </div>
+        )}
+      </div>
 
         {/* ============================================================================== */}
         {/* COMMUNIQUÉS OFFICIELS */}

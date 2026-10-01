@@ -20,13 +20,24 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/Button";
 import { Card, CardHeader, CardContent } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { MOCK_PROFESSEURS, MOCK_COURS, MOCK_CLASSES } from "@/lib/data/mock-data";
+import { MOCK_PROFESSEURS, MOCK_CLASSES } from "@/lib/data/mock-data";
+import { getStoredCourses } from "@/lib/academicStorage";
+import { Cours } from "@/lib/types";
 
 const CURRENT_PROF = MOCK_PROFESSEURS[0];
 
 export default function ProfesseurDashboard() {
+  const [courses, setCourses] = React.useState<Cours[]>([]);
   const myClasses = MOCK_CLASSES.slice(0, 3);
-  const myCourses = MOCK_COURS.slice(0, 3);
+
+  React.useEffect(() => {
+    setCourses(getStoredCourses());
+    const handleUpdate = () => setCourses(getStoredCourses());
+    window.addEventListener("has_academic_storage_updated", handleUpdate);
+    return () => window.removeEventListener("has_academic_storage_updated", handleUpdate);
+  }, []);
+
+  const myCourses = courses.slice(0, 3);
 
   return (
     <DashboardLayout
@@ -114,34 +125,46 @@ export default function ProfesseurDashboard() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {myCourses.map((c) => (
-              <Card key={c.id} hoverEffect>
-                <CardHeader className="pb-3">
-                  <Badge variant="primary" size="sm">{c.matiere?.code}</Badge>
-                  <h3 className="font-serif text-sm font-bold text-slate-900 mt-2 line-clamp-2">{c.title}</h3>
-                  <p className="text-xs text-slate-500 mt-1">{c.classe?.code}</p>
-                </CardHeader>
-                <CardContent className="pt-0 pb-4 flex flex-col gap-2">
-                  <div className="text-xs text-slate-400">
-                    Publié le {new Date(c.created_at).toLocaleDateString("fr-FR")}
-                  </div>
-                  <div className="flex gap-2 pt-1">
-                    {c.file_url && (
-                      <Badge variant="success" size="sm" icon={<FileText className="w-3 h-3" />}>
-                        PDF joint
-                      </Badge>
-                    )}
-                    {c.external_url && (
-                      <Badge variant="neutral" size="sm" icon={<ExternalLink className="w-3 h-3" />}>
-                        Lien externe
-                      </Badge>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          {myCourses.length === 0 ? (
+            <div className="bg-white rounded-xl border border-dashed border-slate-300 p-8 text-center space-y-2">
+              <BookOpen className="w-8 h-8 text-slate-300 mx-auto" />
+              <p className="font-serif text-sm font-bold text-slate-800">
+                Aucun cours publié pour le moment
+              </p>
+              <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                Cliquez sur &quot;Publier un nouveau cours&quot; ci-dessus pour déposer votre premier support de cours ou TD.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {myCourses.map((c) => (
+                <Card key={c.id} hoverEffect>
+                  <CardHeader className="pb-3">
+                    <Badge variant="primary" size="sm">{c.matiere?.code}</Badge>
+                    <h3 className="font-serif text-sm font-bold text-slate-900 mt-2 line-clamp-2">{c.title}</h3>
+                    <p className="text-xs text-slate-500 mt-1">{c.classe?.code}</p>
+                  </CardHeader>
+                  <CardContent className="pt-0 pb-4 flex flex-col gap-2">
+                    <div className="text-xs text-slate-400">
+                      Publié le {new Date(c.created_at).toLocaleDateString("fr-FR")}
+                    </div>
+                    <div className="flex gap-2 pt-1">
+                      {c.file_url && (
+                        <Badge variant="success" size="sm" icon={<FileText className="w-3 h-3" />}>
+                          PDF joint
+                        </Badge>
+                      )}
+                      {c.external_url && (
+                        <Badge variant="neutral" size="sm" icon={<ExternalLink className="w-3 h-3" />}>
+                          Lien externe
+                        </Badge>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Classes encadrées */}

@@ -1,16 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Upload, Calendar, Download, Plus, Trash2, CheckCircle2, AlertCircle, X, Save } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Badge } from "@/components/ui/Badge";
-import { MOCK_CLASSES, MOCK_EMPLOI_DU_TEMPS } from "@/lib/data/mock-data";
+import { MOCK_CLASSES } from "@/lib/data/mock-data";
 import { EmploiDuTemps } from "@/lib/types";
+import { getStoredEDTs, saveEDT, deleteEDT } from "@/lib/academicStorage";
 
 export default function AdminEDTPage() {
-  const [emplois, setEmplois] = useState<EmploiDuTemps[]>([MOCK_EMPLOI_DU_TEMPS]);
+  const [emplois, setEmplois] = useState<EmploiDuTemps[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
@@ -19,6 +20,13 @@ export default function AdminEDTPage() {
   const [formTitle, setFormTitle] = useState("");
   const [formSemestre, setFormSemestre] = useState("Semestre 1");
   const [formAnnee, setFormAnnee] = useState("2024-2025");
+
+  useEffect(() => {
+    setEmplois(getStoredEDTs());
+    const handleUpdate = () => setEmplois(getStoredEDTs());
+    window.addEventListener("has_academic_storage_updated", handleUpdate);
+    return () => window.removeEventListener("has_academic_storage_updated", handleUpdate);
+  }, []);
 
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,15 +44,19 @@ export default function AdminEDTPage() {
       updated_at: new Date().toISOString(),
       classe,
     };
-    setEmplois((prev) => [newEDT, ...prev]);
+    saveEDT(newEDT);
+    setEmplois(getStoredEDTs());
     setModalOpen(false);
-    setFormTitle(""); setFormClasseId(MOCK_CLASSES[0]?.id || ""); setFormSemestre("Semestre 1");
+    setFormTitle("");
+    setFormClasseId(MOCK_CLASSES[0]?.id || "");
+    setFormSemestre("Semestre 1");
     setSuccessMsg("Le nouvel emploi du temps a été publié et est maintenant accessible aux étudiants de la classe.");
     setTimeout(() => setSuccessMsg(null), 4000);
   };
 
   const handleDelete = (id: string) => {
-    setEmplois((prev) => prev.filter((e) => e.id !== id));
+    deleteEDT(id);
+    setEmplois(getStoredEDTs());
     setDeleteConfirm(null);
     setSuccessMsg("L'emploi du temps a été retiré du portail.");
     setTimeout(() => setSuccessMsg(null), 3000);
@@ -58,7 +70,7 @@ export default function AdminEDTPage() {
             <p className="text-[11px] font-bold tracking-wider uppercase text-[#e0521c] mb-1">Administration</p>
             <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] leading-snug">Gestion des Emplois du Temps</h1>
             <p className="text-xs text-slate-500 mt-1">
-              Publication des plannings par classe et semestre
+              Publication et gestion officielle des plannings par classe et semestre
             </p>
           </div>
           <Button variant="accent" size="md" leftIcon={<Plus className="w-4 h-4" />} onClick={() => setModalOpen(true)}>
@@ -73,37 +85,54 @@ export default function AdminEDTPage() {
           </div>
         )}
 
-        {/* Liste des EDT publiés */}
-        <div className="space-y-4">
-          {emplois.map((edt) => (
-            <div key={edt.id} className="bg-white p-5 rounded-xl border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="flex items-center gap-4 min-w-0">
-                <div className="w-12 h-12 rounded-lg bg-[#0f2744]/10 flex items-center justify-center shrink-0">
-                  <Calendar className="w-6 h-6 text-[#0f2744]" />
-                </div>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Badge variant="primary" size="sm">{edt.classe?.code || "—"}</Badge>
-                    <Badge variant="neutral" size="sm">{edt.semestre}</Badge>
-                    {edt.is_active && <Badge variant="success" size="sm">Actif</Badge>}
-                  </div>
-                  <h3 className="font-serif text-base font-bold text-slate-900 truncate">{edt.title}</h3>
-                  <p className="text-xs text-slate-500">
-                    {edt.annee_universitaire} • Publié le {new Date(edt.created_at).toLocaleDateString("fr-FR")}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 shrink-0">
-                <a href={edt.file_url} download className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md transition-colors">
-                  <Download className="w-3.5 h-3.5" /> Télécharger
-                </a>
-                <button onClick={() => setDeleteConfirm(edt.id)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Supprimer">
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
+        {/* Liste des EDT publiés ou état vide */}
+        {emplois.length === 0 ? (
+          <div className="bg-white p-10 rounded-xl border border-dashed border-slate-300 text-center space-y-3">
+            <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-slate-400">
+              <Calendar className="w-6 h-6" />
             </div>
-          ))}
-        </div>
+            <h3 className="font-serif text-lg font-bold text-slate-800">Aucun emploi du temps publié</h3>
+            <p className="text-xs text-slate-500 max-w-md mx-auto">
+              Aucun planning hebdomadaire n&apos;a encore été créé. Cliquez sur le bouton ci-dessus pour publier le premier emploi du temps officiel.
+            </p>
+            <div className="pt-2">
+              <Button variant="accent" size="sm" leftIcon={<Plus className="w-4 h-4" />} onClick={() => setModalOpen(true)}>
+                Publier un planning
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {emplois.map((edt) => (
+              <div key={edt.id} className="bg-white p-5 rounded-xl border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-4 min-w-0">
+                  <div className="w-12 h-12 rounded-lg bg-[#0f2744]/10 flex items-center justify-center shrink-0">
+                    <Calendar className="w-6 h-6 text-[#0f2744]" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Badge variant="primary" size="sm">{edt.classe?.code || "—"}</Badge>
+                      <Badge variant="neutral" size="sm">{edt.semestre}</Badge>
+                      {edt.is_active && <Badge variant="success" size="sm">Actif</Badge>}
+                    </div>
+                    <h3 className="font-serif text-base font-bold text-slate-900 truncate">{edt.title}</h3>
+                    <p className="text-xs text-slate-500">
+                      {edt.annee_universitaire} • Publié le {new Date(edt.created_at).toLocaleDateString("fr-FR")}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <a href={edt.file_url} download className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md transition-colors">
+                    <Download className="w-3.5 h-3.5" /> Télécharger
+                  </a>
+                  <button onClick={() => setDeleteConfirm(edt.id)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Supprimer">
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Modal Publication EDT */}
         {modalOpen && (

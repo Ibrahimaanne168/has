@@ -10,24 +10,39 @@ import {
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { MOCK_COURS, MOCK_COMMUNIQUES, MOCK_PROFESSEURS, MOCK_CLASSES } from "@/lib/data/mock-data";
+import { MOCK_PROFESSEURS, MOCK_CLASSES } from "@/lib/data/mock-data";
+import { getStoredCourses, getStoredEDTs, getStoredCommuniques } from "@/lib/academicStorage";
 
 export default function AdminDashboard() {
+  const [coursesCount, setCoursesCount] = React.useState(0);
+  const [edtsCount, setEdtsCount] = React.useState(0);
+  const [communiquesCount, setCommuniquesCount] = React.useState(0);
+
+  React.useEffect(() => {
+    setCoursesCount(getStoredCourses().length);
+    setEdtsCount(getStoredEDTs().length);
+    setCommuniquesCount(getStoredCommuniques().length);
+    const handleUpdate = () => {
+      setCoursesCount(getStoredCourses().length);
+      setEdtsCount(getStoredEDTs().length);
+      setCommuniquesCount(getStoredCommuniques().length);
+    };
+    window.addEventListener("has_academic_storage_updated", handleUpdate);
+    return () => window.removeEventListener("has_academic_storage_updated", handleUpdate);
+  }, []);
+
   const stats = [
-    { label: "Étudiants inscrits", value: "348", icon: <Users className="w-6 h-6" />, color: "text-[#0f2744]", bg: "bg-[#0f2744]/8", trend: "+12 ce mois" },
-    { label: "Enseignants actifs", value: MOCK_PROFESSEURS.length.toString(), icon: <GraduationCap className="w-6 h-6" />, color: "text-emerald-700", bg: "bg-emerald-50", trend: "Personnel complet" },
-    { label: "Cours publiés", value: MOCK_COURS.length.toString(), icon: <BookOpen className="w-6 h-6" />, color: "text-blue-700", bg: "bg-blue-50", trend: "+4 cette semaine" },
+    { label: "Enseignants actifs", value: MOCK_PROFESSEURS.length.toString(), icon: <GraduationCap className="w-6 h-6" />, color: "text-emerald-700", bg: "bg-emerald-50", trend: "Personnel enseignant" },
+    { label: "Cours & Chapitres", value: coursesCount.toString(), icon: <BookOpen className="w-6 h-6" />, color: "text-blue-700", bg: "bg-blue-50", trend: coursesCount === 0 ? "Aucun publié" : `${coursesCount} actif(s)` },
+    { label: "Emplois du temps", value: edtsCount.toString(), icon: <Calendar className="w-6 h-6" />, color: "text-[#0f2744]", bg: "bg-[#0f2744]/8", trend: edtsCount === 0 ? "En attente" : `${edtsCount} validé(s)` },
     { label: "Classes actives", value: MOCK_CLASSES.length.toString(), icon: <BarChart3 className="w-6 h-6" />, color: "text-amber-700", bg: "bg-amber-50", trend: "Année 2024-2025" },
-    { label: "Messages non traités", value: "5", icon: <MessageSquare className="w-6 h-6" />, color: "text-[#e0521c]", bg: "bg-[#e0521c]/8", trend: "Requiert attention" },
-    { label: "Communiqués publiés", value: MOCK_COMMUNIQUES.length.toString(), icon: <Bell className="w-6 h-6" />, color: "text-purple-700", bg: "bg-purple-50", trend: "3 cette semaine" },
+    { label: "Communiqués officiels", value: communiquesCount.toString(), icon: <Bell className="w-6 h-6" />, color: "text-purple-700", bg: "bg-purple-50", trend: communiquesCount === 0 ? "Aucun" : `${communiquesCount} publié(s)` },
+    { label: "Statut Système", value: "Actif", icon: <ShieldCheck className="w-6 h-6" />, color: "text-emerald-700", bg: "bg-emerald-50", trend: "Plateforme en ligne" },
   ];
 
   const recentActions = [
-    { action: "Inscription d'un nouvel étudiant", detail: "Awa Coulibaly — L1 ISN", time: "Il y a 35 min", type: "creation" },
-    { action: "Emploi du temps publié", detail: "Classe L2-GCB — Semestre 1", time: "Il y a 2 heures", type: "success" },
-    { action: "Communiqué Important publié", detail: "Accueil des promotions 2024-2025", time: "Il y a 3 heures", type: "info" },
-    { action: "Message de contact reçu", detail: "Demande d'informations admissions", time: "Il y a 5 heures", type: "message" },
-    { action: "Compte professeur activé", detail: "Dr. Ibrahima Koné — Dép. EER", time: "Il y a 1 jour", type: "creation" },
+    { action: "Système académique initialisé", detail: "Configuration Halil Académie Scientifique", time: "Aujourd'hui", type: "creation" },
+    { action: "Surveillance de la plateforme", detail: "Services opérationnels et sécurisés", time: "En continu", type: "success" },
   ];
 
   return (
@@ -50,7 +65,7 @@ export default function AdminDashboard() {
               Supervision Globale — Halil Académie Scientifique
             </h1>
             <p className="text-sm text-slate-300">
-              Gérez les comptes, les filières, les emplois du temps, les communiqués et la modération en un seul espace sécurisé.
+              Gérez les comptes, les cours, les filières, les emplois du temps, les communiqués et la modération en un seul espace sécurisé.
             </p>
           </div>
         </div>
@@ -77,9 +92,9 @@ export default function AdminDashboard() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
               { label: "Gérer les comptes", href: "/admin/comptes", icon: <UserCheck className="w-5 h-5" /> },
+              { label: "Cours & Chapitres", href: "/admin/cours", icon: <BookOpen className="w-5 h-5" /> },
               { label: "Publier EDT", href: "/admin/edt", icon: <Calendar className="w-5 h-5" /> },
               { label: "Nouveau communiqué", href: "/admin/communiques", icon: <Bell className="w-5 h-5" /> },
-              { label: "Messages & Contact", href: "/admin/messages", icon: <MessageSquare className="w-5 h-5" /> },
             ].map((action) => (
               <Link key={action.href} href={action.href}>
                 <div className="p-4 rounded-lg border border-slate-200 hover:border-[#0f2744]/40 hover:bg-slate-50/80 transition-all text-center space-y-2 cursor-pointer group">

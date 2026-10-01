@@ -77,8 +77,9 @@ export function DashboardLayout({
   const adminNav: NavItem[] = [
     { label: "Supervision Globale", href: "/admin", icon: <BarChart3 className="w-5 h-5" /> },
     { label: "Gestion des Comptes", href: "/admin/comptes", icon: <Users className="w-5 h-5" /> },
-    { label: "Filières & Matières", href: "/admin/academique", icon: <Sliders className="w-5 h-5" /> },
+    { label: "Cours & Chapitres", href: "/admin/cours", icon: <BookOpen className="w-5 h-5" /> },
     { label: "Emplois du Temps", href: "/admin/edt", icon: <Calendar className="w-5 h-5" /> },
+    { label: "Filières & Matières", href: "/admin/academique", icon: <Sliders className="w-5 h-5" /> },
     { label: "Communiqués", href: "/admin/communiques", icon: <FileText className="w-5 h-5" /> },
     { label: "Messages & Contact", href: "/admin/messages", icon: <MessageSquare className="w-5 h-5" /> },
     { label: "Modération du Chat", href: "/admin/chat", icon: <MessagesSquare className="w-5 h-5" />, badge: "Modo" },
