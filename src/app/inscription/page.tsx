@@ -29,6 +29,8 @@ export default function InscriptionPage() {
   // Form State
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
+  const [filiere, setFiliere] = useState<"MPI" | "SML" | "MIASS">("MPI");
+  const [niveau, setNiveau] = useState<"L1" | "L2">("L1");
   const [code2FA, setCode2FA] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -175,6 +177,8 @@ export default function InscriptionPage() {
           username: username.trim().toLowerCase(),
           password,
           confirmPassword,
+          filiere,
+          niveau,
         }),
       });
       const data = await res.json();
@@ -310,7 +314,7 @@ export default function InscriptionPage() {
               <Input
                 label="Nom complet et prénom(s)"
                 required
-                placeholder="Ex. Mamadou Traoré"
+                placeholder="Ex. Ibrahima Anne"
                 leftIcon={<User className="w-4 h-4" />}
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
@@ -326,6 +330,37 @@ export default function InscriptionPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                    Filière d&apos;inscription
+                  </label>
+                  <select
+                    value={filiere}
+                    onChange={(e) => setFiliere(e.target.value as "MPI" | "SML" | "MIASS")}
+                    className="w-full h-10 px-3 rounded-lg border border-slate-200 bg-white text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0f2744]"
+                  >
+                    <option value="MPI">MPI (Maths, Physique, Info)</option>
+                    <option value="SML">SML (Sciences Matière, Logiciel)</option>
+                    <option value="MIASS">MIASS (Maths & Info Appliquées)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                    Niveau d&apos;études
+                  </label>
+                  <select
+                    value={niveau}
+                    onChange={(e) => setNiveau(e.target.value as "L1" | "L2")}
+                    className="w-full h-10 px-3 rounded-lg border border-slate-200 bg-white text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0f2744]"
+                  >
+                    <option value="L1">Licence 1 (L1)</option>
+                    <option value="L2">Licence 2 (L2)</option>
+                  </select>
+                </div>
+              </div>
 
 
 

@@ -49,6 +49,10 @@ export async function POST(request: NextRequest) {
     const randomDigits = Math.floor(1000 + Math.random() * 9000);
     const matricule = `HAS-${year}-ETU-${randomDigits}`;
 
+    const filiereChoice = parseResult.data.filiere || "MPI";
+    const niveauChoice = parseResult.data.niveau || "L1";
+    const classeChoice = `${niveauChoice}-${filiereChoice}`;
+
     // 3. Création du compte dans Supabase Auth
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
       email,
@@ -58,6 +62,10 @@ export async function POST(request: NextRequest) {
         full_name: fullName,
         username,
         role: "etudiant",
+        filiere: filiereChoice,
+        niveau: niveauChoice,
+        classe: classeChoice,
+        matricule,
       },
     });
 

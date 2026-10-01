@@ -4,9 +4,11 @@ import React, { useState } from "react";
 import { Search, AlertCircle, Calendar } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Badge } from "@/components/ui/Badge";
-import { MOCK_STUDENT, MOCK_COMMUNIQUES } from "@/lib/data/mock-data";
+import { MOCK_COMMUNIQUES } from "@/lib/data/mock-data";
+import { useCurrentUser } from "@/lib/useCurrentUser";
 
 export default function EtudiantCommuniquesPage() {
+  const { user } = useCurrentUser();
   const [communiques] = useState(MOCK_COMMUNIQUES);
   const [filterImportant, setFilterImportant] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -22,9 +24,9 @@ export default function EtudiantCommuniquesPage() {
   return (
     <DashboardLayout
       role="etudiant"
-      userName={MOCK_STUDENT.full_name}
-      userEmail={MOCK_STUDENT.email}
-      matriculeOrTitle={MOCK_STUDENT.matricule || "HAS-ETU"}
+      userName={user.full_name}
+      userEmail={user.email}
+      matriculeOrTitle={user.matricule || "HAS-ETU"}
     >
       <div className="space-y-6">
         <div>

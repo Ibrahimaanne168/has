@@ -14,9 +14,16 @@ interface ChatRoomProps {
     role: UserRole;
   };
   isAdmin?: boolean;
+  roomId?: string;
+  roomTitle?: string;
 }
 
-export function ChatRoom({ currentUser, isAdmin = false }: ChatRoomProps) {
+export function ChatRoom({
+  currentUser,
+  isAdmin = false,
+  roomId = "general",
+  roomTitle = "Salon Général",
+}: ChatRoomProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [isSending, setIsSending] = useState(false);

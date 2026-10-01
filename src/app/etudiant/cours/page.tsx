@@ -14,9 +14,11 @@ import {
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Card, CardContent, CardFooter } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { MOCK_STUDENT, MOCK_COURS, MOCK_MATIERES } from "@/lib/data/mock-data";
+import { MOCK_COURS, MOCK_MATIERES } from "@/lib/data/mock-data";
+import { useCurrentUser } from "@/lib/useCurrentUser";
 
 export default function EtudiantCoursPage() {
+  const { user } = useCurrentUser();
   const [courses, setCourses] = useState(MOCK_COURS);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedMatiere, setSelectedMatiere] = useState<string>("all");
@@ -40,9 +42,9 @@ export default function EtudiantCoursPage() {
   return (
     <DashboardLayout
       role="etudiant"
-      userName={MOCK_STUDENT.full_name}
-      userEmail={MOCK_STUDENT.email}
-      matriculeOrTitle={MOCK_STUDENT.matricule || "HAS-ETU"}
+      userName={user.full_name}
+      userEmail={user.email}
+      matriculeOrTitle={user.matricule || "HAS-ETU"}
     >
       <div className="space-y-6">
         {/* En-tête de page */}
@@ -55,7 +57,7 @@ export default function EtudiantCoursPage() {
               Cours &amp; Fiches Académiques
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              Supports officiels, syllabus et TD pour votre promotion ({MOCK_STUDENT.classe?.code})
+              Supports officiels, syllabus et TD pour votre promotion ({user.classe?.code || "L1-MPI"})
             </p>
           </div>
         </div>

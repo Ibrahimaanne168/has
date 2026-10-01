@@ -17,12 +17,13 @@ import { Button } from "@/components/ui/Button";
 import { Card, CardFooter } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import {
-  MOCK_STUDENT,
   MOCK_COURS,
   MOCK_COMMUNIQUES,
 } from "@/lib/data/mock-data";
+import { useCurrentUser } from "@/lib/useCurrentUser";
 
 export default function EtudiantDashboard() {
+  const { user } = useCurrentUser();
   const [courses, setCourses] = useState(MOCK_COURS);
 
   const toggleFavorite = (courseId: string) => {
@@ -34,9 +35,9 @@ export default function EtudiantDashboard() {
   return (
     <DashboardLayout
       role="etudiant"
-      userName={MOCK_STUDENT.full_name}
-      userEmail={MOCK_STUDENT.email}
-      matriculeOrTitle={MOCK_STUDENT.matricule || "HAS-ETU"}
+      userName={user.full_name}
+      userEmail={user.email}
+      matriculeOrTitle={user.matricule || "HAS-ETU"}
     >
       <div className="space-y-7">
         {/* ============================================================================== */}
@@ -50,7 +51,7 @@ export default function EtudiantDashboard() {
             </div>
 
             <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-white leading-snug">
-              Ravi de vous revoir, {MOCK_STUDENT.full_name}
+              Ravi de vous revoir, {user.full_name}
             </h1>
 
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
@@ -60,13 +61,13 @@ export default function EtudiantDashboard() {
 
             <div className="pt-2 flex flex-wrap items-center gap-2.5 text-xs text-slate-200">
               <span className="bg-white/10 border border-white/10 px-2.5 py-1 rounded-lg font-mono text-[11px]">
-                Matricule : {MOCK_STUDENT.matricule}
+                Matricule : {user.matricule}
               </span>
               <span className="bg-white/10 border border-white/10 px-2.5 py-1 rounded-lg text-[11px] font-medium">
-                Classe : {MOCK_STUDENT.classe?.name}
+                Classe : {user.classe?.name || "L1 MPI"}
               </span>
               <span className="bg-white/10 border border-white/10 px-2.5 py-1 rounded-lg text-[11px] font-medium">
-                Niveau : {MOCK_STUDENT.classe?.niveau}
+                Niveau : {user.classe?.niveau || "L1"}
               </span>
             </div>
           </div>
@@ -88,7 +89,7 @@ export default function EtudiantDashboard() {
                 Planning de la Semaine validé
               </h3>
               <p className="text-xs text-slate-500 mt-0.5">
-                Le planning officiel des cours en présentiel et séances de TD est disponible pour votre classe ({MOCK_STUDENT.classe?.code}).
+                Le planning officiel des cours en présentiel et séances de TD est disponible pour votre classe ({user.classe?.code || "L1-MPI"}).
               </p>
             </div>
           </div>

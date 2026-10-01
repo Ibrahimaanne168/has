@@ -343,8 +343,7 @@ INSERT INTO users (id, role_id, login, password_hash, nom, prenom, telephone, em
 (4, 2, 'ndiogou', '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im', 'Ndiaye', 'Ndiogou', '772772709', 'ndiogou.ndiaye@has.sn', 'uploads/profs/photo_2026-07-20_16-46-11_2.jpg', FALSE),
 (5, 2, 'diopsow', '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im', 'Sow', 'El Hadji Ibrahima Diop', '776689777', 'diop.sow@has.sn', 'uploads/profs/photo_2026-07-20_16-29-37.jpg', FALSE),
 (6, 2, 'papethiam', '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im', 'Thiam', 'Pape', '787318427', 'pape.thiam@has.sn', NULL, FALSE),
-(7, 2, 'kalidou', '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im', 'Ba', 'Kalidou', '782718397', 'kalidou.ba@has.sn', NULL, FALSE),
-(8, 3, 'etudiant', '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im', 'Diop', 'Moussa', '771234567', 'moussa.diop@etudiant.has.sn', NULL, FALSE)
+(7, 2, 'kalidou', '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im', 'Ba', 'Kalidou', '782718397', 'kalidou.ba@has.sn', NULL, FALSE)
 ON CONFLICT (id) DO UPDATE SET password_hash = EXCLUDED.password_hash;
 
 -- Enseignants
@@ -377,10 +376,6 @@ INSERT INTO enseignant_matiere (enseignant_id, matiere_id) VALUES
 (6, 12), (6, 13), (6, 17), (6, 18)
 ON CONFLICT DO NOTHING;
 
--- Compte Étudiant de test
-INSERT INTO etudiants (id, user_id, filiere_id, classe_id, matricule) VALUES
-(1, 8, 1, 1, 'HAS-2026-001')
-ON CONFLICT (id) DO NOTHING;
 
 -- Cours réels d'exemple
 INSERT INTO cours (id, titre, description, matiere_id, enseignant_id, filiere_id, classe_id, niveau, lien_externe) VALUES
@@ -411,8 +406,7 @@ ON CONFLICT (id) DO NOTHING;
 -- Messages d'exemple pour le Chat Général
 INSERT INTO chat_messages (id, user_id, message, created_at) VALUES
 (1, 1, 'Bienvenue à tous dans le salon général de la Halil Académie Scientifique ! Cet espace vous permet d''échanger librement.', NOW() - INTERVAL '2 hours'),
-(2, 2, 'Bonjour chers étudiants, n''hésitez pas si vous avez des questions sur les TD d''Algèbre.', NOW() - INTERVAL '1 hour'),
-(3, 8, 'Merci beaucoup Monsieur Samb ! La plateforme est très claire.', NOW() - INTERVAL '30 minutes')
+(2, 2, 'Bonjour chers étudiants, n''hésitez pas si vous avez des questions sur les TD d''Algèbre.', NOW() - INTERVAL '1 hour')
 ON CONFLICT (id) DO NOTHING;
 
 -- Réalignement des séquences d'identifiants (auto-increment)

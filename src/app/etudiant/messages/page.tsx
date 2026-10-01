@@ -18,10 +18,12 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Badge } from "@/components/ui/Badge";
-import { MOCK_STUDENT, MOCK_PROFESSEURS } from "@/lib/data/mock-data";
+import { MOCK_PROFESSEURS } from "@/lib/data/mock-data";
+import { useCurrentUser } from "@/lib/useCurrentUser";
 import { Message } from "@/lib/types";
 
 function EtudiantMessagesContent() {
+  const { user } = useCurrentUser();
   const searchParams = useSearchParams();
   const preDestId = searchParams.get("dest");
   const preDestName = searchParams.get("name");
@@ -31,10 +33,10 @@ function EtudiantMessagesContent() {
     {
       id: "m-1",
       sender_id: "p1111111-1111-1111-1111-111111111111",
-      receiver_id: MOCK_STUDENT.id,
+      receiver_id: user.id || "student-id",
       subject: "Validation de votre sujet de mini-projet BDD",
       content:
-        "Bonjour Mamadou, j'ai examiné votre proposition de modèle relationnel pour la gestion de pharmacie hospitalière. Les entités sont bien posées. Vous pouvez passer à l'implémentation des contraintes et des index PostgreSQL.",
+        "Bonjour, j'ai examiné votre proposition de modèle relationnel pour la gestion de pharmacie hospitalière. Les entités sont bien posées. Vous pouvez passer à l'implémentation des contraintes et des index PostgreSQL.",
       is_read: true,
       parent_id: null,
       created_at: new Date(Date.now() - 3600000 * 24).toISOString(),
@@ -43,7 +45,7 @@ function EtudiantMessagesContent() {
     {
       id: "m-2",
       sender_id: "admin-id",
-      receiver_id: MOCK_STUDENT.id,
+      receiver_id: user.id || "student-id",
       subject: "Attestation d'inscription 2024-2025 disponible",
       content:
         "Votre attestation d'inscription officielle pour l'année 2024-2025 est désormais signée par le secrétariat académique. Vous pouvez retirer l'original auprès du bureau des admissions.",
@@ -73,7 +75,7 @@ function EtudiantMessagesContent() {
   const [sentMessages, setSentMessages] = useState<Message[]>([
     {
       id: "m-sent-1",
-      sender_id: MOCK_STUDENT.id,
+      sender_id: user.id || "student-id",
       receiver_id: "p1111111-1111-1111-1111-111111111111",
       subject: "Question sur le TP n°2 PostgreSQL",
       content:
@@ -126,7 +128,7 @@ function EtudiantMessagesContent() {
 
     const newMsg: Message = {
       id: `sent-${Date.now()}`,
-      sender_id: MOCK_STUDENT.id,
+      sender_id: user.id || "student-id",
       receiver_id: targetRecipient,
       subject: newSubject,
       content: newContent,
@@ -150,9 +152,9 @@ function EtudiantMessagesContent() {
   return (
     <DashboardLayout
       role="etudiant"
-      userName={MOCK_STUDENT.full_name}
-      userEmail={MOCK_STUDENT.email}
-      matriculeOrTitle={MOCK_STUDENT.matricule || "HAS-ETU"}
+      userName={user.full_name}
+      userEmail={user.email}
+      matriculeOrTitle={user.matricule || "HAS-ETU"}
     >
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
