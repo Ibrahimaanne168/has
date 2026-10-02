@@ -48,8 +48,10 @@ export async function GET(request: NextRequest) {
       if (matchedUser?.email) {
         const role =
           matchedUser.user_metadata?.role ||
-          (matchedUser.email.includes("admin") || matchedUser.email.includes("halil")
+          (matchedUser.email?.includes("admin") || matchedUser.email?.includes("halil-academie")
             ? "admin"
+            : matchedUser.email?.endsWith("@has-academie.online")
+            ? "professeur"
             : "etudiant");
 
         return NextResponse.json({
