@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -16,6 +16,8 @@ import {
   KeyRound,
   Eye,
   EyeOff,
+  Loader2,
+  XCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -37,6 +39,12 @@ export default function InscriptionPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  // Username availability
+  const [usernameStatus, setUsernameStatus] = useState<"idle" | "checking" | "available" | "taken" | "invalid">("idle");
+  const [usernameMsg, setUsernameMsg] = useState<string | null>(null);
+  const [usernameSuggestions, setUsernameSuggestions] = useState<string[]>([]);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   // Messages & Loading
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -53,6 +61,45 @@ export default function InscriptionPage() {
     }, 1000);
     return () => clearInterval(interval);
   }, [resendCooldown]);
+
+  // Vérification username en temps réel (debounce 500ms)
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
+    if (!username || username.length < 3) {
+      setUsernameStatus("idle");
+      setUsernameMsg(null);
+      setUsernameSuggestions([]);
+      return;
+    }
+
+    setUsernameStatus("checking");
+    setUsernameMsg(null);
+    setUsernameSuggestions([]);
+
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/auth/check-username?username=${encodeURIComponent(username.trim().toLowerCase())}`);
+        const data = await res.json();
+
+        if (data.error && !data.available) {
+          setUsernameStatus("invalid");
+          setUsernameMsg(data.error);
+          setUsernameSuggestions([]);
+        } else if (data.available) {
+          setUsernameStatus("available");
+          setUsernameMsg(data.message || `« ${username} » est disponible ✓`);
+          setUsernameSuggestions([]);
+        } else {
+          setUsernameStatus("taken");
+          setUsernameMsg(data.message || `« ${username} » est déjà utilisé.`);
+          setUsernameSuggestions(data.suggestions || []);
+        }
+      } catch {
+        setUsernameStatus("idle");
+      }
+    }, 500);
+  }, [username]);
 
   // Validation mot de passe en direct
   const passwordChecks = {
@@ -161,6 +208,14 @@ export default function InscriptionPage() {
       setErrorMsg("Les deux mots de passe ne sont pas identiques.");
       return;
     }
+    if (usernameStatus === "taken" || usernameStatus === "invalid") {
+      setErrorMsg("Cet identifiant est déjà pris ou invalide. Choisissez-en un autre.");
+      return;
+    }
+    if (usernameStatus === "checking") {
+      setErrorMsg("Vérification de l'identifiant en cours, patientez un instant.");
+      return;
+    }
 
     setIsLoading(true);
     setErrorMsg(null);
@@ -184,6 +239,12 @@ export default function InscriptionPage() {
       const data = await res.json();
 
       if (!res.ok) {
+        // Si le serveur retourne des suggestions (username pris)
+        if (res.status === 409 && data.suggestions?.length) {
+          setUsernameSuggestions(data.suggestions);
+          setUsernameStatus("taken");
+          setUsernameMsg(data.error);
+        }
         throw new Error(data.error || "Échec de création du compte.");
       }
 
@@ -199,6 +260,7 @@ export default function InscriptionPage() {
       setIsLoading(false);
     }
   };
+
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-between">
@@ -444,15 +506,71 @@ export default function InscriptionPage() {
           {/* ============================================================================== */}
           {step === 3 && (
             <form onSubmit={handleStep3Submit} className="space-y-5">
-              <Input
-                label="Identifiant unique (Login)"
-                required
-                placeholder="Ex. mtraore"
-                leftIcon={<KeyRound className="w-4 h-4" />}
-                helperText="Lettres, chiffres, points ou tirets sans espace."
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
+              {/* Champ identifiant avec vérification temps réel */}
+              <div className="space-y-1.5">
+                <label className="block text-sm font-medium text-slate-700">
+                  Identifiant unique (Login) <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                    <KeyRound className="w-4 h-4" />
+                  </div>
+                  <input
+                    id="username-input"
+                    type="text"
+                    required
+                    placeholder="Ex. mtraore"
+                    autoComplete="username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value.replace(/\s/g, "").toLowerCase())}
+                    className={`w-full pl-10 pr-10 py-2.5 text-sm border rounded-lg bg-white focus:outline-none focus:ring-1 transition-colors ${
+                      usernameStatus === "available"
+                        ? "border-emerald-400 focus:ring-emerald-400 bg-emerald-50/30"
+                        : usernameStatus === "taken" || usernameStatus === "invalid"
+                        ? "border-red-400 focus:ring-red-400 bg-red-50/30"
+                        : "border-slate-200 focus:ring-[#0f2744]"
+                    }`}
+                  />
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    {usernameStatus === "checking" && <Loader2 className="w-4 h-4 text-slate-400 animate-spin" />}
+                    {usernameStatus === "available" && <CheckCircle2 className="w-4 h-4 text-emerald-500" />}
+                    {(usernameStatus === "taken" || usernameStatus === "invalid") && <XCircle className="w-4 h-4 text-red-500" />}
+                  </div>
+                </div>
+
+                {/* Message de statut */}
+                {usernameMsg && (
+                  <p className={`text-[11px] font-medium flex items-center gap-1 ${
+                    usernameStatus === "available" ? "text-emerald-600" : "text-red-600"
+                  }`}>
+                    {usernameMsg}
+                  </p>
+                )}
+                {usernameStatus === "idle" && (
+                  <p className="text-[11px] text-slate-400">Lettres, chiffres, tirets ou underscore. 3–30 caractères.</p>
+                )}
+
+                {/* Suggestions d'identifiants alternatifs */}
+                {usernameSuggestions.length > 0 && (
+                  <div className="mt-2 p-3 bg-amber-50 border border-amber-200/80 rounded-lg space-y-1.5">
+                    <p className="text-[11px] font-semibold text-amber-800">
+                      Identifiants disponibles suggérés — cliquez pour choisir :
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {usernameSuggestions.map((s) => (
+                        <button
+                          key={s}
+                          type="button"
+                          onClick={() => setUsername(s)}
+                          className="px-3 py-1 rounded-full text-[11px] font-bold bg-white border border-amber-300 text-amber-900 hover:bg-amber-100 hover:border-amber-400 transition-colors font-mono"
+                        >
+                          {s}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
 
               <div className="space-y-1.5">
                 <Input

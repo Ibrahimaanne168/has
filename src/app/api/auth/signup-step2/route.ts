@@ -44,10 +44,48 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 2. Génération automatique du matricule étudiant officiel HAS
-    const year = new Date().getFullYear();
+    // 2.5 Vérification unicité du username (toutes sources confondues)
+    const cleanUsername = username.toLowerCase().trim();
+
+    // Chercher dans la table profiles
+    const { data: existingProfile } = await supabaseAdmin
+      .from("profiles")
+      .select("id")
+      .eq("username", cleanUsername)
+      .maybeSingle();
+
+    if (existingProfile) {
+      const base = cleanUsername.replace(/[^a-z0-9]/g, "");
+      const year = new Date().getFullYear().toString().slice(-2);
+      const r = () => Math.floor(10 + Math.random() * 90);
+      const suggestions = [...new Set([`${base}${year}`, `${base}${r()}`, `${base}_has`, `${base}${r()}`])].slice(0, 4);
+      return NextResponse.json(
+        { error: `L'identifiant « ${cleanUsername} » est déjà pris.`, suggestions },
+        { status: 409 }
+      );
+    }
+
+    // Chercher dans Supabase Auth metadata
+    const { data: allUsers } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
+    const usernameTaken = allUsers?.users?.some(
+      (u) => (u.user_metadata?.username || "").toLowerCase() === cleanUsername
+    );
+
+    if (usernameTaken) {
+      const base = cleanUsername.replace(/[^a-z0-9]/g, "");
+      const year = new Date().getFullYear().toString().slice(-2);
+      const r = () => Math.floor(10 + Math.random() * 90);
+      const suggestions = [...new Set([`${base}${year}`, `${base}${r()}`, `${base}_has`, `${base}${r()}`])].slice(0, 4);
+      return NextResponse.json(
+        { error: `L'identifiant « ${cleanUsername} » est déjà pris.`, suggestions },
+        { status: 409 }
+      );
+    }
+
+    // 3. Création du compte dans Supabase Auth
+    const yearFull = new Date().getFullYear();
     const randomDigits = Math.floor(1000 + Math.random() * 9000);
-    const matricule = `HAS-${year}-ETU-${randomDigits}`;
+    const matricule = `HAS-${yearFull}-ETU-${randomDigits}`;
 
     const filiereChoice = parseResult.data.filiere || "MPI";
     const niveauChoice = parseResult.data.niveau || "L1";
