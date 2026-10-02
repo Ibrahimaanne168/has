@@ -131,13 +131,62 @@ export interface Message {
   receiver?: Profile;
 }
 
+export interface MatiereAssignee {
+  id: string | number;
+  nom: string;
+  code?: string;
+  niveau: "L1" | "L2" | string;
+  classes: string[]; // e.g. ["L1 MPI", "L1 SML"]
+}
+
+export interface Professeur {
+  id: string;
+  user_id?: number | string;
+  full_name: string;
+  prenom?: string;
+  nom?: string;
+  email: string;
+  username?: string | null;
+  phone: string | null;
+  matricule: string;
+  specialite: string;
+  bio: string;
+  filiere_id?: string | null;
+  photo?: string | null;
+  avatar_url?: string | null;
+  is_active: boolean;
+  matieres: MatiereAssignee[];
+  niveaux: string[]; // e.g. ["L1", "L2"]
+  classes: string[]; // e.g. ["L1 MPI", "L2 MPI"]
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface ChatSalon {
+  id: string;
+  titre: string;
+  description: string;
+  type: "general" | "niveau" | "classe";
+  niveau?: string | null; // "L1", "L2" or null
+  classe?: string | null; // "L1 MPI", etc.
+  cree_par?: string;
+  created_at: string;
+}
+
 export interface ChatMessage {
   id: string;
   user_id: string;
+  salon_id?: string;
   content: string;
   is_deleted: boolean;
   created_at: string;
-  user?: Profile;
+  user?: Profile | {
+    id: string;
+    full_name: string;
+    role?: UserRole;
+    email?: string;
+    avatar_url?: string | null;
+  };
 }
 
 export interface ContactMessage {

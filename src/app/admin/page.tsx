@@ -11,28 +11,31 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { MOCK_PROFESSEURS, MOCK_CLASSES } from "@/lib/data/mock-data";
-import { getStoredCourses, getStoredEDTs, getStoredCommuniques } from "@/lib/academicStorage";
+import { getStoredCourses, getStoredEDTs, getStoredCommuniques, getStoredProfesseurs } from "@/lib/academicStorage";
 
 export default function AdminDashboard() {
   const [coursesCount, setCoursesCount] = React.useState(0);
   const [edtsCount, setEdtsCount] = React.useState(0);
   const [communiquesCount, setCommuniquesCount] = React.useState(0);
+  const [profsCount, setProfsCount] = React.useState(6);
 
   React.useEffect(() => {
     setCoursesCount(getStoredCourses().length);
     setEdtsCount(getStoredEDTs().length);
     setCommuniquesCount(getStoredCommuniques().length);
+    setProfsCount(getStoredProfesseurs().length);
     const handleUpdate = () => {
       setCoursesCount(getStoredCourses().length);
       setEdtsCount(getStoredEDTs().length);
       setCommuniquesCount(getStoredCommuniques().length);
+      setProfsCount(getStoredProfesseurs().length);
     };
     window.addEventListener("has_academic_storage_updated", handleUpdate);
     return () => window.removeEventListener("has_academic_storage_updated", handleUpdate);
   }, []);
 
   const stats = [
-    { label: "Enseignants actifs", value: MOCK_PROFESSEURS.length.toString(), icon: <GraduationCap className="w-6 h-6" />, color: "text-emerald-700", bg: "bg-emerald-50", trend: "Personnel enseignant" },
+    { label: "Enseignants actifs", value: profsCount.toString(), icon: <GraduationCap className="w-6 h-6" />, color: "text-emerald-700", bg: "bg-emerald-50", trend: "Personnel enseignant" },
     { label: "Cours & Chapitres", value: coursesCount.toString(), icon: <BookOpen className="w-6 h-6" />, color: "text-blue-700", bg: "bg-blue-50", trend: coursesCount === 0 ? "Aucun publié" : `${coursesCount} actif(s)` },
     { label: "Emplois du temps", value: edtsCount.toString(), icon: <Calendar className="w-6 h-6" />, color: "text-[#0f2744]", bg: "bg-[#0f2744]/8", trend: edtsCount === 0 ? "En attente" : `${edtsCount} validé(s)` },
     { label: "Classes actives", value: MOCK_CLASSES.length.toString(), icon: <BarChart3 className="w-6 h-6" />, color: "text-amber-700", bg: "bg-amber-50", trend: "Année 2024-2025" },

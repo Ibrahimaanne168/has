@@ -13,10 +13,10 @@ import { MOCK_FILIERES, MOCK_CLASSES, MOCK_MATIERES } from "@/lib/data/mock-data
 import { Filiere, Classe, Matiere } from "@/lib/types";
 
 const FILIERE_ICONS: Record<string, React.ReactNode> = {
-  ISN: <Cpu className="w-5 h-5" />,
-  GCB: <Building className="w-5 h-5" />,
-  EER: <Zap className="w-5 h-5" />,
-  SEG: <TrendingUp className="w-5 h-5" />,
+  MPI: <Cpu className="w-5 h-5" />,
+  SML: <Building className="w-5 h-5" />,
+  MIASS: <TrendingUp className="w-5 h-5" />,
+  PRÉPA: <Zap className="w-5 h-5" />,
 };
 
 export default function AdminAcademiquePage() {
@@ -27,7 +27,81 @@ export default function AdminAcademiquePage() {
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<{ id: string; type: string; name: string } | null>(null);
 
+  // Modals création
+  const [filiereModal, setFiliereModal] = useState(false);
+  const [classeModal, setClasseModal] = useState(false);
+  const [matiereModal, setMatiereModal] = useState(false);
+
+  // Form states
+  const [filiereCode, setFiliereCode] = useState("");
+  const [filiereName, setFiliereName] = useState("");
+  const [filiereDesc, setFiliereDesc] = useState("");
+
+  const [classeCode, setClasseCode] = useState("");
+  const [classeName, setClasseName] = useState("");
+  const [classeNiveau, setClasseNiveau] = useState<"L1" | "L2">("L1");
+  const [classeFiliereId, setClasseFiliereId] = useState(MOCK_FILIERES[0]?.id || "");
+
+  const [matiereCode, setMatiereCode] = useState("");
+  const [matiereName, setMatiereName] = useState("");
+  const [matiereCoeff, setMatiereCoeff] = useState("3");
+  const [matiereEcts, setMatiereEcts] = useState("5");
+  const [matiereFiliereId, setMatiereFiliereId] = useState(MOCK_FILIERES[0]?.id || "");
+
   const showSuccess = (msg: string) => { setSuccessMsg(msg); setTimeout(() => setSuccessMsg(null), 3500); };
+
+  const handleCreateFiliere = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!filiereCode.trim() || !filiereName.trim()) return;
+    const newF: Filiere = {
+      id: `filiere-${Date.now()}`,
+      code: filiereCode.toUpperCase().trim(),
+      name: filiereName.trim(),
+      description: filiereDesc.trim() || "Filière académique d'excellence.",
+      cycle: "Tutorat Supérieur L1-L2",
+      duration_years: 2,
+      icon: "cpu",
+    };
+    setFilieres((prev) => [newF, ...prev]);
+    setFiliereModal(false);
+    setFiliereCode(""); setFiliereName(""); setFiliereDesc("");
+    showSuccess(`La filière ${newF.code} a été ajoutée.`);
+  };
+
+  const handleCreateClasse = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!classeCode.trim() || !classeName.trim()) return;
+    const newC: Classe = {
+      id: `cls-${Date.now()}`,
+      filiere_id: classeFiliereId,
+      code: classeCode.toUpperCase().trim(),
+      name: classeName.trim(),
+      niveau: classeNiveau,
+      annee_scolaire: "2024-2025",
+    };
+    setClasses((prev) => [newC, ...prev]);
+    setClasseModal(false);
+    setClasseCode(""); setClasseName("");
+    showSuccess(`La classe ${newC.code} (${newC.niveau}) a été ajoutée.`);
+  };
+
+  const handleCreateMatiere = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!matiereCode.trim() || !matiereName.trim()) return;
+    const newM: Matiere = {
+      id: `mat-${Date.now()}`,
+      filiere_id: matiereFiliereId,
+      code: matiereCode.toUpperCase().trim(),
+      name: matiereName.trim(),
+      coefficient: parseInt(matiereCoeff, 10) || 3,
+      credits_ects: parseInt(matiereEcts, 10) || 5,
+      description: "Module d'enseignement académique conforme à la maquette.",
+    };
+    setMatieres((prev) => [newM, ...prev]);
+    setMatiereModal(false);
+    setMatiereCode(""); setMatiereName("");
+    showSuccess(`La matière ${newM.name} (${newM.code}) a été ajoutée.`);
+  };
 
   const handleDeleteFiliere = (id: string) => {
     setFilieres((prev) => prev.filter((f) => f.id !== id));
@@ -52,8 +126,8 @@ export default function AdminAcademiquePage() {
       <div className="space-y-6">
         <div>
           <p className="text-[11px] font-bold tracking-wider uppercase text-[#e0521c] mb-1">Administration Académique</p>
-          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] leading-snug">Structure Académique</h1>
-          <p className="text-xs text-slate-500 mt-1">Filières, classes et modules de formation — Halil Académie Scientifique</p>
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] leading-snug">Structure Académique &amp; Matières</h1>
+          <p className="text-xs text-slate-500 mt-1">Filières, classes et modules de formation L1 &amp; L2 — Halil Académie Scientifique</p>
         </div>
 
         {successMsg && (
@@ -65,8 +139,8 @@ export default function AdminAcademiquePage() {
 
         {/* Onglets */}
         <div className="flex gap-1 border-b border-slate-200">
-          {([["filieres", "Filières"], ["classes", "Classes"], ["matieres", "Matières"]] as const).map(([key, label]) => (
-            <button key={key} onClick={() => setTab(key)}
+          {([["filieres", `Filières (${filieres.length})`], ["classes", `Classes (${classes.length})`], ["matieres", `Matières (${matieres.length})`]] as const).map(([key, label]) => (
+            <button key={key} onClick={() => setTab(key as any)}
               className={`px-5 py-2.5 text-xs font-bold border-b-2 transition-colors ${tab === key ? "border-[#0f2744] text-[#0f2744]" : "border-transparent text-slate-500 hover:text-slate-800"}`}>
               {label}
             </button>
@@ -77,7 +151,9 @@ export default function AdminAcademiquePage() {
         {tab === "filieres" && (
           <div className="space-y-4">
             <div className="flex justify-end">
-              <Button variant="accent" size="sm" leftIcon={<Plus className="w-4 h-4" />}>Ajouter une filière</Button>
+              <Button variant="accent" size="sm" onClick={() => setFiliereModal(true)} leftIcon={<Plus className="w-4 h-4" />}>
+                Ajouter une filière
+              </Button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {filieres.map((f) => (
@@ -96,7 +172,6 @@ export default function AdminAcademiquePage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-1">
-                      <button className="p-1.5 text-slate-400 hover:text-[#0f2744] hover:bg-slate-100 rounded-md"><Edit2 className="w-4 h-4" /></button>
                       <button onClick={() => setDeleteConfirm({ id: f.id, type: "filiere", name: f.name })} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md"><Trash2 className="w-4 h-4" /></button>
                     </div>
                   </div>
@@ -112,7 +187,9 @@ export default function AdminAcademiquePage() {
         {tab === "classes" && (
           <div className="space-y-4">
             <div className="flex justify-end">
-              <Button variant="accent" size="sm" leftIcon={<Plus className="w-4 h-4" />}>Ajouter une classe</Button>
+              <Button variant="accent" size="sm" onClick={() => setClasseModal(true)} leftIcon={<Plus className="w-4 h-4" />}>
+                Ajouter une classe
+              </Button>
             </div>
             <div className="bg-white rounded-xl border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] overflow-hidden">
               <table className="w-full text-sm">
@@ -125,19 +202,16 @@ export default function AdminAcademiquePage() {
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {classes.map((cls) => {
-                    const filiere = MOCK_FILIERES.find((f) => f.id === cls.filiere_id);
+                    const filiere = filieres.find((f) => f.id === cls.filiere_id);
                     return (
                       <tr key={cls.id} className="hover:bg-slate-50/50">
                         <td className="px-4 py-3 font-mono text-xs font-bold text-[#0f2744]">{cls.code}</td>
                         <td className="px-4 py-3 text-sm font-medium text-slate-900">{cls.name}</td>
                         <td className="px-4 py-3"><Badge variant="primary" size="sm">{cls.niveau}</Badge></td>
-                        <td className="px-4 py-3 text-xs text-slate-600">{filiere?.code || "—"}</td>
+                        <td className="px-4 py-3 text-xs text-slate-600">{filiere?.code || "MPI"}</td>
                         <td className="px-4 py-3 text-xs text-slate-500">{cls.annee_scolaire}</td>
                         <td className="px-4 py-3">
-                          <div className="flex items-center gap-2">
-                            <button className="p-1.5 text-slate-400 hover:text-[#0f2744] hover:bg-slate-100 rounded-lg"><Edit2 className="w-4 h-4" /></button>
-                            <button onClick={() => setDeleteConfirm({ id: cls.id, type: "classe", name: cls.name })} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg"><Trash2 className="w-4 h-4" /></button>
-                          </div>
+                          <button onClick={() => setDeleteConfirm({ id: cls.id, type: "classe", name: cls.name })} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg"><Trash2 className="w-4 h-4" /></button>
                         </td>
                       </tr>
                     );
@@ -152,7 +226,9 @@ export default function AdminAcademiquePage() {
         {tab === "matieres" && (
           <div className="space-y-4">
             <div className="flex justify-end">
-              <Button variant="accent" size="sm" leftIcon={<Plus className="w-4 h-4" />}>Ajouter une matière</Button>
+              <Button variant="accent" size="sm" onClick={() => setMatiereModal(true)} leftIcon={<Plus className="w-4 h-4" />}>
+                Ajouter une matière
+              </Button>
             </div>
             <div className="bg-white rounded-xl border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] overflow-hidden">
               <table className="w-full text-sm">
@@ -165,25 +241,111 @@ export default function AdminAcademiquePage() {
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {matieres.map((m) => {
-                    const filiere = MOCK_FILIERES.find((f) => f.id === m.filiere_id);
+                    const filiere = filieres.find((f) => f.id === m.filiere_id);
                     return (
                       <tr key={m.id} className="hover:bg-slate-50/50">
                         <td className="px-4 py-3 font-mono text-xs font-bold text-[#e0521c]">{m.code}</td>
                         <td className="px-4 py-3 text-sm font-medium text-slate-900 max-w-xs truncate">{m.name}</td>
-                        <td className="px-4 py-3 text-xs text-slate-600">{filiere?.code || "—"}</td>
+                        <td className="px-4 py-3 text-xs text-slate-600">{filiere?.code || "MPI"}</td>
                         <td className="px-4 py-3 text-center"><Badge variant="primary" size="sm">{m.credits_ects}</Badge></td>
                         <td className="px-4 py-3 text-center text-xs text-slate-700 font-semibold">{m.coefficient}</td>
                         <td className="px-4 py-3">
-                          <div className="flex items-center gap-2">
-                            <button className="p-1.5 text-slate-400 hover:text-[#0f2744] hover:bg-slate-100 rounded-lg"><Edit2 className="w-4 h-4" /></button>
-                            <button onClick={() => setDeleteConfirm({ id: m.id, type: "matiere", name: m.name })} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg"><Trash2 className="w-4 h-4" /></button>
-                          </div>
+                          <button onClick={() => setDeleteConfirm({ id: m.id, type: "matiere", name: m.name })} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg"><Trash2 className="w-4 h-4" /></button>
                         </td>
                       </tr>
                     );
                   })}
                 </tbody>
               </table>
+            </div>
+          </div>
+        )}
+
+        {/* Modal Créer Filière */}
+        {filiereModal && (
+          <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-xl border border-slate-200/90 space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <h3 className="font-serif text-lg font-bold text-[#0f2744]">Ajouter une Filière</h3>
+                <button onClick={() => setFiliereModal(false)} className="text-slate-400 hover:text-slate-700"><X className="w-5 h-5" /></button>
+              </div>
+              <form onSubmit={handleCreateFiliere} className="space-y-4">
+                <Input label="Code de la filière" required placeholder="Ex. MPI, SML, MIASS..." value={filiereCode} onChange={(e) => setFiliereCode(e.target.value)} />
+                <Input label="Nom complet" required placeholder="Ex. Mathématiques, Physique et Informatique" value={filiereName} onChange={(e) => setFiliereName(e.target.value)} />
+                <div className="space-y-1.5">
+                  <label className="block text-sm font-medium text-slate-700">Description</label>
+                  <textarea rows={3} value={filiereDesc} onChange={(e) => setFiliereDesc(e.target.value)} placeholder="Objectifs et compétences..." className="w-full text-sm border border-slate-200 rounded-lg p-2.5" />
+                </div>
+                <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
+                  <Button type="button" variant="ghost" size="sm" onClick={() => setFiliereModal(false)}>Annuler</Button>
+                  <Button type="submit" variant="accent" size="sm">Créer la filière</Button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Modal Créer Classe */}
+        {classeModal && (
+          <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-xl border border-slate-200/90 space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <h3 className="font-serif text-lg font-bold text-[#0f2744]">Ajouter une Classe</h3>
+                <button onClick={() => setClasseModal(false)} className="text-slate-400 hover:text-slate-700"><X className="w-5 h-5" /></button>
+              </div>
+              <form onSubmit={handleCreateClasse} className="space-y-4">
+                <Input label="Code de la classe" required placeholder="Ex. L1-MPI, L2-SML..." value={classeCode} onChange={(e) => setClasseCode(e.target.value)} />
+                <Input label="Intitulé officiel" required placeholder="Ex. Licence 1 — MPI" value={classeName} onChange={(e) => setClasseName(e.target.value)} />
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="block text-sm font-medium text-slate-700">Niveau</label>
+                    <select value={classeNiveau} onChange={(e) => setClasseNiveau(e.target.value as any)} className="w-full text-sm border border-slate-200 rounded-lg p-2.5">
+                      <option value="L1">Licence 1 (L1)</option>
+                      <option value="L2">Licence 2 (L2)</option>
+                    </select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="block text-sm font-medium text-slate-700">Filière</label>
+                    <select value={classeFiliereId} onChange={(e) => setClasseFiliereId(e.target.value)} className="w-full text-sm border border-slate-200 rounded-lg p-2.5">
+                      {filieres.map((f) => <option key={f.id} value={f.id}>{f.code}</option>)}
+                    </select>
+                  </div>
+                </div>
+                <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
+                  <Button type="button" variant="ghost" size="sm" onClick={() => setClasseModal(false)}>Annuler</Button>
+                  <Button type="submit" variant="accent" size="sm">Créer la classe</Button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Modal Créer Matière */}
+        {matiereModal && (
+          <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-xl border border-slate-200/90 space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <h3 className="font-serif text-lg font-bold text-[#0f2744]">Ajouter une Matière</h3>
+                <button onClick={() => setMatiereModal(false)} className="text-slate-400 hover:text-slate-700"><X className="w-5 h-5" /></button>
+              </div>
+              <form onSubmit={handleCreateMatiere} className="space-y-4">
+                <Input label="Code matière" required placeholder="Ex. ANA-1, PROG-PY..." value={matiereCode} onChange={(e) => setMatiereCode(e.target.value)} />
+                <Input label="Intitulé complet" required placeholder="Ex. Analyse Réelle 1" value={matiereName} onChange={(e) => setMatiereName(e.target.value)} />
+                <div className="grid grid-cols-2 gap-3">
+                  <Input label="Coefficient" type="number" min="1" max="10" required value={matiereCoeff} onChange={(e) => setMatiereCoeff(e.target.value)} />
+                  <Input label="Crédits ECTS" type="number" min="1" max="30" required value={matiereEcts} onChange={(e) => setMatiereEcts(e.target.value)} />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="block text-sm font-medium text-slate-700">Filière</label>
+                  <select value={matiereFiliereId} onChange={(e) => setMatiereFiliereId(e.target.value)} className="w-full text-sm border border-slate-200 rounded-lg p-2.5">
+                    {filieres.map((f) => <option key={f.id} value={f.id}>{f.code} — {f.name}</option>)}
+                  </select>
+                </div>
+                <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
+                  <Button type="button" variant="ghost" size="sm" onClick={() => setMatiereModal(false)}>Annuler</Button>
+                  <Button type="submit" variant="accent" size="sm">Créer la matière</Button>
+                </div>
+              </form>
             </div>
           </div>
         )}

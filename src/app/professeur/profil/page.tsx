@@ -76,8 +76,8 @@ export default function ProfesseurProfilPage() {
               <strong className="text-slate-900">{CURRENT_PROF.email}</strong>
             </div>
             <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
-              <span className="text-slate-400 block mb-1">Filière principale</span>
-              <strong className="text-slate-900">Informatique & Systèmes Numériques</strong>
+              <span className="text-slate-400 block mb-1">Discipline d'enseignement</span>
+              <strong className="text-slate-900">{CURRENT_PROF.specialite || "Mathématiques & Sciences"}</strong>
             </div>
           </div>
         </div>

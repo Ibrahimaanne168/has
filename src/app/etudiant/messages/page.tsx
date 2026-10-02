@@ -13,14 +13,20 @@ import {
   Clock,
   ShieldCheck,
   GraduationCap,
+  Sparkles,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Badge } from "@/components/ui/Badge";
-import { MOCK_PROFESSEURS } from "@/lib/data/mock-data";
 import { useCurrentUser } from "@/lib/useCurrentUser";
-import { Message } from "@/lib/types";
+import {
+  getStoredDirectMessages,
+  saveDirectMessage,
+  markDirectMessageRead,
+  getAccessibleProfesseurs,
+} from "@/lib/academicStorage";
+import { Message, Professeur } from "@/lib/types";
 
 function EtudiantMessagesContent() {
   const { user } = useCurrentUser();
@@ -28,36 +34,107 @@ function EtudiantMessagesContent() {
   const preDestId = searchParams.get("dest");
   const preDestName = searchParams.get("name");
 
+  const niveau = user.classe?.niveau || "L1";
+  const classeCode = user.classe?.code || "L1-MPI";
+
   const [tab, setTab] = useState<"inbox" | "sent">("inbox");
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "m-1",
-      sender_id: "p1111111-1111-1111-1111-111111111111",
-      receiver_id: user.id || "student-id",
-      subject: "Validation de votre sujet de mini-projet BDD",
-      content:
-        "Bonjour, j'ai examiné votre proposition de modèle relationnel pour la gestion de pharmacie hospitalière. Les entités sont bien posées. Vous pouvez passer à l'implémentation des contraintes et des index PostgreSQL.",
-      is_read: true,
-      parent_id: null,
-      created_at: new Date(Date.now() - 3600000 * 24).toISOString(),
-      sender: MOCK_PROFESSEURS[0],
-    },
-    {
-      id: "m-2",
-      sender_id: "admin-id",
-      receiver_id: user.id || "student-id",
-      subject: "Attestation d'inscription 2024-2025 disponible",
-      content:
-        "Votre attestation d'inscription officielle pour l'année 2024-2025 est désormais signée par le secrétariat académique. Vous pouvez retirer l'original auprès du bureau des admissions.",
+  const [allMessages, setAllMessages] = useState<Message[]>([]);
+  const [accessibleProfs, setAccessibleProfs] = useState<Professeur[]>([]);
+  const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  // Formulaire nouveau message
+  const [targetRecipient, setTargetRecipient] = useState(preDestId || "admin-id");
+  const [newSubject, setNewSubject] = useState("");
+  const [newContent, setNewContent] = useState("");
+  const [sendSuccess, setSendSuccess] = useState(false);
+
+  const loadData = () => {
+    const msgs = getStoredDirectMessages();
+    setAllMessages(msgs);
+    const profs = getAccessibleProfesseurs(niveau, classeCode);
+    setAccessibleProfs(profs);
+  };
+
+  useEffect(() => {
+    loadData();
+    window.addEventListener("has_academic_storage_updated", loadData);
+    return () => window.removeEventListener("has_academic_storage_updated", loadData);
+  }, [niveau, classeCode]);
+
+  useEffect(() => {
+    if (preDestId) {
+      setTargetRecipient(preDestId);
+      setModalOpen(true);
+    }
+  }, [preDestId]);
+
+  // Messages reçus par l'étudiant
+  const inboxMessages = allMessages.filter(
+    (m) => m.receiver_id === user.id || m.receiver_id === user.email
+  );
+
+  // Messages envoyés par l'étudiant
+  const sentMessages = allMessages.filter(
+    (m) => m.sender_id === user.id || m.sender_id === user.email || m.sender_id === "student-me"
+  );
+
+  const displayedList = tab === "inbox" ? inboxMessages : sentMessages;
+
+  const handleSelectMessage = (msg: Message) => {
+    setSelectedMessage(msg);
+    if (tab === "inbox" && !msg.is_read) {
+      markDirectMessageRead(msg.id);
+    }
+  };
+
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newSubject.trim() || !newContent.trim()) return;
+
+    let receiverName = "Administration HAS";
+    let receiverRole = "admin";
+
+    if (targetRecipient !== "admin-id") {
+      const foundProf = accessibleProfs.find((p) => p.id === targetRecipient);
+      if (foundProf) {
+        receiverName = foundProf.full_name;
+        receiverRole = "professeur";
+      }
+    }
+
+    const newMsg: Message = {
+      id: `msg-${Date.now()}`,
+      sender_id: user.id || user.email || "student-me",
+      receiver_id: targetRecipient,
+      subject: newSubject.trim(),
+      content: newContent.trim(),
       is_read: false,
       parent_id: null,
-      created_at: new Date(Date.now() - 3600000 * 6).toISOString(),
+      created_at: new Date().toISOString(),
       sender: {
-        id: "admin-id",
-        full_name: "Administration Scolarité HAS",
-        role: "admin",
-        email: "scolarite@halil-academie.com",
-        username: "scolarite",
+        id: user.id || "student-me",
+        full_name: user.full_name,
+        email: user.email,
+        role: "etudiant",
+        username: user.username,
+        phone: user.phone,
+        matricule: user.matricule,
+        filiere_id: user.filiere_id,
+        classe_id: user.classe_id,
+        bio: user.bio,
+        specialite: user.specialite,
+        avatar_url: user.avatar_url,
+        is_active: true,
+        created_at: "",
+        updated_at: "",
+      },
+      receiver: {
+        id: targetRecipient,
+        full_name: receiverName,
+        email: "",
+        role: receiverRole as any,
+        username: null,
         phone: null,
         matricule: null,
         filiere_id: null,
@@ -69,83 +146,18 @@ function EtudiantMessagesContent() {
         created_at: "",
         updated_at: "",
       },
-    },
-  ]);
-
-  const [sentMessages, setSentMessages] = useState<Message[]>([
-    {
-      id: "m-sent-1",
-      sender_id: user.id || "student-id",
-      receiver_id: "p1111111-1111-1111-1111-111111111111",
-      subject: "Question sur le TP n°2 PostgreSQL",
-      content:
-        "Bonjour Monsieur, concernant la question 3 du TP sur les triggers de journalisation, doit-on créer une table d'audit séparée ou enregistrer les logs dans la même table ?",
-      is_read: true,
-      parent_id: null,
-      created_at: new Date(Date.now() - 3600000 * 48).toISOString(),
-      receiver: MOCK_PROFESSEURS[0],
-    },
-  ]);
-
-  const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
-
-  // Formulaire nouveau message
-  const [targetRecipient, setTargetRecipient] = useState(preDestId || "admin-id");
-  const [newSubject, setNewSubject] = useState("");
-  const [newContent, setNewContent] = useState("");
-  const [sendSuccess, setSendSuccess] = useState(false);
-
-  useEffect(() => {
-    if (preDestId) {
-      setTargetRecipient(preDestId);
-      setModalOpen(true);
-    }
-  }, [preDestId]);
-
-  const handleSendMessage = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newSubject.trim() || !newContent.trim()) return;
-
-    const recipientProf = MOCK_PROFESSEURS.find((p) => p.id === targetRecipient);
-    const receiverProfile = recipientProf || {
-      id: "admin-id",
-      full_name: "Direction Académique HAS",
-      role: "admin",
-      email: "direction@halil-academie.com",
-      username: "direction",
-      phone: null,
-      matricule: null,
-      filiere_id: null,
-      classe_id: null,
-      bio: null,
-      specialite: null,
-      avatar_url: null,
-      is_active: true,
-      created_at: "",
-      updated_at: "",
     };
 
-    const newMsg: Message = {
-      id: `sent-${Date.now()}`,
-      sender_id: user.id || "student-id",
-      receiver_id: targetRecipient,
-      subject: newSubject,
-      content: newContent,
-      is_read: false,
-      parent_id: null,
-      created_at: new Date().toISOString(),
-      receiver: receiverProfile,
-    };
-
-    setSentMessages((prev) => [newMsg, ...prev]);
+    saveDirectMessage(newMsg);
     setSendSuccess(true);
+
     setTimeout(() => {
       setSendSuccess(false);
       setModalOpen(false);
       setNewSubject("");
       setNewContent("");
       setTab("sent");
+      setSelectedMessage(newMsg);
     }, 1200);
   };
 
@@ -159,12 +171,15 @@ function EtudiantMessagesContent() {
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <p className="text-[11px] font-bold tracking-wider uppercase text-[#e0521c] mb-1">Messagerie HAS</p>
+            <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#0f2744]/5 text-[#0f2744] text-[11px] font-semibold mb-1 border border-slate-200">
+              <Sparkles className="w-3.5 h-3.5 text-[#e0521c]" />
+              <span>Messagerie interne • {classeCode}</span>
+            </div>
             <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] leading-snug">
-              Messagerie Académique Interne
+              Messagerie Académique
             </h1>
-            <p className="text-xs text-slate-500 mt-1">
-              Échangez directement et de manière confidentielle avec vos professeurs et l&apos;administration
+            <p className="text-xs sm:text-sm text-slate-500 mt-1">
+              Échangez de manière confidentielle avec vos professeurs référents et l&apos;administration
             </p>
           </div>
 
@@ -192,7 +207,7 @@ function EtudiantMessagesContent() {
             }`}
           >
             <Inbox className="w-4 h-4" />
-            <span>Boîte de réception ({messages.length})</span>
+            <span>Boîte de réception ({inboxMessages.length})</span>
           </button>
 
           <button
@@ -215,47 +230,59 @@ function EtudiantMessagesContent() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Colonne Liste */}
           <div className="lg:col-span-5 space-y-3">
-            {(tab === "inbox" ? messages : sentMessages).map((msg) => {
-              const correspondentName =
-                tab === "inbox"
-                  ? msg.sender?.full_name || "Expéditeur"
-                  : msg.receiver?.full_name || "Destinataire";
-              const correspondentRole =
-                tab === "inbox" ? msg.sender?.role : msg.receiver?.role;
-              const isSelected = selectedMessage?.id === msg.id;
+            {displayedList.length === 0 ? (
+              <div className="bg-white rounded-xl border border-dashed border-slate-300 p-8 text-center space-y-2">
+                <MessageSquare className="w-8 h-8 text-slate-300 mx-auto" />
+                <p className="font-serif text-sm font-bold text-slate-800">
+                  {tab === "inbox" ? "Boîte de réception vide" : "Aucun message envoyé"}
+                </p>
+                <p className="text-xs text-slate-500 max-w-xs mx-auto">
+                  {tab === "inbox"
+                    ? "Vous n'avez pas encore reçu de message direct de vos enseignants."
+                    : "Vous n'avez envoyé aucun message pour le moment. Cliquez sur Nouveau Message pour poser une question."}
+                </p>
+              </div>
+            ) : (
+              displayedList.map((msg) => {
+                const correspondentName =
+                  tab === "inbox"
+                    ? msg.sender?.full_name || "Expéditeur HAS"
+                    : msg.receiver?.full_name || "Destinataire";
+                const isSelected = selectedMessage?.id === msg.id;
 
-              return (
-                <div
-                  key={msg.id}
-                  onClick={() => setSelectedMessage(msg)}
-                  className={`p-4 rounded-xl border cursor-pointer transition-all ${
-                    isSelected
-                      ? "border-[#0f2744] bg-[#0f2744]/5 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)]"
-                      : "border-slate-200/90 bg-white hover:border-slate-300"
-                  } ${!msg.is_read && tab === "inbox" ? "font-semibold bg-blue-50/30" : ""}`}
-                >
-                  <div className="flex items-center justify-between gap-2 mb-1.5">
-                    <span className="text-xs text-slate-900 truncate">
-                      {correspondentName}
-                    </span>
-                    <span className="text-[10px] text-slate-400 shrink-0">
-                      {new Date(msg.created_at).toLocaleDateString("fr-FR", {
-                        day: "numeric",
-                        month: "short",
-                      })}
-                    </span>
+                return (
+                  <div
+                    key={msg.id}
+                    onClick={() => handleSelectMessage(msg)}
+                    className={`p-4 rounded-xl border cursor-pointer transition-all ${
+                      isSelected
+                        ? "border-[#0f2744] bg-[#0f2744]/5 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)]"
+                        : "border-slate-200/90 bg-white hover:border-slate-300"
+                    } ${!msg.is_read && tab === "inbox" ? "font-semibold bg-blue-50/30 border-l-4 border-l-[#e0521c]" : ""}`}
+                  >
+                    <div className="flex items-center justify-between gap-2 mb-1.5">
+                      <span className="text-xs font-bold text-slate-900 truncate">
+                        {correspondentName}
+                      </span>
+                      <span className="text-[10px] text-slate-400 shrink-0">
+                        {new Date(msg.created_at).toLocaleDateString("fr-FR", {
+                          day: "numeric",
+                          month: "short",
+                        })}
+                      </span>
+                    </div>
+
+                    <h4 className="text-sm font-serif font-bold text-slate-900 truncate">
+                      {msg.subject}
+                    </h4>
+
+                    <p className="text-xs text-slate-500 line-clamp-2 mt-1">
+                      {msg.content}
+                    </p>
                   </div>
-
-                  <h4 className="text-sm font-serif font-bold text-slate-900 truncate">
-                    {msg.subject}
-                  </h4>
-
-                  <p className="text-xs text-slate-500 line-clamp-2 mt-1">
-                    {msg.content}
-                  </p>
-                </div>
-              );
-            })}
+                );
+              })
+            )}
           </div>
 
           {/* Colonne Détail Message */}
@@ -343,17 +370,19 @@ function EtudiantMessagesContent() {
               ) : (
                 <form onSubmit={handleSendMessage} className="space-y-4">
                   <div className="space-y-1.5">
-                    <label className="block text-sm font-medium text-slate-700">Destinataire</label>
+                    <label className="block text-sm font-medium text-slate-700">
+                      Destinataire (autorisé pour votre classe {classeCode})
+                    </label>
                     <select
                       value={targetRecipient}
                       onChange={(e) => setTargetRecipient(e.target.value)}
                       className="w-full text-sm border border-slate-200/90 rounded-lg p-2.5 bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#0f2744]"
                     >
                       <optgroup label="Administration & Scolarité">
-                        <option value="admin-id">Direction Générale & Scolarité</option>
+                        <option value="admin-id">Direction Générale & Scolarité HAS</option>
                       </optgroup>
-                      <optgroup label="Enseignants & Chercheurs">
-                        {MOCK_PROFESSEURS.map((p) => (
+                      <optgroup label={`Vos Professeurs (${classeCode})`}>
+                        {accessibleProfs.map((p) => (
                           <option key={p.id} value={p.id}>
                             {p.full_name} ({p.specialite})
                           </option>
@@ -365,19 +394,21 @@ function EtudiantMessagesContent() {
                   <Input
                     label="Objet du message"
                     required
-                    placeholder="Ex. Précision sur le devoir maison..."
+                    placeholder="Ex. Précision sur le cours d'Algèbre..."
                     value={newSubject}
                     onChange={(e) => setNewSubject(e.target.value)}
                   />
 
                   <div className="space-y-1.5">
-                    <label className="block text-sm font-medium text-slate-700">Contenu du message</label>
+                    <label className="block text-sm font-medium text-slate-700">
+                      Contenu du message
+                    </label>
                     <textarea
                       required
                       rows={5}
                       value={newContent}
                       onChange={(e) => setNewContent(e.target.value)}
-                      placeholder="Exprimez clairement votre demande en respectant les convenances universitaires..."
+                      placeholder="Rédigez votre demande ou question académique..."
                       className="block w-full rounded-lg border border-slate-200/90 bg-white p-3 text-sm text-slate-900 placeholder-slate-400 focus:border-[#0f2744] focus:ring-1 focus:ring-[#0f2744]"
                     />
                   </div>
