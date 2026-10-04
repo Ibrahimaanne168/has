@@ -10,32 +10,7 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { ContactMessage } from "@/lib/types";
 
-const INITIAL_CONTACTS: ContactMessage[] = [
-  {
-    id: "cm-1", full_name: "Boubacar Diarra", email: "b.diarra@gmail.com",
-    phone: "+223 76 12 88 45", subject: "Informations admission Licence 1 ISN",
-    message: "Bonjour, je suis bachelier série D et je souhaite m'inscrire en Licence 1 Informatique. Quels sont les prérequis et la date limite de dépôt de dossier ?",
-    status: "nouveau", created_at: new Date(Date.now() - 3600000 * 2).toISOString(),
-  },
-  {
-    id: "cm-2", full_name: "Mariam Kouyaté", email: "mkouyate@outlook.com",
-    phone: "+223 66 90 34 21", subject: "Coût de la scolarité 2024-2025",
-    message: "Bonjour, pourriez-vous m'indiquer le montant des frais d'inscription pour la filière Génie Civil ainsi que les modalités de paiement acceptées ? Je souhaite m'inscrire pour la rentrée prochaine.",
-    status: "nouveau", created_at: new Date(Date.now() - 3600000 * 6).toISOString(),
-  },
-  {
-    id: "cm-3", full_name: "Seydou Traoré", email: "seydoutraore45@yahoo.fr",
-    phone: null, subject: "Stage de fin d'études — Partenariat entreprise",
-    message: "Nous représentons une société de technologies basée à Bamako et souhaitons proposer des stages de fin d'études à vos étudiants en L3 ISN. Comment procéder pour formaliser un accord de partenariat académique ?",
-    status: "en_cours", created_at: new Date(Date.now() - 3600000 * 24).toISOString(),
-  },
-  {
-    id: "cm-4", full_name: "Aïssata Bah", email: "aissata.bah@email.com",
-    phone: "+223 79 55 10 66", subject: "Récupération de documents officiels",
-    message: "Bonjour, j'ai terminé ma formation en Licence 3 en 2023 et j'ai besoin d'une attestation de diplôme certifiée pour une candidature à l'étranger. Quelle est la procédure ?",
-    status: "traite", created_at: new Date(Date.now() - 3600000 * 72).toISOString(),
-  },
-];
+const INITIAL_CONTACTS: ContactMessage[] = [];
 
 const statusLabel: Record<string, { label: string; variant: "accent" | "warning" | "success" | "neutral" }> = {
   nouveau: { label: "Nouveau", variant: "accent" },
@@ -45,7 +20,15 @@ const statusLabel: Record<string, { label: string; variant: "accent" | "warning"
 };
 
 export default function AdminMessagesPage() {
-  const [messages, setMessages] = useState<ContactMessage[]>(INITIAL_CONTACTS);
+  const [messages, setMessages] = useState<ContactMessage[]>(() => {
+    if (typeof window === "undefined") return INITIAL_CONTACTS;
+    try {
+      const stored = localStorage.getItem("has_contact_messages_v1");
+      return stored ? JSON.parse(stored) : INITIAL_CONTACTS;
+    } catch {
+      return INITIAL_CONTACTS;
+    }
+  });
   const [selectedMsg, setSelectedMsg] = useState<ContactMessage | null>(null);
   const [replyOpen, setReplyOpen] = useState(false);
   const [replyContent, setReplyContent] = useState("");
@@ -69,7 +52,7 @@ export default function AdminMessagesPage() {
   const filtered = messages.filter((m) => statusFilter === "all" || m.status === statusFilter);
 
   return (
-    <DashboardLayout role="admin" userName="Administration HAS" userEmail="direction@halil-academie.com" matriculeOrTitle="Directeur Général">
+    <DashboardLayout role="admin" userName="Administration HAS" userEmail="direction@halil-academie.com" matriculeOrTitle="ADM001">
       <div className="space-y-6">
         <div>
           <p className="text-[11px] font-bold tracking-wider uppercase text-[#e0521c] mb-1">Administration</p>

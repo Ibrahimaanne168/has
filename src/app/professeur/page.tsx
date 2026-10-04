@@ -44,7 +44,7 @@ export default function ProfesseurDashboard() {
       role="professeur"
       userName={CURRENT_PROF.full_name}
       userEmail={CURRENT_PROF.email}
-      matriculeOrTitle={CURRENT_PROF.specialite || "Enseignant HAS"}
+      matriculeOrTitle={CURRENT_PROF.matricule || "PROF001"}
     >
       <div className="space-y-8">
         {/* Bannière de bienvenue Professeur */}
@@ -149,16 +149,9 @@ export default function ProfesseurDashboard() {
                       Publié le {new Date(c.created_at).toLocaleDateString("fr-FR")}
                     </div>
                     <div className="flex gap-2 pt-1">
-                      {c.file_url && (
-                        <Badge variant="success" size="sm" icon={<FileText className="w-3 h-3" />}>
-                          PDF joint
-                        </Badge>
-                      )}
-                      {c.external_url && (
-                        <Badge variant="neutral" size="sm" icon={<ExternalLink className="w-3 h-3" />}>
-                          Lien externe
-                        </Badge>
-                      )}
+                      <Badge variant="success" size="sm" icon={<FileText className="w-3 h-3" />}>
+                        Document PDF
+                      </Badge>
                     </div>
                   </CardContent>
                 </Card>

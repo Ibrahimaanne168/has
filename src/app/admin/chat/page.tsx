@@ -23,7 +23,7 @@ import { ChatSalon } from "@/lib/types";
 
 export default function AdminChatPage() {
   const [salons, setSalons] = useState<ChatSalon[]>([]);
-  const [selectedSalonId, setSelectedSalonId] = useState<string>("general");
+  const [selectedSalonId, setSelectedSalonId] = useState<string>("salon-l1");
   const [modalOpen, setModalOpen] = useState(false);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
@@ -80,13 +80,13 @@ export default function AdminChatPage() {
   };
 
   const handleDeleteSalon = (id: string, titre: string) => {
-    if (id === "general") {
-      alert("Le salon général ne peut pas être supprimé.");
+    if (id === "salon-l1" || id === "salon-l2" || id === "general") {
+      alert("Ce salon principal ne peut pas être supprimé.");
       return;
     }
     if (confirm(`Confirmez-vous la suppression du salon « ${titre} » ?`)) {
       deleteSalon(id);
-      setSelectedSalonId("general");
+      setSelectedSalonId("salon-l1");
       setSuccessMsg(`Le salon « ${titre} » a été supprimé.`);
       setTimeout(() => setSuccessMsg(null), 3500);
     }
@@ -95,10 +95,10 @@ export default function AdminChatPage() {
   const activeSalon =
     salons.find((s) => s.id === selectedSalonId) ||
     salons[0] || {
-      id: "general",
-      titre: "Salon Général de l'Académie",
-      description: "Supervision du salon général",
-      type: "general",
+      id: "salon-l1",
+      titre: "Salon Licence 1 (L1)",
+      description: "Supervision du salon Licence 1 (L1)",
+      type: "niveau",
       created_at: "",
     };
 
@@ -107,7 +107,7 @@ export default function AdminChatPage() {
       role="admin"
       userName="Administration HAS"
       userEmail="direction@halil-academie.com"
-      matriculeOrTitle="Directeur Général"
+      matriculeOrTitle="ADM001"
     >
       <div className="space-y-6">
         {/* Entête */}

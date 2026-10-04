@@ -133,7 +133,7 @@ function ConnexionForm() {
       // Simule ou déclenche l'envoi de réinitialisation
       await new Promise((res) => setTimeout(res, 800));
       setForgotSuccess(
-        `Si un compte est associé à l'adresse ${forgotEmail}, un lien de réinitialisation sécurisé vient de vous être envoyé par email.`
+        `Si un compte est associé à l'adresse ${forgotEmail}, un lien de réinitialisation vient de vous être envoyé par email.`
       );
     } finally {
       setForgotLoading(false);
@@ -142,11 +142,11 @@ function ConnexionForm() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-between">
-      {/* Header */}
-      <header className="bg-white border-b border-slate-200 py-4 px-6">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full overflow-hidden bg-white shadow-xs ring-1 ring-slate-200 flex items-center justify-center shrink-0">
+      {/* Header Mobile & Desktop */}
+      <header className="bg-white border-b border-slate-200 py-3 sm:py-4 px-4 sm:px-6">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
+          <Link href="/" className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden bg-white shadow-xs ring-1 ring-slate-200 flex items-center justify-center shrink-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/images/logo-has.jpg"
@@ -154,18 +154,20 @@ function ConnexionForm() {
                 className="w-full h-full object-cover"
               />
             </div>
-            <div>
-              <span className="font-serif text-lg font-bold text-[#0f2744] block leading-tight">
-                Halil Académie Scientifique
+            <div className="min-w-0">
+              <span className="font-serif text-base sm:text-lg font-bold text-[#0f2744] block leading-tight truncate">
+                <span className="hidden sm:inline">Halil Académie Scientifique</span>
+                <span className="sm:hidden">HAS</span>
               </span>
-              <span className="text-[10px] text-[#e0521c] font-semibold">
+              <span className="text-[10px] text-[#e0521c] font-semibold hidden sm:block">
                 Maths • Physique • Informatique
               </span>
             </div>
           </Link>
-          <Link href="/inscription">
-            <Button variant="outline" size="sm">
-              Créer un compte étudiant
+          <Link href="/inscription" className="shrink-0">
+            <Button variant="outline" size="sm" className="text-xs font-semibold px-3">
+              <span className="hidden sm:inline">Créer un compte étudiant</span>
+              <span className="sm:hidden">Inscription</span>
             </Button>
           </Link>
         </div>
@@ -178,7 +180,6 @@ function ConnexionForm() {
             <div className="w-12 h-12 rounded-xl bg-[#0f2744]/10 text-[#0f2744] flex items-center justify-center mx-auto mb-3">
               <Lock className="w-6 h-6 text-[#0f2744]" />
             </div>
-            <p className="text-[11px] font-bold tracking-wider uppercase text-[#e0521c] mb-1">Authentification Sécurisée</p>
             <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] leading-snug">
               Espace Numérique de Travail
             </h1>

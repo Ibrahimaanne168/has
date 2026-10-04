@@ -123,7 +123,7 @@ export default function ProfesseurMessagesPage() {
       role="professeur"
       userName={prof.full_name}
       userEmail={prof.email}
-      matriculeOrTitle={prof.specialite || "Enseignant HAS"}
+      matriculeOrTitle={prof.matricule || "PROF001"}
     >
       <div className="space-y-6">
         <div>

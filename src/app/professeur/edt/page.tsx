@@ -27,7 +27,7 @@ export default function ProfesseurEDTPage() {
       role="professeur"
       userName={CURRENT_PROF.full_name}
       userEmail={CURRENT_PROF.email}
-      matriculeOrTitle={CURRENT_PROF.specialite || "Enseignant HAS"}
+      matriculeOrTitle={CURRENT_PROF.matricule || "PROF001"}
     >
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

@@ -7,7 +7,6 @@ import {
   Edit2,
   Trash2,
   Download,
-  ExternalLink,
   X,
   Save,
   CheckCircle2,
@@ -15,6 +14,7 @@ import {
   Upload,
   Calendar,
   GraduationCap,
+  FileText,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/Button";
@@ -38,7 +38,8 @@ export default function ProfesseurCoursPage() {
   const [formDescription, setFormDescription] = useState("");
   const [formMatiereId, setFormMatiereId] = useState(MOCK_MATIERES[0]?.id || "");
   const [formClasseId, setFormClasseId] = useState(MOCK_CLASSES[0]?.id || "");
-  const [formExternalUrl, setFormExternalUrl] = useState("");
+  const [formPdfName, setFormPdfName] = useState("");
+  const [formPdfUrl, setFormPdfUrl] = useState("");
 
   React.useEffect(() => {
     setCourses(getStoredCourses());
@@ -53,7 +54,8 @@ export default function ProfesseurCoursPage() {
     setFormDescription("");
     setFormMatiereId(MOCK_MATIERES[0]?.id || "");
     setFormClasseId(MOCK_CLASSES[0]?.id || "");
-    setFormExternalUrl("");
+    setFormPdfName("");
+    setFormPdfUrl("");
     setModalOpen(true);
   };
 
@@ -63,14 +65,21 @@ export default function ProfesseurCoursPage() {
     setFormDescription(course.description || "");
     setFormMatiereId(course.matiere_id);
     setFormClasseId(course.classe_id);
-    setFormExternalUrl(course.external_url || "");
+    setFormPdfName(course.file_name || "");
+    setFormPdfUrl(course.file_url || "");
     setModalOpen(true);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!editingCourse && !formPdfName) {
+      alert("Veuillez sélectionner un fichier PDF pour ce cours.");
+      return;
+    }
+
     const matiere = MOCK_MATIERES.find((m) => m.id === formMatiereId);
     const classe = MOCK_CLASSES.find((c) => c.id === formClasseId);
+    const resolvedPdfName = formPdfName || `${formTitle.toLowerCase().replace(/[^a-z0-9]/g, "-")}.pdf`;
 
     if (editingCourse) {
       const updated: Cours = {
@@ -79,13 +88,16 @@ export default function ProfesseurCoursPage() {
         description: formDescription,
         matiere_id: formMatiereId,
         classe_id: formClasseId,
-        external_url: formExternalUrl || null,
+        file_url: formPdfUrl || editingCourse.file_url || "/documents/cours.pdf",
+        file_name: resolvedPdfName,
+        file_type: "application/pdf",
+        external_url: null,
         matiere,
         classe,
         updated_at: new Date().toISOString(),
       };
       saveCourse(updated);
-      setSuccessMsg("Le cours a été mis à jour avec succès.");
+      setSuccessMsg("Le cours (document PDF) a été mis à jour avec succès.");
     } else {
       const newCourse: Cours = {
         id: `cr-${Date.now()}`,
@@ -94,11 +106,11 @@ export default function ProfesseurCoursPage() {
         matiere_id: formMatiereId,
         classe_id: formClasseId,
         professeur_id: CURRENT_PROF.id,
-        file_url: null,
-        file_name: null,
-        file_type: null,
-        file_size_bytes: null,
-        external_url: formExternalUrl || null,
+        file_url: formPdfUrl || "/documents/cours.pdf",
+        file_name: resolvedPdfName,
+        file_type: "application/pdf",
+        file_size_bytes: 1024 * 1024 * 2,
+        external_url: null,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         matiere,
@@ -107,7 +119,7 @@ export default function ProfesseurCoursPage() {
         is_favorite: false,
       };
       saveCourse(newCourse);
-      setSuccessMsg("Le cours a été publié et est maintenant visible par vos étudiants.");
+      setSuccessMsg("Le cours au format PDF a été publié avec succès.");
     }
     setCourses(getStoredCourses());
     setModalOpen(false);
@@ -127,7 +139,7 @@ export default function ProfesseurCoursPage() {
       role="professeur"
       userName={CURRENT_PROF.full_name}
       userEmail={CURRENT_PROF.email}
-      matriculeOrTitle={CURRENT_PROF.specialite || "Enseignant HAS"}
+      matriculeOrTitle={CURRENT_PROF.matricule || "PROF001"}
     >
       <div className="space-y-6">
         {/* En-tête */}
@@ -220,17 +232,10 @@ export default function ProfesseurCoursPage() {
                 {/* 5. Pied de carte : actions professeur */}
                 <CardFooter className="flex items-center justify-between p-3 bg-slate-50/70">
                   <div className="flex items-center gap-1.5">
-                    {c.external_url && (
-                      <a
-                        href={c.external_url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-1 bg-white text-slate-600 hover:text-[#0f2744] hover:bg-slate-100 rounded-lg border border-slate-200/90 transition-colors"
-                      >
-                        <ExternalLink className="w-3 h-3" />
-                        Ressource
-                      </a>
-                    )}
+                    <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-1 bg-[#0f2744]/10 text-[#0f2744] rounded-md">
+                      <FileText className="w-3.5 h-3.5 text-[#e0521c]" />
+                      Document PDF
+                    </span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <button
@@ -326,25 +331,47 @@ export default function ProfesseurCoursPage() {
                   </div>
                 </div>
 
-                {/* Zone dépôt fichier */}
-                <div className="p-5 rounded-lg border border-dashed border-slate-300 bg-[#F8FAFC] flex flex-col items-center gap-2 text-center">
-                  <Upload className="w-7 h-7 text-slate-400" />
-                  <p className="text-xs sm:text-sm font-semibold text-slate-700">Déposer le support PDF ou présentation</p>
-                  <p className="text-[11px] text-slate-400">PDF, PPTX ou images — taille maximale 50 Mo</p>
-                  <Button type="button" variant="secondary" size="sm" className="rounded-lg text-xs mt-1">
-                    Choisir un fichier
-                  </Button>
+                {/* Zone dépôt fichier PDF */}
+                <div className="p-5 rounded-lg border-2 border-dashed border-slate-300 bg-[#F8FAFC] flex flex-col items-center gap-2 text-center">
+                  <Upload className="w-8 h-8 text-[#0f2744]" />
+                  <p className="text-xs sm:text-sm font-semibold text-slate-800">
+                    Déposer le document de cours (Format PDF uniquement)
+                  </p>
+                  <p className="text-[11px] text-slate-500">
+                    Seuls les fichiers .pdf sont acceptés — Taille max. 50 Mo
+                  </p>
+                  
+                  {formPdfName ? (
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-800 mt-1">
+                      <FileText className="w-4 h-4 text-emerald-600" />
+                      <span>{formPdfName}</span>
+                    </div>
+                  ) : (
+                    <label htmlFor="course-pdf-upload" className="cursor-pointer">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0f2744] text-white text-xs font-semibold hover:bg-[#0f2744]/90 transition-colors mt-1">
+                        Sélectionner le PDF
+                      </span>
+                      <input
+                        id="course-pdf-upload"
+                        type="file"
+                        accept=".pdf,application/pdf"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            if (!file.name.toLowerCase().endsWith(".pdf")) {
+                              alert("Veuillez sélectionner un fichier PDF uniquement.");
+                              return;
+                            }
+                            setFormPdfName(file.name);
+                            const url = URL.createObjectURL(file);
+                            setFormPdfUrl(url);
+                          }
+                        }}
+                      />
+                    </label>
+                  )}
                 </div>
-
-                <Input
-                  label="Lien de ressource externe (optionnel)"
-                  type="url"
-                  placeholder="https://docs.example.com/cours"
-                  leftIcon={<ExternalLink className="w-4 h-4" />}
-                  helperText="Lien vers une vidéo, documentation officielle ou cours en ligne complémentaire."
-                  value={formExternalUrl}
-                  onChange={(e) => setFormExternalUrl(e.target.value)}
-                />
 
                 <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
                   <Button type="button" variant="ghost" size="sm" className="rounded-lg text-xs" onClick={() => setModalOpen(false)}>

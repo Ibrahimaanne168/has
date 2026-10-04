@@ -53,7 +53,7 @@ export default function EtudiantCoursPage() {
       role="etudiant"
       userName={user.full_name}
       userEmail={user.email}
-      matriculeOrTitle={user.matricule || "HAS-ETU"}
+      matriculeOrTitle={user.matricule || "ETU001"}
     >
       <div className="space-y-6">
         {/* En-tête de page */}
@@ -201,29 +201,14 @@ export default function EtudiantCoursPage() {
                 <CardFooter className="flex items-center justify-between gap-2 p-3 bg-slate-50/70 border-t border-slate-100/90">
                   {c.file_url ? (
                     <a
-                      href={c.file_url}
+                      href={c.file_url || "#"}
                       download
                       className="inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-1.5 bg-[#0f2744] text-white hover:bg-[#183a62] rounded-lg transition-colors flex-1"
                     >
                       <Download className="w-3.5 h-3.5" />
-                      Télécharger
+                      Télécharger le PDF
                     </a>
-                  ) : (
-                    <span className="text-xs text-slate-400 italic">Support en ligne</span>
-                  )}
-
-                  {c.external_url && (
-                    <a
-                      href={c.external_url}
-                      target="_blank"
-                      rel="noreferrer"
-                      title="Ressources complémentaires"
-                      className="inline-flex items-center justify-center gap-1 text-xs font-semibold px-2.5 py-1.5 bg-white text-slate-700 hover:bg-slate-100 rounded-lg transition-colors border border-slate-200/90"
-                    >
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
-                  )}
-                </CardFooter>
+                  </CardFooter>
               </Card>
             ))}
           </div>

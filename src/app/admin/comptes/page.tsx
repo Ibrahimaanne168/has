@@ -245,7 +245,7 @@ export default function AdminComptesPage() {
   const availableClassesList = ["L1 MPI", "L2 MPI", "L1 SML", "L2 SML", "L1 MIASS", "L2 MIASS"];
 
   return (
-    <DashboardLayout role="admin" userName="Administration HAS" userEmail="direction@halil-academie.com" matriculeOrTitle="Directeur Général">
+    <DashboardLayout role="admin" userName="Administration HAS" userEmail="direction@halil-academie.com" matriculeOrTitle="ADM001">
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -382,7 +382,7 @@ export default function AdminComptesPage() {
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <Input label="Nom complet" required placeholder="Ex. Pr. Papa Samb, Dr. Ibrahima Anne..." value={formName} onChange={(e) => setFormName(e.target.value)} />
+                  <Input label="Nom complet" required placeholder="Ex. Pr. Papa Samb, Dr. Ousmane Touré..." value={formName} onChange={(e) => setFormName(e.target.value)} />
                   <Input label="Email académique" type="email" required placeholder="nom.prenom@has.sn" value={formEmail} onChange={(e) => setFormEmail(e.target.value)} />
                 </div>
 

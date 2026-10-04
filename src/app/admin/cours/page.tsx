@@ -59,7 +59,6 @@ export default function AdminCoursPage() {
     setFormClasseId(c.classe_id);
     setFormProfId(c.professeur_id || MOCK_PROFESSEURS[0]?.id || "");
     setFormFileUrl(c.file_url || "");
-    setFormExternalUrl(c.external_url || "");
     setModalOpen(true);
   };
 
@@ -81,7 +80,8 @@ export default function AdminCoursPage() {
         professeur_id: formProfId,
         file_url: formFileUrl || null,
         file_name: fileName,
-        external_url: formExternalUrl || null,
+        file_type: "application/pdf",
+        external_url: null,
         matiere,
         classe,
         professeur: prof,
@@ -101,7 +101,7 @@ export default function AdminCoursPage() {
         file_name: fileName,
         file_type: "application/pdf",
         file_size_bytes: null,
-        external_url: formExternalUrl || null,
+        external_url: null,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         matiere,
@@ -139,7 +139,7 @@ export default function AdminCoursPage() {
       role="admin"
       userName="Administration HAS"
       userEmail="direction@halil-academie.com"
-      matriculeOrTitle="Directeur Général — Gestion Pédagogique"
+      matriculeOrTitle="ADM001"
     >
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -392,17 +392,11 @@ export default function AdminCoursPage() {
                 </div>
 
                 <Input
-                  label="Lien ou chemin du support (PDF)"
+                  label="Chemin ou document du support (PDF)"
                   placeholder="Ex. /documents/cours_algebre_chap1.pdf"
                   value={formFileUrl}
                   onChange={(e) => setFormFileUrl(e.target.value)}
-                />
-
-                <Input
-                  label="Lien externe complémentaire (facultatif)"
-                  placeholder="https://..."
-                  value={formExternalUrl}
-                  onChange={(e) => setFormExternalUrl(e.target.value)}
+                  helperText="Les cours doivent obligatoirement être au format PDF."
                 />
 
                 <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">

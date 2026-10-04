@@ -30,6 +30,34 @@ interface ChatRoomProps {
   roomDescription?: string;
 }
 
+function getWelcomeMessage(salonId: string): ChatMessage {
+  return {
+    id: `welcome-${salonId}`,
+    user_id: "admin-1",
+    salon_id: salonId,
+    content: "Bienvenue !!",
+    is_deleted: false,
+    created_at: new Date().toISOString(),
+    user: {
+      id: "admin-1",
+      full_name: "Administration HAS",
+      role: "admin",
+      email: "direction@halil-academie.com",
+      username: "admin",
+      phone: null,
+      matricule: "ADM001",
+      filiere_id: null,
+      classe_id: null,
+      bio: null,
+      specialite: null,
+      avatar_url: null,
+      is_active: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+  };
+}
+
 export function ChatRoom({
   currentUser,
   isAdmin = false,
@@ -86,9 +114,10 @@ export function ChatRoom({
         const localKey = `has_chat_${roomId}_v1`;
         const localCached = localStorage.getItem(localKey);
         if (localCached) {
-          setMessages(JSON.parse(localCached));
+          const parsed = JSON.parse(localCached);
+          setMessages(parsed.length > 0 ? parsed : [getWelcomeMessage(roomId)]);
         } else {
-          setMessages([]);
+          setMessages([getWelcomeMessage(roomId)]);
         }
         return;
       }
@@ -141,11 +170,11 @@ export function ChatRoom({
           }
         }
 
-        setMessages(roomMessages);
+        setMessages(roomMessages.length > 0 ? roomMessages : [getWelcomeMessage(roomId)]);
       }
     } catch (err: unknown) {
       console.warn("[CHAT LOAD ERROR]", err);
-      setMessages([]);
+      setMessages([getWelcomeMessage(roomId)]);
     } finally {
       setIsLoading(false);
     }
@@ -337,7 +366,7 @@ export function ChatRoom({
   };
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] flex flex-col h-[650px] overflow-hidden">
+    <div className="bg-white rounded-xl border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] flex flex-col h-[900px] min-h-[700px] overflow-hidden">
       {/* Header du Chat */}
       <div className="p-4 sm:p-5 border-b border-slate-200/90 bg-slate-50 flex items-center justify-between">
         <div className="flex items-center gap-3 min-w-0">
@@ -460,7 +489,7 @@ export function ChatRoom({
           </Button>
         </form>
         <p className="text-[11px] text-slate-400 mt-2">
-          Appuyez sur Entrée pour envoyer. Les échanges demeurent archivés et modérés conformément au règlement académique HAS.
+          Appuyez sur Entrée pour envoyer votre message.
         </p>
       </div>
     </div>

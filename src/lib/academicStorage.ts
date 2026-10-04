@@ -12,93 +12,23 @@ const STORAGE_KEYS = {
 
 export const DEFAULT_SALONS: ChatSalon[] = [
   {
-    id: "general",
-    titre: "Salon Général de l'Académie",
-    description: "Canal temps réel ouvert à l'ensemble des membres (étudiants, professeurs, direction).",
-    type: "general",
-    niveau: null,
+    id: "salon-l1",
+    titre: "Salon Licence 1 (L1)",
+    description: "Échanges et discussions réservés au niveau Licence 1 (L1)",
+    type: "niveau",
+    niveau: "L1",
     classe: null,
     cree_par: "Administration HAS",
     created_at: "2026-09-01T08:00:00Z",
   },
   {
-    id: "niveau-l1",
-    titre: "Salon Licence 1 (L1)",
-    description: "Échanges réservés aux étudiants et enseignants des promotions de Licence 1.",
-    type: "niveau",
-    niveau: "L1",
-    classe: null,
-    cree_par: "Direction Pédagogique",
-    created_at: "2026-09-01T08:00:00Z",
-  },
-  {
-    id: "niveau-l2",
+    id: "salon-l2",
     titre: "Salon Licence 2 (L2)",
-    description: "Échanges réservés aux étudiants et enseignants des promotions de Licence 2.",
+    description: "Échanges et discussions réservés au niveau Licence 2 (L2)",
     type: "niveau",
     niveau: "L2",
     classe: null,
-    cree_par: "Direction Pédagogique",
-    created_at: "2026-09-01T08:00:00Z",
-  },
-  {
-    id: "classe-l1-mpi",
-    titre: "Salon Classe L1 MPI",
-    description: "Salon de travail pour les étudiants de Licence 1 — Maths, Physique, Info.",
-    type: "classe",
-    niveau: "L1",
-    classe: "L1 MPI",
-    cree_par: "Administration",
-    created_at: "2026-09-01T08:00:00Z",
-  },
-  {
-    id: "classe-l2-mpi",
-    titre: "Salon Classe L2 MPI",
-    description: "Salon de travail pour les étudiants de Licence 2 — Maths, Physique, Info.",
-    type: "classe",
-    niveau: "L2",
-    classe: "L2 MPI",
-    cree_par: "Administration",
-    created_at: "2026-09-01T08:00:00Z",
-  },
-  {
-    id: "classe-l1-sml",
-    titre: "Salon Classe L1 SML",
-    description: "Salon de travail pour les étudiants de Licence 1 — Sciences de la Mer et du Littoral.",
-    type: "classe",
-    niveau: "L1",
-    classe: "L1 SML",
-    cree_par: "Administration",
-    created_at: "2026-09-01T08:00:00Z",
-  },
-  {
-    id: "classe-l2-sml",
-    titre: "Salon Classe L2 SML",
-    description: "Salon de travail pour les étudiants de Licence 2 — Sciences de la Mer et du Littoral.",
-    type: "classe",
-    niveau: "L2",
-    classe: "L2 SML",
-    cree_par: "Administration",
-    created_at: "2026-09-01T08:00:00Z",
-  },
-  {
-    id: "classe-l1-miass",
-    titre: "Salon Classe L1 MIASS",
-    description: "Salon de travail pour les étudiants de Licence 1 — Maths et Info Appliquées.",
-    type: "classe",
-    niveau: "L1",
-    classe: "L1 MIASS",
-    cree_par: "Administration",
-    created_at: "2026-09-01T08:00:00Z",
-  },
-  {
-    id: "classe-l2-miass",
-    titre: "Salon Classe L2 MIASS",
-    description: "Salon de travail pour les étudiants de Licence 2 — Maths et Info Appliquées.",
-    type: "classe",
-    niveau: "L2",
-    classe: "L2 MIASS",
-    cree_par: "Administration",
+    cree_par: "Administration HAS",
     created_at: "2026-09-01T08:00:00Z",
   },
 ];
@@ -235,43 +165,13 @@ export function deleteSalon(id: string): void {
  * L'étudiant ne peut accéder QU'AU salon général, au salon de son niveau (ex: L1) et au salon de sa classe (ex: L1 MPI).
  */
 export function getAccessibleSalons(
-  role: UserRole,
-  userNiveau?: string,
-  userClasse?: string,
-  profClasses?: string[]
+  _role?: UserRole,
+  _userNiveau?: string,
+  _userClasse?: string,
+  _profClasses?: string[]
 ): ChatSalon[] {
-  const allSalons = getStoredSalons();
-  if (role === "admin") return allSalons;
-
-  if (role === "professeur") {
-    return allSalons.filter((s) => {
-      if (s.type === "general") return true;
-      if (!profClasses || profClasses.length === 0) return true;
-      if (s.type === "niveau" && s.niveau) {
-        return profClasses.some((c) => c.toLowerCase().includes(s.niveau!.toLowerCase()));
-      }
-      if (s.type === "classe" && s.classe) {
-        return profClasses.some((c) => c.toLowerCase().trim() === s.classe!.toLowerCase().trim());
-      }
-      return true;
-    });
-  }
-
-  // Rôle étudiant: STRICTEMENT CE QU'IL PEUT ACCÉDER
-  const cleanNiveau = (userNiveau || "L1").toUpperCase();
-  const cleanClasse = (userClasse || "L1 MPI").toUpperCase().replace("-", " ");
-
-  return allSalons.filter((s) => {
-    if (s.type === "general") return true;
-    if (s.type === "niveau") {
-      return (s.niveau || "").toUpperCase() === cleanNiveau;
-    }
-    if (s.type === "classe") {
-      const salonClasse = (s.classe || "").toUpperCase().replace("-", " ");
-      return salonClasse === cleanClasse || salonClasse.includes(cleanClasse) || cleanClasse.includes(salonClasse);
-    }
-    return false;
-  });
+  // Exactement 2 chats : Licence 1 et Licence 2
+  return DEFAULT_SALONS;
 }
 
 /**

@@ -33,7 +33,7 @@ export function useCurrentUser() {
           const meta = authUser.user_metadata || {};
           const fullName = meta.full_name || meta.name || authUser.email?.split("@")[0] || "Étudiant HAS";
           const username = meta.username || authUser.email?.split("@")[0] || "etudiant";
-          const matricule = meta.matricule || `HAS-${new Date().getFullYear()}-L1-001`;
+          const matricule = meta.matricule || "ETU001";
           const filiereCode = meta.filiere || "MPI";
           const niveau = meta.niveau || "L1";
           const classeCode = `${niveau}-${filiereCode}`;

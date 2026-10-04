@@ -166,7 +166,7 @@ function EtudiantMessagesContent() {
       role="etudiant"
       userName={user.full_name}
       userEmail={user.email}
-      matriculeOrTitle={user.matricule || "HAS-ETU"}
+      matriculeOrTitle={user.matricule || "ETU001"}
     >
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -315,9 +315,6 @@ function EtudiantMessagesContent() {
                         </span>
                       </div>
                     </div>
-                    <Badge variant="primary" size="sm">
-                      Sécurisé HAS
-                    </Badge>
                   </div>
                 </div>
 

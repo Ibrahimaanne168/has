@@ -122,7 +122,7 @@ export default function AdminAcademiquePage() {
   };
 
   return (
-    <DashboardLayout role="admin" userName="Administration HAS" userEmail="direction@halil-academie.com" matriculeOrTitle="Directeur Général">
+    <DashboardLayout role="admin" userName="Administration HAS" userEmail="direction@halil-academie.com" matriculeOrTitle="ADM001">
       <div className="space-y-6">
         <div>
           <p className="text-[11px] font-bold tracking-wider uppercase text-[#e0521c] mb-1">Administration Académique</p>

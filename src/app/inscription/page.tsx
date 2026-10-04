@@ -249,7 +249,7 @@ export default function InscriptionPage() {
       }
 
       setCreatedUser({
-        matricule: data.user?.matricule || "HAS-ETU-NOUVEAU",
+        matricule: data.user?.matricule || "ETU001",
         fullName,
       });
       setStep(4);
@@ -265,10 +265,10 @@ export default function InscriptionPage() {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-between">
       {/* Header simplifié */}
-      <header className="bg-white border-b border-slate-200 py-4 px-6">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full overflow-hidden bg-white shadow-xs ring-1 ring-slate-200 flex items-center justify-center shrink-0">
+      <header className="bg-white border-b border-slate-200 py-3 sm:py-4 px-4 sm:px-6">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
+          <Link href="/" className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden bg-white shadow-xs ring-1 ring-slate-200 flex items-center justify-center shrink-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/images/logo-has.jpg"
@@ -276,18 +276,20 @@ export default function InscriptionPage() {
                 className="w-full h-full object-cover"
               />
             </div>
-            <div>
-              <span className="font-serif text-lg font-bold text-[#0f2744] block leading-tight">
-                Halil Académie Scientifique
+            <div className="min-w-0">
+              <span className="font-serif text-base sm:text-lg font-bold text-[#0f2744] block leading-tight truncate">
+                <span className="hidden sm:inline">Halil Académie Scientifique</span>
+                <span className="sm:hidden">HAS</span>
               </span>
-              <span className="text-[10px] text-[#e0521c] font-semibold">
+              <span className="text-[10px] text-[#e0521c] font-semibold hidden sm:block">
                 Maths • Physique • Informatique
               </span>
             </div>
           </Link>
-          <Link href="/connexion">
-            <Button variant="ghost" size="sm">
-              Déjà inscrit ? Se connecter
+          <Link href="/connexion" className="shrink-0">
+            <Button variant="ghost" size="sm" className="text-xs font-semibold px-2.5 sm:px-3">
+              <span className="hidden sm:inline">Déjà inscrit ? Se connecter</span>
+              <span className="sm:hidden">Connexion</span>
             </Button>
           </Link>
         </div>
@@ -302,7 +304,7 @@ export default function InscriptionPage() {
               <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-slate-200 -z-0" />
               {[
                 { num: 1, label: "Identité" },
-                { num: 2, label: "Sécurité 2FA" },
+                { num: 2, label: "Confirmation Email" },
                 { num: 3, label: "Compte" },
               ].map((s) => (
                 <div key={s.num} className="relative z-10 flex flex-col items-center">
@@ -332,14 +334,14 @@ export default function InscriptionPage() {
             <p className="text-[11px] font-bold tracking-wider uppercase text-[#e0521c] mb-1">Portail d&apos;Admission</p>
             <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] leading-snug">
               {step === 1 && "Inscription Étudiant — Étape 1/2"}
-              {step === 2 && "Vérification de sécurité 2FA"}
+              {step === 2 && "Code de confirmation par email"}
               {step === 3 && "Finalisation du Compte — Étape 2/2"}
               {step === 4 && "Inscription Validée"}
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              {step === 1 && "Renseignez vos coordonnées officielles pour recevoir votre code sécurisé."}
+              {step === 1 && "Renseignez vos coordonnées pour recevoir votre code de confirmation."}
               {step === 2 && `Un code à 6 chiffres a été expédié à l'adresse ${email}.`}
-              {step === 3 && "Définissez votre identifiant de connexion et un mot de passe robuste."}
+              {step === 3 && "Définissez votre identifiant et votre mot de passe."}
               {step === 4 && "Votre dossier étudiant est prêt. Vous pouvez maintenant accéder à votre espace."}
             </p>
           </div>
@@ -361,7 +363,7 @@ export default function InscriptionPage() {
 
           {devCode && (
             <div className="mb-6 p-3 rounded-md bg-amber-50 border border-amber-200 text-xs text-amber-900">
-              <strong>Code 2FA (Test local / Démo) :</strong>{" "}
+              <strong>Code de confirmation (Test local / Démo) :</strong>{" "}
               <span className="font-mono text-sm font-bold tracking-widest text-[#e0521c]">
                 {devCode}
               </span>
@@ -376,7 +378,7 @@ export default function InscriptionPage() {
               <Input
                 label="Nom complet et prénom(s)"
                 required
-                placeholder="Ex. Ibrahima Anne"
+                placeholder="Ex. Prénom et Nom"
                 leftIcon={<User className="w-4 h-4" />}
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
@@ -434,7 +436,7 @@ export default function InscriptionPage() {
                 rightIcon={<ArrowRight className="w-4 h-4" />}
                 className="w-full"
               >
-                Continuer et Recevoir le Code 2FA
+                Recevoir le code de confirmation
               </Button>
             </form>
           )}
@@ -475,7 +477,7 @@ export default function InscriptionPage() {
                   rightIcon={<ArrowRight className="w-4 h-4" />}
                   className="w-full"
                 >
-                  Valider le code de sécurité
+                  Valider le code de confirmation
                 </Button>
 
                 <div className="flex items-center justify-between pt-2">
@@ -689,7 +691,7 @@ export default function InscriptionPage() {
 
       {/* Footer minimal */}
       <footer className="py-4 text-center text-xs text-slate-400 border-t border-slate-200 bg-white">
-        © {new Date().getFullYear()} Halil Académie Scientifique (HAS) — Portail Sécurisé
+        © {new Date().getFullYear()} Halil Académie Scientifique (HAS) — Tous droits réservés.
       </footer>
     </div>
   );

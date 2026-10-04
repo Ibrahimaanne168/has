@@ -44,8 +44,7 @@ export default function AdminDashboard() {
   ];
 
   const recentActions = [
-    { action: "Système académique initialisé", detail: "Configuration Halil Académie Scientifique", time: "Aujourd'hui", type: "creation" },
-    { action: "Surveillance de la plateforme", detail: "Services opérationnels et sécurisés", time: "En continu", type: "success" },
+    { action: "Système académique initialisé", detail: "Configuration Halil Académie Scientifique", time: "En continu", type: "creation" },
   ];
 
   return (
@@ -53,7 +52,7 @@ export default function AdminDashboard() {
       role="admin"
       userName="Administration HAS"
       userEmail="direction@halil-academie.com"
-      matriculeOrTitle="Directeur Général — Supervision Totale"
+      matriculeOrTitle="ADM001"
     >
       <div className="space-y-8">
         {/* Bannière Admin */}
@@ -68,7 +67,7 @@ export default function AdminDashboard() {
               Supervision Globale — Halil Académie Scientifique
             </h1>
             <p className="text-sm text-slate-300">
-              Gérez les comptes, les cours, les filières, les emplois du temps, les communiqués et la modération en un seul espace sécurisé.
+              Gérez les comptes, les cours, les filières, les emplois du temps, les communiqués et les échanges en un seul espace.
             </p>
           </div>
         </div>
@@ -146,26 +145,18 @@ export default function AdminDashboard() {
           <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs space-y-4">
             <h3 className="font-serif text-base font-bold text-[#0f2744]">Points d&apos;Attention</h3>
             <div className="space-y-3">
-              <div className="p-3.5 rounded-lg bg-amber-50 border border-amber-200 flex items-start gap-3">
-                <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+              <div className="p-3.5 rounded-lg bg-slate-50 border border-slate-200 flex items-start gap-3">
+                <Calendar className="w-4 h-4 text-[#0f2744] shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-xs font-bold text-amber-900">5 messages de contact en attente</p>
-                  <p className="text-[11px] text-amber-700 mt-0.5">Demandes d&apos;informations d&apos;admission non traitées</p>
-                  <Link href="/admin/messages" className="text-[11px] text-amber-800 font-semibold hover:underline">Traiter maintenant →</Link>
-                </div>
-              </div>
-              <div className="p-3.5 rounded-lg bg-[#0f2744]/5 border border-[#0f2744]/20 flex items-start gap-3">
-                <Shield className="w-4 h-4 text-[#0f2744] shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-xs font-bold text-[#0f2744]">RLS & Sécurité — Statut : Actif</p>
-                  <p className="text-[11px] text-slate-600 mt-0.5">Row Level Security active sur toutes les tables</p>
+                  <p className="text-xs font-bold text-[#0f2744]">Rentrée Académique</p>
+                  <p className="text-[11px] text-slate-600 mt-0.5">Année universitaire 2024-2025 en cours</p>
                 </div>
               </div>
               <div className="p-3.5 rounded-lg bg-emerald-50 border border-emerald-200 flex items-start gap-3">
                 <TrendingUp className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-xs font-bold text-emerald-900">Emplois du temps — Semestre 1 : Publiés</p>
-                  <p className="text-[11px] text-emerald-700 mt-0.5">6 classes / plannings validés et accessibles</p>
+                  <p className="text-xs font-bold text-emerald-900">Emplois du temps</p>
+                  <p className="text-[11px] text-emerald-700 mt-0.5">Plannings validés pour Licence 1 et Licence 2</p>
                 </div>
               </div>
             </div>

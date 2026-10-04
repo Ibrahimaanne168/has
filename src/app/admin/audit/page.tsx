@@ -17,16 +17,32 @@ const ACTION_TYPES = [
   { key: "PUBLICATION_COMMUNIQUE", label: "Communiqué", icon: <FileText className="w-4 h-4" />, color: "bg-purple-100 text-purple-700" },
 ];
 
-const MOCK_AUDIT_LOGS = [
-  { id: "a1", user: "Administration HAS", action: "INSCRIPTION_ETUDIANT_2FA", details: { email: "mamadou.traore@etudiant.halil-academie.com", matricule: "HAS-2024-ETU-3812" }, ip: "197.234.12.45", created_at: new Date(Date.now() - 1000 * 60 * 35).toISOString() },
-  { id: "a2", user: "Dr. Ousmane Touré", action: "PUBLICATION_COURS", details: { titre: "Optimisation PostgreSQL — Chapitre 4", classe: "L2-ISN" }, ip: "197.234.18.10", created_at: new Date(Date.now() - 1000 * 60 * 90).toISOString() },
-  { id: "a3", user: "Administration HAS", action: "PUBLICATION_COMMUNIQUE", details: { titre: "Emplois du temps Semestre 1 disponibles" }, ip: "197.234.12.45", created_at: new Date(Date.now() - 1000 * 60 * 180).toISOString() },
-  { id: "a4", user: "Mamadou Traoré", action: "MODIFICATION_MOT_DE_PASSE", details: { email: "m.traore@etudiant.halil-academie.com" }, ip: "154.72.45.3", created_at: new Date(Date.now() - 1000 * 60 * 60 * 6).toISOString() },
-  { id: "a5", user: "Administration HAS", action: "INSCRIPTION_ETUDIANT_2FA", details: { email: "awa.coulibaly@etudiant.halil-academie.com", matricule: "HAS-2024-ETU-4291" }, ip: "197.234.12.45", created_at: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString() },
-  { id: "a6", user: "Administration HAS", action: "SUPPRESSION_COMPTE", details: { email: "test.user@halil-academie.com", raison: "Compte de test" }, ip: "197.234.12.45", created_at: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString() },
-];
+interface AuditEntry {
+  id: string;
+  user: string;
+  action: string;
+  details?: Record<string, unknown> | null;
+  ip: string;
+  created_at: string;
+}
 
 export default function AdminAuditPage() {
+  const [logs, setLogs] = React.useState<AuditEntry[]>([]);
+
+  React.useEffect(() => {
+    // Si des logs réels existent dans le stockage local ou la base de données
+    try {
+      const stored = localStorage.getItem("has_audit_logs_v1");
+      if (stored) {
+        setLogs(JSON.parse(stored));
+      } else {
+        setLogs([]);
+      }
+    } catch {
+      setLogs([]);
+    }
+  }, []);
+
   const getActionInfo = (action: string) => ACTION_TYPES.find((a) => a.key === action) || { label: action, icon: <Shield className="w-4 h-4" />, color: "bg-slate-100 text-slate-600" };
 
   const formatRelativeTime = (dateStr: string) => {
@@ -39,7 +55,7 @@ export default function AdminAuditPage() {
   };
 
   return (
-    <DashboardLayout role="admin" userName="Administration HAS" userEmail="direction@halil-academie.com" matriculeOrTitle="Directeur Général">
+    <DashboardLayout role="admin" userName="Administration HAS" userEmail="direction@halil-academie.com" matriculeOrTitle="ADM001">
       <div className="space-y-6">
         <div>
           <p className="text-[11px] font-bold tracking-wider uppercase text-[#e0521c] mb-1">Sécurité & Conformité</p>
@@ -64,46 +80,76 @@ export default function AdminAuditPage() {
 
         {/* Table Journal */}
         <div className="bg-white rounded-xl border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] overflow-hidden">
-          <div className="p-4 border-b border-slate-100 flex items-center gap-2">
-            <Shield className="w-4 h-4 text-[#0f2744]" />
-            <span className="text-sm font-bold text-slate-800">
-              {MOCK_AUDIT_LOGS.length} entrées récentes — ordonnées par date
-            </span>
+          <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Shield className="w-4 h-4 text-[#0f2744]" />
+              <span className="text-sm font-bold text-slate-800">
+                {logs.length} entrée(s) — journal d&apos;audit en temps réel
+              </span>
+            </div>
+            {logs.length > 0 && (
+              <button
+                onClick={() => {
+                  if (confirm("Confirmez-vous la réinitialisation du journal d'audit ?")) {
+                    localStorage.removeItem("has_audit_logs_v1");
+                    setLogs([]);
+                  }
+                }}
+                className="text-xs text-red-600 hover:underline"
+              >
+                Vider le journal
+              </button>
+            )}
           </div>
-          <div className="divide-y divide-slate-100">
-            {MOCK_AUDIT_LOGS.map((log) => {
-              const info = getActionInfo(log.action);
-              return (
-                <div key={log.id} className="p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 hover:bg-slate-50/50 transition-colors">
-                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${info.color}`}>
-                    {info.icon}
-                  </div>
-                  <div className="flex-1 min-w-0 space-y-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-xs font-bold text-slate-900">{info.label}</span>
-                      <ChevronRight className="w-3 h-3 text-slate-400" />
-                      <span className="text-xs font-medium text-slate-700">{log.user}</span>
+
+          {logs.length === 0 ? (
+            <div className="p-12 text-center space-y-3">
+              <div className="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
+                <Shield className="w-6 h-6" />
+              </div>
+              <h3 className="font-serif text-base font-bold text-slate-800">
+                Aucune entrée dans le journal d&apos;audit
+              </h3>
+              <p className="text-xs text-slate-500 max-w-sm mx-auto leading-relaxed">
+                Le journal d&apos;audit est actuellement vide. Toutes les nouvelles opérations sensibles (création de compte, publication, connexion) apparaîtront automatiquement ici.
+              </p>
+            </div>
+          ) : (
+            <div className="divide-y divide-slate-100">
+              {logs.map((log) => {
+                const info = getActionInfo(log.action);
+                return (
+                  <div key={log.id} className="p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 hover:bg-slate-50/50 transition-colors">
+                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${info.color}`}>
+                      {info.icon}
                     </div>
-                    {log.details && (
-                      <div className="text-[11px] text-slate-500 font-mono bg-slate-50 px-2 py-1 rounded-md border border-slate-100 inline-block max-w-full truncate">
-                        {JSON.stringify(log.details)}
+                    <div className="flex-1 min-w-0 space-y-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-xs font-bold text-slate-900">{info.label}</span>
+                        <ChevronRight className="w-3 h-3 text-slate-400" />
+                        <span className="text-xs font-medium text-slate-700">{log.user}</span>
                       </div>
-                    )}
-                  </div>
-                  <div className="text-right shrink-0 space-y-1">
-                    <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
-                      <Clock className="w-3 h-3" />
-                      <span>{formatRelativeTime(log.created_at)}</span>
+                      {log.details && (
+                        <div className="text-[11px] text-slate-500 font-mono bg-slate-50 px-2 py-1 rounded-md border border-slate-100 inline-block max-w-full truncate">
+                          {JSON.stringify(log.details)}
+                        </div>
+                      )}
                     </div>
-                    <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
-                      <Activity className="w-3 h-3" />
-                      <span className="font-mono">{log.ip}</span>
+                    <div className="text-right shrink-0 space-y-1">
+                      <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
+                        <Clock className="w-3 h-3" />
+                        <span>{formatRelativeTime(log.created_at)}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
+                        <Activity className="w-3 h-3" />
+                        <span className="font-mono">{log.ip}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
     </DashboardLayout>
