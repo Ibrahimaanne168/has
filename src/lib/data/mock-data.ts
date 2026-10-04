@@ -7,8 +7,8 @@ export const MOCK_FILIERES: Filiere[] = [
     name: "Mathématiques Physique et Informatique",
     description:
       "Formation intensive axée sur l'analyse, l'algèbre linéaire, l'électromagnétisme, la thermodynamique et l'algorithmique programmée en Python/C.",
-    cycle: "Tutorat Supérieur L1-L3",
-    duration_years: 1,
+    cycle: "Licence",
+    duration_years: 3,
     icon: "cpu",
   },
   {
@@ -17,8 +17,8 @@ export const MOCK_FILIERES: Filiere[] = [
     name: "Science de la mer et du Littoral",
     description:
       "Perfectionnement méthodique en sciences marines, dynamique côtière, océanographie physique et instrumentation scientifique.",
-    cycle: "Tutorat Supérieur L1-L3",
-    duration_years: 1,
+    cycle: "Licence",
+    duration_years: 3,
     icon: "zap",
   },
   {
@@ -27,8 +27,8 @@ export const MOCK_FILIERES: Filiere[] = [
     name: "Mathématiques et Informatique Appliquées aux Sciences Sociales",
     description:
       "Modélisation quantitative, probabilités/statistiques inférentielles, économétrie, analyse de données et bases de données relationnelles SQL.",
-    cycle: "Tutorat Supérieur & Éco-Gestion",
-    duration_years: 1,
+    cycle: "Licence",
+    duration_years: 3,
     icon: "trending-up",
   },
 ];
@@ -112,7 +112,7 @@ export const MOCK_PROFESSEURS: ProfesseurProfile[] = [
   {
     id: "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
     user_id: 2,
-    email: "pape.samb@has-academie.online",
+    email: "",
     username: "halilsamb",
     prenom: "Pape Ibrahima",
     nom: "Samb",
@@ -144,7 +144,7 @@ export const MOCK_PROFESSEURS: ProfesseurProfile[] = [
   {
     id: "32e74ddd-3e79-410a-8a87-4bfdff1fc099",
     user_id: 3,
-    email: "ibrahima.anne@has-academie.online",
+    email: "",
     username: "ibusaki",
     prenom: "Ibrahima",
     nom: "Anne",
@@ -171,7 +171,7 @@ export const MOCK_PROFESSEURS: ProfesseurProfile[] = [
   {
     id: "25013b47-9a78-4f97-8552-977450abdad2",
     user_id: 4,
-    email: "ndiogou.ndiaye@has-academie.online",
+    email: "",
     username: "ndiogou",
     prenom: "Ndiogou",
     nom: "Ndiaye",
@@ -200,7 +200,7 @@ export const MOCK_PROFESSEURS: ProfesseurProfile[] = [
   {
     id: "0ffa8cbd-6c98-409a-948d-0988754c1b32",
     user_id: 5,
-    email: "diop.sow@has-academie.online",
+    email: "",
     username: "diopsow",
     prenom: "El Hadji Ibrahima Diop",
     nom: "Sow",
@@ -226,7 +226,7 @@ export const MOCK_PROFESSEURS: ProfesseurProfile[] = [
   {
     id: "5bfff82c-62a6-48d4-801f-9e9ac5421df5",
     user_id: 6,
-    email: "pape.thiam@has-academie.online",
+    email: "",
     username: "pape",
     prenom: "Pape",
     nom: "Thiam",
@@ -253,7 +253,7 @@ export const MOCK_PROFESSEURS: ProfesseurProfile[] = [
   {
     id: "b3624bdb-2544-4995-989d-fc38e478d256",
     user_id: 7,
-    email: "kalidou.ba@has-academie.online",
+    email: "",
     username: "kalidou",
     prenom: "Kalidou",
     nom: "Ba",

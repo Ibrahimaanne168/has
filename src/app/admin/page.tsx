@@ -145,13 +145,6 @@ export default function AdminDashboard() {
           <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-xs space-y-4">
             <h3 className="font-serif text-base font-bold text-[#0f2744]">Points d&apos;Attention</h3>
             <div className="space-y-3">
-              <div className="p-3.5 rounded-lg bg-slate-50 border border-slate-200 flex items-start gap-3">
-                <Calendar className="w-4 h-4 text-[#0f2744] shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-xs font-bold text-[#0f2744]">Rentrée Académique</p>
-                  <p className="text-[11px] text-slate-600 mt-0.5">Année universitaire 2024-2025 en cours</p>
-                </div>
-              </div>
               <div className="p-3.5 rounded-lg bg-emerald-50 border border-emerald-200 flex items-start gap-3">
                 <TrendingUp className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                 <div>

@@ -86,8 +86,8 @@ export default function AdminAcademiquePage() {
       code: filiereCode.toUpperCase().trim(),
       name: filiereName.trim(),
       description: filiereDesc.trim() || "Filière académique d'excellence.",
-      cycle: "Tutorat Supérieur L1-L2",
-      duration_years: 2,
+      cycle: "Licence",
+      duration_years: 3,
       icon: "cpu",
     };
     saveFiliere(newF);
@@ -284,7 +284,7 @@ export default function AdminAcademiquePage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    {["Code", "Intitulé", "Classes Concernées (Tronc Commun)", "Crédits ECTS", "Coefficient", "Actions"].map((h) => (
+                    {["Code", "Intitulé", "Classes Concernées", "Actions"].map((h) => (
                       <th key={h} className="text-left text-xs font-bold text-slate-500 uppercase tracking-wider px-4 py-3">{h}</th>
                     ))}
                   </tr>
@@ -312,8 +312,6 @@ export default function AdminAcademiquePage() {
                             ))}
                           </div>
                         </td>
-                        <td className="px-4 py-3 text-center"><Badge variant="primary" size="sm">{m.credits_ects}</Badge></td>
-                        <td className="px-4 py-3 text-center text-xs text-slate-700 font-semibold">{m.coefficient}</td>
                         <td className="px-4 py-3">
                           <button onClick={() => setDeleteConfirm({ id: m.id, type: "matiere", name: m.name })} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg"><Trash2 className="w-4 h-4" /></button>
                         </td>
