@@ -493,16 +493,14 @@ export function ChatRoom({
           </div>
         ) : (
           messages.map((msg) => {
+            // Un message m'appartient ssi mon ID ou email correspond
             const isMe =
-              msg.user_id === currentUser.id ||
-              msg.user?.email === currentUser.email ||
-              msg.user?.full_name === currentUser.fullName ||
-              (currentUser.role === "admin" && msg.user_id === "1") ||
-              (currentUser.role === "admin" && msg.user?.role === "admin");
+              (currentUser.id && currentUser.id !== "" && msg.user_id === currentUser.id) ||
+              (currentUser.email && currentUser.email !== "" && msg.user?.email === currentUser.email);
 
             const authorRole = msg.user?.role || "etudiant";
             const authorName = msg.user?.full_name || "Membre HAS";
-            const styles = getRoleStyles(authorRole, isMe);
+            const styles = getRoleStyles(authorRole, Boolean(isMe));
 
             // Initiales avatar
             const avatarInitials = authorName
