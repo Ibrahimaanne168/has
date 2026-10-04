@@ -97,6 +97,14 @@ export function DashboardLayout({
     } catch {
       // ignore
     }
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.removeItem("has_current_student_profile_v2");
+        sessionStorage.clear();
+      } catch {
+        // ignore
+      }
+    }
     router.push("/connexion");
   };
 

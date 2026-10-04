@@ -86,9 +86,9 @@ export async function middleware(request: NextRequest) {
   // Déduction automatique du rôle si non encore renseigné
   if (!userRole) {
     const email = (user.email || "").toLowerCase();
-    if (email.includes("admin") || email.includes("halil")) {
+    if (email.includes("admin") || email.startsWith("halil@") || email.startsWith("direction@") || email.endsWith("@has-internal.local")) {
       userRole = "admin";
-    } else if (email.includes("prof")) {
+    } else if (email.includes("prof") || email.endsWith("@has-academie.online")) {
       userRole = "professeur";
     } else {
       userRole = "etudiant";

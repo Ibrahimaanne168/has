@@ -41,12 +41,22 @@ export function useCurrentUser() {
           const foundClasse = MOCK_CLASSES.find((c) => c.code === classeCode) || MOCK_CLASSES[0];
           const foundFiliere = MOCK_FILIERES.find((f) => f.code === filiereCode) || MOCK_FILIERES[0];
 
+          // Ne pas écraser le profil étudiant si l'utilisateur connecté est un compte admin ou enseignant
+          const isAdminAccount =
+            meta.role === "admin" ||
+            meta.role === "professeur" ||
+            authUser.email?.includes("admin") ||
+            authUser.email?.startsWith("halil@") ||
+            authUser.email?.startsWith("direction@") ||
+            authUser.email?.endsWith("@has-internal.local");
+
+          const effectiveRole = isAdminAccount ? (meta.role || "admin") : "etudiant";
           const updated: Profile = {
             id: authUser.id,
             email: authUser.email || MOCK_STUDENT.email,
             username,
             full_name: fullName,
-            role: "etudiant",
+            role: effectiveRole,
             phone: meta.phone || MOCK_STUDENT.phone,
             matricule,
             filiere_id: foundFiliere.id,
@@ -62,7 +72,10 @@ export function useCurrentUser() {
           };
 
           setUser(updated);
-          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
+          // Ne persister dans le cache étudiant QUE si c'est réellement un étudiant
+          if (!isAdminAccount) {
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
+          }
         }
       } catch (err) {
         console.warn("Erreur chargement useCurrentUser:", err);

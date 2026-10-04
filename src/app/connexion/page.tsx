@@ -89,8 +89,19 @@ function ConnexionForm() {
           }
         }
 
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.removeItem("has_current_student_profile_v2");
+          } catch {}
+        }
+
         if (!role) {
-          if (authEmail.toLowerCase().includes("admin") || authEmail.toLowerCase().includes("halil")) {
+          if (
+            authEmail.toLowerCase().includes("admin") ||
+            authEmail.toLowerCase().startsWith("halil@") ||
+            authEmail.toLowerCase().startsWith("direction@") ||
+            authEmail.toLowerCase().endsWith("@has-internal.local")
+          ) {
             role = "admin";
           } else {
             role = "etudiant";

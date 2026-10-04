@@ -81,17 +81,37 @@ export function ChatRoom({
     return { salonId: "general", content: rawText };
   }, []);
 
-  // Extrait les métadonnées expéditeur encodées dans le message
-  const parseSenderMeta = useCallback((text: string): { name: string | null; role: UserRole | null; cleanContent: string } => {
-    const match = text.match(/^\[\[sender:([^\|]+)\|\|([^\]]+)\]\]\s*([\s\S]*)$/);
-    if (match) {
+  // Extrait les métadonnées expéditeur encodées dans le message (id, nom, rôle, email)
+  const parseSenderMeta = useCallback((text: string): {
+    id: string | null;
+    name: string | null;
+    role: UserRole | null;
+    email: string | null;
+    cleanContent: string;
+  } => {
+    // Format moderne à 4 éléments : [[sender:ID||NOM||ROLE||EMAIL]]
+    const match4 = text.match(/^\[\[sender:([^\|]+)\|\|([^\|]+)\|\|([^\|]+)\|\|([^\]]*)\]\]\s*([\s\S]*)$/);
+    if (match4) {
       return {
-        name: match[1].trim() || null,
-        role: (match[2].trim() as UserRole) || null,
-        cleanContent: match[3].trim(),
+        id: match4[1].trim() || null,
+        name: match4[2].trim() || null,
+        role: (match4[3].trim() as UserRole) || null,
+        email: match4[4].trim() || null,
+        cleanContent: match4[5].trim(),
       };
     }
-    return { name: null, role: null, cleanContent: text };
+    // Format legacy à 2 éléments : [[sender:NOM||ROLE]]
+    const match2 = text.match(/^\[\[sender:([^\|]+)\|\|([^\]]+)\]\]\s*([\s\S]*)$/);
+    if (match2) {
+      return {
+        id: null,
+        name: match2[1].trim() || null,
+        role: (match2[2].trim() as UserRole) || null,
+        email: null,
+        cleanContent: match2[3].trim(),
+      };
+    }
+    return { id: null, name: null, role: null, email: null, cleanContent: text };
   }, []);
 
   // Charger les messages réels depuis la base Supabase
@@ -144,7 +164,13 @@ export function ChatRoom({
           if (salonId === roomId || (roomId === "general" && salonId === "general")) {
 
             // Extraire les métadonnées expéditeur encodées dans le message (source fiable)
-            const { name: embeddedName, role: embeddedRole, cleanContent } = parseSenderMeta(rawAfterSalon);
+            const {
+              id: embeddedId,
+              name: embeddedName,
+              role: embeddedRole,
+              email: embeddedEmail,
+              cleanContent,
+            } = parseSenderMeta(rawAfterSalon);
 
             // Fallback : jointure DB (peut être incorrecte si user_id ne correspond pas)
             const userObj = item.users as any;
@@ -159,21 +185,23 @@ export function ChatRoom({
                 : "etudiant";
 
             // Priorité : métadonnées embarquées > jointure DB > fallback
+            const finalUserId = embeddedId || String(item.user_id);
             const fullName = embeddedName || dbFullName || "Membre HAS";
             const roleName = embeddedRole || dbRole;
+            const finalEmail = embeddedEmail || userObj?.email || "";
 
             roomMessages.push({
               id: String(item.id),
-              user_id: String(item.user_id),
+              user_id: finalUserId,
               salon_id: salonId,
               content: cleanContent || rawAfterSalon.trim(),
               is_deleted: false,
               created_at: item.created_at,
               user: {
-                id: String(item.user_id),
+                id: finalUserId,
                 full_name: fullName,
                 role: roleName,
-                email: userObj?.email || "",
+                email: finalEmail,
                 username: null,
                 phone: null,
                 matricule: null,
@@ -224,8 +252,13 @@ export function ChatRoom({
             // le message optimistique (avec le bon nom de l'expéditeur)
             // est déjà dans le state. On recharge seulement si c'est
             // un message d'un AUTRE utilisateur (id différent du current user).
+            const rawMsg = String((payload.new as any)?.message || "");
+            const { id: embId, email: embEmail, name: embName } = parseSenderMeta(rawMsg);
             const insertedUserId = String((payload.new as any)?.user_id);
             const isMyMessage =
+              (embId && embId === currentUser.id) ||
+              (embEmail && currentUser.email && embEmail.toLowerCase() === currentUser.email.toLowerCase()) ||
+              (embName && currentUser.fullName && embName.toLowerCase() === currentUser.fullName.toLowerCase()) ||
               insertedUserId === currentUser.id ||
               (currentUser.role === "admin" && insertedUserId === "1");
             if (!isMyMessage) {
@@ -266,10 +299,10 @@ export function ChatRoom({
     const messageText = newMessage.trim();
     const tempId = `temp-${Date.now()}`;
 
-    // Format avec préfixe de salon + métadonnées expéditeur
-    // Structure: [[salon:ID]][[sender:NOM||ROLE]] CONTENU
-    // Cela permet de récupérer le bon nom même si la jointure DB échoue
-    const senderMeta = `[[sender:${currentUser.fullName}||${currentUser.role}]]`;
+    // Format avec préfixe de salon + métadonnées expéditeur complètes
+    // Structure: [[salon:ID]][[sender:ID||NOM||ROLE||EMAIL]] CONTENU
+    // Cela garantit la persistance exacte de l'auteur même après reconnexion ou rechargement
+    const senderMeta = `[[sender:${currentUser.id}||${currentUser.fullName}||${currentUser.role}||${currentUser.email || ""}]]`;
     const formattedPayload =
       roomId === "general"
         ? `${senderMeta} ${messageText}`
@@ -307,31 +340,28 @@ export function ChatRoom({
     try {
       const supabase = createClient();
 
-      // Résolution de l'identifiant numérique dans la table users
-      let dbUserId = 1;
+      // Résolution de l'identifiant numérique dans la table users :
+      // admin -> 1, etudiant -> 10 (ou ID étudiant spécifique 12, 13)
+      let dbUserId = currentUser.role === "admin" ? 1 : 10;
       const parsedNumeric = parseInt(currentUser.id, 10);
       if (!isNaN(parsedNumeric) && parsedNumeric > 0) {
         dbUserId = parsedNumeric;
-      } else {
-        // Chercher l'ID de l'utilisateur par son email s'il existe
+      } else if (currentUser.email) {
         try {
-          if (currentUser.email) {
-            const { data: matchedUser } = await supabase
-              .from("users")
-              .select("id")
-              .eq("email", currentUser.email)
-              .maybeSingle();
-            if (matchedUser?.id) {
-              dbUserId = matchedUser.id;
-            }
+          const { data: matchedUser } = await supabase
+            .from("users")
+            .select("id")
+            .eq("email", currentUser.email)
+            .maybeSingle();
+          if (matchedUser?.id) {
+            dbUserId = matchedUser.id;
           }
         } catch {
           // Ignorer
         }
       }
 
-      // Si c'est l'admin par défaut
-      if (currentUser.role === "admin" && dbUserId !== 1) {
+      if (currentUser.role === "admin") {
         dbUserId = 1;
       }
 
@@ -493,10 +523,11 @@ export function ChatRoom({
           </div>
         ) : (
           messages.map((msg) => {
-            // Un message m'appartient ssi mon ID ou email correspond
+            // Un message m'appartient ssi mon ID, mon email ou mon nom complet correspond
             const isMe =
-              (currentUser.id && currentUser.id !== "" && msg.user_id === currentUser.id) ||
-              (currentUser.email && currentUser.email !== "" && msg.user?.email === currentUser.email);
+              (currentUser.id && currentUser.id !== "" && (msg.user_id === currentUser.id || msg.user?.id === currentUser.id)) ||
+              (currentUser.email && currentUser.email !== "" && msg.user?.email && msg.user.email.toLowerCase() === currentUser.email.toLowerCase()) ||
+              (currentUser.fullName && currentUser.fullName !== "" && msg.user?.full_name && msg.user.full_name.toLowerCase() === currentUser.fullName.toLowerCase());
 
             const authorRole = msg.user?.role || "etudiant";
             const authorName = msg.user?.full_name || "Membre HAS";
