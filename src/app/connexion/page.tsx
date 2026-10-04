@@ -92,6 +92,7 @@ function ConnexionForm() {
         if (typeof window !== "undefined") {
           try {
             localStorage.removeItem("has_current_student_profile_v2");
+            localStorage.removeItem("has_current_professeur_profile_v2");
           } catch {}
         }
 

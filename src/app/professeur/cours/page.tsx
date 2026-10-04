@@ -21,7 +21,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card, CardFooter } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { MOCK_PROFESSEURS } from "@/lib/data/mock-data";
+import { useCurrentProfesseur } from "@/lib/useCurrentProfesseur";
 import { Cours, Classe, Matiere } from "@/lib/types";
 import {
   getStoredCourses,
@@ -32,9 +32,8 @@ import {
   fileToDataUrl,
 } from "@/lib/academicStorage";
 
-const CURRENT_PROF = MOCK_PROFESSEURS[0];
-
 export default function ProfesseurCoursPage() {
+  const { prof } = useCurrentProfesseur();
   const [courses, setCourses] = useState<Cours[]>([]);
   const [classes, setClasses] = useState<Classe[]>([]);
   const [matieres, setMatieres] = useState<Matiere[]>([]);
@@ -66,15 +65,16 @@ export default function ProfesseurCoursPage() {
 
   // Matières enseignées par ce professeur (sans restriction préalable de classe)
   const profMatieres = React.useMemo(() => {
+    if (!prof.matieres || prof.matieres.length === 0) return matieres;
     return matieres.filter((m) => {
-      return CURRENT_PROF.matieres?.some(
+      return prof.matieres?.some(
         (pm) =>
           pm.code?.toUpperCase() === m.code.toUpperCase() ||
           String(pm.id) === String(m.id) ||
           pm.nom.toLowerCase() === m.name.toLowerCase()
       );
     });
-  }, [matieres]);
+  }, [matieres, prof.matieres]);
 
   // Matière sélectionnée dans le formulaire
   const currentSelectedMatiere = React.useMemo(() => {
@@ -139,7 +139,7 @@ export default function ProfesseurCoursPage() {
         matiere_id: matiere?.id || formMatiereId,
         classe_id: primaryClasse?.id,
         classes: targetClasses,
-        professeur_id: CURRENT_PROF.id,
+        professeur_id: prof.id,
         file_url: formPdfUrl || "/documents/cours.pdf",
         file_name: resolvedPdfName,
         file_type: "application/pdf",
@@ -149,7 +149,7 @@ export default function ProfesseurCoursPage() {
         updated_at: new Date().toISOString(),
         matiere,
         classe: primaryClasse,
-        professeur: CURRENT_PROF,
+        professeur: { ...prof, role: "professeur" as const, classe_id: null } as import("@/lib/types").Profile,
         is_favorite: false,
       };
       saveCourse(newCourse);
@@ -170,15 +170,15 @@ export default function ProfesseurCoursPage() {
 
   // Seuls les cours concernant ce professeur sont affichés
   const myCourses = courses.filter((c) => {
-    return c.professeur_id === CURRENT_PROF.id || !c.professeur_id || c.professeur?.id === CURRENT_PROF.id;
+    return c.professeur_id === prof.id || !c.professeur_id || c.professeur?.id === prof.id;
   });
 
   return (
     <DashboardLayout
       role="professeur"
-      userName={CURRENT_PROF.full_name}
-      userEmail={CURRENT_PROF.email}
-      matriculeOrTitle={CURRENT_PROF.matricule || "PROF001"}
+      userName={prof.full_name}
+      userEmail={prof.email}
+      matriculeOrTitle={prof.matricule || "PROF001"}
     >
       <div className="space-y-6">
         {/* En-tête */}

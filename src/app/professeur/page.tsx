@@ -21,12 +21,12 @@ import { Button } from "@/components/ui/Button";
 import { Card, CardHeader, CardContent } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { MOCK_PROFESSEURS, MOCK_CLASSES } from "@/lib/data/mock-data";
+import { useCurrentProfesseur } from "@/lib/useCurrentProfesseur";
 import { getStoredCourses } from "@/lib/academicStorage";
 import { Cours } from "@/lib/types";
 
-const CURRENT_PROF = MOCK_PROFESSEURS[0];
-
 export default function ProfesseurDashboard() {
+  const { prof } = useCurrentProfesseur();
   const [courses, setCourses] = React.useState<Cours[]>([]);
   const myClasses = MOCK_CLASSES.slice(0, 3);
 
@@ -37,14 +37,14 @@ export default function ProfesseurDashboard() {
     return () => window.removeEventListener("has_academic_storage_updated", handleUpdate);
   }, []);
 
-  const myCourses = courses.slice(0, 3);
+  const myCourses = courses.filter((c) => c.professeur_id === prof.id || c.professeur?.id === prof.id || !c.professeur_id).slice(0, 3);
 
   return (
     <DashboardLayout
       role="professeur"
-      userName={CURRENT_PROF.full_name}
-      userEmail={CURRENT_PROF.email}
-      matriculeOrTitle={CURRENT_PROF.matricule || "PROF001"}
+      userName={prof.full_name}
+      userEmail={prof.email}
+      matriculeOrTitle={prof.matricule || "PROF001"}
     >
       <div className="space-y-8">
         {/* Bannière de bienvenue Professeur */}
@@ -56,17 +56,17 @@ export default function ProfesseurDashboard() {
               <span>Espace Enseignant-Chercheur • Année 2024-2025</span>
             </div>
             <h1 className="font-serif text-2xl sm:text-3xl font-bold text-white">
-              Bienvenue, {CURRENT_PROF.full_name}
+              Bienvenue, {prof.full_name}
             </h1>
             <p className="text-sm text-slate-300 leading-relaxed">
               Gérez vos cours, déposez vos supports pédagogiques et répondez aux questions de vos étudiants depuis votre espace dédié Halil Académie Scientifique.
             </p>
             <div className="flex flex-wrap items-center gap-3 text-xs text-slate-200 pt-2">
               <span className="bg-white/15 px-3 py-1 rounded-md">
-                Spécialité : {CURRENT_PROF.specialite}
+                Spécialité : {prof.specialite}
               </span>
               <span className="bg-white/15 px-3 py-1 rounded-md font-mono">
-                {CURRENT_PROF.matricule}
+                {prof.matricule}
               </span>
             </div>
           </div>

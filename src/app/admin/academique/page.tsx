@@ -58,6 +58,49 @@ export default function AdminAcademiquePage() {
   const [matiereFiliereId, setMatiereFiliereId] = useState("");
   const [matiereClasses, setMatiereClasses] = useState<string[]>(["L1-MPI", "L1-SML", "L1-MIASS"]);
 
+  // Edit matière
+  const [editMatiereId, setEditMatiereId] = useState<string | null>(null);
+  const [editMatiereModal, setEditMatiereModal] = useState(false);
+
+  const openEditMatiere = (m: Matiere) => {
+    setEditMatiereId(m.id);
+    setMatiereCode(m.code);
+    setMatiereName(m.name);
+    setMatiereCoeff(String(m.coefficient));
+    setMatiereEcts(String(m.credits_ects));
+    setMatiereFiliereId(m.filiere_id || "");
+    setMatiereClasses(m.classes || []);
+    setEditMatiereModal(true);
+  };
+
+  const handleSaveEditMatiere = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!matiereCode.trim() || !matiereName.trim() || !editMatiereId) return;
+    if (matiereClasses.length === 0) {
+      alert("Veuillez sélectionner au moins une classe concernée.");
+      return;
+    }
+    const isL1 = matiereClasses.some((c) => c.startsWith("L1"));
+    const isL2 = matiereClasses.some((c) => c.startsWith("L2"));
+    const niveau = isL1 && !isL2 ? "L1" : isL2 && !isL1 ? "L2" : "L1";
+    const existing = matieres.find((m) => m.id === editMatiereId);
+    const updated: Matiere = {
+      ...(existing as Matiere),
+      code: matiereCode.toUpperCase().trim(),
+      name: matiereName.trim(),
+      coefficient: parseInt(matiereCoeff, 10) || 3,
+      credits_ects: parseInt(matiereEcts, 10) || 5,
+      classes: matiereClasses,
+      filiere_id: matiereFiliereId || filieres[0]?.id || "",
+      niveau,
+    };
+    saveMatiere(updated);
+    reloadData();
+    setEditMatiereModal(false);
+    setEditMatiereId(null);
+    showSuccess(`Matière "${updated.name}" mise à jour avec succès.`);
+  };
+
   const reloadData = () => {
     const fList = getStoredFilieres();
     const cList = getStoredClasses();
@@ -313,7 +356,14 @@ export default function AdminAcademiquePage() {
                           </div>
                         </td>
                         <td className="px-4 py-3">
-                          <button onClick={() => setDeleteConfirm({ id: m.id, type: "matiere", name: m.name })} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg"><Trash2 className="w-4 h-4" /></button>
+                          <div className="flex items-center gap-1">
+                            <button onClick={() => openEditMatiere(m)} className="p-1.5 text-slate-400 hover:text-[#0f2744] hover:bg-blue-50 rounded-lg" title="Modifier">
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button onClick={() => setDeleteConfirm({ id: m.id, type: "matiere", name: m.name })} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Supprimer">
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     );
@@ -501,6 +551,64 @@ export default function AdminAcademiquePage() {
                   else handleDeleteMatiere(deleteConfirm.id);
                 }}>Supprimer</Button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Modal Modifier Matière */}
+        {editMatiereModal && (
+          <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-slate-200/90 space-y-4 max-h-[90vh] overflow-y-auto">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <h3 className="font-serif text-lg font-bold text-[#0f2744]">Modifier la Matière</h3>
+                <button onClick={() => setEditMatiereModal(false)} className="text-slate-400 hover:text-slate-700"><X className="w-5 h-5" /></button>
+              </div>
+              <form onSubmit={handleSaveEditMatiere} className="space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <Input label="Code" required placeholder="Ex. MAT101" value={matiereCode} onChange={(e) => setMatiereCode(e.target.value)} />
+                  <Input label="Coefficient" type="number" required placeholder="3" value={matiereCoeff} onChange={(e) => setMatiereCoeff(e.target.value)} />
+                </div>
+                <Input label="Intitulé officiel" required placeholder="Ex. Algèbre Linéaire" value={matiereName} onChange={(e) => setMatiereName(e.target.value)} />
+                <div className="grid grid-cols-2 gap-3">
+                  <Input label="Crédits ECTS" type="number" required placeholder="5" value={matiereEcts} onChange={(e) => setMatiereEcts(e.target.value)} />
+                  <div className="space-y-1.5">
+                    <label className="block text-sm font-medium text-slate-700">Filière principale</label>
+                    <select value={matiereFiliereId} onChange={(e) => setMatiereFiliereId(e.target.value)} className="w-full text-sm border border-slate-200 rounded-lg p-2.5">
+                      <option value="">— Aucune —</option>
+                      {filieres.map((f) => <option key={f.id} value={f.id}>{f.code} — {f.name}</option>)}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-slate-700">Classes concernées par cette matière</label>
+                  <p className="text-[11px] text-slate-500">Cochez toutes les classes qui suivent cette matière.</p>
+                  <div className="grid grid-cols-3 gap-2">
+                    {classes.map((cls) => {
+                      const checked = matiereClasses.includes(cls.code);
+                      return (
+                        <label key={cls.id} className={`flex items-center gap-2 p-2 rounded-md border text-xs font-medium cursor-pointer transition-colors ${
+                          checked ? "bg-[#0f2744]/5 border-[#0f2744] text-[#0f2744] font-bold" : "border-slate-200 text-slate-600 hover:bg-slate-50"
+                        }`}>
+                          <input type="checkbox" checked={checked}
+                            onChange={(e) => {
+                              if (e.target.checked) setMatiereClasses([...matiereClasses, cls.code]);
+                              else setMatiereClasses(matiereClasses.filter((c) => c !== cls.code));
+                            }}
+                            className="rounded border-slate-300 text-[#0f2744] focus:ring-[#0f2744]"
+                          />
+                          <span>{cls.code}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
+                  <Button type="button" variant="ghost" size="sm" onClick={() => setEditMatiereModal(false)}>Annuler</Button>
+                  <Button type="submit" variant="accent" size="sm">Enregistrer les modifications</Button>
+                </div>
+              </form>
             </div>
           </div>
         )}

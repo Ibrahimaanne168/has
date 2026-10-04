@@ -11,6 +11,8 @@ import {
   AlertCircle,
   Hash,
   Sparkles,
+  Mic,
+  Square,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { ChatMessage, UserRole } from "@/lib/types";
@@ -71,6 +73,15 @@ export function ChatRoom({
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [selectedMsgId, setSelectedMsgId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Voice recording state
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingSeconds, setRecordingSeconds] = useState(0);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const recordingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [playingMsgId, setPlayingMsgId] = useState<string | null>(null);
+  const audioRefs = useRef<Record<string, HTMLAudioElement>>({});
 
   // Fonction utilitaire pour parser un message et son salon
   const parseMessageSalon = useCallback((rawText: string) => {
@@ -422,6 +433,98 @@ export function ChatRoom({
       console.warn("[MODERATION CHAT FAIL]", err);
     }
   };
+  // ─── Voice message handlers ──────────────────────────────────────────────
+
+  const handleStartRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      audioChunksRef.current = [];
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) audioChunksRef.current.push(e.data);
+      };
+      recorder.start(100);
+      mediaRecorderRef.current = recorder;
+      setIsRecording(true);
+      setRecordingSeconds(0);
+      recordingTimerRef.current = setInterval(() => setRecordingSeconds((s) => s + 1), 1000);
+    } catch {
+      alert("Impossible d'accéder au microphone. Vérifiez les permissions du navigateur.");
+    }
+  };
+
+  const handleStopRecording = () => {
+    const recorder = mediaRecorderRef.current;
+    if (!recorder) return;
+    recorder.stop();
+    recorder.stream.getTracks().forEach((t) => t.stop());
+    if (recordingTimerRef.current) clearInterval(recordingTimerRef.current);
+    setIsRecording(false);
+    setRecordingSeconds(0);
+
+    recorder.onstop = () => {
+      const blob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64 = reader.result as string;
+        const tempId = `voice-${Date.now()}`;
+        const senderMeta = `[[sender:${currentUser.id}||${currentUser.fullName}||${currentUser.role}||${currentUser.email || ""}]]`;
+        const voicePayload =
+          roomId === "general"
+            ? `${senderMeta} [[voice:${base64}]]`
+            : `[[salon:${roomId}]] ${senderMeta} [[voice:${base64}]]`;
+
+        const optimistic: ChatMessage = {
+          id: tempId,
+          user_id: currentUser.id,
+          salon_id: roomId,
+          content: `[[voice:${base64}]]`,
+          is_deleted: false,
+          created_at: new Date().toISOString(),
+          user: {
+            id: currentUser.id,
+            full_name: currentUser.fullName,
+            role: currentUser.role,
+            email: currentUser.email || "",
+            username: null, phone: null, matricule: null,
+            filiere_id: null, classe_id: null, bio: null,
+            specialite: null, avatar_url: null, is_active: true,
+            created_at: new Date().toISOString(), updated_at: new Date().toISOString(),
+          },
+        };
+        setMessages((prev) => [...prev, optimistic]);
+
+        try {
+          const supabase = createClient();
+          let dbUserId = currentUser.role === "admin" ? 1 : 10;
+          if (currentUser.email) {
+            const { data: u } = await supabase.from("users").select("id").eq("email", currentUser.email).maybeSingle();
+            if (u?.id) dbUserId = u.id;
+          }
+          if (currentUser.role === "admin") dbUserId = 1;
+
+          const { data: inserted } = await supabase
+            .from("chat_messages")
+            .insert({ user_id: dbUserId, message: voicePayload })
+            .select()
+            .single();
+
+          if (inserted) {
+            setMessages((prev) => prev.map((m) => m.id === tempId ? { ...m, id: String(inserted.id) } : m));
+          }
+        } catch {
+          // garder l'optimistique
+        }
+      };
+      reader.readAsDataURL(blob);
+    };
+  };
+
+  // Helper : extraire URL audio d'un contenu vocal
+  const extractVoiceUrl = (content: string): string | null => {
+    const match = content.match(/\[\[voice:(data:audio[^\]]+)\]\]/);
+    return match ? match[1] : null;
+  };
 
   const renderRoleBadge = (role?: UserRole) => {
     switch (role) {
@@ -572,7 +675,23 @@ export function ChatRoom({
                       isMe ? `${styles.bubble} rounded-br-none` : `${styles.bubble} rounded-bl-none`
                     } ${selectedMsgId === msg.id ? "ring-2 ring-red-400/60" : ""}`}
                   >
-                    {msg.content}
+                    {(() => {
+                      const voiceUrl = extractVoiceUrl(msg.content);
+                      if (voiceUrl) {
+                        return (
+                          <div className="flex items-center gap-2 min-w-[180px]">
+                            <Mic className="w-4 h-4 shrink-0 opacity-70" />
+                            <audio
+                              controls
+                              src={voiceUrl}
+                              className="h-8 w-full max-w-[200px] accent-current"
+                              style={{ filter: isMe ? "invert(0)" : "none" }}
+                            />
+                          </div>
+                        );
+                      }
+                      return <span>{msg.content}</span>;
+                    })()}
 
                     {/* Menu contextuel style WhatsApp */}
                     {selectedMsgId === msg.id && (isAdmin || currentUser.role === "admin") && (
@@ -608,16 +727,31 @@ export function ChatRoom({
       </div>
 
       {/* Saisie de message */}
-      <div className="p-4 bg-white border-t border-slate-200/90">
+      <div className="p-4 bg-white border-t border-slate-200/90 space-y-2">
         <form onSubmit={handleSendMessage} className="flex gap-2">
           <input
             type="text"
-            required
             placeholder={`Écrivez votre message dans ${roomTitle}...`}
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); if (newMessage.trim()) handleSendMessage(e as any); } }}
             className="flex-1 rounded-lg border border-slate-200/90 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-[#0f2744] focus:ring-1 focus:ring-[#0f2744] transition-colors"
           />
+
+          {/* Bouton microphone message vocal */}
+          <button
+            type="button"
+            title={isRecording ? `Arrêter l'enregistrement (${recordingSeconds}s)` : "Enregistrer un message vocal"}
+            onClick={isRecording ? handleStopRecording : handleStartRecording}
+            className={`flex items-center justify-center w-10 h-10 rounded-lg border transition-all ${
+              isRecording
+                ? "bg-red-600 border-red-600 text-white animate-pulse shadow-md"
+                : "bg-white border-slate-200 text-slate-500 hover:text-[#0f2744] hover:border-[#0f2744]"
+            }`}
+          >
+            {isRecording ? <Square className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+          </button>
+
           <Button
             type="submit"
             variant="accent"
@@ -629,8 +763,17 @@ export function ChatRoom({
             Envoyer
           </Button>
         </form>
-        <p className="text-[11px] text-slate-400 mt-2">
-          Appuyez sur Entrée pour envoyer votre message.
+
+        {isRecording && (
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-red-50 border border-red-200 rounded-lg">
+            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+            <span className="text-xs font-semibold text-red-700">Enregistrement en cours… {recordingSeconds}s</span>
+            <span className="text-[11px] text-red-500 ml-auto">Cliquez sur le carré pour arrêter et envoyer</span>
+          </div>
+        )}
+
+        <p className="text-[11px] text-slate-400">
+          Entrée pour envoyer • 🎙 pour un message vocal
         </p>
       </div>
     </div>

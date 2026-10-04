@@ -4,23 +4,17 @@ import React, { useState, useEffect } from "react";
 import { MessageSquare, Users, BookOpen, Sparkles } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { ChatRoom } from "@/components/chat/ChatRoom";
-import { getStoredProfesseurs, getAccessibleSalons } from "@/lib/academicStorage";
-import { ChatSalon, Professeur } from "@/lib/types";
+import { getAccessibleSalons } from "@/lib/academicStorage";
+import { useCurrentProfesseur } from "@/lib/useCurrentProfesseur";
+import { ChatSalon } from "@/lib/types";
 
 export default function ProfesseurChatPage() {
-  const [prof, setProf] = useState<Professeur>(() => {
-    const list = getStoredProfesseurs();
-    return list[0];
-  });
-
+  const { prof } = useCurrentProfesseur();
   const [salons, setSalons] = useState<ChatSalon[]>([]);
   const [activeSalonId, setActiveSalonId] = useState<string>("salon-l1");
 
   useEffect(() => {
     const update = () => {
-      const list = getStoredProfesseurs();
-      const current = list[0];
-      setProf(current);
       const allowed = getAccessibleSalons("professeur");
       setSalons(allowed);
     };
