@@ -19,6 +19,7 @@ import {
   getStoredClasses,
   getStoredMatieres,
   getStoredProfesseurs,
+  fileToDataUrl,
 } from "@/lib/academicStorage";
 
 export default function AdminCoursPage() {
@@ -32,12 +33,12 @@ export default function AdminCoursPage() {
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedClasse, setSelectedClasse] = useState("all");
+  const [isUploading, setIsUploading] = useState(false);
 
   // Formulaire
   const [formTitle, setFormTitle] = useState("");
   const [formDescription, setFormDescription] = useState("");
   const [formProfId, setFormProfId] = useState("");
-  const [formClasseId, setFormClasseId] = useState("");
   const [formMatiereId, setFormMatiereId] = useState("");
   const [formPdfName, setFormPdfName] = useState("");
   const [formFileUrl, setFormFileUrl] = useState("");
@@ -51,7 +52,7 @@ export default function AdminCoursPage() {
     setMatieres(mList);
     setProfs(pList);
     if (!formProfId && pList.length > 0) setFormProfId(pList[0].id);
-    if (!formClasseId && cList.length > 0) setFormClasseId(cList[0].id);
+    if (!formMatiereId && mList.length > 0) setFormMatiereId(mList[0].id);
   };
 
   useEffect(() => {
@@ -62,44 +63,16 @@ export default function AdminCoursPage() {
   }, []);
 
   const selectedProf = profs.find((p) => p.id === formProfId) || profs[0];
-  const selectedClasseObj = classes.find((c) => c.id === formClasseId) || classes[0];
-
-  // Matières qui concernent à la fois le professeur sélectionné ET la classe sélectionnée
-  const filteredMatieres = React.useMemo(() => {
-    if (!selectedProf || !selectedClasseObj) return matieres;
-    const targetClassCode = selectedClasseObj.code.replace("-", " ").toUpperCase();
-    const targetNiveau = selectedClasseObj.niveau.toUpperCase();
-
-    const matches = matieres.filter((m) => {
-      return selectedProf.matieres?.some((pm) => {
-        const isSameMatiere =
-          pm.code?.toUpperCase() === m.code.toUpperCase() ||
-          String(pm.id) === String(m.id) ||
-          pm.nom.toLowerCase() === m.name.toLowerCase();
-        const isForClass =
-          pm.classes?.some((c) => c.replace("-", " ").toUpperCase() === targetClassCode) ||
-          pm.niveau?.toUpperCase() === targetNiveau;
-        return isSameMatiere && (isForClass || !pm.classes || pm.classes.length === 0);
-      });
-    });
-
-    return matches.length > 0 ? matches : matieres;
-  }, [selectedProf, selectedClasseObj, matieres]);
-
-  useEffect(() => {
-    if (filteredMatieres.length > 0 && !filteredMatieres.some((m) => m.id === formMatiereId)) {
-      setFormMatiereId(filteredMatieres[0].id);
-    }
-  }, [filteredMatieres, formMatiereId]);
+  const selectedMatiereObj = matieres.find((m) => m.id === formMatiereId) || matieres[0];
 
   const openCreateModal = () => {
     setEditingCourse(null);
     setFormTitle("");
     setFormDescription("");
     const pId = profs[0]?.id || "";
-    const cId = classes[0]?.id || "";
+    const mId = matieres[0]?.id || "";
     setFormProfId(pId);
-    setFormClasseId(cId);
+    setFormMatiereId(mId);
     setFormPdfName("");
     setFormFileUrl("");
     setModalOpen(true);
@@ -110,7 +83,6 @@ export default function AdminCoursPage() {
     setFormTitle(c.title);
     setFormDescription(c.description || "");
     setFormProfId(c.professeur_id || profs[0]?.id || "");
-    setFormClasseId(c.classe_id);
     setFormMatiereId(c.matiere_id);
     setFormPdfName(c.file_name || "");
     setFormFileUrl(c.file_url || "");
@@ -124,9 +96,10 @@ export default function AdminCoursPage() {
       return;
     }
 
-    const matiere = matieres.find((m) => m.id === formMatiereId) || filteredMatieres[0];
-    const classe = classes.find((c) => c.id === formClasseId);
-    const prof = profs.find((p) => p.id === formProfId);
+    const matiere = matieres.find((m) => m.id === formMatiereId) || matieres[0];
+    const prof = profs.find((p) => p.id === formProfId) || profs[0];
+    const targetClasses = matiere?.classes && matiere.classes.length > 0 ? matiere.classes : [];
+    const primaryClasse = classes.find((c) => targetClasses.includes(c.code)) || classes[0];
 
     const resolvedPdfName = formPdfName || (formFileUrl ? formFileUrl.split("/").pop() : `${formTitle.toLowerCase().replace(/[^a-z0-9]/g, "-")}.pdf`);
 
@@ -136,14 +109,15 @@ export default function AdminCoursPage() {
         title: formTitle,
         description: formDescription,
         matiere_id: formMatiereId,
-        classe_id: formClasseId,
+        classe_id: primaryClasse?.id || editingCourse.classe_id,
+        classes: targetClasses.length > 0 ? targetClasses : (editingCourse.classes || []),
         professeur_id: formProfId,
         file_url: formFileUrl || editingCourse.file_url || "/documents/cours.pdf",
         file_name: resolvedPdfName || null,
         file_type: "application/pdf",
         external_url: null,
         matiere,
-        classe,
+        classe: primaryClasse,
         professeur: prof as any,
         updated_at: new Date().toISOString(),
       };
@@ -155,7 +129,8 @@ export default function AdminCoursPage() {
         title: formTitle,
         description: formDescription,
         matiere_id: formMatiereId,
-        classe_id: formClasseId,
+        classe_id: primaryClasse?.id || "",
+        classes: targetClasses,
         professeur_id: formProfId,
         file_url: formFileUrl || "/documents/cours.pdf",
         file_name: resolvedPdfName || null,
@@ -165,12 +140,12 @@ export default function AdminCoursPage() {
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         matiere,
-        classe,
+        classe: primaryClasse,
         professeur: prof as any,
         is_favorite: false,
       };
       saveCourse(newCourse);
-      setSuccessMsg("Le cours a été publié et est maintenant accessible aux étudiants de la classe.");
+      setSuccessMsg("Le cours a été publié avec succès pour toutes les classes concernées !");
     }
 
     reloadData();
@@ -186,11 +161,25 @@ export default function AdminCoursPage() {
     setTimeout(() => setSuccessMsg(null), 3000);
   };
 
+  const selectedClasseObj = classes.find((c) => c.id === selectedClasse);
+
   const filtered = courses.filter((c) => {
     const matchSearch =
       c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (c.description && c.description.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchClasse = selectedClasse === "all" || c.classe_id === selectedClasse;
+    
+    let matchClasse = true;
+    if (selectedClasse !== "all" && selectedClasseObj) {
+      const targetCode = selectedClasseObj.code.toUpperCase();
+      const courseClasses = c.classes && c.classes.length > 0
+        ? c.classes.map((cls) => cls.toUpperCase())
+        : (c.matiere?.classes ? c.matiere.classes.map((cls) => cls.toUpperCase()) : []);
+      
+      matchClasse =
+        c.classe_id === selectedClasse ||
+        (c.classe?.code && c.classe.code.toUpperCase() === targetCode) ||
+        courseClasses.includes(targetCode);
+    }
     return matchSearch && matchClasse;
   });
 
@@ -294,9 +283,22 @@ export default function AdminCoursPage() {
               <Card key={c.id} className="flex flex-col justify-between overflow-hidden">
                 <div className="p-5 flex-1 flex flex-col">
                   <div className="flex items-center justify-between gap-2 mb-2">
-                    <Badge variant="primary" size="sm">
-                      {c.classe?.code || "Classe"}
-                    </Badge>
+                    {(() => {
+                      const displayClasses = (c.classes && c.classes.length > 0)
+                        ? c.classes
+                        : (c.matiere?.classes && c.matiere.classes.length > 0)
+                          ? c.matiere.classes
+                          : [c.classe?.code || "L1"];
+                      return (
+                        <div className="flex flex-wrap gap-1">
+                          {displayClasses.map((cls) => (
+                            <Badge key={cls} variant="primary" size="sm">
+                              {cls}
+                            </Badge>
+                          ))}
+                        </div>
+                      );
+                    })()}
                     <span className="text-[10px] text-slate-400 font-mono">
                       {new Date(c.created_at).toLocaleDateString("fr-FR")}
                     </span>
@@ -343,7 +345,7 @@ export default function AdminCoursPage() {
                   {c.file_url && (
                     <a
                       href={c.file_url}
-                      download
+                      download={c.file_name || `${c.title}.pdf`}
                       className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 bg-white border border-slate-200 rounded-md text-slate-700 hover:bg-slate-50"
                     >
                       <Download className="w-3.5 h-3.5" /> PDF
@@ -384,9 +386,13 @@ export default function AdminCoursPage() {
                     Déposer le document du cours (Format PDF uniquement)
                   </p>
                   <p className="text-[11px] text-slate-500">
-                    Le nom de votre fichier PDF est automatiquement assigné au titre du cours
+                    Le nom de votre fichier PDF est automatiquement assigné au titre du cours et sauvegardé de manière permanente
                   </p>
-                  {formPdfName ? (
+                  {isUploading ? (
+                    <div className="text-xs text-slate-500 py-1 font-medium animate-pulse">
+                      Chargement et sauvegarde permanente du PDF...
+                    </div>
+                  ) : formPdfName ? (
                     <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-800 mt-1">
                       <FileText className="w-4 h-4 text-emerald-600 shrink-0" />
                       <span className="truncate max-w-xs">{formPdfName}</span>
@@ -402,18 +408,26 @@ export default function AdminCoursPage() {
                         type="file"
                         accept=".pdf,application/pdf"
                         className="hidden"
-                        onChange={(e) => {
+                        onChange={async (e) => {
                           const file = e.target.files?.[0];
                           if (file) {
                             if (!file.name.toLowerCase().endsWith(".pdf")) {
                               alert("Veuillez sélectionner un fichier PDF uniquement.");
                               return;
                             }
-                            setFormPdfName(file.name);
-                            const cleanTitle = file.name.replace(/\.pdf$/i, "").replace(/[-_]/g, " ").trim();
-                            setFormTitle(cleanTitle);
-                            const url = URL.createObjectURL(file);
-                            setFormFileUrl(url);
+                            setIsUploading(true);
+                            try {
+                              setFormPdfName(file.name);
+                              const cleanTitle = file.name.replace(/\.pdf$/i, "").replace(/[-_]/g, " ").trim();
+                              setFormTitle(cleanTitle);
+                              const dataUrl = await fileToDataUrl(file);
+                              setFormFileUrl(dataUrl);
+                            } catch (err) {
+                              console.error(err);
+                              alert("Erreur lors de la lecture du fichier PDF.");
+                            } finally {
+                              setIsUploading(false);
+                            }
                           }
                         }}
                       />
@@ -429,36 +443,19 @@ export default function AdminCoursPage() {
                   onChange={(e) => setFormTitle(e.target.value)}
                 />
 
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-                    Enseignant responsable <span className="text-[#e0521c]">*</span>
-                  </label>
-                  <select
-                    value={formProfId}
-                    onChange={(e) => setFormProfId(e.target.value)}
-                    className="w-full text-xs border border-slate-200 rounded-lg p-2.5 bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#0f2744]"
-                  >
-                    {profs.map((p) => (
-                      <option key={p.id} value={p.id}>
-                        {p.full_name} ({p.specialite})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-                      Classe destinataire <span className="text-[#e0521c]">*</span>
+                      Enseignant responsable <span className="text-[#e0521c]">*</span>
                     </label>
                     <select
-                      value={formClasseId}
-                      onChange={(e) => setFormClasseId(e.target.value)}
+                      value={formProfId}
+                      onChange={(e) => setFormProfId(e.target.value)}
                       className="w-full text-xs border border-slate-200 rounded-lg p-2.5 bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#0f2744]"
                     >
-                      {classes.map((c) => (
-                        <option key={c.id} value={c.id}>
-                          {c.code} — {c.name}
+                      {profs.map((p) => (
+                        <option key={p.id} value={p.id}>
+                          {p.full_name} ({p.specialite})
                         </option>
                       ))}
                     </select>
@@ -466,25 +463,47 @@ export default function AdminCoursPage() {
 
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
-                      Matière (filtrée selon prof &amp; classe) <span className="text-[#e0521c]">*</span>
+                      Matière académique <span className="text-[#e0521c]">*</span>
                     </label>
                     <select
                       value={formMatiereId}
                       onChange={(e) => setFormMatiereId(e.target.value)}
                       className="w-full text-xs border border-slate-200 rounded-lg p-2.5 bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#0f2744]"
                     >
-                      {filteredMatieres.length === 0 ? (
-                        <option value="">Aucune matière attribuée pour cette sélection</option>
-                      ) : (
-                        filteredMatieres.map((m) => (
-                          <option key={m.id} value={m.id}>
-                            {m.code} — {m.name}
-                          </option>
-                        ))
-                      )}
+                      {matieres.map((m) => (
+                        <option key={m.id} value={m.id}>
+                          {m.code} — {m.name}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>
+
+                {/* Information automatique sur les classes concernées */}
+                {selectedMatiereObj && (
+                  <div className="p-3 bg-amber-50/70 border border-amber-200/80 rounded-lg">
+                    <p className="text-[11px] font-bold text-amber-900 mb-1.5 flex items-center gap-1.5">
+                      <GraduationCap className="w-4 h-4 text-[#e0521c]" />
+                      Classes automatiquement concernées par cette matière :
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {(selectedMatiereObj.classes && selectedMatiereObj.classes.length > 0
+                        ? selectedMatiereObj.classes
+                        : ["L1-MPI", "L1-SML", "L1-MIASS"]
+                      ).map((cls) => (
+                        <span
+                          key={cls}
+                          className="inline-flex items-center px-2.5 py-0.5 rounded text-[11px] font-bold bg-[#0f2744] text-white shadow-xs"
+                        >
+                          {cls}
+                        </span>
+                      ))}
+                    </div>
+                    <p className="text-[10px] text-amber-800/80 mt-1.5">
+                      Pas besoin de choisir la classe manuellement : les étudiants de ces classes auront immédiatement accès au cours.
+                    </p>
+                  </div>
+                )}
 
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">

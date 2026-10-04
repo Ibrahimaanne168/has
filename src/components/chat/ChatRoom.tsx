@@ -13,7 +13,6 @@ import {
   Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
 import { ChatMessage, UserRole } from "@/lib/types";
 import { createClient } from "@/lib/supabase/client";
 
@@ -114,7 +113,7 @@ export function ChatRoom({
         const localKey = `has_chat_${roomId}_v1`;
         const localCached = localStorage.getItem(localKey);
         if (localCached) {
-          const parsed = JSON.parse(localCached);
+          const parsed: ChatMessage[] = JSON.parse(localCached);
           setMessages(parsed.length > 0 ? parsed : [getWelcomeMessage(roomId)]);
         } else {
           setMessages([getWelcomeMessage(roomId)]);
@@ -171,6 +170,14 @@ export function ChatRoom({
         }
 
         setMessages(roomMessages.length > 0 ? roomMessages : [getWelcomeMessage(roomId)]);
+
+        // Synchroniser le cache local avec les vrais messages
+        try {
+          const localKey = `has_chat_${roomId}_v1`;
+          localStorage.setItem(localKey, JSON.stringify(roomMessages));
+        } catch {
+          // quota dépassé, ignorer
+        }
       }
     } catch (err: unknown) {
       console.warn("[CHAT LOAD ERROR]", err);
@@ -346,23 +353,46 @@ export function ChatRoom({
     switch (role) {
       case "admin":
         return (
-          <Badge variant="accent" size="sm" icon={<ShieldCheck className="w-3 h-3" />}>
-            Administration
-          </Badge>
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700 border border-purple-200">
+            <ShieldCheck className="w-3 h-3" />
+            Admin
+          </span>
         );
       case "professeur":
         return (
-          <Badge variant="primary" size="sm" icon={<GraduationCap className="w-3 h-3" />}>
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#0f2744]/10 text-[#0f2744] border border-[#0f2744]/20">
+            <GraduationCap className="w-3 h-3" />
             Enseignant
-          </Badge>
+          </span>
         );
       default:
         return (
-          <Badge variant="neutral" size="sm" icon={<UserCheck className="w-3 h-3" />}>
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-100 text-[#e0521c] border border-orange-200">
+            <UserCheck className="w-3 h-3" />
             Étudiant
-          </Badge>
+          </span>
         );
     }
+  };
+
+  // Couleurs par rôle
+  const getRoleStyles = (role: UserRole, isMe: boolean) => {
+    if (role === "admin") return {
+      bubble: isMe ? "bg-purple-700 text-white" : "bg-purple-50 text-purple-900 border border-purple-200",
+      avatar: "bg-purple-600 text-white",
+      name: "text-purple-700",
+    };
+    if (role === "professeur") return {
+      bubble: isMe ? "bg-[#0f2744] text-white" : "bg-blue-50 text-blue-900 border border-blue-200",
+      avatar: "bg-[#0f2744] text-white",
+      name: "text-[#0f2744]",
+    };
+    // etudiant
+    return {
+      bubble: isMe ? "bg-[#e0521c] text-white" : "bg-orange-50 text-orange-900 border border-orange-200",
+      avatar: "bg-[#e0521c] text-white",
+      name: "text-[#e0521c]",
+    };
   };
 
   return (
@@ -391,10 +421,28 @@ export function ChatRoom({
         </div>
 
         {isAdmin && (
-          <Badge variant="warning" size="sm" className="shrink-0 hidden sm:inline-flex">
-            Modérateur Actif
-          </Badge>
+          <span className="shrink-0 hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700 border border-amber-200">
+            <ShieldCheck className="w-3 h-3" />
+            Modérateur
+          </span>
         )}
+      </div>
+
+      {/* Légende des couleurs */}
+      <div className="px-4 py-2 border-b border-slate-100 bg-white flex items-center gap-3 text-[10px] font-semibold text-slate-500">
+        <span className="shrink-0">Code couleur :</span>
+        <span className="flex items-center gap-1">
+          <span className="w-3 h-3 rounded-full bg-[#e0521c] inline-block" />
+          <span className="text-[#e0521c]">Étudiant</span>
+        </span>
+        <span className="flex items-center gap-1">
+          <span className="w-3 h-3 rounded-full bg-[#0f2744] inline-block" />
+          <span className="text-[#0f2744]">Enseignant</span>
+        </span>
+        <span className="flex items-center gap-1">
+          <span className="w-3 h-3 rounded-full bg-purple-600 inline-block" />
+          <span className="text-purple-700">Admin</span>
+        </span>
       </div>
 
       {/* Zone des messages */}
@@ -424,40 +472,56 @@ export function ChatRoom({
 
             const authorRole = msg.user?.role || "etudiant";
             const authorName = msg.user?.full_name || "Membre HAS";
+            const styles = getRoleStyles(authorRole, isMe);
+
+            // Initiales avatar
+            const avatarInitials = authorName
+              .split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
 
             return (
               <div
                 key={msg.id}
-                className={`flex flex-col ${isMe ? "items-end" : "items-start"} group`}
+                className={`flex gap-2.5 ${isMe ? "flex-row-reverse" : "flex-row"} group`}
               >
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xs font-semibold text-slate-800">{authorName}</span>
-                  {renderRoleBadge(authorRole)}
-                  <span className="text-[10px] text-slate-400">
-                    {new Date(msg.created_at).toLocaleTimeString("fr-FR", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </span>
-                  {(isAdmin || currentUser.role === "admin") && (
-                    <button
-                      onClick={() => handleDeleteMessage(msg.id)}
-                      title="Supprimer ce message (Modération)"
-                      className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700 transition-opacity ml-1"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  )}
+                {/* Avatar initiales */}
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-black shrink-0 mt-1 shadow-sm ${styles.avatar}`}>
+                  {avatarInitials}
                 </div>
 
-                <div
-                  className={`max-w-xl rounded-xl p-3.5 text-sm leading-relaxed ${
-                    isMe
-                      ? "bg-[#0f2744] text-white rounded-tr-none shadow-xs"
-                      : "bg-white text-slate-800 border border-slate-200/90 rounded-tl-none shadow-xs"
-                  }`}
-                >
-                  {msg.content}
+                <div className={`flex flex-col ${isMe ? "items-end" : "items-start"} max-w-[75%]`}>
+                  {/* Nom + badge rôle + heure */}
+                  <div className="flex items-center gap-1.5 mb-1 flex-wrap">
+                    {!isMe && (
+                      <span className={`text-xs font-bold ${styles.name}`}>{authorName}</span>
+                    )}
+                    {renderRoleBadge(authorRole)}
+                    <span className="text-[10px] text-slate-400">
+                      {new Date(msg.created_at).toLocaleTimeString("fr-FR", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                    {(isAdmin || currentUser.role === "admin") && (
+                      <button
+                        onClick={() => handleDeleteMessage(msg.id)}
+                        title="Supprimer ce message"
+                        className="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-600 transition-opacity"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Bulle de message */}
+                  <div
+                    className={`rounded-2xl px-4 py-2.5 text-sm leading-relaxed shadow-sm ${
+                      isMe
+                        ? `${styles.bubble} rounded-tr-sm`
+                        : `${styles.bubble} rounded-tl-sm`
+                    }`}
+                  >
+                    {msg.content}
+                  </div>
                 </div>
               </div>
             );

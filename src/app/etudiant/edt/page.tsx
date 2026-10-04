@@ -5,7 +5,6 @@ import {
   Calendar,
   Download,
   Clock,
-  MapPin,
   CheckCircle2,
   Video,
   User,
@@ -176,8 +175,7 @@ export default function EtudiantEDTPage() {
                               <span className="truncate">{s.professeur_nom}</span>
                             </div>
                             <div className="flex items-center gap-1.5 truncate">
-                              <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
-                              <span className="truncate">{s.salle}</span>
+                              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[10px] font-semibold border border-emerald-200">🌐 En ligne</span>
                             </div>
                           </div>
 

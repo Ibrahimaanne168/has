@@ -243,12 +243,23 @@ export function markDirectMessageRead(id: string): void {
   setStorageItem(STORAGE_KEYS.MESSAGES, updated);
 }
 
-// === GÉNÉRATEUR DE LIENS GOOGLE MEET (https://meet.google.com/xxx-xxxx-xxx) ===
+// === GÉNÉRATEUR DE LIENS GOOGLE MEET (https://meet.google.com/xxx-xxxx-xxx) STRICTEMENT QUE DES LETTRES ===
 export function generateMeetLink(): string {
+  // Purement des lettres minuscules de a à z (aucun chiffre)
   const chars = "abcdefghijklmnopqrstuvwxyz";
   const seg = (n: number) =>
     Array.from({ length: n }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
   return `https://meet.google.com/${seg(3)}-${seg(4)}-${seg(3)}`;
+}
+
+// Convertit un fichier téléversé en Data URL Base64 pour persistance permanente dans le navigateur
+export function fileToDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (err) => reject(err);
+    reader.readAsDataURL(file);
+  });
 }
 
 // === GESTION DES FILIÈRES (PERSISTÉ EN LOCALSTORAGE - 3 FILIÈRES OFFICIELLES) ===
@@ -296,9 +307,19 @@ export function deleteClasse(id: string): void {
   setStorageItem(STORAGE_KEYS.CLASSES, list);
 }
 
-// === GESTION DES MATIÈRES (PERSISTÉ EN LOCALSTORAGE) ===
+// === GESTION DES MATIÈRES (PERSISTÉ EN LOCALSTORAGE AVEC CLASSES CONCERNÉES) ===
 export function getStoredMatieres(): Matiere[] {
-  return getStorageItem<Matiere[]>(STORAGE_KEYS.MATIERES, MOCK_MATIERES);
+  const list = getStorageItem<Matiere[]>(STORAGE_KEYS.MATIERES, MOCK_MATIERES);
+  // Garantir que chaque matière a ses classes assignées (y compris troncs communs)
+  return list.map((m) => {
+    if (!m.classes || m.classes.length === 0) {
+      const defaultM = MOCK_MATIERES.find((dm) => dm.code === m.code || dm.id === m.id);
+      if (defaultM?.classes) {
+        return { ...m, classes: defaultM.classes, niveau: defaultM.niveau || m.niveau };
+      }
+    }
+    return m;
+  });
 }
 
 export function saveMatiere(mat: Matiere): void {
@@ -317,111 +338,74 @@ export function deleteMatiere(id: string): void {
   setStorageItem(STORAGE_KEYS.MATIERES, list);
 }
 
-// === GESTION DES SÉANCES D'EMPLOI DU TEMPS (GRILLE HEBDOMADAIRE EN TEMPS RÉEL + MEET) ===
-export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [
-  {
-    id: "seance-1",
-    classe_id: "cls-l1-mpi",
-    jour: "Lundi",
-    heure_debut: "08:30",
-    heure_fin: "10:30",
-    matiere_nom: "Analyse 1",
-    matiere_code: "ANA-1",
-    professeur_nom: "Pape Ibrahima Samb",
-    professeur_id: "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
-    salle: "Amphi Pasteur",
-    meet_url: "https://meet.google.com/has-ana1-l1m",
-    type_seance: "CM",
-    created_at: "2026-09-01T08:00:00Z",
-  },
-  {
-    id: "seance-2",
-    classe_id: "cls-l1-mpi",
-    jour: "Lundi",
-    heure_debut: "11:00",
-    heure_fin: "13:00",
-    matiere_nom: "Algèbre 1",
-    matiere_code: "ALG-1",
-    professeur_nom: "Pape Ibrahima Samb",
-    professeur_id: "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
-    salle: "Salle 102",
-    meet_url: "https://meet.google.com/has-alg1-l1m",
-    type_seance: "TD",
-    created_at: "2026-09-01T08:00:00Z",
-  },
-  {
-    id: "seance-3",
-    classe_id: "cls-l1-mpi",
-    jour: "Mardi",
-    heure_debut: "09:00",
-    heure_fin: "12:00",
-    matiere_nom: "Programmation Python",
-    matiere_code: "PROG-PY",
-    professeur_nom: "Ibrahima Anne",
-    professeur_id: "32e74ddd-3e79-410a-8a87-4bfdff1fc099",
-    salle: "Laboratoire Info 1",
-    meet_url: "https://meet.google.com/has-pyth-lab",
-    type_seance: "TP",
-    created_at: "2026-09-01T08:00:00Z",
-  },
-  {
-    id: "seance-4",
-    classe_id: "cls-l1-mpi",
-    jour: "Mercredi",
-    heure_debut: "10:00",
-    heure_fin: "12:00",
-    matiere_nom: "Mécanique du point",
-    matiere_code: "MEC-PT",
-    professeur_nom: "Pape Ibrahima Samb",
-    professeur_id: "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
-    salle: "Salle 204",
-    meet_url: "https://meet.google.com/has-meca-pt1",
-    type_seance: "CM",
-    created_at: "2026-09-01T08:00:00Z",
-  },
-  {
-    id: "seance-5",
-    classe_id: "cls-l1-mpi",
-    jour: "Jeudi",
-    heure_debut: "14:00",
-    heure_fin: "16:00",
-    matiere_nom: "Electricité",
-    matiere_code: "ELEC",
-    professeur_nom: "Pape Ibrahima Samb",
-    professeur_id: "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
-    salle: "Salle 103",
-    meet_url: "https://meet.google.com/has-elec-sem",
-    type_seance: "TD",
-    created_at: "2026-09-01T08:00:00Z",
-  },
-  {
-    id: "seance-6",
-    classe_id: "cls-l2-mpi",
-    jour: "Lundi",
-    heure_debut: "14:00",
-    heure_fin: "16:30",
-    matiere_nom: "Analyse 3",
-    matiere_code: "ANA-3",
-    professeur_nom: "Pape Ibrahima Samb",
-    professeur_id: "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
-    salle: "Amphi Turing",
-    meet_url: "https://meet.google.com/has-ana3-l2m",
-    type_seance: "CM",
-    created_at: "2026-09-01T08:00:00Z",
-  },
-];
+/**
+ * Vérifie si un cours concerne un étudiant selon sa classe (ou son niveau).
+ * Les matières définissent les classes concernées (ex: Électricité en L1 MPI et SML, Maths en L1 entier).
+ */
+export function isCourseConcernedForStudent(
+  course: Cours,
+  userClasseCode?: string,
+  userNiveau?: string
+): boolean {
+  if (!userClasseCode && !userNiveau) return true;
+  const targetCode = (userClasseCode || "").replace("-", " ").toUpperCase();
+  const targetNiveau = (userNiveau || "L1").toUpperCase();
+
+  // 1. Classes spécifiées sur le cours ou sur sa matière
+  const concernedClasses = course.classes || course.matiere?.classes;
+  if (concernedClasses && concernedClasses.length > 0) {
+    const isDirectMatch = concernedClasses.some((c) => {
+      const norm = c.replace("-", " ").toUpperCase();
+      return norm === targetCode || targetCode.includes(norm) || norm.includes(targetCode);
+    });
+    if (isDirectMatch) return true;
+  }
+
+  // 2. Si le cours ou sa matière a un niveau spécifié (ex: "L1")
+  const matiereNiveau = course.matiere?.niveau;
+  if (matiereNiveau && matiereNiveau.toUpperCase() === targetNiveau) {
+    if (!concernedClasses || concernedClasses.length === 0) return true;
+  }
+
+  // 3. Fallback sur classe_id directe
+  if (course.classe?.code) {
+    const norm = course.classe.code.replace("-", " ").toUpperCase();
+    if (norm === targetCode || targetCode.includes(norm) || norm.includes(targetCode)) return true;
+  }
+
+  return false;
+}
+
+// Aucune séance fictive : c'est l'admin qui les crée en temps réel
+export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [];
 
 export function getStoredSeancesEDT(): SeanceEDT[] {
-  return getStorageItem<SeanceEDT[]>(STORAGE_KEYS.SEANCES_EDT, DEFAULT_SEANCES_EDT);
+  const list = getStorageItem<SeanceEDT[]>(STORAGE_KEYS.SEANCES_EDT, DEFAULT_SEANCES_EDT);
+  // Nettoyage automatique pour s'assurer qu'aucun lien Meet ne contient de chiffres
+  return list.map((s) => {
+    if (s.meet_url && /\d/.test(s.meet_url)) {
+      // Remplacer les chiffres par des lettres
+      const cleanUrl = s.meet_url.replace(/\d/g, (d) => String.fromCharCode(97 + parseInt(d, 10)));
+      return { ...s, meet_url: cleanUrl };
+    }
+    return s;
+  });
 }
 
 export function saveSeanceEDT(seance: SeanceEDT): void {
+  // S'assurer que le meet_url ne contient absolument aucun chiffre
+  let cleanMeetUrl = seance.meet_url;
+  if (cleanMeetUrl && /\d/.test(cleanMeetUrl)) {
+    cleanMeetUrl = cleanMeetUrl.replace(/\d/g, (d) => String.fromCharCode(97 + parseInt(d, 10)));
+  }
+  const cleanSeance = { ...seance, meet_url: cleanMeetUrl };
+
   const list = getStoredSeancesEDT();
-  const index = list.findIndex((s) => s.id === seance.id);
+  const index = list.findIndex((s) => s.id === cleanSeance.id);
   if (index >= 0) {
-    list[index] = seance;
+    list[index] = cleanSeance;
   } else {
-    list.push(seance);
+    list.push(cleanSeance);
   }
   setStorageItem(STORAGE_KEYS.SEANCES_EDT, list);
 }

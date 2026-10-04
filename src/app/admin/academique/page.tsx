@@ -56,6 +56,7 @@ export default function AdminAcademiquePage() {
   const [matiereCoeff, setMatiereCoeff] = useState("3");
   const [matiereEcts, setMatiereEcts] = useState("5");
   const [matiereFiliereId, setMatiereFiliereId] = useState("");
+  const [matiereClasses, setMatiereClasses] = useState<string[]>(["L1-MPI", "L1-SML", "L1-MIASS"]);
 
   const reloadData = () => {
     const fList = getStoredFilieres();
@@ -117,6 +118,14 @@ export default function AdminAcademiquePage() {
   const handleCreateMatiere = (e: React.FormEvent) => {
     e.preventDefault();
     if (!matiereCode.trim() || !matiereName.trim()) return;
+    if (matiereClasses.length === 0) {
+      alert("Veuillez sélectionner au moins une classe concernée par cette matière.");
+      return;
+    }
+    const isL1 = matiereClasses.some((c) => c.startsWith("L1"));
+    const isL2 = matiereClasses.some((c) => c.startsWith("L2"));
+    const niveau = isL1 && !isL2 ? "L1" : isL2 && !isL1 ? "L2" : "L1";
+
     const newM: Matiere = {
       id: `mat-${Date.now()}`,
       filiere_id: matiereFiliereId || filieres[0]?.id || "",
@@ -124,12 +133,15 @@ export default function AdminAcademiquePage() {
       name: matiereName.trim(),
       coefficient: parseInt(matiereCoeff, 10) || 3,
       credits_ects: parseInt(matiereEcts, 10) || 5,
+      classes: matiereClasses,
+      niveau,
       description: "Module d'enseignement académique conforme à la maquette.",
     };
     saveMatiere(newM);
     reloadData();
     setMatiereModal(false);
     setMatiereCode(""); setMatiereName("");
+    setMatiereClasses(["L1-MPI", "L1-SML", "L1-MIASS"]);
     showSuccess(`La matière ${newM.name} (${newM.code}) a été ajoutée.`);
   };
 
@@ -258,7 +270,12 @@ export default function AdminAcademiquePage() {
         {/* === MATIÈRES === */}
         {tab === "matieres" && (
           <div className="space-y-4">
-            <div className="flex justify-end">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-slate-500">
+                  Définissez les matières et associez-les à une ou plusieurs classes (tronc commun L1 ou filière spécifique).
+                </p>
+              </div>
               <Button variant="accent" size="sm" onClick={() => setMatiereModal(true)} leftIcon={<Plus className="w-4 h-4" />}>
                 Ajouter une matière
               </Button>
@@ -267,7 +284,7 @@ export default function AdminAcademiquePage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    {["Code", "Intitulé", "Filière", "Crédits ECTS", "Coefficient", "Actions"].map((h) => (
+                    {["Code", "Intitulé", "Classes Concernées (Tronc Commun)", "Crédits ECTS", "Coefficient", "Actions"].map((h) => (
                       <th key={h} className="text-left text-xs font-bold text-slate-500 uppercase tracking-wider px-4 py-3">{h}</th>
                     ))}
                   </tr>
@@ -275,11 +292,26 @@ export default function AdminAcademiquePage() {
                 <tbody className="divide-y divide-slate-100">
                   {matieres.map((m) => {
                     const filiere = filieres.find((f) => f.id === m.filiere_id);
+                    const displayClasses = m.classes && m.classes.length > 0
+                      ? m.classes
+                      : [filiere?.code ? `L1-${filiere.code}` : "L1-MPI"];
+
                     return (
                       <tr key={m.id} className="hover:bg-slate-50/50">
                         <td className="px-4 py-3 font-mono text-xs font-bold text-[#e0521c]">{m.code}</td>
-                        <td className="px-4 py-3 text-sm font-medium text-slate-900 max-w-xs truncate">{m.name}</td>
-                        <td className="px-4 py-3 text-xs text-slate-600">{filiere?.code || "MPI"}</td>
+                        <td className="px-4 py-3 text-sm font-medium text-slate-900 max-w-xs">{m.name}</td>
+                        <td className="px-4 py-3">
+                          <div className="flex flex-wrap gap-1 max-w-xs">
+                            {displayClasses.map((cCode) => (
+                              <span
+                                key={cCode}
+                                className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-[#0f2744] text-white shadow-2xs"
+                              >
+                                {cCode}
+                              </span>
+                            ))}
+                          </div>
+                        </td>
                         <td className="px-4 py-3 text-center"><Badge variant="primary" size="sm">{m.credits_ects}</Badge></td>
                         <td className="px-4 py-3 text-center text-xs text-slate-700 font-semibold">{m.coefficient}</td>
                         <td className="px-4 py-3">
@@ -356,25 +388,94 @@ export default function AdminAcademiquePage() {
         {/* Modal Créer Matière */}
         {matiereModal && (
           <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-xl border border-slate-200/90 space-y-4">
+            <div className="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-slate-200/90 space-y-4 max-h-[90vh] overflow-y-auto">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                <h3 className="font-serif text-lg font-bold text-[#0f2744]">Ajouter une Matière</h3>
+                <div>
+                  <h3 className="font-serif text-lg font-bold text-[#0f2744]">Ajouter une Matière</h3>
+                  <p className="text-xs text-slate-500">Configurez l&apos;intitulé et assignez les classes concernées</p>
+                </div>
                 <button onClick={() => setMatiereModal(false)} className="text-slate-400 hover:text-slate-700"><X className="w-5 h-5" /></button>
               </div>
               <form onSubmit={handleCreateMatiere} className="space-y-4">
-                <Input label="Code matière" required placeholder="Ex. ANA-1, PROG-PY..." value={matiereCode} onChange={(e) => setMatiereCode(e.target.value)} />
-                <Input label="Intitulé complet" required placeholder="Ex. Analyse Réelle 1" value={matiereName} onChange={(e) => setMatiereName(e.target.value)} />
+                <Input label="Code matière" required placeholder="Ex. ANA-1, ELEC, MATH-2..." value={matiereCode} onChange={(e) => setMatiereCode(e.target.value)} />
+                <Input label="Intitulé complet" required placeholder="Ex. Analyse Réelle 1, Électricité..." value={matiereName} onChange={(e) => setMatiereName(e.target.value)} />
                 <div className="grid grid-cols-2 gap-3">
                   <Input label="Coefficient" type="number" min="1" max="10" required value={matiereCoeff} onChange={(e) => setMatiereCoeff(e.target.value)} />
                   <Input label="Crédits ECTS" type="number" min="1" max="30" required value={matiereEcts} onChange={(e) => setMatiereEcts(e.target.value)} />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="block text-sm font-medium text-slate-700">Filière</label>
+                  <label className="block text-sm font-medium text-slate-700">Filière de référence</label>
                   <select value={matiereFiliereId} onChange={(e) => setMatiereFiliereId(e.target.value)} className="w-full text-sm border border-slate-200 rounded-lg p-2.5">
                     {filieres.map((f) => <option key={f.id} value={f.id}>{f.code} — {f.name}</option>)}
                   </select>
                 </div>
-                <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
+
+                {/* Sélecteur de classes concernées / Tronc commun */}
+                <div className="space-y-2 pt-2 border-t border-slate-100">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                    Classes concernées (Tronc Commun ou filière) <span className="text-[#e0521c]">*</span>
+                  </label>
+                  <p className="text-[11px] text-slate-500">
+                    Sélectionnez toutes les classes où cette matière est enseignée.
+                  </p>
+                  
+                  {/* Raccourcis de sélection */}
+                  <div className="flex flex-wrap gap-1.5 pb-1">
+                    <button
+                      type="button"
+                      onClick={() => setMatiereClasses(["L1-MPI", "L1-SML", "L1-MIASS"])}
+                      className="px-2 py-1 text-[11px] font-semibold rounded bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors"
+                    >
+                      Tout L1 (Maths 1 &amp; 2)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setMatiereClasses(["L1-MPI", "L1-SML"])}
+                      className="px-2 py-1 text-[11px] font-semibold rounded bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors"
+                    >
+                      L1 MPI + SML (Électricité)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setMatiereClasses(["L2-MPI", "L2-SML", "L2-MIASS"])}
+                      className="px-2 py-1 text-[11px] font-semibold rounded bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors"
+                    >
+                      Tout L2
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-3 bg-slate-50 border border-slate-200 rounded-lg">
+                    {classes.map((cls) => {
+                      const checked = matiereClasses.includes(cls.code);
+                      return (
+                        <label
+                          key={cls.id}
+                          className={`flex items-center gap-2 p-2 rounded-md border text-xs font-medium cursor-pointer transition-colors ${
+                            checked
+                              ? "bg-white border-[#0f2744] text-[#0f2744] shadow-2xs font-bold"
+                              : "border-slate-200 text-slate-600 hover:bg-slate-100/60"
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setMatiereClasses([...matiereClasses, cls.code]);
+                              } else {
+                                setMatiereClasses(matiereClasses.filter((c) => c !== cls.code));
+                              }
+                            }}
+                            className="rounded border-slate-300 text-[#0f2744] focus:ring-[#0f2744]"
+                          />
+                          <span>{cls.code}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
                   <Button type="button" variant="ghost" size="sm" onClick={() => setMatiereModal(false)}>Annuler</Button>
                   <Button type="submit" variant="accent" size="sm">Créer la matière</Button>
                 </div>

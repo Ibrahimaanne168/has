@@ -81,6 +81,8 @@ export function useCurrentUser() {
     filiere?: "MPI" | "SML" | "MIASS";
     niveau?: "L1" | "L2";
     phone?: string;
+    specialite?: string;
+    bio?: string;
   }) => {
     try {
       const supabase = createClient();
@@ -102,6 +104,8 @@ export function useCurrentUser() {
           niveau: nextNiveau,
           phone: nextPhone,
           classe: nextClasseCode,
+          ...(updates.specialite !== undefined ? { specialite: updates.specialite } : {}),
+          ...(updates.bio !== undefined ? { bio: updates.bio } : {}),
         },
       });
 
@@ -112,7 +116,8 @@ export function useCurrentUser() {
         classe_id: foundClasse.id,
         filiere: foundFiliere,
         classe: foundClasse,
-        specialite: foundFiliere.name,
+        specialite: updates.specialite !== undefined ? updates.specialite : (user.specialite || foundFiliere.name),
+        bio: updates.bio !== undefined ? updates.bio : user.bio,
       };
 
       setUser(updatedUser);

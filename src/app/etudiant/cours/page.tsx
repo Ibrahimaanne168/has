@@ -39,13 +39,34 @@ export default function EtudiantCoursPage() {
     );
   };
 
+  const userClasseCode = user.classe?.code || "";
+  const userNiveau = user.classe?.niveau || "";
+
   const filteredCourses = courses.filter((c) => {
+    // Filtrer par classe de l'étudiant
+    const courseClasses: string[] = (c.classes && c.classes.length > 0)
+      ? c.classes
+      : (c.matiere?.classes && c.matiere.classes.length > 0)
+        ? c.matiere.classes
+        : (c.classe?.code ? [c.classe.code] : []);
+
+    const matchesClasse = courseClasses.length === 0 ||
+      courseClasses.some((cls) => {
+        const clsUpper = cls.toUpperCase();
+        const userUpper = userClasseCode.toUpperCase();
+        // Correspond exactement à la classe (L1-MPI == L1-MPI)
+        if (clsUpper === userUpper) return true;
+        // Ou correspond au niveau (si la matière est pour tout le niveau)
+        if (userNiveau && clsUpper === userNiveau.toUpperCase()) return true;
+        return false;
+      });
+
     const matchesSearch =
       c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (c.description && c.description.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesMatiere = selectedMatiere === "all" || c.matiere_id === selectedMatiere;
     const matchesFavorites = !onlyFavorites || c.is_favorite;
-    return matchesSearch && matchesMatiere && matchesFavorites;
+    return matchesClasse && matchesSearch && matchesMatiere && matchesFavorites;
   });
 
   return (

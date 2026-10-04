@@ -59,6 +59,8 @@ export interface Matiere {
   coefficient: number;
   credits_ects: number;
   description: string | null;
+  classes?: string[]; // Classes concernées (ex: ["L1-MPI", "L1-SML"])
+  niveau?: string;    // "L1" ou "L2"
   created_at?: string;
   updated_at?: string;
   filiere?: Filiere;
@@ -69,7 +71,8 @@ export interface Cours {
   title: string;
   description: string | null;
   matiere_id: string;
-  classe_id: string;
+  classe_id?: string;
+  classes?: string[]; // Classes cibles (héritées automatiquement de la matière)
   professeur_id: string;
   file_url: string | null;
   file_name: string | null;
@@ -118,7 +121,6 @@ export interface SeanceEDT {
   matiere_code: string;
   professeur_nom: string;
   professeur_id?: string;
-  salle: string;
   meet_url?: string | null;
   semaine?: string;
   type_seance?: "CM" | "TD" | "TP";
@@ -134,6 +136,8 @@ export interface Communique {
   published_by: string | null;
   created_at: string;
   updated_at: string;
+  file_url?: string | null;  // PDF base64 data url
+  file_name?: string | null; // Nom du fichier PDF
   publisher?: Profile;
 }
 

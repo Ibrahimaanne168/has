@@ -8,7 +8,6 @@ import {
   Plus,
   Trash2,
   Edit2,
-  MapPin,
   User,
   BookOpen,
   CheckCircle2,
@@ -70,7 +69,6 @@ export default function AdminEDTPage() {
   const [formType, setFormType] = useState<"CM" | "TD" | "TP">("CM");
   const [formProfId, setFormProfId] = useState("");
   const [formMatiereId, setFormMatiereId] = useState("");
-  const [formSalle, setFormSalle] = useState("Amphi Pasteur");
   const [formMeetUrl, setFormMeetUrl] = useState("");
 
   // Modal PDF optionnel
@@ -151,7 +149,6 @@ export default function AdminEDTPage() {
     setFormType("CM");
     const defaultProf = profs[0]?.id || "";
     setFormProfId(defaultProf);
-    setFormSalle("Amphi Pasteur");
     setFormMeetUrl("");
     setSeanceModalOpen(true);
   };
@@ -165,7 +162,6 @@ export default function AdminEDTPage() {
     setFormProfId(s.professeur_id || profs[0]?.id || "");
     const matchingMat = matieres.find((m) => m.code === s.matiere_code || m.name === s.matiere_nom);
     setFormMatiereId(matchingMat?.id || matieres[0]?.id || "");
-    setFormSalle(s.salle || "Salle 102");
     setFormMeetUrl(s.meet_url || "");
     setSeanceModalOpen(true);
   };
@@ -200,7 +196,6 @@ export default function AdminEDTPage() {
       matiere_code: matiere?.code || "MAT",
       professeur_nom: prof?.full_name || "Enseignant HAS",
       professeur_id: prof?.id,
-      salle: formSalle.trim() || (formMeetUrl ? "Visioconférence Meet" : "Salle de cours"),
       meet_url: formMeetUrl.trim() || null,
       type_seance: formType,
       semaine: "Semaine en cours",
@@ -429,8 +424,7 @@ export default function AdminEDTPage() {
                               <span className="truncate">{s.professeur_nom}</span>
                             </div>
                             <div className="flex items-center gap-1.5 truncate">
-                              <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
-                              <span className="truncate">{s.salle}</span>
+                              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[10px] font-semibold border border-emerald-200">🌐 En ligne</span>
                             </div>
                           </div>
 
@@ -611,13 +605,6 @@ export default function AdminEDTPage() {
                     ))}
                   </select>
                 </div>
-
-                <Input
-                  label="Salle de cours / Emplacement"
-                  placeholder="Ex. Amphi Pasteur, Salle 102, Labo Info"
-                  value={formSalle}
-                  onChange={(e) => setFormSalle(e.target.value)}
-                />
 
                 {/* Générateur de liens Google Meet */}
                 <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/90 space-y-2">

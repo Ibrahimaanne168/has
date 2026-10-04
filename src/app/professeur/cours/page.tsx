@@ -29,6 +29,7 @@ import {
   deleteCourse,
   getStoredClasses,
   getStoredMatieres,
+  fileToDataUrl,
 } from "@/lib/academicStorage";
 
 const CURRENT_PROF = MOCK_PROFESSEURS[0];
@@ -44,7 +45,6 @@ export default function ProfesseurCoursPage() {
 
   const [formTitle, setFormTitle] = useState("");
   const [formDescription, setFormDescription] = useState("");
-  const [formClasseId, setFormClasseId] = useState("");
   const [formMatiereId, setFormMatiereId] = useState("");
   const [formPdfName, setFormPdfName] = useState("");
   const [formPdfUrl, setFormPdfUrl] = useState("");
@@ -64,51 +64,28 @@ export default function ProfesseurCoursPage() {
     return () => window.removeEventListener("has_academic_storage_updated", handleUpdate);
   }, []);
 
-  // Classes que le professeur enseigne
-  const profClasses = React.useMemo(() => {
-    return classes.filter((cl) => {
-      const norm = cl.code.replace("-", " ").toUpperCase();
-      return CURRENT_PROF.classes.some((c) => c.replace("-", " ").toUpperCase() === norm);
-    });
-  }, [classes]);
-
-  // Matières qui concernent à la fois ce professeur ET la classe sélectionnée
-  const availableMatieres = React.useMemo(() => {
-    const selectedCls = profClasses.find((c) => c.id === formClasseId) || profClasses[0];
-    if (!selectedCls) return [];
-    const targetClassCode = selectedCls.code.replace("-", " ").toUpperCase();
-    const targetNiveau = selectedCls.niveau.toUpperCase();
-
+  // Matières enseignées par ce professeur (sans restriction préalable de classe)
+  const profMatieres = React.useMemo(() => {
     return matieres.filter((m) => {
-      return CURRENT_PROF.matieres?.some((pm) => {
-        const isSameMatiere =
+      return CURRENT_PROF.matieres?.some(
+        (pm) =>
           pm.code?.toUpperCase() === m.code.toUpperCase() ||
           String(pm.id) === String(m.id) ||
-          pm.nom.toLowerCase() === m.name.toLowerCase();
-        const isForClass =
-          pm.classes?.some((c) => c.replace("-", " ").toUpperCase() === targetClassCode) ||
-          pm.niveau?.toUpperCase() === targetNiveau;
-        return isSameMatiere && (isForClass || !pm.classes || pm.classes.length === 0);
-      });
+          pm.nom.toLowerCase() === m.name.toLowerCase()
+      );
     });
-  }, [profClasses, formClasseId, matieres]);
+  }, [matieres]);
 
-  // Synchroniser la matière si elle n'est plus dans les matières disponibles
-  React.useEffect(() => {
-    if (availableMatieres.length > 0) {
-      const exists = availableMatieres.some((m) => m.id === formMatiereId);
-      if (!exists) {
-        setFormMatiereId(availableMatieres[0].id);
-      }
-    }
-  }, [availableMatieres, formMatiereId]);
+  // Matière sélectionnée dans le formulaire
+  const currentSelectedMatiere = React.useMemo(() => {
+    return profMatieres.find((m) => m.id === formMatiereId) || profMatieres[0];
+  }, [profMatieres, formMatiereId]);
 
   const openCreateModal = () => {
     setEditingCourse(null);
     setFormTitle("");
     setFormDescription("");
-    const initialClassId = profClasses[0]?.id || classes[0]?.id || "";
-    setFormClasseId(initialClassId);
+    setFormMatiereId(profMatieres[0]?.id || matieres[0]?.id || "");
     setFormPdfName("");
     setFormPdfUrl("");
     setModalOpen(true);
@@ -118,7 +95,6 @@ export default function ProfesseurCoursPage() {
     setEditingCourse(course);
     setFormTitle(course.title);
     setFormDescription(course.description || "");
-    setFormClasseId(course.classe_id);
     setFormMatiereId(course.matiere_id);
     setFormPdfName(course.file_name || "");
     setFormPdfUrl(course.file_url || "");
@@ -132,23 +108,25 @@ export default function ProfesseurCoursPage() {
       return;
     }
 
-    const matiere = matieres.find((m) => m.id === formMatiereId) || availableMatieres[0];
-    const classe = classes.find((c) => c.id === formClasseId) || profClasses[0];
+    const matiere = matieres.find((m) => m.id === formMatiereId) || profMatieres[0];
     const resolvedPdfName = formPdfName || `${formTitle.toLowerCase().replace(/[^a-z0-9]/g, "-")}.pdf`;
+    const targetClasses = matiere?.classes || [];
+    const primaryClasse = classes.find((c) => targetClasses.includes(c.code)) || classes[0];
 
     if (editingCourse) {
       const updated: Cours = {
         ...editingCourse,
         title: formTitle,
         description: formDescription,
-        matiere_id: formMatiereId,
-        classe_id: formClasseId,
+        matiere_id: matiere?.id || formMatiereId,
+        classe_id: primaryClasse?.id,
+        classes: targetClasses,
         file_url: formPdfUrl || editingCourse.file_url || "/documents/cours.pdf",
         file_name: resolvedPdfName,
         file_type: "application/pdf",
         external_url: null,
         matiere,
-        classe,
+        classe: primaryClasse,
         updated_at: new Date().toISOString(),
       };
       saveCourse(updated);
@@ -158,8 +136,9 @@ export default function ProfesseurCoursPage() {
         id: `cr-${Date.now()}`,
         title: formTitle,
         description: formDescription,
-        matiere_id: formMatiereId,
-        classe_id: formClasseId,
+        matiere_id: matiere?.id || formMatiereId,
+        classe_id: primaryClasse?.id,
+        classes: targetClasses,
         professeur_id: CURRENT_PROF.id,
         file_url: formPdfUrl || "/documents/cours.pdf",
         file_name: resolvedPdfName,
@@ -169,12 +148,12 @@ export default function ProfesseurCoursPage() {
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         matiere,
-        classe,
+        classe: primaryClasse,
         professeur: CURRENT_PROF,
         is_favorite: false,
       };
       saveCourse(newCourse);
-      setSuccessMsg("Le cours au format PDF a été publié avec succès.");
+      setSuccessMsg("Le cours a été publié avec succès pour toutes les classes concernées !");
     }
     reloadData();
     setModalOpen(false);
@@ -243,79 +222,92 @@ export default function ProfesseurCoursPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {myCourses.map((c) => (
-              <Card key={c.id} hoverEffect className="flex flex-col overflow-hidden">
-                <div className="p-5 flex-1 flex flex-col">
-                  {/* 1. En-tête badges */}
-                  <div className="flex items-center gap-1.5 flex-wrap mb-2.5">
-                    <Badge variant="primary" size="sm" uppercase>{c.matiere?.code || "MATIÈRE"}</Badge>
-                    <Badge variant="neutral" size="sm">{c.classe?.code || "CLASSE"}</Badge>
-                  </div>
+            {myCourses.map((c) => {
+              const displayClasses =
+                c.classes && c.classes.length > 0
+                  ? c.classes
+                  : c.matiere?.classes && c.matiere.classes.length > 0
+                  ? c.matiere.classes
+                  : [c.classe?.code || "Tous"];
 
-                  {/* 2. Catégorie matière */}
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-[#e0521c] mb-1">
-                    {c.matiere?.name}
-                  </p>
+              return (
+                <Card key={c.id} hoverEffect className="flex flex-col overflow-hidden">
+                  <div className="p-5 flex-1 flex flex-col">
+                    {/* 1. En-tête badges */}
+                    <div className="flex items-center gap-1.5 flex-wrap mb-2.5">
+                      <Badge variant="primary" size="sm" uppercase>{c.matiere?.code || "MATIÈRE"}</Badge>
+                      {displayClasses.map((cls) => (
+                        <Badge key={cls} variant="neutral" size="sm">{cls}</Badge>
+                      ))}
+                    </div>
 
-                  {/* 3. Titre principal */}
-                  <h3 className="font-serif text-base font-bold text-slate-900 line-clamp-2 leading-snug mb-1.5">
-                    {c.title}
-                  </h3>
-
-                  {c.description && (
-                    <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed flex-1 mb-3">
-                      {c.description}
+                    {/* 2. Catégorie matière */}
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-[#e0521c] mb-1">
+                      {c.matiere?.name}
                     </p>
-                  )}
 
-                  {/* 4. Métadonnées filaires */}
-                  <div className="pt-3 border-t border-slate-100/90 space-y-1 text-xs text-slate-400">
+                    {/* 3. Titre principal */}
+                    <h3 className="font-serif text-base font-bold text-slate-900 line-clamp-2 leading-snug mb-1.5">
+                      {c.title}
+                    </h3>
+
+                    {c.description && (
+                      <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed flex-1 mb-3">
+                        {c.description}
+                      </p>
+                    )}
+
+                    {/* 4. Métadonnées filaires */}
+                    <div className="pt-3 border-t border-slate-100/90 space-y-1 text-xs text-slate-400">
+                      <div className="flex items-center gap-1.5">
+                        <GraduationCap className="w-3.5 h-3.5 shrink-0" />
+                        <span className="font-medium text-slate-600">
+                          Classes concernées : {displayClasses.join(", ")}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="flex items-center gap-1.5">
+                          <Calendar className="w-3.5 h-3.5 shrink-0" />
+                          {new Date(c.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}
+                        </span>
+                        {c.file_url && (
+                          <a href={c.file_url} download={c.file_name || `${c.title}.pdf`} className="inline-flex items-center gap-1 text-[11px] text-slate-500 hover:text-[#0f2744] font-medium transition-colors">
+                            <Download className="w-3.5 h-3.5" />
+                            PDF
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 5. Pied de carte : actions professeur */}
+                  <CardFooter className="flex items-center justify-between p-3 bg-slate-50/70">
                     <div className="flex items-center gap-1.5">
-                      <GraduationCap className="w-3.5 h-3.5 shrink-0" />
-                      <span className="font-medium text-slate-600">{c.classe?.name}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="flex items-center gap-1.5">
-                        <Calendar className="w-3.5 h-3.5 shrink-0" />
-                        {new Date(c.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}
+                      <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-1 bg-[#0f2744]/10 text-[#0f2744] rounded-md">
+                        <FileText className="w-3.5 h-3.5 text-[#e0521c]" />
+                        Document PDF permanent
                       </span>
-                      {c.file_url && (
-                        <a href={c.file_url} download className="inline-flex items-center gap-1 text-[11px] text-slate-500 hover:text-[#0f2744] font-medium transition-colors">
-                          <Download className="w-3.5 h-3.5" />
-                          {c.file_name?.split(".").pop()?.toUpperCase()}
-                        </a>
-                      )}
                     </div>
-                  </div>
-                </div>
-
-                {/* 5. Pied de carte : actions professeur */}
-                <CardFooter className="flex items-center justify-between p-3 bg-slate-50/70">
-                  <div className="flex items-center gap-1.5">
-                    <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-1 bg-[#0f2744]/10 text-[#0f2744] rounded-md">
-                      <FileText className="w-3.5 h-3.5 text-[#e0521c]" />
-                      Document PDF
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <button
-                      onClick={() => openEditModal(c)}
-                      className="p-1.5 text-slate-500 hover:text-[#0f2744] hover:bg-white rounded-lg transition-colors border border-transparent hover:border-slate-200/90"
-                      title="Modifier ce cours"
-                    >
-                      <Edit2 className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      onClick={() => setDeleteConfirm(c.id)}
-                      className="p-1.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-200/80"
-                      title="Supprimer ce cours"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </CardFooter>
-              </Card>
-            ))}
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        onClick={() => openEditModal(c)}
+                        className="p-1.5 text-slate-500 hover:text-[#0f2744] hover:bg-white rounded-lg transition-colors border border-transparent hover:border-slate-200/90"
+                        title="Modifier ce cours"
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => setDeleteConfirm(c.id)}
+                        className="p-1.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-200/80"
+                        title="Supprimer ce cours"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </CardFooter>
+                </Card>
+              );
+            })}
           </div>
         )}
 
@@ -329,7 +321,7 @@ export default function ProfesseurCoursPage() {
                     {editingCourse ? "Édition du cours" : "Nouveau cours"}
                   </p>
                   <h3 className="font-serif text-xl font-bold text-[#0f2744]">
-                    {editingCourse ? "Modifier le cours" : "Publier un nouveau cours (PDF)"}
+                    {editingCourse ? "Modifier le cours" : "Publier un cours par Matière"}
                   </h3>
                 </div>
                 <button onClick={() => setModalOpen(false)} className="p-1.5 text-slate-500 hover:bg-slate-100 rounded-lg transition-colors">
@@ -338,14 +330,14 @@ export default function ProfesseurCoursPage() {
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-5">
-                {/* Zone dépôt fichier PDF d'abord ou titre auto */}
+                {/* Zone dépôt fichier PDF */}
                 <div className="p-5 rounded-lg border-2 border-dashed border-slate-300 bg-[#F8FAFC] flex flex-col items-center gap-2 text-center">
                   <Upload className="w-8 h-8 text-[#0f2744]" />
                   <p className="text-xs sm:text-sm font-semibold text-slate-800">
-                    Sélectionner le document du cours (Format PDF uniquement)
+                    Déposer le document du cours (Format PDF uniquement)
                   </p>
                   <p className="text-[11px] text-slate-500">
-                    Le nom de votre fichier PDF deviendra automatiquement le titre du cours
+                    Le nom de votre fichier PDF est automatiquement sauvegardé et assigné comme titre
                   </p>
                   
                   {formPdfName ? (
@@ -364,7 +356,7 @@ export default function ProfesseurCoursPage() {
                         type="file"
                         accept=".pdf,application/pdf"
                         className="hidden"
-                        onChange={(e) => {
+                        onChange={async (e) => {
                           const file = e.target.files?.[0];
                           if (file) {
                             if (!file.name.toLowerCase().endsWith(".pdf")) {
@@ -372,11 +364,14 @@ export default function ProfesseurCoursPage() {
                               return;
                             }
                             setFormPdfName(file.name);
-                            // Le nom du PDF devient le titre du fichier
                             const cleanTitle = file.name.replace(/\.pdf$/i, "").replace(/[-_]/g, " ").trim();
                             setFormTitle(cleanTitle);
-                            const url = URL.createObjectURL(file);
-                            setFormPdfUrl(url);
+                            try {
+                              const base64 = await fileToDataUrl(file);
+                              setFormPdfUrl(base64);
+                            } catch {
+                              setFormPdfUrl(URL.createObjectURL(file));
+                            }
                           }
                         }}
                       />
@@ -385,60 +380,63 @@ export default function ProfesseurCoursPage() {
                 </div>
 
                 <Input
-                  label="Titre du cours (rempli automatiquement par le PDF)"
+                  label="Titre du cours (défini automatiquement par le PDF)"
                   required
-                  placeholder="Ex. Chapitre 1 : Espaces Vectoriels & Applications"
+                  placeholder="Ex. Analyse 1 — Suites et Limites"
                   value={formTitle}
                   onChange={(e) => setFormTitle(e.target.value)}
                 />
 
+                {/* Sélection directe de la matière sans avoir à choisir de classe */}
+                <div className="space-y-2">
+                  <label className="block text-xs font-semibold text-slate-700">
+                    Matière enseignée <span className="text-[#e0521c]">*</span>
+                  </label>
+                  <select
+                    required
+                    value={formMatiereId}
+                    onChange={(e) => setFormMatiereId(e.target.value)}
+                    className="w-full text-xs sm:text-sm border border-slate-200/90 rounded-lg px-3 py-2.5 bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#0f2744]"
+                  >
+                    {profMatieres.map((m) => (
+                      <option key={m.id} value={m.id}>
+                        {m.code} — {m.name} ({m.niveau || "L1/L2"})
+                      </option>
+                    ))}
+                  </select>
+
+                  {/* Affichage automatique des classes concernées par cette matière */}
+                  {currentSelectedMatiere && (
+                    <div className="p-3 bg-slate-50 border border-slate-200/80 rounded-lg flex items-center justify-between flex-wrap gap-2">
+                      <span className="text-xs text-slate-600 font-medium">
+                        Classes cibles automatiques (visibilité immédiate) :
+                      </span>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        {(currentSelectedMatiere.classes || []).length > 0 ? (
+                          currentSelectedMatiere.classes?.map((cCode) => (
+                            <Badge key={cCode} variant="primary" size="sm">
+                              {cCode}
+                            </Badge>
+                          ))
+                        ) : (
+                          <Badge variant="neutral" size="sm">
+                            {currentSelectedMatiere.niveau ? `Niveau ${currentSelectedMatiere.niveau}` : "Toutes les promotions"}
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-semibold text-slate-700">Description académique</label>
+                  <label className="block text-xs font-semibold text-slate-700">Description académique (optionnelle)</label>
                   <textarea
                     rows={3}
                     value={formDescription}
                     onChange={(e) => setFormDescription(e.target.value)}
-                    placeholder="Objectifs pédagogiques, prérequis et points essentiels du cours..."
+                    placeholder="Objectifs pédagogiques, prérequis et consignes de travail..."
                     className="block w-full rounded-lg border border-slate-200/90 bg-white p-3 text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:border-[#0f2744] focus:ring-1 focus:ring-[#0f2744] transition-colors"
                   />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <label className="block text-xs font-semibold text-slate-700">
-                      Classe cible (vos classes) <span className="text-[#e0521c]">*</span>
-                    </label>
-                    <select
-                      required
-                      value={formClasseId}
-                      onChange={(e) => setFormClasseId(e.target.value)}
-                      className="w-full text-xs sm:text-sm border border-slate-200/90 rounded-lg px-3 py-2.5 bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#0f2744]"
-                    >
-                      {profClasses.map((cl) => (
-                        <option key={cl.id} value={cl.id}>{cl.code} — {cl.name}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="block text-xs font-semibold text-slate-700">
-                      Matière (concernant votre classe) <span className="text-[#e0521c]">*</span>
-                    </label>
-                    <select
-                      required
-                      value={formMatiereId}
-                      onChange={(e) => setFormMatiereId(e.target.value)}
-                      className="w-full text-xs sm:text-sm border border-slate-200/90 rounded-lg px-3 py-2.5 bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#0f2744]"
-                    >
-                      {availableMatieres.length === 0 ? (
-                        <option value="">Aucune matière attribuée pour cette classe</option>
-                      ) : (
-                        availableMatieres.map((m) => (
-                          <option key={m.id} value={m.id}>{m.code} — {m.name}</option>
-                        ))
-                      )}
-                    </select>
-                  </div>
                 </div>
 
                 <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
@@ -446,7 +444,7 @@ export default function ProfesseurCoursPage() {
                     Annuler
                   </Button>
                   <Button type="submit" variant="accent" size="sm" className="rounded-lg text-xs" leftIcon={<Save className="w-3.5 h-3.5" />}>
-                    {editingCourse ? "Enregistrer les modifications" : "Publier le cours"}
+                    {editingCourse ? "Enregistrer les modifications" : "Publier pour les classes concernées"}
                   </Button>
                 </div>
               </form>
