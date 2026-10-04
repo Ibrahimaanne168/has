@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/Input";
 import { Matiere, SeanceEDT, JourSemaine } from "@/lib/types";
 import {
   getStoredMatieres, getStoredSeancesEDT,
-  saveSeanceEDT, deleteSeanceEDT, generateMeetLink,
+  saveSeanceEDT, deleteSeanceEDT,
 } from "@/lib/academicStorage";
 
 const JOURS: JourSemaine[] = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
@@ -254,17 +254,23 @@ export default function AdminEDTPage() {
                 <label className="block text-xs font-bold text-slate-700 mb-1">Lien Google Meet</label>
                 <div className="flex gap-2">
                   <Input
-                    placeholder="https://meet.google.com/xxx-xxxx-xxx"
+                    placeholder="https://meet.google.com/abc-defg-hij"
                     leftIcon={<Video className="w-4 h-4" />}
                     value={form.meetUrl}
                     onChange={(e) => setForm((f) => ({ ...f, meetUrl: e.target.value }))}
                   />
-                  <button type="button"
-                    onClick={() => setForm((f) => ({ ...f, meetUrl: generateMeetLink() }))}
-                    className="shrink-0 flex items-center gap-1 px-3 py-2 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 text-xs font-bold">
-                    <Sparkles className="w-3.5 h-3.5" /> Générer
-                  </button>
+                  <a
+                    href="https://meet.new"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="shrink-0 flex items-center gap-1 px-3 py-2 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 text-xs font-bold whitespace-nowrap"
+                  >
+                    <Sparkles className="w-3.5 h-3.5" /> Créer un Meet
+                  </a>
                 </div>
+                <p className="text-[10px] text-slate-400 mt-1">
+                  Cliquez &laquo;&nbsp;Créer un Meet&nbsp;&raquo;, copiez le lien depuis Google, puis collez-le ici.
+                </p>
               </div>
 
               <div className="flex justify-end gap-3 pt-2 border-t border-slate-100">
