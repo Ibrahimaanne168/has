@@ -80,6 +80,19 @@ export function ChatRoom({
     return { salonId: "general", content: rawText };
   }, []);
 
+  // Extrait les métadonnées expéditeur encodées dans le message
+  const parseSenderMeta = useCallback((text: string): { name: string | null; role: UserRole | null; cleanContent: string } => {
+    const match = text.match(/^\[\[sender:([^\|]+)\|\|([^\]]+)\]\]\s*([\s\S]*)$/);
+    if (match) {
+      return {
+        name: match[1].trim() || null,
+        role: (match[2].trim() as UserRole) || null,
+        cleanContent: match[3].trim(),
+      };
+    }
+    return { name: null, role: null, cleanContent: text };
+  }, []);
+
   // Charger les messages réels depuis la base Supabase
   const loadRealMessages = useCallback(async () => {
     setIsLoading(true);
@@ -126,26 +139,33 @@ export function ChatRoom({
         const roomMessages: ChatMessage[] = [];
 
         for (const item of data) {
-          const { salonId, content } = parseMessageSalon(item.message || "");
+          const { salonId, content: rawAfterSalon } = parseMessageSalon(item.message || "");
           if (salonId === roomId || (roomId === "general" && salonId === "general")) {
-            // Identifier les infos de l'auteur
+
+            // Extraire les métadonnées expéditeur encodées dans le message (source fiable)
+            const { name: embeddedName, role: embeddedRole, cleanContent } = parseSenderMeta(rawAfterSalon);
+
+            // Fallback : jointure DB (peut être incorrecte si user_id ne correspond pas)
             const userObj = item.users as any;
-            const roleName: UserRole =
+            const dbFullName = userObj
+              ? `${userObj.prenom || ""} ${userObj.nom || ""}`.trim() || userObj.email || ""
+              : "";
+            const dbRole: UserRole =
               userObj?.roles?.nom === "admin"
                 ? "admin"
                 : userObj?.roles?.nom === "enseignant"
                 ? "professeur"
                 : "etudiant";
 
-            const fullName = userObj
-              ? `${userObj.prenom || ""} ${userObj.nom || ""}`.trim() || userObj.email || "Membre HAS"
-              : "Membre HAS";
+            // Priorité : métadonnées embarquées > jointure DB > fallback
+            const fullName = embeddedName || dbFullName || "Membre HAS";
+            const roleName = embeddedRole || dbRole;
 
             roomMessages.push({
               id: String(item.id),
               user_id: String(item.user_id),
               salon_id: salonId,
-              content: content.trim(),
+              content: cleanContent || rawAfterSalon.trim(),
               is_deleted: false,
               created_at: item.created_at,
               user: {
@@ -185,7 +205,7 @@ export function ChatRoom({
     } finally {
       setIsLoading(false);
     }
-  }, [roomId, parseMessageSalon]);
+  }, [roomId, parseMessageSalon, parseSenderMeta]);
 
   useEffect(() => {
     loadRealMessages();
@@ -198,9 +218,18 @@ export function ChatRoom({
         .on(
           "postgres_changes",
           { event: "INSERT", schema: "public", table: "chat_messages" },
-          () => {
-            // Recharger pour obtenir la jointure complète de l'utilisateur
-            loadRealMessages();
+          (payload) => {
+            // NE PAS recharger tous les messages sur INSERT :
+            // le message optimistique (avec le bon nom de l'expéditeur)
+            // est déjà dans le state. On recharge seulement si c'est
+            // un message d'un AUTRE utilisateur (id différent du current user).
+            const insertedUserId = String((payload.new as any)?.user_id);
+            const isMyMessage =
+              insertedUserId === currentUser.id ||
+              (currentUser.role === "admin" && insertedUserId === "1");
+            if (!isMyMessage) {
+              loadRealMessages();
+            }
           }
         )
         .on(
@@ -236,9 +265,14 @@ export function ChatRoom({
     const messageText = newMessage.trim();
     const tempId = `temp-${Date.now()}`;
 
-    // Format avec préfixe de salon si ce n'est pas le salon général
+    // Format avec préfixe de salon + métadonnées expéditeur
+    // Structure: [[salon:ID]][[sender:NOM||ROLE]] CONTENU
+    // Cela permet de récupérer le bon nom même si la jointure DB échoue
+    const senderMeta = `[[sender:${currentUser.fullName}||${currentUser.role}]]`;
     const formattedPayload =
-      roomId === "general" ? messageText : `[[salon:${roomId}]] ${messageText}`;
+      roomId === "general"
+        ? `${senderMeta} ${messageText}`
+        : `[[salon:${roomId}]] ${senderMeta} ${messageText}`;
 
     const optimisticMessage: ChatMessage = {
       id: tempId,
@@ -315,9 +349,18 @@ export function ChatRoom({
 
       if (inserted) {
         // Mettre à jour l'ID temporaire par le véritable ID de la base
+        // Garder TOUTES les données de l'optimistique (bon nom, bon rôle)
         setMessages((prev) =>
           prev.map((m) => (m.id === tempId ? { ...m, id: String(inserted.id) } : m))
         );
+        // Synchroniser le cache local
+        try {
+          const localKey = `has_chat_${roomId}_v1`;
+          const existing: ChatMessage[] = JSON.parse(localStorage.getItem(localKey) || "[]");
+          const updated = existing.filter((m) => m.id !== tempId);
+          updated.push({ ...optimisticMessage, id: String(inserted.id) });
+          localStorage.setItem(localKey, JSON.stringify(updated));
+        } catch { /* quota */ }
       }
     } catch (err: unknown) {
       console.warn("[CHAT SEND ERROR / LOCAL CACHE]", err);
