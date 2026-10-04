@@ -511,7 +511,9 @@ export function ChatRoom({
             const isMe =
               msg.user_id === currentUser.id ||
               msg.user?.email === currentUser.email ||
-              (currentUser.role === "admin" && msg.user_id === "1");
+              msg.user?.full_name === currentUser.fullName ||
+              (currentUser.role === "admin" && msg.user_id === "1") ||
+              (currentUser.role === "admin" && msg.user?.role === "admin");
 
             const authorRole = msg.user?.role || "etudiant";
             const authorName = msg.user?.full_name || "Membre HAS";
@@ -524,19 +526,19 @@ export function ChatRoom({
             return (
               <div
                 key={msg.id}
-                className={`flex gap-2.5 ${isMe ? "flex-row-reverse" : "flex-row"} group`}
+                className={`flex gap-2.5 ${isMe ? "flex-row-reverse" : "flex-row"} group items-end`}
               >
                 {/* Avatar initiales */}
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-black shrink-0 mt-1 shadow-sm ${styles.avatar}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-black shrink-0 shadow-sm ${styles.avatar}`}>
                   {avatarInitials}
                 </div>
 
-                <div className={`flex flex-col ${isMe ? "items-end" : "items-start"} max-w-[75%]`}>
+                <div className={`flex flex-col ${isMe ? "items-end" : "items-start"} max-w-[72%]`}>
                   {/* Nom + badge rôle + heure */}
-                  <div className="flex items-center gap-1.5 mb-1 flex-wrap">
-                    {!isMe && (
-                      <span className={`text-xs font-bold ${styles.name}`}>{authorName}</span>
-                    )}
+                  <div className={`flex items-center gap-1.5 mb-1 flex-wrap ${isMe ? "flex-row-reverse" : "flex-row"}`}>
+                    <span className={`text-xs font-bold ${styles.name}`}>
+                      {isMe ? "Moi" : authorName}
+                    </span>
                     {renderRoleBadge(authorRole)}
                     <span className="text-[10px] text-slate-400">
                       {new Date(msg.created_at).toLocaleTimeString("fr-FR", {
@@ -559,8 +561,8 @@ export function ChatRoom({
                   <div
                     className={`rounded-2xl px-4 py-2.5 text-sm leading-relaxed shadow-sm ${
                       isMe
-                        ? `${styles.bubble} rounded-tr-sm`
-                        : `${styles.bubble} rounded-tl-sm`
+                        ? `${styles.bubble} rounded-br-none`
+                        : `${styles.bubble} rounded-bl-none`
                     }`}
                   >
                     {msg.content}
