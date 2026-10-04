@@ -21,14 +21,22 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card, CardFooter } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { MOCK_PROFESSEURS, MOCK_MATIERES, MOCK_CLASSES } from "@/lib/data/mock-data";
-import { Cours } from "@/lib/types";
-import { getStoredCourses, saveCourse, deleteCourse } from "@/lib/academicStorage";
+import { MOCK_PROFESSEURS } from "@/lib/data/mock-data";
+import { Cours, Classe, Matiere } from "@/lib/types";
+import {
+  getStoredCourses,
+  saveCourse,
+  deleteCourse,
+  getStoredClasses,
+  getStoredMatieres,
+} from "@/lib/academicStorage";
 
 const CURRENT_PROF = MOCK_PROFESSEURS[0];
 
 export default function ProfesseurCoursPage() {
   const [courses, setCourses] = useState<Cours[]>([]);
+  const [classes, setClasses] = useState<Classe[]>([]);
+  const [matieres, setMatieres] = useState<Matiere[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState<Cours | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
@@ -36,24 +44,71 @@ export default function ProfesseurCoursPage() {
 
   const [formTitle, setFormTitle] = useState("");
   const [formDescription, setFormDescription] = useState("");
-  const [formMatiereId, setFormMatiereId] = useState(MOCK_MATIERES[0]?.id || "");
-  const [formClasseId, setFormClasseId] = useState(MOCK_CLASSES[0]?.id || "");
+  const [formClasseId, setFormClasseId] = useState("");
+  const [formMatiereId, setFormMatiereId] = useState("");
   const [formPdfName, setFormPdfName] = useState("");
   const [formPdfUrl, setFormPdfUrl] = useState("");
 
-  React.useEffect(() => {
+  const reloadData = () => {
     setCourses(getStoredCourses());
-    const handleUpdate = () => setCourses(getStoredCourses());
+    const cList = getStoredClasses();
+    const mList = getStoredMatieres();
+    setClasses(cList);
+    setMatieres(mList);
+  };
+
+  React.useEffect(() => {
+    reloadData();
+    const handleUpdate = () => reloadData();
     window.addEventListener("has_academic_storage_updated", handleUpdate);
     return () => window.removeEventListener("has_academic_storage_updated", handleUpdate);
   }, []);
+
+  // Classes que le professeur enseigne
+  const profClasses = React.useMemo(() => {
+    return classes.filter((cl) => {
+      const norm = cl.code.replace("-", " ").toUpperCase();
+      return CURRENT_PROF.classes.some((c) => c.replace("-", " ").toUpperCase() === norm);
+    });
+  }, [classes]);
+
+  // Matières qui concernent à la fois ce professeur ET la classe sélectionnée
+  const availableMatieres = React.useMemo(() => {
+    const selectedCls = profClasses.find((c) => c.id === formClasseId) || profClasses[0];
+    if (!selectedCls) return [];
+    const targetClassCode = selectedCls.code.replace("-", " ").toUpperCase();
+    const targetNiveau = selectedCls.niveau.toUpperCase();
+
+    return matieres.filter((m) => {
+      return CURRENT_PROF.matieres?.some((pm) => {
+        const isSameMatiere =
+          pm.code?.toUpperCase() === m.code.toUpperCase() ||
+          String(pm.id) === String(m.id) ||
+          pm.nom.toLowerCase() === m.name.toLowerCase();
+        const isForClass =
+          pm.classes?.some((c) => c.replace("-", " ").toUpperCase() === targetClassCode) ||
+          pm.niveau?.toUpperCase() === targetNiveau;
+        return isSameMatiere && (isForClass || !pm.classes || pm.classes.length === 0);
+      });
+    });
+  }, [profClasses, formClasseId, matieres]);
+
+  // Synchroniser la matière si elle n'est plus dans les matières disponibles
+  React.useEffect(() => {
+    if (availableMatieres.length > 0) {
+      const exists = availableMatieres.some((m) => m.id === formMatiereId);
+      if (!exists) {
+        setFormMatiereId(availableMatieres[0].id);
+      }
+    }
+  }, [availableMatieres, formMatiereId]);
 
   const openCreateModal = () => {
     setEditingCourse(null);
     setFormTitle("");
     setFormDescription("");
-    setFormMatiereId(MOCK_MATIERES[0]?.id || "");
-    setFormClasseId(MOCK_CLASSES[0]?.id || "");
+    const initialClassId = profClasses[0]?.id || classes[0]?.id || "";
+    setFormClasseId(initialClassId);
     setFormPdfName("");
     setFormPdfUrl("");
     setModalOpen(true);
@@ -63,8 +118,8 @@ export default function ProfesseurCoursPage() {
     setEditingCourse(course);
     setFormTitle(course.title);
     setFormDescription(course.description || "");
-    setFormMatiereId(course.matiere_id);
     setFormClasseId(course.classe_id);
+    setFormMatiereId(course.matiere_id);
     setFormPdfName(course.file_name || "");
     setFormPdfUrl(course.file_url || "");
     setModalOpen(true);
@@ -77,8 +132,8 @@ export default function ProfesseurCoursPage() {
       return;
     }
 
-    const matiere = MOCK_MATIERES.find((m) => m.id === formMatiereId);
-    const classe = MOCK_CLASSES.find((c) => c.id === formClasseId);
+    const matiere = matieres.find((m) => m.id === formMatiereId) || availableMatieres[0];
+    const classe = classes.find((c) => c.id === formClasseId) || profClasses[0];
     const resolvedPdfName = formPdfName || `${formTitle.toLowerCase().replace(/[^a-z0-9]/g, "-")}.pdf`;
 
     if (editingCourse) {
@@ -121,18 +176,23 @@ export default function ProfesseurCoursPage() {
       saveCourse(newCourse);
       setSuccessMsg("Le cours au format PDF a été publié avec succès.");
     }
-    setCourses(getStoredCourses());
+    reloadData();
     setModalOpen(false);
     setTimeout(() => setSuccessMsg(null), 4000);
   };
 
   const handleDelete = (courseId: string) => {
     deleteCourse(courseId);
-    setCourses(getStoredCourses());
+    reloadData();
     setDeleteConfirm(null);
     setSuccessMsg("Le cours a été supprimé de votre catalogue.");
     setTimeout(() => setSuccessMsg(null), 3000);
   };
+
+  // Seuls les cours concernant ce professeur sont affichés
+  const myCourses = courses.filter((c) => {
+    return c.professeur_id === CURRENT_PROF.id || !c.professeur_id || c.professeur?.id === CURRENT_PROF.id;
+  });
 
   return (
     <DashboardLayout
@@ -175,15 +235,15 @@ export default function ProfesseurCoursPage() {
         )}
 
         {/* Grille des cours en cartes géométriques */}
-        {courses.length === 0 ? (
+        {myCourses.length === 0 ? (
           <div className="bg-white rounded-xl border border-slate-200/90 p-16 text-center shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)]">
             <BookOpen className="w-12 h-12 text-slate-200 mx-auto mb-3" />
-            <p className="text-sm font-semibold text-slate-600">Aucun cours publié pour l&apos;instant.</p>
-            <p className="text-xs text-slate-400 mt-1">Cliquez sur « Publier un nouveau cours » pour commencer.</p>
+            <p className="text-sm font-semibold text-slate-600">Aucun cours publié pour vos matières et classes pour l&apos;instant.</p>
+            <p className="text-xs text-slate-400 mt-1">Cliquez sur « Publier un nouveau cours » pour déposer un support PDF.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {courses.map((c) => (
+            {myCourses.map((c) => (
               <Card key={c.id} hoverEffect className="flex flex-col overflow-hidden">
                 <div className="p-5 flex-1 flex flex-col">
                   {/* 1. En-tête badges */}
@@ -269,7 +329,7 @@ export default function ProfesseurCoursPage() {
                     {editingCourse ? "Édition du cours" : "Nouveau cours"}
                   </p>
                   <h3 className="font-serif text-xl font-bold text-[#0f2744]">
-                    {editingCourse ? "Modifier le cours" : "Publier un nouveau cours"}
+                    {editingCourse ? "Modifier le cours" : "Publier un nouveau cours (PDF)"}
                   </h3>
                 </div>
                 <button onClick={() => setModalOpen(false)} className="p-1.5 text-slate-500 hover:bg-slate-100 rounded-lg transition-colors">
@@ -278,10 +338,56 @@ export default function ProfesseurCoursPage() {
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-5">
+                {/* Zone dépôt fichier PDF d'abord ou titre auto */}
+                <div className="p-5 rounded-lg border-2 border-dashed border-slate-300 bg-[#F8FAFC] flex flex-col items-center gap-2 text-center">
+                  <Upload className="w-8 h-8 text-[#0f2744]" />
+                  <p className="text-xs sm:text-sm font-semibold text-slate-800">
+                    Sélectionner le document du cours (Format PDF uniquement)
+                  </p>
+                  <p className="text-[11px] text-slate-500">
+                    Le nom de votre fichier PDF deviendra automatiquement le titre du cours
+                  </p>
+                  
+                  {formPdfName ? (
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-800 mt-1">
+                      <FileText className="w-4 h-4 text-emerald-600 shrink-0" />
+                      <span className="truncate max-w-xs">{formPdfName}</span>
+                    </div>
+                  ) : (
+                    <label htmlFor="course-pdf-upload" className="cursor-pointer">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0f2744] text-white text-xs font-semibold hover:bg-[#0f2744]/90 transition-colors mt-1">
+                        <FileText className="w-3.5 h-3.5" />
+                        Choisir le fichier PDF
+                      </span>
+                      <input
+                        id="course-pdf-upload"
+                        type="file"
+                        accept=".pdf,application/pdf"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            if (!file.name.toLowerCase().endsWith(".pdf")) {
+                              alert("Veuillez sélectionner un fichier PDF uniquement.");
+                              return;
+                            }
+                            setFormPdfName(file.name);
+                            // Le nom du PDF devient le titre du fichier
+                            const cleanTitle = file.name.replace(/\.pdf$/i, "").replace(/[-_]/g, " ").trim();
+                            setFormTitle(cleanTitle);
+                            const url = URL.createObjectURL(file);
+                            setFormPdfUrl(url);
+                          }
+                        }}
+                      />
+                    </label>
+                  )}
+                </div>
+
                 <Input
-                  label="Titre du cours"
+                  label="Titre du cours (rempli automatiquement par le PDF)"
                   required
-                  placeholder="Ex. Chapitre 3 : Normalisation des bases de données"
+                  placeholder="Ex. Chapitre 1 : Espaces Vectoriels & Applications"
                   value={formTitle}
                   onChange={(e) => setFormTitle(e.target.value)}
                 />
@@ -300,23 +406,7 @@ export default function ProfesseurCoursPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label className="block text-xs font-semibold text-slate-700">
-                      Matière <span className="text-[#e0521c]">*</span>
-                    </label>
-                    <select
-                      required
-                      value={formMatiereId}
-                      onChange={(e) => setFormMatiereId(e.target.value)}
-                      className="w-full text-xs sm:text-sm border border-slate-200/90 rounded-lg px-3 py-2.5 bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#0f2744]"
-                    >
-                      {MOCK_MATIERES.map((m) => (
-                        <option key={m.id} value={m.id}>{m.code} — {m.name}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="block text-xs font-semibold text-slate-700">
-                      Classe cible <span className="text-[#e0521c]">*</span>
+                      Classe cible (vos classes) <span className="text-[#e0521c]">*</span>
                     </label>
                     <select
                       required
@@ -324,53 +414,31 @@ export default function ProfesseurCoursPage() {
                       onChange={(e) => setFormClasseId(e.target.value)}
                       className="w-full text-xs sm:text-sm border border-slate-200/90 rounded-lg px-3 py-2.5 bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#0f2744]"
                     >
-                      {MOCK_CLASSES.map((cl) => (
-                        <option key={cl.id} value={cl.id}>{cl.code} — {cl.niveau}</option>
+                      {profClasses.map((cl) => (
+                        <option key={cl.id} value={cl.id}>{cl.code} — {cl.name}</option>
                       ))}
                     </select>
                   </div>
-                </div>
 
-                {/* Zone dépôt fichier PDF */}
-                <div className="p-5 rounded-lg border-2 border-dashed border-slate-300 bg-[#F8FAFC] flex flex-col items-center gap-2 text-center">
-                  <Upload className="w-8 h-8 text-[#0f2744]" />
-                  <p className="text-xs sm:text-sm font-semibold text-slate-800">
-                    Déposer le document de cours (Format PDF uniquement)
-                  </p>
-                  <p className="text-[11px] text-slate-500">
-                    Seuls les fichiers .pdf sont acceptés — Taille max. 50 Mo
-                  </p>
-                  
-                  {formPdfName ? (
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-800 mt-1">
-                      <FileText className="w-4 h-4 text-emerald-600" />
-                      <span>{formPdfName}</span>
-                    </div>
-                  ) : (
-                    <label htmlFor="course-pdf-upload" className="cursor-pointer">
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0f2744] text-white text-xs font-semibold hover:bg-[#0f2744]/90 transition-colors mt-1">
-                        Sélectionner le PDF
-                      </span>
-                      <input
-                        id="course-pdf-upload"
-                        type="file"
-                        accept=".pdf,application/pdf"
-                        className="hidden"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            if (!file.name.toLowerCase().endsWith(".pdf")) {
-                              alert("Veuillez sélectionner un fichier PDF uniquement.");
-                              return;
-                            }
-                            setFormPdfName(file.name);
-                            const url = URL.createObjectURL(file);
-                            setFormPdfUrl(url);
-                          }
-                        }}
-                      />
+                  <div className="space-y-1.5">
+                    <label className="block text-xs font-semibold text-slate-700">
+                      Matière (concernant votre classe) <span className="text-[#e0521c]">*</span>
                     </label>
-                  )}
+                    <select
+                      required
+                      value={formMatiereId}
+                      onChange={(e) => setFormMatiereId(e.target.value)}
+                      className="w-full text-xs sm:text-sm border border-slate-200/90 rounded-lg px-3 py-2.5 bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#0f2744]"
+                    >
+                      {availableMatieres.length === 0 ? (
+                        <option value="">Aucune matière attribuée pour cette classe</option>
+                      ) : (
+                        availableMatieres.map((m) => (
+                          <option key={m.id} value={m.id}>{m.code} — {m.name}</option>
+                        ))
+                      )}
+                    </select>
+                  </div>
                 </div>
 
                 <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">

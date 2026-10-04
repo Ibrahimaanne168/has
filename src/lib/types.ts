@@ -106,6 +106,25 @@ export interface EmploiDuTemps {
   classe?: Classe;
 }
 
+export type JourSemaine = "Lundi" | "Mardi" | "Mercredi" | "Jeudi" | "Vendredi" | "Samedi";
+
+export interface SeanceEDT {
+  id: string;
+  classe_id: string;
+  jour: JourSemaine;
+  heure_debut: string; // ex: "08:00"
+  heure_fin: string;   // ex: "10:00"
+  matiere_nom: string;
+  matiere_code: string;
+  professeur_nom: string;
+  professeur_id?: string;
+  salle: string;
+  meet_url?: string | null;
+  semaine?: string;
+  type_seance?: "CM" | "TD" | "TP";
+  created_at: string;
+}
+
 export interface Communique {
   id: string;
   title: string;

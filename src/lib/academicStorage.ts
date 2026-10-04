@@ -1,5 +1,17 @@
-import { Cours, EmploiDuTemps, Communique, ChatSalon, Professeur, Message, UserRole } from "./types";
-import { MOCK_PROFESSEURS } from "./data/mock-data";
+import {
+  Cours,
+  EmploiDuTemps,
+  Communique,
+  ChatSalon,
+  Professeur,
+  Message,
+  UserRole,
+  Filiere,
+  Classe,
+  Matiere,
+  SeanceEDT,
+} from "./types";
+import { MOCK_PROFESSEURS, MOCK_FILIERES, MOCK_CLASSES, MOCK_MATIERES } from "./data/mock-data";
 
 const STORAGE_KEYS = {
   COURS: "has_academic_courses_v1",
@@ -8,6 +20,10 @@ const STORAGE_KEYS = {
   PROFESSEURS: "has_academic_professeurs_v2",
   SALONS: "has_academic_salons_v1",
   MESSAGES: "has_academic_direct_messages_v1",
+  FILIERES: "has_academic_filieres_v2",
+  CLASSES: "has_academic_classes_v2",
+  MATIERES: "has_academic_matieres_v2",
+  SEANCES_EDT: "has_academic_seances_edt_v1",
 };
 
 export const DEFAULT_SALONS: ChatSalon[] = [
@@ -225,4 +241,192 @@ export function markDirectMessageRead(id: string): void {
   const list = getStoredDirectMessages();
   const updated = list.map((m) => (m.id === id ? { ...m, is_read: true } : m));
   setStorageItem(STORAGE_KEYS.MESSAGES, updated);
+}
+
+// === GÉNÉRATEUR DE LIENS GOOGLE MEET (https://meet.google.com/xxx-xxxx-xxx) ===
+export function generateMeetLink(): string {
+  const chars = "abcdefghijklmnopqrstuvwxyz";
+  const seg = (n: number) =>
+    Array.from({ length: n }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
+  return `https://meet.google.com/${seg(3)}-${seg(4)}-${seg(3)}`;
+}
+
+// === GESTION DES FILIÈRES (PERSISTÉ EN LOCALSTORAGE - 3 FILIÈRES OFFICIELLES) ===
+export function getStoredFilieres(): Filiere[] {
+  const list = getStorageItem<Filiere[]>(STORAGE_KEYS.FILIERES, MOCK_FILIERES);
+  // Filtrer impérativement toute ancienne trace de PRÉPA
+  const cleaned = list.filter((f) => f.code !== "PRÉPA" && f.id !== "44444444-4444-4444-4444-444444444444");
+  return cleaned.length > 0 ? cleaned : MOCK_FILIERES;
+}
+
+export function saveFiliere(filiere: Filiere): void {
+  const list = getStoredFilieres();
+  const index = list.findIndex((f) => f.id === filiere.id);
+  if (index >= 0) {
+    list[index] = filiere;
+  } else {
+    list.unshift(filiere);
+  }
+  setStorageItem(STORAGE_KEYS.FILIERES, list);
+}
+
+export function deleteFiliere(id: string): void {
+  const list = getStoredFilieres().filter((f) => f.id !== id);
+  setStorageItem(STORAGE_KEYS.FILIERES, list);
+}
+
+// === GESTION DES CLASSES (PERSISTÉ EN LOCALSTORAGE) ===
+export function getStoredClasses(): Classe[] {
+  return getStorageItem<Classe[]>(STORAGE_KEYS.CLASSES, MOCK_CLASSES);
+}
+
+export function saveClasse(cls: Classe): void {
+  const list = getStoredClasses();
+  const index = list.findIndex((c) => c.id === cls.id);
+  if (index >= 0) {
+    list[index] = cls;
+  } else {
+    list.unshift(cls);
+  }
+  setStorageItem(STORAGE_KEYS.CLASSES, list);
+}
+
+export function deleteClasse(id: string): void {
+  const list = getStoredClasses().filter((c) => c.id !== id);
+  setStorageItem(STORAGE_KEYS.CLASSES, list);
+}
+
+// === GESTION DES MATIÈRES (PERSISTÉ EN LOCALSTORAGE) ===
+export function getStoredMatieres(): Matiere[] {
+  return getStorageItem<Matiere[]>(STORAGE_KEYS.MATIERES, MOCK_MATIERES);
+}
+
+export function saveMatiere(mat: Matiere): void {
+  const list = getStoredMatieres();
+  const index = list.findIndex((m) => m.id === mat.id);
+  if (index >= 0) {
+    list[index] = mat;
+  } else {
+    list.unshift(mat);
+  }
+  setStorageItem(STORAGE_KEYS.MATIERES, list);
+}
+
+export function deleteMatiere(id: string): void {
+  const list = getStoredMatieres().filter((m) => m.id !== id);
+  setStorageItem(STORAGE_KEYS.MATIERES, list);
+}
+
+// === GESTION DES SÉANCES D'EMPLOI DU TEMPS (GRILLE HEBDOMADAIRE EN TEMPS RÉEL + MEET) ===
+export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [
+  {
+    id: "seance-1",
+    classe_id: "cls-l1-mpi",
+    jour: "Lundi",
+    heure_debut: "08:30",
+    heure_fin: "10:30",
+    matiere_nom: "Analyse 1",
+    matiere_code: "ANA-1",
+    professeur_nom: "Pape Ibrahima Samb",
+    professeur_id: "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
+    salle: "Amphi Pasteur",
+    meet_url: "https://meet.google.com/has-ana1-l1m",
+    type_seance: "CM",
+    created_at: "2026-09-01T08:00:00Z",
+  },
+  {
+    id: "seance-2",
+    classe_id: "cls-l1-mpi",
+    jour: "Lundi",
+    heure_debut: "11:00",
+    heure_fin: "13:00",
+    matiere_nom: "Algèbre 1",
+    matiere_code: "ALG-1",
+    professeur_nom: "Pape Ibrahima Samb",
+    professeur_id: "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
+    salle: "Salle 102",
+    meet_url: "https://meet.google.com/has-alg1-l1m",
+    type_seance: "TD",
+    created_at: "2026-09-01T08:00:00Z",
+  },
+  {
+    id: "seance-3",
+    classe_id: "cls-l1-mpi",
+    jour: "Mardi",
+    heure_debut: "09:00",
+    heure_fin: "12:00",
+    matiere_nom: "Programmation Python",
+    matiere_code: "PROG-PY",
+    professeur_nom: "Ibrahima Anne",
+    professeur_id: "32e74ddd-3e79-410a-8a87-4bfdff1fc099",
+    salle: "Laboratoire Info 1",
+    meet_url: "https://meet.google.com/has-pyth-lab",
+    type_seance: "TP",
+    created_at: "2026-09-01T08:00:00Z",
+  },
+  {
+    id: "seance-4",
+    classe_id: "cls-l1-mpi",
+    jour: "Mercredi",
+    heure_debut: "10:00",
+    heure_fin: "12:00",
+    matiere_nom: "Mécanique du point",
+    matiere_code: "MEC-PT",
+    professeur_nom: "Pape Ibrahima Samb",
+    professeur_id: "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
+    salle: "Salle 204",
+    meet_url: "https://meet.google.com/has-meca-pt1",
+    type_seance: "CM",
+    created_at: "2026-09-01T08:00:00Z",
+  },
+  {
+    id: "seance-5",
+    classe_id: "cls-l1-mpi",
+    jour: "Jeudi",
+    heure_debut: "14:00",
+    heure_fin: "16:00",
+    matiere_nom: "Electricité",
+    matiere_code: "ELEC",
+    professeur_nom: "Pape Ibrahima Samb",
+    professeur_id: "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
+    salle: "Salle 103",
+    meet_url: "https://meet.google.com/has-elec-sem",
+    type_seance: "TD",
+    created_at: "2026-09-01T08:00:00Z",
+  },
+  {
+    id: "seance-6",
+    classe_id: "cls-l2-mpi",
+    jour: "Lundi",
+    heure_debut: "14:00",
+    heure_fin: "16:30",
+    matiere_nom: "Analyse 3",
+    matiere_code: "ANA-3",
+    professeur_nom: "Pape Ibrahima Samb",
+    professeur_id: "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
+    salle: "Amphi Turing",
+    meet_url: "https://meet.google.com/has-ana3-l2m",
+    type_seance: "CM",
+    created_at: "2026-09-01T08:00:00Z",
+  },
+];
+
+export function getStoredSeancesEDT(): SeanceEDT[] {
+  return getStorageItem<SeanceEDT[]>(STORAGE_KEYS.SEANCES_EDT, DEFAULT_SEANCES_EDT);
+}
+
+export function saveSeanceEDT(seance: SeanceEDT): void {
+  const list = getStoredSeancesEDT();
+  const index = list.findIndex((s) => s.id === seance.id);
+  if (index >= 0) {
+    list[index] = seance;
+  } else {
+    list.push(seance);
+  }
+  setStorageItem(STORAGE_KEYS.SEANCES_EDT, list);
+}
+
+export function deleteSeanceEDT(id: string): void {
+  const list = getStoredSeancesEDT().filter((s) => s.id !== id);
+  setStorageItem(STORAGE_KEYS.SEANCES_EDT, list);
 }

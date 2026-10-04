@@ -4,7 +4,7 @@ export const MOCK_FILIERES: Filiere[] = [
   {
     id: "11111111-1111-1111-1111-111111111111",
     code: "MPI",
-    name: "Renforcement MPI (Maths, Physique, Informatique)",
+    name: "Mathématiques Physique et Informatique",
     description:
       "Formation intensive axée sur l'analyse, l'algèbre linéaire, l'électromagnétisme, la thermodynamique et l'algorithmique programmée en Python/C.",
     cycle: "Tutorat Supérieur L1-L3",
@@ -14,9 +14,9 @@ export const MOCK_FILIERES: Filiere[] = [
   {
     id: "22222222-2222-2222-2222-222222222222",
     code: "SML",
-    name: "Renforcement SML (Sciences de la Matière & Logiciel)",
+    name: "Science de la mer et du Littoral",
     description:
-      "Perfectionnement méthodique en chimie physique, mécanique analytique, instrumentation numérique et outils logiciels pour scientifiques.",
+      "Perfectionnement méthodique en sciences marines, dynamique côtière, océanographie physique et instrumentation scientifique.",
     cycle: "Tutorat Supérieur L1-L3",
     duration_years: 1,
     icon: "zap",
@@ -24,22 +24,12 @@ export const MOCK_FILIERES: Filiere[] = [
   {
     id: "33333333-3333-3333-3333-333333333333",
     code: "MIASS",
-    name: "Renforcement MIASS (Maths & Informatique Appliquées)",
+    name: "Mathématiques et Informatique Appliquées aux Sciences Sociales",
     description:
       "Modélisation quantitative, probabilités/statistiques inférentielles, économétrie, analyse de données et bases de données relationnelles SQL.",
     cycle: "Tutorat Supérieur & Éco-Gestion",
     duration_years: 1,
     icon: "trending-up",
-  },
-  {
-    id: "44444444-4444-4444-4444-444444444444",
-    code: "PRÉPA",
-    name: "Prépa Concours d'Ingénieurs & Santé (PASS/LAS)",
-    description:
-      "Coaching d'excellence pour concours sélectifs, entraînement intensif sur annales d'examens antérieurs et simulations d'épreuves orales.",
-    cycle: "Prépa Concours & Santé",
-    duration_years: 1,
-    icon: "award",
   },
 ];
 
@@ -48,7 +38,7 @@ export const MOCK_CLASSES: Classe[] = [
     id: "cls-l1-mpi",
     filiere_id: "11111111-1111-1111-1111-111111111111",
     code: "L1-MPI",
-    name: "Licence 1 — MPI (Maths, Physique, Informatique)",
+    name: "Licence 1 — MPI (Mathématiques Physique et Informatique)",
     niveau: "L1",
     annee_scolaire: "2024-2025",
   },
@@ -56,7 +46,7 @@ export const MOCK_CLASSES: Classe[] = [
     id: "cls-l2-mpi",
     filiere_id: "11111111-1111-1111-1111-111111111111",
     code: "L2-MPI",
-    name: "Licence 2 — MPI (Maths, Physique, Informatique)",
+    name: "Licence 2 — MPI (Mathématiques Physique et Informatique)",
     niveau: "L2",
     annee_scolaire: "2024-2025",
   },
@@ -64,7 +54,7 @@ export const MOCK_CLASSES: Classe[] = [
     id: "cls-l1-sml",
     filiere_id: "22222222-2222-2222-2222-222222222222",
     code: "L1-SML",
-    name: "Licence 1 — SML (Sciences de la Matière & Logiciel)",
+    name: "Licence 1 — SML (Science de la mer et du Littoral)",
     niveau: "L1",
     annee_scolaire: "2024-2025",
   },
@@ -72,7 +62,7 @@ export const MOCK_CLASSES: Classe[] = [
     id: "cls-l2-sml",
     filiere_id: "22222222-2222-2222-2222-222222222222",
     code: "L2-SML",
-    name: "Licence 2 — SML (Sciences de la Matière & Logiciel)",
+    name: "Licence 2 — SML (Science de la mer et du Littoral)",
     niveau: "L2",
     annee_scolaire: "2024-2025",
   },
@@ -80,7 +70,7 @@ export const MOCK_CLASSES: Classe[] = [
     id: "cls-l1-miass",
     filiere_id: "33333333-3333-3333-3333-333333333333",
     code: "L1-MIASS",
-    name: "Licence 1 — MIASS (Maths & Info Appliquées)",
+    name: "Licence 1 — MIASS (Mathématiques et Informatique Appliquées aux Sciences Sociales)",
     niveau: "L1",
     annee_scolaire: "2024-2025",
   },
@@ -88,7 +78,7 @@ export const MOCK_CLASSES: Classe[] = [
     id: "cls-l2-miass",
     filiere_id: "33333333-3333-3333-3333-333333333333",
     code: "L2-MIASS",
-    name: "Licence 2 — MIASS (Maths & Info Appliquées)",
+    name: "Licence 2 — MIASS (Mathématiques et Informatique Appliquées aux Sciences Sociales)",
     niveau: "L2",
     annee_scolaire: "2024-2025",
   },

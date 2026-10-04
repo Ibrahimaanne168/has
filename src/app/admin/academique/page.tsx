@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Sliders, Plus, Trash2, Edit2, BookOpen, Building, Zap, TrendingUp,
   CheckCircle2, AlertCircle, X, Save, Cpu,
@@ -9,21 +9,30 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Badge } from "@/components/ui/Badge";
-import { MOCK_FILIERES, MOCK_CLASSES, MOCK_MATIERES } from "@/lib/data/mock-data";
 import { Filiere, Classe, Matiere } from "@/lib/types";
+import {
+  getStoredFilieres,
+  saveFiliere,
+  deleteFiliere,
+  getStoredClasses,
+  saveClasse,
+  deleteClasse,
+  getStoredMatieres,
+  saveMatiere,
+  deleteMatiere,
+} from "@/lib/academicStorage";
 
 const FILIERE_ICONS: Record<string, React.ReactNode> = {
   MPI: <Cpu className="w-5 h-5" />,
   SML: <Building className="w-5 h-5" />,
   MIASS: <TrendingUp className="w-5 h-5" />,
-  PRÉPA: <Zap className="w-5 h-5" />,
 };
 
 export default function AdminAcademiquePage() {
   const [tab, setTab] = useState<"filieres" | "classes" | "matieres">("filieres");
-  const [filieres, setFilieres] = useState<Filiere[]>(MOCK_FILIERES);
-  const [classes, setClasses] = useState<Classe[]>(MOCK_CLASSES);
-  const [matieres, setMatieres] = useState<Matiere[]>(MOCK_MATIERES);
+  const [filieres, setFilieres] = useState<Filiere[]>([]);
+  const [classes, setClasses] = useState<Classe[]>([]);
+  const [matieres, setMatieres] = useState<Matiere[]>([]);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<{ id: string; type: string; name: string } | null>(null);
 
@@ -40,13 +49,31 @@ export default function AdminAcademiquePage() {
   const [classeCode, setClasseCode] = useState("");
   const [classeName, setClasseName] = useState("");
   const [classeNiveau, setClasseNiveau] = useState<"L1" | "L2">("L1");
-  const [classeFiliereId, setClasseFiliereId] = useState(MOCK_FILIERES[0]?.id || "");
+  const [classeFiliereId, setClasseFiliereId] = useState("");
 
   const [matiereCode, setMatiereCode] = useState("");
   const [matiereName, setMatiereName] = useState("");
   const [matiereCoeff, setMatiereCoeff] = useState("3");
   const [matiereEcts, setMatiereEcts] = useState("5");
-  const [matiereFiliereId, setMatiereFiliereId] = useState(MOCK_FILIERES[0]?.id || "");
+  const [matiereFiliereId, setMatiereFiliereId] = useState("");
+
+  const reloadData = () => {
+    const fList = getStoredFilieres();
+    const cList = getStoredClasses();
+    const mList = getStoredMatieres();
+    setFilieres(fList);
+    setClasses(cList);
+    setMatieres(mList);
+    if (!classeFiliereId && fList.length > 0) setClasseFiliereId(fList[0].id);
+    if (!matiereFiliereId && fList.length > 0) setMatiereFiliereId(fList[0].id);
+  };
+
+  useEffect(() => {
+    reloadData();
+    const handleUpdate = () => reloadData();
+    window.addEventListener("has_academic_storage_updated", handleUpdate);
+    return () => window.removeEventListener("has_academic_storage_updated", handleUpdate);
+  }, []);
 
   const showSuccess = (msg: string) => { setSuccessMsg(msg); setTimeout(() => setSuccessMsg(null), 3500); };
 
@@ -62,7 +89,8 @@ export default function AdminAcademiquePage() {
       duration_years: 2,
       icon: "cpu",
     };
-    setFilieres((prev) => [newF, ...prev]);
+    saveFiliere(newF);
+    reloadData();
     setFiliereModal(false);
     setFiliereCode(""); setFiliereName(""); setFiliereDesc("");
     showSuccess(`La filière ${newF.code} a été ajoutée.`);
@@ -73,13 +101,14 @@ export default function AdminAcademiquePage() {
     if (!classeCode.trim() || !classeName.trim()) return;
     const newC: Classe = {
       id: `cls-${Date.now()}`,
-      filiere_id: classeFiliereId,
+      filiere_id: classeFiliereId || filieres[0]?.id || "",
       code: classeCode.toUpperCase().trim(),
       name: classeName.trim(),
       niveau: classeNiveau,
       annee_scolaire: "2024-2025",
     };
-    setClasses((prev) => [newC, ...prev]);
+    saveClasse(newC);
+    reloadData();
     setClasseModal(false);
     setClasseCode(""); setClasseName("");
     showSuccess(`La classe ${newC.code} (${newC.niveau}) a été ajoutée.`);
@@ -90,35 +119,39 @@ export default function AdminAcademiquePage() {
     if (!matiereCode.trim() || !matiereName.trim()) return;
     const newM: Matiere = {
       id: `mat-${Date.now()}`,
-      filiere_id: matiereFiliereId,
+      filiere_id: matiereFiliereId || filieres[0]?.id || "",
       code: matiereCode.toUpperCase().trim(),
       name: matiereName.trim(),
       coefficient: parseInt(matiereCoeff, 10) || 3,
       credits_ects: parseInt(matiereEcts, 10) || 5,
       description: "Module d'enseignement académique conforme à la maquette.",
     };
-    setMatieres((prev) => [newM, ...prev]);
+    saveMatiere(newM);
+    reloadData();
     setMatiereModal(false);
     setMatiereCode(""); setMatiereName("");
     showSuccess(`La matière ${newM.name} (${newM.code}) a été ajoutée.`);
   };
 
   const handleDeleteFiliere = (id: string) => {
-    setFilieres((prev) => prev.filter((f) => f.id !== id));
+    deleteFiliere(id);
+    reloadData();
     setDeleteConfirm(null);
-    showSuccess("La filière a été supprimée.");
+    showSuccess("La filière a été supprimée définitivement.");
   };
 
   const handleDeleteClasse = (id: string) => {
-    setClasses((prev) => prev.filter((c) => c.id !== id));
+    deleteClasse(id);
+    reloadData();
     setDeleteConfirm(null);
-    showSuccess("La classe a été supprimée.");
+    showSuccess("La classe a été supprimée définitivement.");
   };
 
   const handleDeleteMatiere = (id: string) => {
-    setMatieres((prev) => prev.filter((m) => m.id !== id));
+    deleteMatiere(id);
+    reloadData();
     setDeleteConfirm(null);
-    showSuccess("La matière a été supprimée.");
+    showSuccess("La matière a été supprimée définitivement.");
   };
 
   return (
