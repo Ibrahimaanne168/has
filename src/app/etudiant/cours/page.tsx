@@ -208,7 +208,8 @@ export default function EtudiantCoursPage() {
                       <Download className="w-3.5 h-3.5" />
                       Télécharger le PDF
                     </a>
-                  </CardFooter>
+                  ) : null}
+                </CardFooter>
               </Card>
             ))}
           </div>
