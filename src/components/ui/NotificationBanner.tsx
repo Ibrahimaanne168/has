@@ -1,9 +1,4 @@
 "use client";
-/**
- * NotificationBanner – HAS University
- * Invite l'utilisateur à activer les notifications push au premier chargement.
- * S'affiche uniquement si la permission n'est pas encore accordée ou refusée.
- */
 
 import React, { useEffect, useState } from "react";
 import { Bell, X, CheckCircle2 } from "lucide-react";
@@ -16,7 +11,6 @@ export function NotificationBanner() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (!("Notification" in window) || !("serviceWorker" in navigator)) return;
-    // Show only if permission not yet decided
     if (Notification.permission === "default") {
       setVisible(true);
     }
@@ -54,16 +48,16 @@ export function NotificationBanner() {
         <div className="flex-1">
           <p className="text-sm font-bold leading-tight mb-0.5">Activer les notifications</p>
           <p className="text-xs text-white/70 leading-snug">
-            Soyez alerté dès qu&apos;un cours, un EDT ou un communiqué est publié.
+            Soyez notifiÃ© dÃ¨s qu&apos;un cours, un EDT ou un communiquÃ© est publiÃ©.
           </p>
 
           {status === "granted" && (
             <p className="mt-1.5 text-xs text-emerald-400 flex items-center gap-1">
-              <CheckCircle2 className="w-3.5 h-3.5" /> Notifications activées !
+              <CheckCircle2 className="w-3.5 h-3.5" /> Notifications activÃ©es !
             </p>
           )}
           {status === "denied" && (
-            <p className="mt-1.5 text-xs text-red-400">Permission refusée.</p>
+            <p className="mt-1.5 text-xs text-red-400">Permission refusÃ©e.</p>
           )}
 
           {status === "idle" && (
@@ -86,7 +80,7 @@ export function NotificationBanner() {
           )}
 
           {status === "loading" && (
-            <p className="mt-2 text-xs text-white/60 animate-pulse">Activation en cours…</p>
+            <p className="mt-2 text-xs text-white/60 animate-pulse">Activation en cours...</p>
           )}
         </div>
 

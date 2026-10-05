@@ -1,7 +1,8 @@
 "use client";
+
 /**
- * useNotifications � Hook HAS University
- * G�re l'inscription aux notifications push (Service Worker + Notification API)
+ * useNotifications - Hook HAS University
+ * Gere l'inscription aux notifications push (Service Worker + Notification API)
  * et l'envoi de notifications locales directement via le SW.
  */
 
@@ -15,17 +16,15 @@ export interface HASNotifPayload {
   tag?: string;
 }
 
-/** Enregistre le service worker et demande la permission � l'utilisateur */
+/** Enregistre le service worker et demande la permission a l'utilisateur */
 export async function registerPushNotifications(): Promise<boolean> {
   if (typeof window === "undefined") return false;
   if (!("Notification" in window) || !("serviceWorker" in navigator)) return false;
 
-  // Demande la permission si pas encore accord�e
   const permission = await Notification.requestPermission();
   if (permission !== "granted") return false;
 
   try {
-    // Enregistrer le SW si ce n'est pas d�j� fait
     await navigator.serviceWorker.register("/sw.js", { scope: "/" });
     return true;
   } catch (err) {
@@ -34,14 +33,14 @@ export async function registerPushNotifications(): Promise<boolean> {
   }
 }
 
-/** V�rifie si les notifications sont autoris�es */
+/** Verifie si les notifications sont autorisees */
 export function areNotificationsGranted(): boolean {
   if (typeof window === "undefined") return false;
   return "Notification" in window && Notification.permission === "granted";
 }
 
 /**
- * Envoie une notification locale via le Service Worker enregistr�.
+ * Envoie une notification locale via le Service Worker enregistre.
  * Si le SW n'est pas disponible, utilise Notification() directement.
  */
 export async function sendLocalNotification(payload: HASNotifPayload): Promise<void> {
@@ -51,18 +50,17 @@ export async function sendLocalNotification(payload: HASNotifPayload): Promise<v
 
   try {
     const reg = await navigator.serviceWorker.ready;
-    await reg.showNotification(title, {
+    const options: NotificationOptions & Record<string, unknown> = {
       body,
       icon: "/favicon.ico",
       badge: "/favicon.ico",
       tag,
       renotify: true,
       data: { url },
-      // @ts-expect-error � vibrate not in all TS typings
       vibrate: [200, 100, 200],
-    });
+    };
+    await reg.showNotification(title, options);
   } catch {
-    // Fallback
     new Notification(title, { body, tag });
   }
 }
