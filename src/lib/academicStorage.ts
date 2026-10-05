@@ -186,8 +186,8 @@ export function getAccessibleSalons(
   _userClasse?: string,
   _profClasses?: string[]
 ): ChatSalon[] {
-  // Exactement 2 chats : Licence 1 et Licence 2
-  return DEFAULT_SALONS;
+  const stored = getStoredSalons();
+  return stored.length > 0 ? stored : DEFAULT_SALONS;
 }
 
 /**
@@ -336,6 +336,19 @@ export function saveMatiere(mat: Matiere): void {
 export function deleteMatiere(id: string): void {
   const list = getStoredMatieres().filter((m) => m.id !== id);
   setStorageItem(STORAGE_KEYS.MATIERES, list);
+}
+
+/**
+ * Génère automatiquement le prochain code matière au format MAT001, MAT002...
+ */
+export function getNextMatiereCode(): string {
+  const matieres = getStoredMatieres();
+  const existingCodes = new Set(matieres.map((m) => m.code?.toUpperCase().trim()));
+  let count = 1;
+  while (existingCodes.has(`MAT${String(count).padStart(3, "0")}`)) {
+    count++;
+  }
+  return `MAT${String(count).padStart(3, "0")}`;
 }
 
 /**

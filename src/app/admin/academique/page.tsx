@@ -20,6 +20,7 @@ import {
   getStoredMatieres,
   saveMatiere,
   deleteMatiere,
+  getNextMatiereCode,
 } from "@/lib/academicStorage";
 
 const FILIERE_ICONS: Record<string, React.ReactNode> = {
@@ -51,54 +52,71 @@ export default function AdminAcademiquePage() {
   const [classeNiveau, setClasseNiveau] = useState<"L1" | "L2">("L1");
   const [classeFiliereId, setClasseFiliereId] = useState("");
 
-  const [matiereCode, setMatiereCode] = useState("");
+  // Matière : simple nom, niveau (L1 ou L2) et classes concernées (code MAT001 automatique, pas d'ects ni coeff ni filiere)
+  const [autoMatiereCode, setAutoMatiereCode] = useState("MAT001");
   const [matiereName, setMatiereName] = useState("");
-  const [matiereCoeff, setMatiereCoeff] = useState("3");
-  const [matiereEcts, setMatiereEcts] = useState("5");
-  const [matiereFiliereId, setMatiereFiliereId] = useState("");
+  const [matiereNiveau, setMatiereNiveau] = useState<"L1" | "L2">("L1");
   const [matiereClasses, setMatiereClasses] = useState<string[]>(["L1-MPI", "L1-SML", "L1-MIASS"]);
 
   // Edit matière
   const [editMatiereId, setEditMatiereId] = useState<string | null>(null);
   const [editMatiereModal, setEditMatiereModal] = useState(false);
 
+  const openAddMatiereModal = () => {
+    const nextCode = getNextMatiereCode();
+    setAutoMatiereCode(nextCode);
+    setMatiereName("");
+    setMatiereNiveau("L1");
+    const l1Cls = classes.filter((c) => c.niveau === "L1").map((c) => c.code);
+    setMatiereClasses(l1Cls.length > 0 ? l1Cls : ["L1-MPI", "L1-SML", "L1-MIASS"]);
+    setMatiereModal(true);
+  };
+
+  const handleNiveauChange = (newNiv: "L1" | "L2") => {
+    setMatiereNiveau(newNiv);
+    const targetCls = classes.filter((c) => c.niveau === newNiv).map((c) => c.code);
+    const fallback = newNiv === "L1" ? ["L1-MPI", "L1-SML", "L1-MIASS"] : ["L2-MPI", "L2-SML", "L2-MIASS"];
+    setMatiereClasses(targetCls.length > 0 ? targetCls : fallback);
+  };
+
   const openEditMatiere = (m: Matiere) => {
     setEditMatiereId(m.id);
-    setMatiereCode(m.code);
+    setAutoMatiereCode(m.code);
     setMatiereName(m.name);
-    setMatiereCoeff(String(m.coefficient));
-    setMatiereEcts(String(m.credits_ects));
-    setMatiereFiliereId(m.filiere_id || "");
-    setMatiereClasses(m.classes || []);
+    const isL2 = m.niveau === "L2" || (m.classes || []).some((c) => c.startsWith("L2"));
+    const niv: "L1" | "L2" = isL2 ? "L2" : "L1";
+    setMatiereNiveau(niv);
+    setMatiereClasses(m.classes || (niv === "L1" ? ["L1-MPI", "L1-SML", "L1-MIASS"] : ["L2-MPI", "L2-SML", "L2-MIASS"]));
     setEditMatiereModal(true);
   };
 
   const handleSaveEditMatiere = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!matiereCode.trim() || !matiereName.trim() || !editMatiereId) return;
+    if (!matiereName.trim() || !editMatiereId) return;
     if (matiereClasses.length === 0) {
       alert("Veuillez sélectionner au moins une classe concernée.");
       return;
     }
-    const isL1 = matiereClasses.some((c) => c.startsWith("L1"));
-    const isL2 = matiereClasses.some((c) => c.startsWith("L2"));
-    const niveau = isL1 && !isL2 ? "L1" : isL2 && !isL1 ? "L2" : "L1";
+    // Empêcher strictement le mélange L1 et L2
+    const hasL1 = matiereClasses.some((c) => c.startsWith("L1"));
+    const hasL2 = matiereClasses.some((c) => c.startsWith("L2"));
+    if (hasL1 && hasL2) {
+      alert("Impossible d'associer une même matière à la fois en Licence 1 et Licence 2.");
+      return;
+    }
+
     const existing = matieres.find((m) => m.id === editMatiereId);
     const updated: Matiere = {
       ...(existing as Matiere),
-      code: matiereCode.toUpperCase().trim(),
       name: matiereName.trim(),
-      coefficient: parseInt(matiereCoeff, 10) || 3,
-      credits_ects: parseInt(matiereEcts, 10) || 5,
       classes: matiereClasses,
-      filiere_id: matiereFiliereId || filieres[0]?.id || "",
-      niveau,
+      niveau: matiereNiveau,
     };
     saveMatiere(updated);
     reloadData();
     setEditMatiereModal(false);
     setEditMatiereId(null);
-    showSuccess(`Matière "${updated.name}" mise à jour avec succès.`);
+    showSuccess(`Matière "${updated.name}" (${updated.code}) mise à jour avec succès.`);
   };
 
   const reloadData = () => {
@@ -109,7 +127,6 @@ export default function AdminAcademiquePage() {
     setClasses(cList);
     setMatieres(mList);
     if (!classeFiliereId && fList.length > 0) setClasseFiliereId(fList[0].id);
-    if (!matiereFiliereId && fList.length > 0) setMatiereFiliereId(fList[0].id);
   };
 
   useEffect(() => {
@@ -160,32 +177,37 @@ export default function AdminAcademiquePage() {
 
   const handleCreateMatiere = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!matiereCode.trim() || !matiereName.trim()) return;
+    if (!matiereName.trim()) return;
     if (matiereClasses.length === 0) {
       alert("Veuillez sélectionner au moins une classe concernée par cette matière.");
       return;
     }
-    const isL1 = matiereClasses.some((c) => c.startsWith("L1"));
-    const isL2 = matiereClasses.some((c) => c.startsWith("L2"));
-    const niveau = isL1 && !isL2 ? "L1" : isL2 && !isL1 ? "L2" : "L1";
+    // Empêcher strictement le mélange L1 et L2
+    const hasL1 = matiereClasses.some((c) => c.startsWith("L1"));
+    const hasL2 = matiereClasses.some((c) => c.startsWith("L2"));
+    if (hasL1 && hasL2) {
+      alert("Impossible d'associer une même matière à la fois en Licence 1 et Licence 2.");
+      return;
+    }
+
+    const assignedCode = autoMatiereCode || getNextMatiereCode();
 
     const newM: Matiere = {
       id: `mat-${Date.now()}`,
-      filiere_id: matiereFiliereId || filieres[0]?.id || "",
-      code: matiereCode.toUpperCase().trim(),
+      filiere_id: filieres[0]?.id || "",
+      code: assignedCode,
       name: matiereName.trim(),
-      coefficient: parseInt(matiereCoeff, 10) || 3,
-      credits_ects: parseInt(matiereEcts, 10) || 5,
+      coefficient: 3,
+      credits_ects: 5,
       classes: matiereClasses,
-      niveau,
-      description: "Module d'enseignement académique conforme à la maquette.",
+      niveau: matiereNiveau,
+      description: `Matière ${matiereName.trim()} pour le niveau ${matiereNiveau}.`,
     };
     saveMatiere(newM);
     reloadData();
     setMatiereModal(false);
-    setMatiereCode(""); setMatiereName("");
-    setMatiereClasses(["L1-MPI", "L1-SML", "L1-MIASS"]);
-    showSuccess(`La matière ${newM.name} (${newM.code}) a été ajoutée.`);
+    setMatiereName("");
+    showSuccess(`La matière « ${newM.name} » a été ajoutée avec le code ${newM.code}.`);
   };
 
   const handleDeleteFiliere = (id: string) => {
@@ -316,10 +338,10 @@ export default function AdminAcademiquePage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-slate-500">
-                  Définissez les matières et associez-les à une ou plusieurs classes (tronc commun L1 ou filière spécifique).
+                  Définissez les matières et associez-les à leurs classes (Licence 1 ou Licence 2, sans mélange de niveau).
                 </p>
               </div>
-              <Button variant="accent" size="sm" onClick={() => setMatiereModal(true)} leftIcon={<Plus className="w-4 h-4" />}>
+              <Button variant="accent" size="sm" onClick={openAddMatiereModal} leftIcon={<Plus className="w-4 h-4" />}>
                 Ajouter une matière
               </Button>
             </div>
@@ -327,28 +349,38 @@ export default function AdminAcademiquePage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    {["Code", "Intitulé", "Classes Concernées", "Actions"].map((h) => (
+                    {["Code", "Intitulé de la matière", "Niveau", "Classes Concernées", "Actions"].map((h) => (
                       <th key={h} className="text-left text-xs font-bold text-slate-500 uppercase tracking-wider px-4 py-3">{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {matieres.map((m) => {
-                    const filiere = filieres.find((f) => f.id === m.filiere_id);
-                    const displayClasses = m.classes && m.classes.length > 0
-                      ? m.classes
-                      : [filiere?.code ? `L1-${filiere.code}` : "L1-MPI"];
+                    const displayClasses = m.classes && m.classes.length > 0 ? m.classes : ["L1-MPI"];
+                    const isL2 = m.niveau === "L2" || displayClasses.some((c) => c.startsWith("L2"));
+                    const niveauLabel = isL2 ? "L2" : "L1";
 
                     return (
                       <tr key={m.id} className="hover:bg-slate-50/50">
                         <td className="px-4 py-3 font-mono text-xs font-bold text-[#e0521c]">{m.code}</td>
                         <td className="px-4 py-3 text-sm font-medium text-slate-900 max-w-xs">{m.name}</td>
                         <td className="px-4 py-3">
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                            niveauLabel === "L1"
+                              ? "bg-blue-50 text-[#0f2744] border border-blue-200"
+                              : "bg-orange-50 text-[#e0521c] border border-orange-200"
+                          }`}>
+                            {niveauLabel === "L1" ? "Licence 1 (L1)" : "Licence 2 (L2)"}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3">
                           <div className="flex flex-wrap gap-1 max-w-xs">
                             {displayClasses.map((cCode) => (
                               <span
                                 key={cCode}
-                                className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-[#0f2744] text-white shadow-2xs"
+                                className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold text-white shadow-2xs ${
+                                  cCode.startsWith("L2") ? "bg-[#e0521c]" : "bg-[#0f2744]"
+                                }`}
                               >
                                 {cCode}
                               </span>
@@ -433,99 +465,133 @@ export default function AdminAcademiquePage() {
           </div>
         )}
 
-        {/* Modal Créer Matière */}
+        {/* Modal Créer Matière (Formulaire ultra-simplifié : nom + choix classes concernées L1 ou L2) */}
         {matiereModal && (
-          <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-slate-200/90 space-y-4 max-h-[90vh] overflow-y-auto">
+          <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+            <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div>
                   <h3 className="font-serif text-lg font-bold text-[#0f2744]">Ajouter une Matière</h3>
-                  <p className="text-xs text-slate-500">Configurez l&apos;intitulé et assignez les classes concernées</p>
+                  <p className="text-xs text-slate-500">Intitulé et sélection des classes concernées</p>
                 </div>
-                <button onClick={() => setMatiereModal(false)} className="text-slate-400 hover:text-slate-700"><X className="w-5 h-5" /></button>
+                <button onClick={() => setMatiereModal(false)} className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100">
+                  <X className="w-5 h-5" />
+                </button>
               </div>
+
               <form onSubmit={handleCreateMatiere} className="space-y-4">
-                <Input label="Code matière" required placeholder="Ex. ANA-1, ELEC, MATH-2..." value={matiereCode} onChange={(e) => setMatiereCode(e.target.value)} />
-                <Input label="Intitulé complet" required placeholder="Ex. Analyse Réelle 1, Électricité..." value={matiereName} onChange={(e) => setMatiereName(e.target.value)} />
-                <div className="grid grid-cols-2 gap-3">
-                  <Input label="Coefficient" type="number" min="1" max="10" required value={matiereCoeff} onChange={(e) => setMatiereCoeff(e.target.value)} />
-                  <Input label="Crédits ECTS" type="number" min="1" max="30" required value={matiereEcts} onChange={(e) => setMatiereEcts(e.target.value)} />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="block text-sm font-medium text-slate-700">Filière de référence</label>
-                  <select value={matiereFiliereId} onChange={(e) => setMatiereFiliereId(e.target.value)} className="w-full text-sm border border-slate-200 rounded-lg p-2.5">
-                    {filieres.map((f) => <option key={f.id} value={f.id}>{f.code} — {f.name}</option>)}
-                  </select>
+                {/* Code matière attribué automatiquement */}
+                <div className="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">Code attribué</span>
+                    <span className="font-mono text-base font-extrabold text-[#e0521c]">{autoMatiereCode}</span>
+                  </div>
+                  <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    Attribué automatiquement
+                  </span>
                 </div>
 
-                {/* Sélecteur de classes concernées / Tronc commun */}
-                <div className="space-y-2 pt-2 border-t border-slate-100">
+                {/* Nom de la matière */}
+                <Input
+                  label="Nom de la matière"
+                  required
+                  placeholder="Ex. Algèbre Linéaire, Programmation Web, Électricité..."
+                  value={matiereName}
+                  onChange={(e) => setMatiereName(e.target.value)}
+                />
+
+                {/* Choix du niveau académique : impossible que L1 et L2 partagent la même matière */}
+                <div className="space-y-2">
                   <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-                    Classes concernées (Tronc Commun ou filière) <span className="text-[#e0521c]">*</span>
+                    Niveau d&apos;enseignement <span className="text-[#e0521c]">*</span>
                   </label>
-                  <p className="text-[11px] text-slate-500">
-                    Sélectionnez toutes les classes où cette matière est enseignée.
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => handleNiveauChange("L1")}
+                      className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-xs font-bold transition-all ${
+                        matiereNiveau === "L1"
+                          ? "bg-[#0f2744] text-white border-[#0f2744] shadow-sm"
+                          : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                      }`}
+                    >
+                      <span>🎓 Licence 1 (L1)</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleNiveauChange("L2")}
+                      className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-xs font-bold transition-all ${
+                        matiereNiveau === "L2"
+                          ? "bg-[#0f2744] text-white border-[#0f2744] shadow-sm"
+                          : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                      }`}
+                    >
+                      <span>🎓 Licence 2 (L2)</span>
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-slate-400">
+                    Une matière appartient exclusivement à la Licence 1 ou à la Licence 2 (jamais aux deux niveaux).
                   </p>
-                  
-                  {/* Raccourcis de sélection */}
-                  <div className="flex flex-wrap gap-1.5 pb-1">
+                </div>
+
+                {/* Classes concernées strictement filtrées selon le niveau */}
+                <div className="space-y-2 pt-2 border-t border-slate-100">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                      Classes concernées ({matiereNiveau}) <span className="text-[#e0521c]">*</span>
+                    </label>
                     <button
                       type="button"
-                      onClick={() => setMatiereClasses(["L1-MPI", "L1-SML", "L1-MIASS"])}
-                      className="px-2 py-1 text-[11px] font-semibold rounded bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors"
+                      onClick={() => {
+                        const available = classes.filter((c) => c.niveau === matiereNiveau).map((c) => c.code);
+                        setMatiereClasses(available.length > 0 ? available : (matiereNiveau === "L1" ? ["L1-MPI", "L1-SML", "L1-MIASS"] : ["L2-MPI", "L2-SML", "L2-MIASS"]));
+                      }}
+                      className="text-[11px] font-bold text-[#e0521c] hover:underline"
                     >
-                      Tout L1 (Maths 1 &amp; 2)
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setMatiereClasses(["L1-MPI", "L1-SML"])}
-                      className="px-2 py-1 text-[11px] font-semibold rounded bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors"
-                    >
-                      L1 MPI + SML (Électricité)
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setMatiereClasses(["L2-MPI", "L2-SML", "L2-MIASS"])}
-                      className="px-2 py-1 text-[11px] font-semibold rounded bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors"
-                    >
-                      Tout L2
+                      Sélectionner tout {matiereNiveau}
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-3 bg-slate-50 border border-slate-200 rounded-lg">
-                    {classes.map((cls) => {
-                      const checked = matiereClasses.includes(cls.code);
-                      return (
-                        <label
-                          key={cls.id}
-                          className={`flex items-center gap-2 p-2 rounded-md border text-xs font-medium cursor-pointer transition-colors ${
-                            checked
-                              ? "bg-white border-[#0f2744] text-[#0f2744] shadow-2xs font-bold"
-                              : "border-slate-200 text-slate-600 hover:bg-slate-100/60"
-                          }`}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={checked}
-                            onChange={(e) => {
-                              if (e.target.checked) {
-                                setMatiereClasses([...matiereClasses, cls.code]);
-                              } else {
-                                setMatiereClasses(matiereClasses.filter((c) => c !== cls.code));
-                              }
-                            }}
-                            className="rounded border-slate-300 text-[#0f2744] focus:ring-[#0f2744]"
-                          />
-                          <span>{cls.code}</span>
-                        </label>
-                      );
-                    })}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                    {classes
+                      .filter((cls) => cls.niveau === matiereNiveau)
+                      .map((cls) => {
+                        const checked = matiereClasses.includes(cls.code);
+                        return (
+                          <label
+                            key={cls.id}
+                            className={`flex items-center gap-2 p-2.5 rounded-lg border text-xs font-medium cursor-pointer transition-colors ${
+                              checked
+                                ? "bg-white border-[#0f2744] text-[#0f2744] shadow-xs font-bold"
+                                : "border-slate-200 text-slate-600 hover:bg-slate-100/60"
+                            }`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={checked}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setMatiereClasses([...matiereClasses, cls.code]);
+                                } else {
+                                  setMatiereClasses(matiereClasses.filter((c) => c !== cls.code));
+                                }
+                              }}
+                              className="rounded border-slate-300 text-[#0f2744] focus:ring-[#0f2744]"
+                            />
+                            <span>{cls.code}</span>
+                          </label>
+                        );
+                      })}
                   </div>
                 </div>
 
                 <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
-                  <Button type="button" variant="ghost" size="sm" onClick={() => setMatiereModal(false)}>Annuler</Button>
-                  <Button type="submit" variant="accent" size="sm">Créer la matière</Button>
+                  <Button type="button" variant="ghost" size="sm" onClick={() => setMatiereModal(false)}>
+                    Annuler
+                  </Button>
+                  <Button type="submit" variant="accent" size="sm" disabled={!matiereName.trim() || matiereClasses.length === 0}>
+                    Ajouter la matière
+                  </Button>
                 </div>
               </form>
             </div>
@@ -537,7 +603,9 @@ export default function AdminAcademiquePage() {
           <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
             <div className="bg-white rounded-xl max-w-sm w-full p-6 shadow-xl border border-slate-200/90 space-y-4">
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-lg bg-red-50 border border-red-200/80 flex items-center justify-center shrink-0"><AlertCircle className="w-5 h-5 text-red-600" /></div>
+                <div className="w-10 h-10 rounded-lg bg-red-50 border border-red-200/80 flex items-center justify-center shrink-0">
+                  <AlertCircle className="w-5 h-5 text-red-600" />
+                </div>
                 <div>
                   <h3 className="font-serif text-base font-bold text-slate-900">Supprimer « {deleteConfirm.name} »</h3>
                   <p className="text-xs text-slate-600 mt-1">Cette action est irréversible et peut affecter les étudiants et cours associés.</p>
@@ -555,58 +623,127 @@ export default function AdminAcademiquePage() {
           </div>
         )}
 
-        {/* Modal Modifier Matière */}
+        {/* Modal Modifier Matière (Même simplicité : nom et classes L1 ou L2) */}
         {editMatiereModal && (
-          <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-slate-200/90 space-y-4 max-h-[90vh] overflow-y-auto">
+          <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+            <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto">
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                <h3 className="font-serif text-lg font-bold text-[#0f2744]">Modifier la Matière</h3>
-                <button onClick={() => setEditMatiereModal(false)} className="text-slate-400 hover:text-slate-700"><X className="w-5 h-5" /></button>
-              </div>
-              <form onSubmit={handleSaveEditMatiere} className="space-y-4">
-                <div className="grid grid-cols-2 gap-3">
-                  <Input label="Code" required placeholder="Ex. MAT101" value={matiereCode} onChange={(e) => setMatiereCode(e.target.value)} />
-                  <Input label="Coefficient" type="number" required placeholder="3" value={matiereCoeff} onChange={(e) => setMatiereCoeff(e.target.value)} />
+                <div>
+                  <h3 className="font-serif text-lg font-bold text-[#0f2744]">Modifier la Matière</h3>
+                  <p className="text-xs text-slate-500">Intitulé et classes concernées</p>
                 </div>
-                <Input label="Intitulé officiel" required placeholder="Ex. Algèbre Linéaire" value={matiereName} onChange={(e) => setMatiereName(e.target.value)} />
-                <div className="grid grid-cols-2 gap-3">
-                  <Input label="Crédits ECTS" type="number" required placeholder="5" value={matiereEcts} onChange={(e) => setMatiereEcts(e.target.value)} />
-                  <div className="space-y-1.5">
-                    <label className="block text-sm font-medium text-slate-700">Filière principale</label>
-                    <select value={matiereFiliereId} onChange={(e) => setMatiereFiliereId(e.target.value)} className="w-full text-sm border border-slate-200 rounded-lg p-2.5">
-                      <option value="">— Aucune —</option>
-                      {filieres.map((f) => <option key={f.id} value={f.id}>{f.code} — {f.name}</option>)}
-                    </select>
+                <button onClick={() => setEditMatiereModal(false)} className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <form onSubmit={handleSaveEditMatiere} className="space-y-4">
+                {/* Code matière */}
+                <div className="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">Code matière</span>
+                    <span className="font-mono text-base font-extrabold text-[#e0521c]">{autoMatiereCode}</span>
+                  </div>
+                  <span className="text-xs text-slate-400 font-medium">Identifiant unique</span>
+                </div>
+
+                <Input
+                  label="Nom de la matière"
+                  required
+                  placeholder="Ex. Algèbre Linéaire"
+                  value={matiereName}
+                  onChange={(e) => setMatiereName(e.target.value)}
+                />
+
+                {/* Niveau académique */}
+                <div className="space-y-2">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                    Niveau d&apos;enseignement <span className="text-[#e0521c]">*</span>
+                  </label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => handleNiveauChange("L1")}
+                      className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-xs font-bold transition-all ${
+                        matiereNiveau === "L1"
+                          ? "bg-[#0f2744] text-white border-[#0f2744] shadow-sm"
+                          : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                      }`}
+                    >
+                      <span>🎓 Licence 1 (L1)</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleNiveauChange("L2")}
+                      className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-xs font-bold transition-all ${
+                        matiereNiveau === "L2"
+                          ? "bg-[#0f2744] text-white border-[#0f2744] shadow-sm"
+                          : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                      }`}
+                    >
+                      <span>🎓 Licence 2 (L2)</span>
+                    </button>
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-slate-700">Classes concernées par cette matière</label>
-                  <p className="text-[11px] text-slate-500">Cochez toutes les classes qui suivent cette matière.</p>
-                  <div className="grid grid-cols-3 gap-2">
-                    {classes.map((cls) => {
-                      const checked = matiereClasses.includes(cls.code);
-                      return (
-                        <label key={cls.id} className={`flex items-center gap-2 p-2 rounded-md border text-xs font-medium cursor-pointer transition-colors ${
-                          checked ? "bg-[#0f2744]/5 border-[#0f2744] text-[#0f2744] font-bold" : "border-slate-200 text-slate-600 hover:bg-slate-50"
-                        }`}>
-                          <input type="checkbox" checked={checked}
-                            onChange={(e) => {
-                              if (e.target.checked) setMatiereClasses([...matiereClasses, cls.code]);
-                              else setMatiereClasses(matiereClasses.filter((c) => c !== cls.code));
-                            }}
-                            className="rounded border-slate-300 text-[#0f2744] focus:ring-[#0f2744]"
-                          />
-                          <span>{cls.code}</span>
-                        </label>
-                      );
-                    })}
+                {/* Classes concernées strictement selon le niveau */}
+                <div className="space-y-2 pt-2 border-t border-slate-100">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                      Classes concernées ({matiereNiveau}) <span className="text-[#e0521c]">*</span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const available = classes.filter((c) => c.niveau === matiereNiveau).map((c) => c.code);
+                        setMatiereClasses(available.length > 0 ? available : (matiereNiveau === "L1" ? ["L1-MPI", "L1-SML", "L1-MIASS"] : ["L2-MPI", "L2-SML", "L2-MIASS"]));
+                      }}
+                      className="text-[11px] font-bold text-[#e0521c] hover:underline"
+                    >
+                      Sélectionner tout {matiereNiveau}
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                    {classes
+                      .filter((cls) => cls.niveau === matiereNiveau)
+                      .map((cls) => {
+                        const checked = matiereClasses.includes(cls.code);
+                        return (
+                          <label
+                            key={cls.id}
+                            className={`flex items-center gap-2 p-2.5 rounded-lg border text-xs font-medium cursor-pointer transition-colors ${
+                              checked
+                                ? "bg-white border-[#0f2744] text-[#0f2744] shadow-xs font-bold"
+                                : "border-slate-200 text-slate-600 hover:bg-slate-100/60"
+                            }`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={checked}
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  setMatiereClasses([...matiereClasses, cls.code]);
+                                } else {
+                                  setMatiereClasses(matiereClasses.filter((c) => c !== cls.code));
+                                }
+                              }}
+                              className="rounded border-slate-300 text-[#0f2744] focus:ring-[#0f2744]"
+                            />
+                            <span>{cls.code}</span>
+                          </label>
+                        );
+                      })}
                   </div>
                 </div>
 
                 <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
-                  <Button type="button" variant="ghost" size="sm" onClick={() => setEditMatiereModal(false)}>Annuler</Button>
-                  <Button type="submit" variant="accent" size="sm">Enregistrer les modifications</Button>
+                  <Button type="button" variant="ghost" size="sm" onClick={() => setEditMatiereModal(false)}>
+                    Annuler
+                  </Button>
+                  <Button type="submit" variant="accent" size="sm" disabled={!matiereName.trim() || matiereClasses.length === 0}>
+                    Enregistrer les modifications
+                  </Button>
                 </div>
               </form>
             </div>

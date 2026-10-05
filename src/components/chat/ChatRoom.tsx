@@ -8,15 +8,24 @@ import {
   UserCheck,
   GraduationCap,
   MessagesSquare,
-  AlertCircle,
   Hash,
   Sparkles,
   Mic,
   Square,
+  X,
+  ArrowLeft,
+  Maximize2,
+  Minimize2,
+  Search,
+  Users,
+  ChevronDown,
+  Volume2,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { ChatMessage, UserRole } from "@/lib/types";
+import { ChatMessage, ChatSalon, UserRole } from "@/lib/types";
 import { createClient } from "@/lib/supabase/client";
+import { WaterRippleBackground } from "./WaterRippleBackground";
+import { TelegramVoiceNote } from "./TelegramVoiceNote";
 
 interface ChatRoomProps {
   currentUser: {
@@ -29,6 +38,12 @@ interface ChatRoomProps {
   roomId?: string;
   roomTitle?: string;
   roomDescription?: string;
+  // Modal / Popup props
+  isPopup?: boolean;
+  isOpen?: boolean;
+  onClose?: () => void;
+  salons?: ChatSalon[];
+  onSelectSalon?: (salonId: string) => void;
 }
 
 function getWelcomeMessage(salonId: string): ChatMessage {
@@ -36,7 +51,7 @@ function getWelcomeMessage(salonId: string): ChatMessage {
     id: `welcome-${salonId}`,
     user_id: "admin-1",
     salon_id: salonId,
-    content: "Bienvenue !!",
+    content: "Bienvenue dans cet espace d'échanges académiques officiel de Halil Académie Scientifique ! Respectez les règles de courtoisie et d'entraide.",
     is_deleted: false,
     created_at: new Date().toISOString(),
     user: {
@@ -65,14 +80,24 @@ export function ChatRoom({
   roomId = "general",
   roomTitle = "Salon Général de l'Académie",
   roomDescription = "Canal d'échanges officiel en direct de Halil Académie Scientifique",
+  isPopup = false,
+  isOpen = true,
+  onClose,
+  salons,
+  onSelectSalon,
 }: ChatRoomProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [selectedMsgId, setSelectedMsgId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [salonsDropdownOpen, setSalonsDropdownOpen] = useState(false);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   // Voice recording state
   const [isRecording, setIsRecording] = useState(false);
@@ -80,10 +105,19 @@ export function ChatRoom({
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const recordingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const [playingMsgId, setPlayingMsgId] = useState<string | null>(null);
-  const audioRefs = useRef<Record<string, HTMLAudioElement>>({});
 
-  // Fonction utilitaire pour parser un message et son salon
+  // Helper : extraire URL audio d'un contenu vocal
+  const extractVoiceUrl = (content: string): string | null => {
+    const match = content.match(/\[\[voice:(data:audio[^\]]+)\]\]/);
+    return match ? match[1] : null;
+  };
+
+  // Helper : nettoyer le contenu vocal ou sender pour l'affichage textuel
+  const cleanMessageContent = (content: string): string => {
+    return content.replace(/\[\[voice:data:audio[^\]]+\]\]/g, "").trim();
+  };
+
+  // Parse message salon prefix
   const parseMessageSalon = useCallback((rawText: string) => {
     const match = rawText.match(/^\[\[salon:([^\]]+)\]\]\s*([\s\S]*)$/);
     if (match) {
@@ -92,7 +126,7 @@ export function ChatRoom({
     return { salonId: "general", content: rawText };
   }, []);
 
-  // Extrait les métadonnées expéditeur encodées dans le message (id, nom, rôle, email)
+  // Parse sender metadata
   const parseSenderMeta = useCallback((text: string): {
     id: string | null;
     name: string | null;
@@ -100,7 +134,6 @@ export function ChatRoom({
     email: string | null;
     cleanContent: string;
   } => {
-    // Format moderne à 4 éléments : [[sender:ID||NOM||ROLE||EMAIL]]
     const match4 = text.match(/^\[\[sender:([^\|]+)\|\|([^\|]+)\|\|([^\|]+)\|\|([^\]]*)\]\]\s*([\s\S]*)$/);
     if (match4) {
       return {
@@ -111,7 +144,6 @@ export function ChatRoom({
         cleanContent: match4[5].trim(),
       };
     }
-    // Format legacy à 2 éléments : [[sender:NOM||ROLE]]
     const match2 = text.match(/^\[\[sender:([^\|]+)\|\|([^\]]+)\]\]\s*([\s\S]*)$/);
     if (match2) {
       return {
@@ -128,7 +160,6 @@ export function ChatRoom({
   // Charger les messages réels depuis la base Supabase
   const loadRealMessages = useCallback(async () => {
     setIsLoading(true);
-    setErrorMsg(null);
 
     try {
       const supabase = createClient();
@@ -154,9 +185,8 @@ export function ChatRoom({
 
       if (error) {
         console.warn("[CHAT DB ERROR]", error.message);
-        // Fallback local storage si table non joignable
         const localKey = `has_chat_${roomId}_v1`;
-        const localCached = localStorage.getItem(localKey);
+        const localCached = typeof window !== "undefined" ? localStorage.getItem(localKey) : null;
         if (localCached) {
           const parsed: ChatMessage[] = JSON.parse(localCached);
           setMessages(parsed.length > 0 ? parsed : [getWelcomeMessage(roomId)]);
@@ -167,14 +197,11 @@ export function ChatRoom({
       }
 
       if (data) {
-        // Filtrer les messages pour le salon actif
         const roomMessages: ChatMessage[] = [];
 
         for (const item of data) {
           const { salonId, content: rawAfterSalon } = parseMessageSalon(item.message || "");
           if (salonId === roomId || (roomId === "general" && salonId === "general")) {
-
-            // Extraire les métadonnées expéditeur encodées dans le message (source fiable)
             const {
               id: embeddedId,
               name: embeddedName,
@@ -183,7 +210,6 @@ export function ChatRoom({
               cleanContent,
             } = parseSenderMeta(rawAfterSalon);
 
-            // Fallback : jointure DB (peut être incorrecte si user_id ne correspond pas)
             const userObj = item.users as any;
             const dbFullName = userObj
               ? `${userObj.prenom || ""} ${userObj.nom || ""}`.trim() || userObj.email || ""
@@ -195,7 +221,6 @@ export function ChatRoom({
                 ? "professeur"
                 : "etudiant";
 
-            // Priorité : métadonnées embarquées > jointure DB > fallback
             const finalUserId = embeddedId || String(item.user_id);
             const fullName = embeddedName || dbFullName || "Membre HAS";
             const roleName = embeddedRole || dbRole;
@@ -231,12 +256,11 @@ export function ChatRoom({
 
         setMessages(roomMessages.length > 0 ? roomMessages : [getWelcomeMessage(roomId)]);
 
-        // Synchroniser le cache local avec les vrais messages
         try {
           const localKey = `has_chat_${roomId}_v1`;
           localStorage.setItem(localKey, JSON.stringify(roomMessages));
         } catch {
-          // quota dépassé, ignorer
+          // quota
         }
       }
     } catch (err: unknown) {
@@ -250,7 +274,6 @@ export function ChatRoom({
   useEffect(() => {
     loadRealMessages();
 
-    // Abonnement Supabase Realtime
     try {
       const supabase = createClient();
       const channel = supabase
@@ -259,10 +282,6 @@ export function ChatRoom({
           "postgres_changes",
           { event: "INSERT", schema: "public", table: "chat_messages" },
           (payload) => {
-            // NE PAS recharger tous les messages sur INSERT :
-            // le message optimistique (avec le bon nom de l'expéditeur)
-            // est déjà dans le state. On recharge seulement si c'est
-            // un message d'un AUTRE utilisateur (id différent du current user).
             const rawMsg = String((payload.new as any)?.message || "");
             const { id: embId, email: embEmail, name: embName } = parseSenderMeta(rawMsg);
             const insertedUserId = String((payload.new as any)?.user_id);
@@ -293,26 +312,34 @@ export function ChatRoom({
     } catch {
       // Fallback
     }
-  }, [roomId, loadRealMessages]);
+  }, [roomId, loadRealMessages, currentUser, parseSenderMeta]);
 
-  // Défilement automatique vers le bas lors de nouveaux messages
+  // Défilement automatique vers le bas
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Écoute de la touche Échap pour fermer la popup
+  useEffect(() => {
+    if (!isPopup || !isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && onClose) {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isPopup, isOpen, onClose]);
+
+  // Envoyer un message texte
+  const handleSendMessage = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     if (!newMessage.trim() || isSending) return;
 
     setIsSending(true);
-    setErrorMsg(null);
-
     const messageText = newMessage.trim();
     const tempId = `temp-${Date.now()}`;
 
-    // Format avec préfixe de salon + métadonnées expéditeur complètes
-    // Structure: [[salon:ID]][[sender:ID||NOM||ROLE||EMAIL]] CONTENU
-    // Cela garantit la persistance exacte de l'auteur même après reconnexion ou rechargement
     const senderMeta = `[[sender:${currentUser.id}||${currentUser.fullName}||${currentUser.role}||${currentUser.email || ""}]]`;
     const formattedPayload =
       roomId === "general"
@@ -350,52 +377,25 @@ export function ChatRoom({
 
     try {
       const supabase = createClient();
-
-      // Résolution de l'identifiant numérique dans la table users :
-      // admin -> 1, etudiant -> 10 (ou ID étudiant spécifique 12, 13)
       let dbUserId = currentUser.role === "admin" ? 1 : 10;
-      const parsedNumeric = parseInt(currentUser.id, 10);
-      if (!isNaN(parsedNumeric) && parsedNumeric > 0) {
-        dbUserId = parsedNumeric;
-      } else if (currentUser.email) {
-        try {
-          const { data: matchedUser } = await supabase
-            .from("users")
-            .select("id")
-            .eq("email", currentUser.email)
-            .maybeSingle();
-          if (matchedUser?.id) {
-            dbUserId = matchedUser.id;
-          }
-        } catch {
-          // Ignorer
-        }
+      if (currentUser.email) {
+        const { data: u } = await supabase.from("users").select("id").eq("email", currentUser.email).maybeSingle();
+        if (u?.id) dbUserId = u.id;
       }
-
-      if (currentUser.role === "admin") {
-        dbUserId = 1;
-      }
+      if (currentUser.role === "admin") dbUserId = 1;
 
       const { data: inserted, error } = await supabase
         .from("chat_messages")
-        .insert({
-          user_id: dbUserId,
-          message: formattedPayload,
-        })
+        .insert({ user_id: dbUserId, message: formattedPayload })
         .select()
         .single();
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
       if (inserted) {
-        // Mettre à jour l'ID temporaire par le véritable ID de la base
-        // Garder TOUTES les données de l'optimistique (bon nom, bon rôle)
         setMessages((prev) =>
           prev.map((m) => (m.id === tempId ? { ...m, id: String(inserted.id) } : m))
         );
-        // Synchroniser le cache local
         try {
           const localKey = `has_chat_${roomId}_v1`;
           const existing: ChatMessage[] = JSON.parse(localStorage.getItem(localKey) || "[]");
@@ -406,19 +406,17 @@ export function ChatRoom({
       }
     } catch (err: unknown) {
       console.warn("[CHAT SEND ERROR / LOCAL CACHE]", err);
-      // Conserver dans le stockage local si déconnecté
       try {
         const localKey = `has_chat_${roomId}_v1`;
         const existing = JSON.parse(localStorage.getItem(localKey) || "[]");
         localStorage.setItem(localKey, JSON.stringify([...existing, optimisticMessage]));
-      } catch {
-        // Ignorer
-      }
+      } catch { /* ignore */ }
     } finally {
       setIsSending(false);
     }
   };
 
+  // Suppression d'un message pour admin
   const handleDeleteMessage = async (msgId: string) => {
     if (!isAdmin && currentUser.role !== "admin") return;
     setMessages((prev) => prev.filter((m) => m.id !== msgId));
@@ -433,8 +431,8 @@ export function ChatRoom({
       console.warn("[MODERATION CHAT FAIL]", err);
     }
   };
-  // ─── Voice message handlers ──────────────────────────────────────────────
 
+  // ─── Enregistrement vocal façon Telegram ──────────────────────────────────────
   const handleStartRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -449,18 +447,29 @@ export function ChatRoom({
       setRecordingSeconds(0);
       recordingTimerRef.current = setInterval(() => setRecordingSeconds((s) => s + 1), 1000);
     } catch {
-      alert("Impossible d'accéder au microphone. Vérifiez les permissions du navigateur.");
+      alert("Impossible d'accéder au microphone. Vérifiez les autorisations de votre navigateur.");
     }
   };
 
-  const handleStopRecording = () => {
+  const handleCancelRecording = () => {
+    const recorder = mediaRecorderRef.current;
+    if (recorder) {
+      recorder.stop();
+      recorder.stream.getTracks().forEach((t) => t.stop());
+    }
+    if (recordingTimerRef.current) clearInterval(recordingTimerRef.current);
+    audioChunksRef.current = [];
+    setIsRecording(false);
+    setRecordingSeconds(0);
+  };
+
+  const handleStopAndSendRecording = () => {
     const recorder = mediaRecorderRef.current;
     if (!recorder) return;
     recorder.stop();
     recorder.stream.getTracks().forEach((t) => t.stop());
     if (recordingTimerRef.current) clearInterval(recordingTimerRef.current);
     setIsRecording(false);
-    setRecordingSeconds(0);
 
     recorder.onstop = () => {
       const blob = new Blob(audioChunksRef.current, { type: "audio/webm" });
@@ -486,10 +495,17 @@ export function ChatRoom({
             full_name: currentUser.fullName,
             role: currentUser.role,
             email: currentUser.email || "",
-            username: null, phone: null, matricule: null,
-            filiere_id: null, classe_id: null, bio: null,
-            specialite: null, avatar_url: null, is_active: true,
-            created_at: new Date().toISOString(), updated_at: new Date().toISOString(),
+            username: null,
+            phone: null,
+            matricule: null,
+            filiere_id: null,
+            classe_id: null,
+            bio: null,
+            specialite: null,
+            avatar_url: null,
+            is_active: true,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
           },
         };
         setMessages((prev) => [...prev, optimistic]);
@@ -510,20 +526,14 @@ export function ChatRoom({
             .single();
 
           if (inserted) {
-            setMessages((prev) => prev.map((m) => m.id === tempId ? { ...m, id: String(inserted.id) } : m));
+            setMessages((prev) => prev.map((m) => (m.id === tempId ? { ...m, id: String(inserted.id) } : m)));
           }
         } catch {
-          // garder l'optimistique
+          // garder optimistique
         }
       };
       reader.readAsDataURL(blob);
     };
-  };
-
-  // Helper : extraire URL audio d'un contenu vocal
-  const extractVoiceUrl = (content: string): string | null => {
-    const match = content.match(/\[\[voice:(data:audio[^\]]+)\]\]/);
-    return match ? match[1] : null;
   };
 
   const renderRoleBadge = (role?: UserRole) => {
@@ -531,251 +541,482 @@ export function ChatRoom({
       case "admin":
         return (
           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700 border border-purple-200">
-            <ShieldCheck className="w-3 h-3" />
+            <ShieldCheck className="w-3 h-3 text-purple-600" />
             Admin
           </span>
         );
       case "professeur":
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#0f2744]/10 text-[#0f2744] border border-[#0f2744]/20">
-            <GraduationCap className="w-3 h-3" />
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-[#0f2744] border border-[#0f2744]/20">
+            <GraduationCap className="w-3 h-3 text-[#0f2744]" />
             Enseignant
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-100 text-[#e0521c] border border-orange-200">
-            <UserCheck className="w-3 h-3" />
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-50 text-[#e0521c] border border-orange-200">
+            <UserCheck className="w-3 h-3 text-[#e0521c]" />
             Étudiant
           </span>
         );
     }
   };
 
-  // Couleurs par rôle
-  const getRoleStyles = (role: UserRole, isMe: boolean) => {
-    if (role === "admin") return {
-      bubble: isMe ? "bg-purple-700 text-white" : "bg-purple-50 text-purple-900 border border-purple-200",
-      avatar: "bg-purple-600 text-white",
-      name: "text-purple-700",
-    };
-    if (role === "professeur") return {
-      bubble: isMe ? "bg-[#0f2744] text-white" : "bg-blue-50 text-blue-900 border border-blue-200",
-      avatar: "bg-[#0f2744] text-white",
-      name: "text-[#0f2744]",
-    };
+  // Styles visuels des bulles WhatsApp
+  const getBubbleStyles = (role: UserRole, isMe: boolean) => {
+    if (isMe) {
+      return {
+        bubble: "bg-[#0f2744] text-white rounded-tr-none shadow-[0_2px_8px_rgba(15,39,68,0.18)]",
+        name: "text-orange-200",
+        avatar: "bg-[#0f2744] text-white border-2 border-white",
+        accent: "#ffffff",
+      };
+    }
+
+    if (role === "admin") {
+      return {
+        bubble: "bg-white text-slate-800 border border-purple-200 rounded-tl-none shadow-[0_2px_8px_rgba(147,51,234,0.06)]",
+        name: "text-purple-700 font-bold",
+        avatar: "bg-purple-600 text-white",
+        accent: "#7e22ce",
+      };
+    }
+
+    if (role === "professeur") {
+      return {
+        bubble: "bg-white text-slate-800 border border-blue-200/90 rounded-tl-none shadow-[0_2px_8px_rgba(15,39,68,0.06)]",
+        name: "text-[#0f2744] font-bold",
+        avatar: "bg-[#0f2744] text-white",
+        accent: "#0f2744",
+      };
+    }
+
     // etudiant
     return {
-      bubble: isMe ? "bg-[#e0521c] text-white" : "bg-orange-50 text-orange-900 border border-orange-200",
+      bubble: "bg-white text-slate-800 border border-slate-200/90 rounded-tl-none shadow-[0_2px_6px_rgba(0,0,0,0.04)]",
+      name: "text-[#e0521c] font-bold",
       avatar: "bg-[#e0521c] text-white",
-      name: "text-[#e0521c]",
+      accent: "#e0521c",
     };
   };
 
-  return (
-    <div className="bg-white rounded-xl border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] flex flex-col h-[900px] min-h-[700px] overflow-hidden">
-      {/* Header du Chat */}
-      <div className="p-4 sm:p-5 border-b border-slate-200/90 bg-slate-50 flex items-center justify-between">
+  // Filtrage recherche
+  const filteredMessages = searchQuery.trim()
+    ? messages.filter((m) => m.content.toLowerCase().includes(searchQuery.toLowerCase()))
+    : messages;
+
+  if (isPopup && !isOpen) return null;
+
+  const chatContainer = (
+    <div
+      className={`bg-white rounded-2xl flex flex-col overflow-hidden border border-slate-200/90 shadow-2xl relative ${
+        isPopup
+          ? isFullscreen
+            ? "fixed inset-0 z-50 rounded-none w-screen h-screen"
+            : "w-full max-w-6xl h-[92vh] max-h-[960px] mx-auto transition-all duration-300"
+          : "h-[850px] min-h-[680px] w-full"
+      }`}
+    >
+      {/* ─── Top Header WhatsApp ────────────────────────────────────────────── */}
+      <div className="px-4 py-3 sm:px-6 sm:py-3.5 bg-slate-50/95 backdrop-blur-md border-b border-slate-200/90 flex items-center justify-between shrink-0 z-20">
         <div className="flex items-center gap-3 min-w-0">
-          <div className="w-10 h-10 rounded-lg bg-[#0f2744] text-white flex items-center justify-center shrink-0">
-            <MessagesSquare className="w-5 h-5 text-[#e0521c]" />
+          {/* Bouton retour / fermer WhatsApp */}
+          {onClose && (
+            <button
+              type="button"
+              onClick={onClose}
+              title="Fermer le chat"
+              className="p-2 -ml-1 text-slate-600 hover:text-slate-900 hover:bg-slate-200/70 rounded-full transition-colors flex items-center justify-center shrink-0"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+          )}
+
+          {/* Avatar du salon avec ondulation circulaire */}
+          <div className="relative shrink-0">
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-gradient-to-tr from-[#0f2744] to-[#1e3a5f] text-white flex items-center justify-center shadow-sm">
+              <MessagesSquare className="w-5 h-5 text-[#e0521c]" />
+            </div>
+            <span
+              className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white animate-pulse"
+              title="Salon en direct"
+            />
           </div>
+
+          {/* Titre & métadonnées du salon */}
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <h2 className="font-serif text-base sm:text-lg font-bold text-[#0f2744] truncate">
                 {roomTitle}
               </h2>
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#0f2744]/10 text-[#0f2744]">
-                <Hash className="w-3 h-3 text-[#e0521c]" />
+
+              {/* Dropdown de changement rapide de salon */}
+              {salons && salons.length > 1 && onSelectSalon && (
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setSalonsDropdownOpen((prev) => !prev)}
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-200/70 text-slate-700 hover:bg-slate-300/70 transition-colors"
+                  >
+                    <span>Changer</span>
+                    <ChevronDown className="w-3 h-3 text-slate-500" />
+                  </button>
+
+                  {salonsDropdownOpen && (
+                    <div className="absolute left-0 top-full mt-1.5 w-56 bg-white rounded-xl shadow-xl border border-slate-200/90 py-1.5 z-50">
+                      <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                        Basculer vers un salon
+                      </div>
+                      {salons.map((s) => (
+                        <button
+                          key={s.id}
+                          onClick={() => {
+                            onSelectSalon(s.id);
+                            setSalonsDropdownOpen(false);
+                          }}
+                          className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-slate-50 transition-colors ${
+                            s.id === roomId ? "font-bold text-[#0f2744] bg-blue-50/50" : "text-slate-700"
+                          }`}
+                        >
+                          <span className="truncate">{s.titre}</span>
+                          {s.id === roomId && <span className="w-1.5 h-1.5 rounded-full bg-[#e0521c]" />}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2 text-xs text-slate-500 truncate mt-0.5">
+              <span className="inline-flex items-center gap-1 font-mono text-[10.5px] text-[#e0521c] font-semibold">
+                <Hash className="w-3 h-3" />
                 {roomId}
               </span>
-            </div>
-            <div className="flex items-center gap-2 text-xs text-slate-500 truncate mt-0.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+              <span className="text-slate-300">•</span>
               <span className="truncate">{roomDescription}</span>
             </div>
           </div>
         </div>
 
-        {isAdmin && (
-          <span className="shrink-0 hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700 border border-amber-200">
-            <ShieldCheck className="w-3 h-3" />
-            Modérateur
-          </span>
-        )}
-      </div>
-
-
-      {/* Zone des messages */}
-      <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-slate-50/30">
-        {isLoading ? (
-          <div className="h-full flex items-center justify-center text-slate-400">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0f2744]"></div>
-          </div>
-        ) : messages.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center text-center p-8 max-w-md mx-auto space-y-3">
-            <div className="w-12 h-12 rounded-full bg-[#0f2744]/5 flex items-center justify-center text-[#0f2744]">
-              <Sparkles className="w-6 h-6 text-[#e0521c]" />
-            </div>
-            <h3 className="font-serif text-base font-bold text-slate-900">
-              Aucun message pour le moment
-            </h3>
-            <p className="text-xs text-slate-500 leading-relaxed">
-              Ce salon d&apos;échange est prêt. Posez votre première question ou partagez une information académique avec votre communauté !
-            </p>
-          </div>
-        ) : (
-          messages.map((msg) => {
-            // Un message m'appartient ssi mon ID, mon email ou mon nom complet correspond
-            const isMe =
-              (currentUser.id && currentUser.id !== "" && (msg.user_id === currentUser.id || msg.user?.id === currentUser.id)) ||
-              (currentUser.email && currentUser.email !== "" && msg.user?.email && msg.user.email.toLowerCase() === currentUser.email.toLowerCase()) ||
-              (currentUser.fullName && currentUser.fullName !== "" && msg.user?.full_name && msg.user.full_name.toLowerCase() === currentUser.fullName.toLowerCase());
-
-            const authorRole = msg.user?.role || "etudiant";
-            const authorName = msg.user?.full_name || "Membre HAS";
-            const styles = getRoleStyles(authorRole, Boolean(isMe));
-
-            // Initiales avatar
-            const avatarInitials = authorName
-              .split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
-
-            return (
-              <div
-                key={msg.id}
-                className={`flex gap-2.5 ${isMe ? "flex-row-reverse" : "flex-row"} items-end`}
-                onClick={() => setSelectedMsgId(null)}
-              >
-                {/* Avatar */}
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-black shrink-0 shadow-sm ${styles.avatar}`}>
-                  {avatarInitials}
-                </div>
-
-                <div className={`flex flex-col ${isMe ? "items-end" : "items-start"} max-w-[72%] relative`}>
-                  {/* Nom + badge + heure */}
-                  <div className={`flex items-center gap-1.5 mb-1 flex-wrap ${isMe ? "flex-row-reverse" : "flex-row"}`}>
-                    <span className={`text-xs font-bold ${styles.name}`}>
-                      {isMe ? "Moi" : authorName}
-                    </span>
-                    {renderRoleBadge(authorRole)}
-                    <span className="text-[10px] text-slate-400">
-                      {new Date(msg.created_at).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
-                    </span>
-                  </div>
-
-                  {/* Bulle cliquable */}
-                  <div
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (isAdmin || currentUser.role === "admin") {
-                        setSelectedMsgId((prev) => (prev === msg.id ? null : msg.id));
-                      }
-                    }}
-                    className={`relative rounded-2xl px-4 py-2.5 text-sm leading-relaxed shadow-sm cursor-pointer select-none ${
-                      isMe ? `${styles.bubble} rounded-br-none` : `${styles.bubble} rounded-bl-none`
-                    } ${selectedMsgId === msg.id ? "ring-2 ring-red-400/60" : ""}`}
-                  >
-                    {(() => {
-                      const voiceUrl = extractVoiceUrl(msg.content);
-                      if (voiceUrl) {
-                        return (
-                          <div className="flex items-center gap-2 min-w-[180px]">
-                            <Mic className="w-4 h-4 shrink-0 opacity-70" />
-                            <audio
-                              controls
-                              src={voiceUrl}
-                              className="h-8 w-full max-w-[200px] accent-current"
-                              style={{ filter: isMe ? "invert(0)" : "none" }}
-                            />
-                          </div>
-                        );
-                      }
-                      return <span>{msg.content}</span>;
-                    })()}
-
-                    {/* Menu contextuel style WhatsApp */}
-                    {selectedMsgId === msg.id && (isAdmin || currentUser.role === "admin") && (
-                      <div
-                        className={`absolute ${isMe ? "right-0" : "left-0"} top-full mt-1.5 z-50 bg-white rounded-xl shadow-xl border border-slate-200/80 overflow-hidden min-w-[130px]`}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <button
-                          onClick={() => {
-                            handleDeleteMessage(msg.id);
-                            setSelectedMsgId(null);
-                          }}
-                          className="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-red-600 hover:bg-red-50 transition-colors"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                          Supprimer le message
-                        </button>
-                        <button
-                          onClick={() => setSelectedMsgId(null)}
-                          className="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-slate-500 hover:bg-slate-50 transition-colors border-t border-slate-100"
-                        >
-                          Annuler
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            );
-          })
-        )}
-        <div ref={messagesEndRef} />
-      </div>
-
-      {/* Saisie de message */}
-      <div className="p-4 bg-white border-t border-slate-200/90 space-y-2">
-        <form onSubmit={handleSendMessage} className="flex gap-2">
-          <input
-            type="text"
-            placeholder={`Écrivez votre message dans ${roomTitle}...`}
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); if (newMessage.trim()) handleSendMessage(e as any); } }}
-            className="flex-1 rounded-lg border border-slate-200/90 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-[#0f2744] focus:ring-1 focus:ring-[#0f2744] transition-colors"
-          />
-
-          {/* Bouton microphone message vocal */}
+        {/* Boutons d'actions WhatsApp (Recherche, plein écran, fermer) */}
+        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
           <button
             type="button"
-            title={isRecording ? `Arrêter l'enregistrement (${recordingSeconds}s)` : "Enregistrer un message vocal"}
-            onClick={isRecording ? handleStopRecording : handleStartRecording}
-            className={`flex items-center justify-center w-10 h-10 rounded-lg border transition-all ${
-              isRecording
-                ? "bg-red-600 border-red-600 text-white animate-pulse shadow-md"
-                : "bg-white border-slate-200 text-slate-500 hover:text-[#0f2744] hover:border-[#0f2744]"
+            onClick={() => setIsSearchOpen((prev) => !prev)}
+            title="Rechercher dans la conversation"
+            className={`p-2 rounded-full transition-colors ${
+              isSearchOpen ? "bg-[#0f2744] text-white" : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
             }`}
           >
-            {isRecording ? <Square className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+            <Search className="w-4 h-4" />
           </button>
 
-          <Button
-            type="submit"
-            variant="accent"
-            size="md"
-            isLoading={isSending}
-            disabled={!newMessage.trim()}
-            rightIcon={<Send className="w-4 h-4" />}
-          >
-            Envoyer
-          </Button>
-        </form>
+          {isPopup && (
+            <button
+              type="button"
+              onClick={() => setIsFullscreen((prev) => !prev)}
+              title={isFullscreen ? "Réduire la fenêtre" : "Plein écran"}
+              className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 rounded-full transition-colors hidden sm:flex items-center justify-center"
+            >
+              {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+            </button>
+          )}
 
-        {isRecording && (
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-red-50 border border-red-200 rounded-lg">
-            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-            <span className="text-xs font-semibold text-red-700">Enregistrement en cours… {recordingSeconds}s</span>
-            <span className="text-[11px] text-red-500 ml-auto">Cliquez sur le carré pour arrêter et envoyer</span>
+          {isAdmin && (
+            <span className="hidden md:inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
+              <ShieldCheck className="w-3 h-3 text-amber-600" />
+              Modérateur
+            </span>
+          )}
+
+          {onClose && (
+            <button
+              type="button"
+              onClick={onClose}
+              title="Fermer"
+              className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-200/70 rounded-full transition-colors ml-1"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Barre de recherche toggleable */}
+      {isSearchOpen && (
+        <div className="px-4 py-2 bg-slate-100/90 border-b border-slate-200 flex items-center gap-2 z-20">
+          <Search className="w-4 h-4 text-slate-400 shrink-0" />
+          <input
+            type="text"
+            placeholder="Rechercher dans les messages..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="flex-1 bg-transparent text-xs text-slate-800 placeholder-slate-400 focus:outline-none"
+            autoFocus
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => setSearchQuery("")}
+              className="text-xs text-slate-400 hover:text-slate-600"
+            >
+              Effacer
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* ─── Zone des messages avec le WaterRippleBackground ──────────────── */}
+      <div
+        ref={messagesContainerRef}
+        className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 relative"
+        onClick={() => setSelectedMsgId(null)}
+      >
+        {/* Fond blanc ultra-propre avec les ondulations concentriques de gouttes d'eau */}
+        <WaterRippleBackground />
+
+        {/* Contenu réel au-dessus du fond */}
+        <div className="relative z-10 space-y-4">
+          {isLoading ? (
+            <div className="h-96 flex flex-col items-center justify-center text-slate-400 gap-3">
+              <div className="animate-spin rounded-full h-9 w-9 border-b-2 border-[#0f2744]"></div>
+              <span className="text-xs font-medium text-slate-500">Chargement de la conversation…</span>
+            </div>
+          ) : filteredMessages.length === 0 ? (
+            <div className="h-96 flex flex-col items-center justify-center text-center p-8 max-w-md mx-auto space-y-3">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#0f2744]/10 to-[#e0521c]/10 flex items-center justify-center text-[#0f2744] shadow-inner">
+                <Sparkles className="w-7 h-7 text-[#e0521c]" />
+              </div>
+              <h3 className="font-serif text-lg font-bold text-[#0f2744]">
+                {searchQuery ? "Aucun message trouvé" : "Salon de discussion ouvert"}
+              </h3>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                {searchQuery
+                  ? "Aucun message ne correspond à votre recherche. Essayez un autre mot-clé."
+                  : "Partagez vos questions, réponses ou notes vocales avec la communauté étudiante et le corps enseignant."}
+              </p>
+            </div>
+          ) : (
+            filteredMessages.map((msg) => {
+              const isMe =
+                (currentUser.id && currentUser.id !== "" && (msg.user_id === currentUser.id || msg.user?.id === currentUser.id)) ||
+                (currentUser.email && currentUser.email !== "" && msg.user?.email && msg.user.email.toLowerCase() === currentUser.email.toLowerCase()) ||
+                (currentUser.fullName && currentUser.fullName !== "" && msg.user?.full_name && msg.user.full_name.toLowerCase() === currentUser.fullName.toLowerCase());
+
+              const authorRole = msg.user?.role || "etudiant";
+              const authorName = msg.user?.full_name || "Membre HAS";
+              const styles = getBubbleStyles(authorRole, Boolean(isMe));
+              const voiceUrl = extractVoiceUrl(msg.content);
+              const textContent = cleanMessageContent(msg.content);
+
+              const avatarInitials = authorName
+                .split(" ")
+                .filter(Boolean)
+                .map((n) => n[0])
+                .join("")
+                .slice(0, 2)
+                .toUpperCase() || "HA";
+
+              const formattedTime = new Date(msg.created_at).toLocaleTimeString("fr-FR", {
+                hour: "2-digit",
+                minute: "2-digit",
+              });
+
+              return (
+                <div
+                  key={msg.id}
+                  className={`flex gap-2.5 ${isMe ? "flex-row-reverse" : "flex-row"} items-end group`}
+                >
+                  {/* Avatar */}
+                  <div
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-black shrink-0 shadow-sm ${styles.avatar}`}
+                  >
+                    {avatarInitials}
+                  </div>
+
+                  <div className={`flex flex-col ${isMe ? "items-end" : "items-start"} max-w-[85%] sm:max-w-[75%] relative`}>
+                    {/* Nom de l'expéditeur + badge de rôle */}
+                    <div className={`flex items-center gap-1.5 mb-1 flex-wrap ${isMe ? "flex-row-reverse" : "flex-row"}`}>
+                      <span className={`text-xs font-bold ${styles.name}`}>
+                        {isMe ? "Moi" : authorName}
+                      </span>
+                      {renderRoleBadge(authorRole)}
+                      <span className="text-[10px] text-slate-400 font-mono">
+                        {formattedTime}
+                      </span>
+                    </div>
+
+                    {/* Bulle de message façon WhatsApp */}
+                    <div
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (isAdmin || currentUser.role === "admin") {
+                          setSelectedMsgId((prev) => (prev === msg.id ? null : msg.id));
+                        }
+                      }}
+                      className={`relative px-4 py-2.5 text-sm leading-relaxed transition-all ${styles.bubble} ${
+                        selectedMsgId === msg.id ? "ring-2 ring-red-400" : ""
+                      }`}
+                    >
+                      {/* Message vocal Telegram */}
+                      {voiceUrl ? (
+                        <div className="py-0.5">
+                          <TelegramVoiceNote
+                            src={voiceUrl}
+                            isMe={Boolean(isMe)}
+                            roleAccent={styles.accent}
+                            timestamp={formattedTime}
+                            messageId={msg.id}
+                          />
+                          {textContent && (
+                            <p className="mt-2 text-xs border-t border-white/20 pt-1.5">{textContent}</p>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="break-words space-y-1">
+                          <p className="whitespace-pre-wrap">{msg.content}</p>
+                          <div className={`flex items-center justify-end gap-1 text-[10px] ${isMe ? "text-orange-200" : "text-slate-400"}`}>
+                            <span>{formattedTime}</span>
+                            {isMe && <span className="font-bold text-emerald-400">✓✓</span>}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Menu de modération pour administrateurs */}
+                      {selectedMsgId === msg.id && (isAdmin || currentUser.role === "admin") && (
+                        <div
+                          className={`absolute ${isMe ? "right-0" : "left-0"} top-full mt-1.5 z-50 bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden min-w-[150px] animate-in fade-in zoom-in-95`}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <button
+                            type="button"
+                            onClick={() => {
+                              handleDeleteMessage(msg.id);
+                              setSelectedMsgId(null);
+                            }}
+                            className="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-red-600 hover:bg-red-50 transition-colors"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            Supprimer ce message
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+      </div>
+
+      {/* ─── Barre de saisie inférieure (WhatsApp / Telegram) ──────────────── */}
+      <div className="p-3 sm:p-4 bg-slate-50/95 backdrop-blur-md border-t border-slate-200/90 shrink-0 z-20">
+        {isRecording ? (
+          /* Enregistreur vocal professionnel façon Telegram */
+          <div className="flex items-center justify-between gap-3 px-4 py-2.5 bg-red-50/90 border border-red-200 rounded-2xl shadow-sm animate-in fade-in duration-150">
+            <div className="flex items-center gap-3">
+              <span className="w-3 h-3 rounded-full bg-red-600 animate-ping shrink-0" />
+              <div className="flex items-center gap-2">
+                <Mic className="w-4 h-4 text-red-600 animate-pulse" />
+                <span className="font-mono text-xs font-bold text-red-700">
+                  {Math.floor(recordingSeconds / 60)}:
+                  {(recordingSeconds % 60).toString().padStart(2, "0")}
+                </span>
+              </div>
+
+              {/* Ondulations égaliseur dynamiques */}
+              <div className="hidden sm:flex items-center gap-1 h-5 ml-2">
+                {[14, 22, 10, 26, 18, 12, 28, 16, 24, 12, 18].map((h, i) => (
+                  <span
+                    key={i}
+                    style={{
+                      height: `${h}px`,
+                      animationDuration: `${0.4 + (i % 3) * 0.2}s`,
+                    }}
+                    className="w-1 bg-red-500 rounded-full animate-pulse"
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleCancelRecording}
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-red-700 hover:bg-red-100 transition-colors"
+              >
+                Annuler
+              </button>
+              <button
+                type="button"
+                onClick={handleStopAndSendRecording}
+                className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-red-600 text-white text-xs font-bold shadow-md hover:bg-red-700 transition-transform active:scale-95"
+              >
+                <Send className="w-3.5 h-3.5" />
+                <span>Envoyer la note vocale</span>
+              </button>
+            </div>
           </div>
+        ) : (
+          /* Saisie classique de texte + bouton micro */
+          <form onSubmit={handleSendMessage} className="flex items-center gap-2">
+            <div className="flex-1 relative flex items-center">
+              <input
+                type="text"
+                placeholder={`Écrivez votre message dans ${roomTitle}...`}
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    if (newMessage.trim()) handleSendMessage();
+                  }
+                }}
+                className="w-full rounded-2xl border border-slate-200/90 bg-white px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:border-[#0f2744] focus:ring-2 focus:ring-[#0f2744]/15 transition-all shadow-xs"
+              />
+            </div>
+
+            {/* Bouton Enregistrement Vocal façon Telegram */}
+            <button
+              type="button"
+              onClick={handleStartRecording}
+              title="Enregistrer un message vocal (façon Telegram)"
+              className="flex items-center justify-center w-11 h-11 rounded-2xl bg-white border border-slate-200 text-[#0f2744] hover:bg-orange-50 hover:text-[#e0521c] hover:border-orange-200 shadow-xs transition-all active:scale-95 shrink-0"
+            >
+              <Mic className="w-5 h-5" />
+            </button>
+
+            {/* Bouton Envoyer WhatsApp */}
+            <button
+              type="submit"
+              disabled={!newMessage.trim() || isSending}
+              title="Envoyer le message"
+              className="flex items-center justify-center w-11 h-11 rounded-2xl bg-[#0f2744] text-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#163860] active:scale-95 shadow-md transition-all shrink-0"
+            >
+              <Send className="w-4 h-4 text-[#e0521c]" />
+            </button>
+          </form>
         )}
 
-        <p className="text-[11px] text-slate-400">
-          Entrée pour envoyer • 🎙 pour un message vocal
-        </p>
+        <div className="flex items-center justify-between text-[11px] text-slate-400 mt-2 px-1">
+          <span>Touche Entrée pour envoyer • Cliquez sur le micro 🎙 pour une note vocale</span>
+          <span className="hidden sm:inline font-mono">Halil Académie Scientifique • Live Chat</span>
+        </div>
       </div>
     </div>
   );
+
+  // Si c'est en mode popup, l'encapsuler dans un backdrop WhatsApp moderne
+  if (isPopup) {
+    return (
+      <div className="fixed inset-0 z-50 bg-slate-950/65 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 lg:p-6 animate-in fade-in duration-200">
+        {chatContainer}
+      </div>
+    );
+  }
+
+  return chatContainer;
 }
