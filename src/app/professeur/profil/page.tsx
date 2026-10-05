@@ -180,13 +180,21 @@ export default function ProfesseurProfilPage() {
                 </div>
               )}
               <form onSubmit={handleUpdateProfile} className="mt-4 space-y-4">
-                <Input
-                  label="Spécialité / Chaire académique"
-                  placeholder="Ex. Génie Logiciel & Bases de Données"
-                  leftIcon={<Award className="w-4 h-4" />}
-                  value={specialite}
-                  onChange={(e) => setSpecialite(e.target.value)}
-                />
+                <div className="space-y-1.5">
+                  <label className="block text-sm font-medium text-slate-700">
+                    Spécialité officielle
+                  </label>
+                  <select
+                    value={specialite}
+                    onChange={(e) => setSpecialite(e.target.value)}
+                    className="w-full text-sm border border-slate-300 rounded-lg p-2.5 bg-white font-medium text-slate-800 focus:border-[#0f2744] focus:ring-1 focus:ring-[#0f2744]"
+                  >
+                    <option value="Informatique">Informatique</option>
+                    <option value="Math">Math</option>
+                    <option value="Physique">Physique</option>
+                    <option value="Economie">Economie</option>
+                  </select>
+                </div>
                 <Input
                   label="Téléphone de permanence"
                   placeholder="+221 77 000 00 00"

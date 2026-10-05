@@ -9,13 +9,21 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Badge } from "@/components/ui/Badge";
-import { MOCK_STUDENT, MOCK_CLASSES, MOCK_FILIERES, MOCK_MATIERES } from "@/lib/data/mock-data";
-import { getStoredProfesseurs, saveProfesseur, deleteProfesseur } from "@/lib/academicStorage";
+import { MOCK_CLASSES, MOCK_FILIERES, MOCK_MATIERES } from "@/lib/data/mock-data";
+import {
+  getStoredProfesseurs,
+  saveProfesseur,
+  deleteProfesseur,
+  getStoredStudents,
+  saveStudent,
+  deleteStudent,
+  deduceSpecialiteFromMatieres,
+} from "@/lib/academicStorage";
 import { Profile, UserRole, Professeur, MatiereAssignee } from "@/lib/types";
 
 export default function AdminComptesPage() {
   const [profs, setProfs] = useState<Professeur[]>([]);
-  const [users, setUsers] = useState<Profile[]>([MOCK_STUDENT]);
+  const [users, setUsers] = useState<Profile[]>([]);
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<"all" | UserRole>("all");
   const [modalOpen, setModalOpen] = useState(false);
@@ -30,7 +38,7 @@ export default function AdminComptesPage() {
   const [formFiliereId, setFormFiliereId] = useState("");
   const [formClasseId, setFormClasseId] = useState("");
   const [formPhone, setFormPhone] = useState("");
-  const [formSpecialite, setFormSpecialite] = useState("");
+  const [formSpecialite, setFormSpecialite] = useState("Informatique");
   const [formBio, setFormBio] = useState("");
 
   // Pour les professeurs: matières, niveaux et classes
@@ -40,9 +48,10 @@ export default function AdminComptesPage() {
 
   const loadData = () => {
     const storedProfs = getStoredProfesseurs();
+    const storedStudents = getStoredStudents();
     setProfs(storedProfs);
     const combined: Profile[] = [
-      MOCK_STUDENT,
+      ...storedStudents,
       ...storedProfs.map((p) => ({
         id: p.id,
         email: p.email,
@@ -146,6 +155,7 @@ export default function AdminComptesPage() {
       });
 
       const profId = editUser ? editUser.id : `prof-${Date.now()}`;
+      const deducedSpecialite = formSpecialite || deduceSpecialiteFromMatieres(matieresAssignees);
       const newProf: Professeur = {
         id: profId,
         user_id: editUser?.id || profs.length + 2,
@@ -156,7 +166,7 @@ export default function AdminComptesPage() {
         nom: formName.split(" ").slice(1).join(" ") || "",
         phone: formPhone || null,
         matricule: editUser?.matricule || `HAS-ENS-${year}-${Math.floor(100 + Math.random() * 900)}`,
-        specialite: formSpecialite || "Enseignant-Chercheur",
+        specialite: deducedSpecialite,
         bio: formBio || "Enseignant à Halil Académie Scientifique.",
         photo: editUser?.avatar_url || null,
         avatar_url: editUser?.avatar_url || null,
@@ -171,23 +181,21 @@ export default function AdminComptesPage() {
     } else {
       // Étudiant ou Admin
       if (editUser) {
-        setUsers((prev) =>
-          prev.map((u) =>
-            u.id === editUser.id
-              ? {
-                  ...u,
-                  full_name: formName,
-                  email: formEmail,
-                  role: formRole,
-                  filiere_id: formFiliereId || null,
-                  classe_id: formClasseId || null,
-                  phone: formPhone || null,
-                  specialite: formSpecialite || null,
-                  updated_at: new Date().toISOString(),
-                }
-              : u
-          )
-        );
+        const updated: Profile = {
+          ...editUser,
+          full_name: formName,
+          email: formEmail,
+          role: formRole,
+          filiere_id: formFiliereId || null,
+          classe_id: formClasseId || null,
+          phone: formPhone || null,
+          specialite: null,
+          updated_at: new Date().toISOString(),
+        };
+        if (formRole === "etudiant") {
+          saveStudent(updated);
+        }
+        setUsers((prev) => prev.map((u) => (u.id === editUser.id ? updated : u)));
         setSuccessMsg(`Le compte de ${formName} a été mis à jour.`);
       } else {
         const newUser: Profile = {
@@ -201,12 +209,15 @@ export default function AdminComptesPage() {
           filiere_id: formFiliereId || null,
           classe_id: formClasseId || null,
           bio: formBio || null,
-          specialite: formSpecialite || null,
+          specialite: null,
           avatar_url: null,
           is_active: true,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         };
+        if (formRole === "etudiant") {
+          saveStudent(newUser);
+        }
         setUsers((prev) => [newUser, ...prev]);
         setSuccessMsg(`Le compte de ${formName} a été créé.`);
       }
@@ -220,6 +231,8 @@ export default function AdminComptesPage() {
     const u = users.find((x) => x.id === userId);
     if (u?.role === "professeur") {
       deleteProfesseur(userId);
+    } else if (u?.role === "etudiant") {
+      deleteStudent(userId);
     }
     setUsers((prev) => prev.filter((x) => x.id !== userId));
     setDeleteConfirm(null);
@@ -405,12 +418,21 @@ export default function AdminComptesPage() {
                 {/* Configuration spécifique Enseignant */}
                 {formRole === "professeur" && (
                   <div className="p-4 bg-slate-50 rounded-xl border border-slate-200/90 space-y-4">
-                    <Input
-                      label="Spécialité / Discipline"
-                      placeholder="Ex. Mathématiques Pures, Génie Logiciel, Physique..."
-                      value={formSpecialite}
-                      onChange={(e) => setFormSpecialite(e.target.value)}
-                    />
+                    <div className="space-y-1.5">
+                      <label className="block text-sm font-medium text-slate-700">
+                        Spécialité officielle
+                      </label>
+                      <select
+                        value={formSpecialite}
+                        onChange={(e) => setFormSpecialite(e.target.value)}
+                        className="w-full text-sm border border-slate-300 rounded-md p-2.5 bg-white font-medium text-slate-800"
+                      >
+                        <option value="Informatique">Informatique</option>
+                        <option value="Math">Math</option>
+                        <option value="Physique">Physique</option>
+                        <option value="Economie">Economie</option>
+                      </select>
+                    </div>
 
                     <div className="space-y-1.5">
                       <label className="block text-sm font-medium text-slate-700">Biographie académique</label>

@@ -113,7 +113,7 @@ export function useCurrentProfesseur() {
               username: meta.username || authUser.email?.split("@")[0] || null,
               phone: meta.phone || null,
               matricule: meta.matricule || "PROF-HAS",
-              specialite: meta.specialite || "Enseignement Supérieur",
+              specialite: meta.specialite || "Informatique",
               bio: meta.bio || "Enseignant-chercheur à Halil Académie Scientifique.",
               is_active: true,
               matieres: [],

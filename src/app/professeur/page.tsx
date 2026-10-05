@@ -15,20 +15,17 @@ import {
   Sparkles,
   CheckCircle2,
   BarChart3,
-  UserCheck,
-  ChevronDown,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/Button";
 import { useCurrentProfesseur } from "@/lib/useCurrentProfesseur";
-import { getStoredCourses, getStoredDirectMessages } from "@/lib/academicStorage";
+import { getStoredCourses, getStoredDirectMessages, getStudentsForProfesseur } from "@/lib/academicStorage";
 import { Cours, Message } from "@/lib/types";
 
 export default function ProfesseurDashboard() {
-  const { prof, switchProfAccount, allProfesseurs } = useCurrentProfesseur();
+  const { prof } = useCurrentProfesseur();
   const [courses, setCourses] = useState<Cours[]>([]);
   const [directMessages, setDirectMessages] = useState<Message[]>([]);
-  const [showSwitchMenu, setShowSwitchMenu] = useState(false);
 
   const loadData = () => {
     setCourses(getStoredCourses());
@@ -64,8 +61,10 @@ export default function ProfesseurDashboard() {
   // Classes encadrées déduites du profil du professeur
   const classesEncadrees = prof.classes || (prof.matieres && prof.matieres.length > 0 ? ["L1-MPI", "L2-MPI"] : []);
   const classesCount = classesEncadrees.length;
-  // Estimation dynamique du nombre d'étudiants (moyenne de 25 étudiants par classe)
-  const totalStudentsEstimate = classesCount > 0 ? classesCount * 26 : 0;
+
+  // Effectif réel des étudiants inscrits dans les classes de cet enseignant (aucune fausse donnée)
+  const realStudents = getStudentsForProfesseur(prof);
+  const realStudentsCount = realStudents.length;
 
   return (
     <DashboardLayout
@@ -93,7 +92,7 @@ export default function ProfesseurDashboard() {
               </p>
               <div className="flex flex-wrap items-center gap-3 text-xs text-slate-200 pt-2">
                 <span className="bg-white/15 px-3 py-1 rounded-md">
-                  Spécialité : {prof.specialite || "Enseignement Supérieur"}
+                  Spécialité : {prof.specialite || "Informatique"}
                 </span>
                 <span className="bg-white/15 px-3 py-1 rounded-md font-mono">
                   {prof.matricule || "PROF-HAS"}
@@ -104,51 +103,6 @@ export default function ProfesseurDashboard() {
                   </span>
                 )}
               </div>
-            </div>
-
-            {/* Sélecteur rapide de compte enseignant */}
-            <div className="relative shrink-0">
-              <button
-                type="button"
-                onClick={() => setShowSwitchMenu((prev) => !prev)}
-                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-semibold text-white transition-all shadow-sm"
-              >
-                <UserCheck className="w-4 h-4 text-[#e0521c]" />
-                <span>Changer de compte prof</span>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-300" />
-              </button>
-
-              {showSwitchMenu && (
-                <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-xl shadow-2xl border border-slate-200 py-2 z-50 animate-in fade-in">
-                  <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100">
-                    Comptes du corps professoral
-                  </div>
-                  <div className="max-h-72 overflow-y-auto divide-y divide-slate-100">
-                    {allProfesseurs.map((p) => {
-                      const isCurrent = p.id === prof.id || p.matricule === prof.matricule;
-                      return (
-                        <button
-                          key={p.id}
-                          type="button"
-                          onClick={() => {
-                            switchProfAccount(p.id);
-                            setShowSwitchMenu(false);
-                          }}
-                          className={`w-full text-left px-3.5 py-2.5 text-xs flex flex-col gap-0.5 hover:bg-slate-50 transition-colors ${
-                            isCurrent ? "bg-blue-50/70 font-bold" : ""
-                          }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="text-slate-900 font-bold truncate">{p.full_name}</span>
-                            <span className="font-mono text-[10px] text-[#e0521c] font-semibold">{p.matricule}</span>
-                          </div>
-                          <span className="text-[11px] text-slate-500 truncate">{p.specialite}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </div>
@@ -179,8 +133,8 @@ export default function ProfesseurDashboard() {
             },
             {
               label: "Étudiants encadrés",
-              value: totalStudentsEstimate.toString(),
-              sub: "Effectif des classes",
+              value: realStudentsCount.toString(),
+              sub: realStudentsCount === 0 ? "Aucun étudiant inscrit" : `${realStudentsCount} étudiant(s) inscrit(s)`,
               icon: <BarChart3 className="w-5 h-5 text-[#e0521c]" />,
               color: "bg-[#e0521c]/5",
             },

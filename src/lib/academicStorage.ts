@@ -10,8 +10,9 @@ import {
   Classe,
   Matiere,
   SeanceEDT,
+  Profile,
 } from "./types";
-import { MOCK_PROFESSEURS, MOCK_FILIERES, MOCK_CLASSES, MOCK_MATIERES } from "./data/mock-data";
+import { MOCK_PROFESSEURS, MOCK_FILIERES, MOCK_CLASSES, MOCK_MATIERES, MOCK_STUDENT } from "./data/mock-data";
 import { sendLocalNotification } from "./useNotifications";
 
 const STORAGE_KEYS = {
@@ -25,6 +26,7 @@ const STORAGE_KEYS = {
   CLASSES: "has_academic_classes_v2",
   MATIERES: "has_academic_matieres_v3",
   SEANCES_EDT: "has_academic_seances_edt_v1",
+  STUDENTS: "has_academic_students_v1",
 };
 
 export const DEFAULT_SALONS: ChatSalon[] = [
@@ -163,18 +165,45 @@ export function deleteCommunique(id: string): void {
   setStorageItem(STORAGE_KEYS.COMMUNIQUES, communiques);
 }
 
+// === SPÉCIALITÉS OFFICIELLES (INFORMATIQUE, MATH, PHYSIQUE, ECONOMIE) ===
+export type AcademicSpecialite = "Informatique" | "Math" | "Physique" | "Economie";
+
+export function deduceSpecialiteFromMatieres(
+  matieres?: { nom?: string; name?: string }[],
+  existingSpecialite?: string | null
+): AcademicSpecialite {
+  const s = (existingSpecialite || "").trim().toLowerCase();
+  if (s === "informatique" || s === "math" || s === "physique" || s === "economie" || s === "économie") {
+    return s.startsWith("écon") || s.startsWith("econ") ? "Economie" : (s === "math" ? "Math" : s === "physique" ? "Physique" : "Informatique");
+  }
+  const text = `${existingSpecialite || ""} ${(matieres || []).map((m) => m.nom || m.name || "").join(" ")}`.toLowerCase();
+  if (text.includes("écono") || text.includes("econo")) return "Economie";
+  if (text.includes("math") || text.includes("analyse") || text.includes("algèbre") || text.includes("stochastique") || text.includes("numérique matricielle")) return "Math";
+  if (text.includes("info") || text.includes("python") || text.includes("logiciel") || text.includes("base de données") || text.includes("programmation") || text.includes("langage c") || text.includes("système")) return "Informatique";
+  if (text.includes("physique") || text.includes("mécanique") || text.includes("thermo") || text.includes("optique") || text.includes("électr") || text.includes("ondes")) return "Physique";
+  return "Informatique";
+}
+
 // === GESTION DES PROFESSEURS (L'ADMIN PEUT TOUT AJOUTER / MODIFIER) ===
 export function getStoredProfesseurs(): Professeur[] {
-  return getStorageItem<Professeur[]>(STORAGE_KEYS.PROFESSEURS, MOCK_PROFESSEURS);
+  const list = getStorageItem<Professeur[]>(STORAGE_KEYS.PROFESSEURS, MOCK_PROFESSEURS);
+  return list.map((p) => ({
+    ...p,
+    specialite: deduceSpecialiteFromMatieres(p.matieres, p.specialite),
+  }));
 }
 
 export function saveProfesseur(prof: Professeur): void {
   const profs = getStoredProfesseurs();
+  const normalizedProf = {
+    ...prof,
+    specialite: deduceSpecialiteFromMatieres(prof.matieres, prof.specialite),
+  };
   const index = profs.findIndex((p) => p.id === prof.id);
   if (index >= 0) {
-    profs[index] = prof;
+    profs[index] = normalizedProf;
   } else {
-    profs.push(prof);
+    profs.push(normalizedProf);
   }
   setStorageItem(STORAGE_KEYS.PROFESSEURS, profs);
 }
@@ -182,6 +211,52 @@ export function saveProfesseur(prof: Professeur): void {
 export function deleteProfesseur(id: string): void {
   const profs = getStoredProfesseurs().filter((p) => p.id !== id);
   setStorageItem(STORAGE_KEYS.PROFESSEURS, profs);
+}
+
+// === GESTION DES ÉTUDIANTS (EFFECTIFS RÉELS - AUCUNE FAUSSE DONNÉE) ===
+export const DEFAULT_STUDENTS: Profile[] = [MOCK_STUDENT];
+
+export function getStoredStudents(): Profile[] {
+  return getStorageItem<Profile[]>(STORAGE_KEYS.STUDENTS, DEFAULT_STUDENTS);
+}
+
+export function saveStudent(student: Profile): void {
+  const list = getStoredStudents();
+  const index = list.findIndex((s) => s.id === student.id || s.email === student.email);
+  if (index >= 0) {
+    list[index] = student;
+  } else {
+    list.unshift(student);
+  }
+  setStorageItem(STORAGE_KEYS.STUDENTS, list);
+}
+
+export function deleteStudent(id: string): void {
+  const list = getStoredStudents().filter((s) => s.id !== id);
+  setStorageItem(STORAGE_KEYS.STUDENTS, list);
+}
+
+/**
+ * Retourne les étudiants réels inscrits dans les classes ou niveaux enseignés par un professeur.
+ */
+export function getStudentsForProfesseur(prof: Partial<Professeur>): Profile[] {
+  const allStudents = getStoredStudents();
+  if (!prof) return [];
+
+  const profClasses = (prof.classes || []).map((c) => c.toUpperCase().replace("-", " "));
+  const profNiveaux = (prof.niveaux || []).map((n) => n.toUpperCase());
+
+  return allStudents.filter((stu) => {
+    const stuClasseCode = (stu.classe?.code || stu.classe_id || "").toUpperCase().replace("-", " ");
+    const stuNiveau = (stu.classe?.niveau || (stuClasseCode.startsWith("L2") ? "L2" : "L1")).toUpperCase();
+
+    const matchClasse = profClasses.some(
+      (pc) => pc && (stuClasseCode.includes(pc) || pc.includes(stuClasseCode))
+    );
+    const matchNiveau = profNiveaux.includes(stuNiveau);
+
+    return matchClasse || (matchNiveau && profClasses.length === 0);
+  });
 }
 
 // === GESTION DES SALONS DE DISCUSSION (L'ADMIN PEUT EN CRÉER / SUPPRIMER) ===
