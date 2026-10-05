@@ -52,10 +52,11 @@ export default function AdminAcademiquePage() {
   const [classeNiveau, setClasseNiveau] = useState<"L1" | "L2">("L1");
   const [classeFiliereId, setClasseFiliereId] = useState("");
 
-  // Matière : simple nom, niveau (L1 ou L2) et classes concernées (code MAT001 automatique, pas d'ects ni coeff ni filiere)
+  // Matière : simple nom, niveau (L1 ou L2), semestre (S1/S2 pour L1, S3/S4 pour L2) et classes concernées (code MAT001 automatique)
   const [autoMatiereCode, setAutoMatiereCode] = useState("MAT001");
   const [matiereName, setMatiereName] = useState("");
   const [matiereNiveau, setMatiereNiveau] = useState<"L1" | "L2">("L1");
+  const [matiereSemestre, setMatiereSemestre] = useState<"S1" | "S2" | "S3" | "S4">("S1");
   const [matiereClasses, setMatiereClasses] = useState<string[]>(["L1-MPI", "L1-SML", "L1-MIASS"]);
 
   // Edit matière
@@ -67,6 +68,7 @@ export default function AdminAcademiquePage() {
     setAutoMatiereCode(nextCode);
     setMatiereName("");
     setMatiereNiveau("L1");
+    setMatiereSemestre("S1");
     const l1Cls = classes.filter((c) => c.niveau === "L1").map((c) => c.code);
     setMatiereClasses(l1Cls.length > 0 ? l1Cls : ["L1-MPI", "L1-SML", "L1-MIASS"]);
     setMatiereModal(true);
@@ -74,6 +76,12 @@ export default function AdminAcademiquePage() {
 
   const handleNiveauChange = (newNiv: "L1" | "L2") => {
     setMatiereNiveau(newNiv);
+    // Ajuster le semestre selon le niveau : S1/S2 pour L1, S3/S4 pour L2
+    if (newNiv === "L1") {
+      setMatiereSemestre((prev) => (prev === "S1" || prev === "S2" ? prev : "S1"));
+    } else {
+      setMatiereSemestre((prev) => (prev === "S3" || prev === "S4" ? prev : "S3"));
+    }
     const targetCls = classes.filter((c) => c.niveau === newNiv).map((c) => c.code);
     const fallback = newNiv === "L1" ? ["L1-MPI", "L1-SML", "L1-MIASS"] : ["L2-MPI", "L2-SML", "L2-MIASS"];
     setMatiereClasses(targetCls.length > 0 ? targetCls : fallback);
@@ -86,6 +94,11 @@ export default function AdminAcademiquePage() {
     const isL2 = m.niveau === "L2" || (m.classes || []).some((c) => c.startsWith("L2"));
     const niv: "L1" | "L2" = isL2 ? "L2" : "L1";
     setMatiereNiveau(niv);
+    if (niv === "L1") {
+      setMatiereSemestre(m.semestre === "S2" ? "S2" : "S1");
+    } else {
+      setMatiereSemestre(m.semestre === "S4" ? "S4" : "S3");
+    }
     setMatiereClasses(m.classes || (niv === "L1" ? ["L1-MPI", "L1-SML", "L1-MIASS"] : ["L2-MPI", "L2-SML", "L2-MIASS"]));
     setEditMatiereModal(true);
   };
@@ -111,6 +124,7 @@ export default function AdminAcademiquePage() {
       name: matiereName.trim(),
       classes: matiereClasses,
       niveau: matiereNiveau,
+      semestre: matiereSemestre,
     };
     saveMatiere(updated);
     reloadData();
@@ -201,7 +215,8 @@ export default function AdminAcademiquePage() {
       credits_ects: 5,
       classes: matiereClasses,
       niveau: matiereNiveau,
-      description: `Matière ${matiereName.trim()} pour le niveau ${matiereNiveau}.`,
+      semestre: matiereSemestre,
+      description: `Matière ${matiereName.trim()} (${matiereSemestre}) pour le niveau ${matiereNiveau}.`,
     };
     saveMatiere(newM);
     reloadData();
@@ -349,7 +364,7 @@ export default function AdminAcademiquePage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    {["Code", "Intitulé de la matière", "Niveau", "Classes Concernées", "Actions"].map((h) => (
+                    {["Code", "Intitulé de la matière", "Niveau", "Semestre", "Classes Concernées", "Actions"].map((h) => (
                       <th key={h} className="text-left text-xs font-bold text-slate-500 uppercase tracking-wider px-4 py-3">{h}</th>
                     ))}
                   </tr>
@@ -359,6 +374,7 @@ export default function AdminAcademiquePage() {
                     const displayClasses = m.classes && m.classes.length > 0 ? m.classes : ["L1-MPI"];
                     const isL2 = m.niveau === "L2" || displayClasses.some((c) => c.startsWith("L2"));
                     const niveauLabel = isL2 ? "L2" : "L1";
+                    const semLabel = m.semestre || (niveauLabel === "L1" ? "S1" : "S3");
 
                     return (
                       <tr key={m.id} className="hover:bg-slate-50/50">
@@ -371,6 +387,19 @@ export default function AdminAcademiquePage() {
                               : "bg-orange-50 text-[#e0521c] border border-orange-200"
                           }`}>
                             {niveauLabel === "L1" ? "Licence 1 (L1)" : "Licence 2 (L2)"}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-extrabold border ${
+                            semLabel === "S1"
+                              ? "bg-sky-50 text-sky-800 border-sky-200"
+                              : semLabel === "S2"
+                              ? "bg-blue-50 text-blue-800 border-blue-200"
+                              : semLabel === "S3"
+                              ? "bg-amber-50 text-amber-800 border-amber-200"
+                              : "bg-orange-50 text-orange-800 border-orange-200"
+                          }`}>
+                            {semLabel}
                           </span>
                         </td>
                         <td className="px-4 py-3">
@@ -534,6 +563,70 @@ export default function AdminAcademiquePage() {
                   </p>
                 </div>
 
+                {/* Semestre d'enseignement : S1 ou S2 pour L1, S3 ou S4 pour L2 */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                      Semestre d&apos;enseignement <span className="text-[#e0521c]">*</span>
+                    </label>
+                    <span className="text-[11px] font-semibold text-slate-500">
+                      {matiereNiveau === "L1" ? "L1 : Semestre 1 ou 2" : "L2 : Semestre 3 ou 4"}
+                    </span>
+                  </div>
+
+                  {matiereNiveau === "L1" ? (
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setMatiereSemestre("S1")}
+                        className={`flex items-center justify-center gap-2 p-2.5 rounded-xl border text-xs font-bold transition-all ${
+                          matiereSemestre === "S1"
+                            ? "bg-[#0f2744] text-white border-[#0f2744] shadow-sm"
+                            : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                        }`}
+                      >
+                        <span>📘 Semestre 1 (S1)</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setMatiereSemestre("S2")}
+                        className={`flex items-center justify-center gap-2 p-2.5 rounded-xl border text-xs font-bold transition-all ${
+                          matiereSemestre === "S2"
+                            ? "bg-[#0f2744] text-white border-[#0f2744] shadow-sm"
+                            : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                        }`}
+                      >
+                        <span>📗 Semestre 2 (S2)</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setMatiereSemestre("S3")}
+                        className={`flex items-center justify-center gap-2 p-2.5 rounded-xl border text-xs font-bold transition-all ${
+                          matiereSemestre === "S3"
+                            ? "bg-[#e0521c] text-white border-[#e0521c] shadow-sm"
+                            : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                        }`}
+                      >
+                        <span>📙 Semestre 3 (S3)</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setMatiereSemestre("S4")}
+                        className={`flex items-center justify-center gap-2 p-2.5 rounded-xl border text-xs font-bold transition-all ${
+                          matiereSemestre === "S4"
+                            ? "bg-[#e0521c] text-white border-[#e0521c] shadow-sm"
+                            : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                        }`}
+                      >
+                        <span>📕 Semestre 4 (S4)</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+
                 {/* Classes concernées strictement filtrées selon le niveau */}
                 <div className="space-y-2 pt-2 border-t border-slate-100">
                   <div className="flex items-center justify-between">
@@ -684,6 +777,70 @@ export default function AdminAcademiquePage() {
                       <span>🎓 Licence 2 (L2)</span>
                     </button>
                   </div>
+                </div>
+
+                {/* Semestre d'enseignement : S1 ou S2 pour L1, S3 ou S4 pour L2 */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                      Semestre d&apos;enseignement <span className="text-[#e0521c]">*</span>
+                    </label>
+                    <span className="text-[11px] font-semibold text-slate-500">
+                      {matiereNiveau === "L1" ? "L1 : Semestre 1 ou 2" : "L2 : Semestre 3 ou 4"}
+                    </span>
+                  </div>
+
+                  {matiereNiveau === "L1" ? (
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setMatiereSemestre("S1")}
+                        className={`flex items-center justify-center gap-2 p-2.5 rounded-xl border text-xs font-bold transition-all ${
+                          matiereSemestre === "S1"
+                            ? "bg-[#0f2744] text-white border-[#0f2744] shadow-sm"
+                            : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                        }`}
+                      >
+                        <span>📘 Semestre 1 (S1)</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setMatiereSemestre("S2")}
+                        className={`flex items-center justify-center gap-2 p-2.5 rounded-xl border text-xs font-bold transition-all ${
+                          matiereSemestre === "S2"
+                            ? "bg-[#0f2744] text-white border-[#0f2744] shadow-sm"
+                            : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                        }`}
+                      >
+                        <span>📗 Semestre 2 (S2)</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setMatiereSemestre("S3")}
+                        className={`flex items-center justify-center gap-2 p-2.5 rounded-xl border text-xs font-bold transition-all ${
+                          matiereSemestre === "S3"
+                            ? "bg-[#e0521c] text-white border-[#e0521c] shadow-sm"
+                            : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                        }`}
+                      >
+                        <span>📙 Semestre 3 (S3)</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setMatiereSemestre("S4")}
+                        className={`flex items-center justify-center gap-2 p-2.5 rounded-xl border text-xs font-bold transition-all ${
+                          matiereSemestre === "S4"
+                            ? "bg-[#e0521c] text-white border-[#e0521c] shadow-sm"
+                            : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                        }`}
+                      >
+                        <span>📕 Semestre 4 (S4)</span>
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* Classes concernées strictement selon le niveau */}

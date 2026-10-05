@@ -316,11 +316,13 @@ export function getStoredMatieres(): Matiere[] {
     const code = m.code?.startsWith("MAT") ? m.code : (defaultM?.code || `MAT${String(idx + 1).padStart(3, "0")}`);
     const classes = m.classes && m.classes.length > 0 ? m.classes : (defaultM?.classes || ["L1-MPI"]);
     const niveau = defaultM?.niveau || m.niveau || (classes.some((c) => c.startsWith("L2")) ? "L2" : "L1");
+    const semestre = m.semestre || defaultM?.semestre || (niveau === "L1" ? "S1" : "S3");
     return {
       ...m,
       code,
       classes,
       niveau,
+      semestre,
     };
   });
 }

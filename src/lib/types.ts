@@ -61,6 +61,7 @@ export interface Matiere {
   description: string | null;
   classes?: string[]; // Classes concernées (ex: ["L1-MPI", "L1-SML"])
   niveau?: string;    // "L1" ou "L2"
+  semestre?: "S1" | "S2" | "S3" | "S4" | string; // S1/S2 pour L1, S3/S4 pour L2
   created_at?: string;
   updated_at?: string;
   filiere?: Filiere;
