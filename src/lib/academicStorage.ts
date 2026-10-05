@@ -12,6 +12,7 @@ import {
   SeanceEDT,
 } from "./types";
 import { MOCK_PROFESSEURS, MOCK_FILIERES, MOCK_CLASSES, MOCK_MATIERES } from "./data/mock-data";
+import { sendLocalNotification } from "./useNotifications";
 
 const STORAGE_KEYS = {
   COURS: "has_academic_courses_v1",
@@ -76,6 +77,7 @@ export function getStoredCourses(): Cours[] {
 
 export function saveCourse(course: Cours): void {
   const courses = getStoredCourses();
+  const isNew = !courses.some((c) => c.id === course.id);
   const index = courses.findIndex((c) => c.id === course.id);
   if (index >= 0) {
     courses[index] = course;
@@ -83,6 +85,15 @@ export function saveCourse(course: Cours): void {
     courses.unshift(course);
   }
   setStorageItem(STORAGE_KEYS.COURS, courses);
+  if (isNew) {
+    sendLocalNotification({
+      type: "cours",
+      title: "Nouveau cours disponible 📚",
+      body: `${course.title}${course.matiere?.name ? " — " + course.matiere.name : ""}`.trim(),
+      url: "/etudiant/cours",
+      tag: `cours-${course.id}`,
+    });
+  }
 }
 
 export function deleteCourse(id: string): void {
@@ -97,6 +108,7 @@ export function getStoredEDTs(): EmploiDuTemps[] {
 
 export function saveEDT(edt: EmploiDuTemps): void {
   const edts = getStoredEDTs();
+  const isNew = !edts.some((e) => e.id === edt.id);
   const index = edts.findIndex((e) => e.id === edt.id);
   if (index >= 0) {
     edts[index] = edt;
@@ -104,6 +116,15 @@ export function saveEDT(edt: EmploiDuTemps): void {
     edts.unshift(edt);
   }
   setStorageItem(STORAGE_KEYS.EDT, edts);
+  if (isNew) {
+    sendLocalNotification({
+      type: "edt",
+      title: "Emploi du temps mis à jour 📅",
+      body: `${edt.title || "Nouvel emploi du temps"} disponible.`,
+      url: "/etudiant/edt",
+      tag: `edt-${edt.id}`,
+    });
+  }
 }
 
 export function deleteEDT(id: string): void {
@@ -118,6 +139,7 @@ export function getStoredCommuniques(): Communique[] {
 
 export function saveCommunique(communique: Communique): void {
   const communiques = getStoredCommuniques();
+  const isNew = !communiques.some((c) => c.id === communique.id);
   const index = communiques.findIndex((c) => c.id === communique.id);
   if (index >= 0) {
     communiques[index] = communique;
@@ -125,6 +147,15 @@ export function saveCommunique(communique: Communique): void {
     communiques.unshift(communique);
   }
   setStorageItem(STORAGE_KEYS.COMMUNIQUES, communiques);
+  if (isNew) {
+    sendLocalNotification({
+      type: "communique",
+      title: "Nouveau communiqué 📢",
+      body: communique.title || "Un nouveau communiqué a été publié.",
+      url: "/etudiant/communiques",
+      tag: `communique-${communique.id}`,
+    });
+  }
 }
 
 export function deleteCommunique(id: string): void {
@@ -181,13 +212,29 @@ export function deleteSalon(id: string): void {
  * L'étudiant ne peut accéder QU'AU salon général, au salon de son niveau (ex: L1) et au salon de sa classe (ex: L1 MPI).
  */
 export function getAccessibleSalons(
-  _role?: UserRole,
-  _userNiveau?: string,
+  role?: UserRole,
+  userNiveau?: string,
   _userClasse?: string,
   _profClasses?: string[]
 ): ChatSalon[] {
   const stored = getStoredSalons();
-  return stored.length > 0 ? stored : DEFAULT_SALONS;
+  const all = stored.length > 0 ? stored : DEFAULT_SALONS;
+
+  // Admins and professors see all salons
+  if (role === "admin" || role === "professeur") return all;
+
+  // Students only see the salon matching their niveau
+  if (role === "etudiant" && userNiveau) {
+    const niveau = userNiveau.toUpperCase();
+    const filtered = all.filter((s) => {
+      if (s.niveau) return s.niveau.toUpperCase() === niveau;
+      // Fallback: match by salon ID (e.g. salon-l1 for L1)
+      return s.id.toLowerCase().includes(niveau.toLowerCase());
+    });
+    return filtered.length > 0 ? filtered : all;
+  }
+
+  return all;
 }
 
 /**

@@ -25,6 +25,7 @@ import {
   LifeBuoy,
 } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
+import { NotificationBanner } from "@/components/ui/NotificationBanner";
 import { UserRole } from "@/lib/types";
 
 interface NavItem {
@@ -122,7 +123,7 @@ export function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
-      {/* Top Header */}
+      <NotificationBanner />
       <header className="sticky top-0 z-30 bg-white border-b border-slate-200">
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">

@@ -130,10 +130,7 @@ export default function AdminChatPage() {
             <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] leading-snug">
               Gestion & Modération des Salons
             </h1>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl">
-              Cliquez sur un salon pour ouvrir le chat large façon WhatsApp, écouter les notes vocales
-              Telegram et modérer les messages en temps réel.
-            </p>
+
           </div>
 
           <div className="flex items-center gap-2">

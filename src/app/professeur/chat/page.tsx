@@ -6,7 +6,6 @@ import {
   Users,
   Sparkles,
   ArrowRight,
-  Mic,
   ShieldCheck,
   Radio,
   GraduationCap,
@@ -67,10 +66,7 @@ export default function ProfesseurChatPage() {
             <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] leading-snug">
               Salons Académiques de Discussion
             </h1>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl">
-              Cliquez sur un salon pour lancer la fenêtre de chat grand format WhatsApp. Vous pouvez y
-              envoyer des messages textes ou des notes vocales Telegram de haute clarté.
-            </p>
+
           </div>
 
           <button
@@ -139,10 +135,6 @@ export default function ProfesseurChatPage() {
                   </p>
 
                   <div className="flex flex-wrap items-center gap-1.5 pt-2">
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-blue-50 text-[#0f2744] border border-blue-100">
-                      <Mic className="w-3 h-3 text-[#e0521c]" />
-                      Vocal Telegram avec vitesse réglable
-                    </span>
                     <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">
                       <ShieldCheck className="w-3 h-3 text-emerald-600" />
                       Privilèges Enseignant
@@ -152,10 +144,10 @@ export default function ProfesseurChatPage() {
 
                 <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
                   <span className="text-xs font-semibold text-slate-500 group-hover:text-slate-900 transition-colors">
-                    Rejoindre les échanges étudiants
+                    {salon.description}
                   </span>
                   <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 group-hover:bg-[#0f2744] text-slate-700 group-hover:text-white transition-all text-xs font-bold shadow-xs">
-                    <span>Ouvrir WhatsApp</span>
+                    <span>Entrer</span>
                     <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                   </div>
                 </div>

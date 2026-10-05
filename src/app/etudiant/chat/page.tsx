@@ -6,9 +6,7 @@ import {
   Users,
   Sparkles,
   ArrowRight,
-  Mic,
   ShieldCheck,
-  CheckCircle2,
   Radio,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
@@ -72,10 +70,7 @@ export default function EtudiantChatPage() {
             <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] leading-snug">
               Salons de Discussion en Direct
             </h1>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-2xl">
-              Cliquez sur un salon pour ouvrir instantanément la salle de discussion grand format
-              façon WhatsApp, avec messages vocaux Telegram et fond aux ondulations d&apos;eau.
-            </p>
+
           </div>
 
           <div className="flex items-center gap-2">
@@ -147,12 +142,7 @@ export default function EtudiantChatPage() {
                     {salon.description}
                   </p>
 
-                  {/* Badges fonctionnalités */}
                   <div className="flex flex-wrap items-center gap-1.5 pt-2">
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-blue-50 text-[#0f2744] border border-blue-100">
-                      <Mic className="w-3 h-3 text-[#e0521c]" />
-                      Notes vocales Telegram
-                    </span>
                     <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">
                       <ShieldCheck className="w-3 h-3 text-emerald-600" />
                       Canal vérifié
@@ -163,10 +153,9 @@ export default function EtudiantChatPage() {
                   </div>
                 </div>
 
-                {/* Bouton d'action "Entrer dans le salon" */}
                 <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
                   <span className="text-xs font-semibold text-slate-500 group-hover:text-slate-900 transition-colors">
-                    Ouvrir la salle de chat large
+                    {salon.description}
                   </span>
                   <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 group-hover:bg-[#0f2744] text-slate-700 group-hover:text-white transition-all text-xs font-bold shadow-xs">
                     <span>Entrer</span>
@@ -178,25 +167,7 @@ export default function EtudiantChatPage() {
           })}
         </div>
 
-        {/* Aperçu / Carte d'information du salon sélectionné */}
-        <div className="bg-gradient-to-r from-[#0f2744]/5 via-white to-[#e0521c]/5 rounded-2xl p-6 border border-slate-200/90 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="space-y-1">
-            <h4 className="font-serif text-base font-bold text-[#0f2744]">
-              Vous consultez actuellement : {activeSalon.titre}
-            </h4>
-            <p className="text-xs text-slate-500">
-              Format WhatsApp activé • Fond blanc aux ondulations concentriques bleu et orange • Lecteur vocal Telegram avec ondes et contrôle de vitesse 1X / 1.5X / 2X.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => setIsPopupOpen(true)}
-            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#0f2744] hover:bg-[#163860] text-white text-xs font-bold shadow-md transition-all active:scale-95 shrink-0"
-          >
-            <MessageSquare className="w-4 h-4 text-[#e0521c]" />
-            <span>Afficher la fenêtre WhatsApp</span>
-          </button>
-        </div>
+
 
         {/* ─── Grand Pop-up de Chat façon WhatsApp ──────────────────────────── */}
         {isPopupOpen && (
