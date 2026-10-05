@@ -85,25 +85,26 @@ export const MOCK_CLASSES: Classe[] = [
 ];
 
 export const MOCK_MATIERES: Matiere[] = [
-  { id: "1", filiere_id: "11111111-1111-1111-1111-111111111111", code: "POO-PY", name: "Programmation Orientée Objet Python", coefficient: 3, credits_ects: 5, description: "Classes, objets, héritage, polymorphisme et design patterns en Python.", niveau: "L2", classes: ["L2-MPI", "L2-MIASS"] },
-  { id: "2", filiere_id: "11111111-1111-1111-1111-111111111111", code: "BDD", name: "Base de données", coefficient: 3, credits_ects: 5, description: "Modèle relationnel, requêtes SQL, normalisation et transactions ACID.", niveau: "L2", classes: ["L2-MPI", "L2-MIASS"] },
-  { id: "3", filiere_id: "11111111-1111-1111-1111-111111111111", code: "MEC-GEN", name: "Mécanique Générale", coefficient: 3, credits_ects: 5, description: "Cinématique, dynamique des solides et théorèmes énergétiques.", niveau: "L2", classes: ["L2-MPI", "L2-SML"] },
-  { id: "4", filiere_id: "11111111-1111-1111-1111-111111111111", code: "ANA-3", name: "Analyse 3", coefficient: 3, credits_ects: 5, description: "Séries numériques, séries de Fourier et équations différentielles.", niveau: "L2", classes: ["L2-MPI", "L2-SML", "L2-MIASS"] },
-  { id: "5", filiere_id: "11111111-1111-1111-1111-111111111111", code: "ALG-3", name: "Algèbre 3", coefficient: 3, credits_ects: 5, description: "Réduction d'endomorphismes, diagonalisation et formes bilinéaires.", niveau: "L2", classes: ["L2-MPI", "L2-SML", "L2-MIASS"] },
-  { id: "6", filiere_id: "11111111-1111-1111-1111-111111111111", code: "THERMO", name: "Thermodynamique", coefficient: 3, credits_ects: 4, description: "Premier et second principes, cycles thermiques et machines.", niveau: "L2", classes: ["L2-MPI", "L2-SML"] },
-  { id: "7", filiere_id: "11111111-1111-1111-1111-111111111111", code: "ANM", name: "Analyse Numérique Matricielle", coefficient: 3, credits_ects: 5, description: "Résolution de systèmes linéaires, factorisation LU, QR et valeurs propres.", niveau: "L2", classes: ["L2-MPI", "L2-SML"] },
-  { id: "8", filiere_id: "33333333-3333-3333-3333-333333333333", code: "ECO", name: "Economie", coefficient: 2, credits_ects: 3, description: "Microéconomie avancée et macroéconomie monétaire.", niveau: "L2", classes: ["L2-MIASS"] },
-  { id: "9", filiere_id: "11111111-1111-1111-1111-111111111111", code: "ANA-1", name: "Analyse 1", coefficient: 4, credits_ects: 6, description: "Suites réelles, limites, continuité et fonctions dérivables.", niveau: "L1", classes: ["L1-MPI", "L1-SML", "L1-MIASS"] },
-  { id: "10", filiere_id: "11111111-1111-1111-1111-111111111111", code: "ALG-1", name: "Algèbre 1", coefficient: 4, credits_ects: 6, description: "Espaces vectoriels, applications linéaires et calcul matriciel.", niveau: "L1", classes: ["L1-MPI", "L1-SML", "L1-MIASS"] },
-  { id: "11", filiere_id: "11111111-1111-1111-1111-111111111111", code: "PROG-PY", name: "Programmation Python", coefficient: 3, credits_ects: 5, description: "Syntaxe fondamentale, structures de données, boucles et fonctions.", niveau: "L1", classes: ["L1-MPI", "L1-MIASS"] },
-  { id: "12", filiere_id: "11111111-1111-1111-1111-111111111111", code: "MEC-PT", name: "Mécanique du point", coefficient: 3, credits_ects: 5, description: "Cinématique du point matériel et lois fondamentales de Newton.", niveau: "L1", classes: ["L1-MPI", "L1-SML"] },
-  { id: "13", filiere_id: "11111111-1111-1111-1111-111111111111", code: "ELEC", name: "Electricité", coefficient: 3, credits_ects: 4, description: "Circuits en régime continu et transitoire, théorèmes de Thévenin et Norton.", niveau: "L1", classes: ["L1-MPI", "L1-SML"] },
-  { id: "14", filiere_id: "33333333-3333-3333-3333-333333333333", code: "ECO-GEN", name: "Economie Générale", coefficient: 2, credits_ects: 3, description: "Fondements de l'analyse économique et circuits de production.", niveau: "L1", classes: ["L1-MIASS"] },
-  { id: "15", filiere_id: "11111111-1111-1111-1111-111111111111", code: "ANA-2", name: "Analyse 2", coefficient: 4, credits_ects: 6, description: "Calcul intégral, primitives, développements limités et intégrales généralisées.", niveau: "L1", classes: ["L1-MPI", "L1-SML", "L1-MIASS"] },
-  { id: "16", filiere_id: "11111111-1111-1111-1111-111111111111", code: "ALG-2", name: "Algèbre 2", coefficient: 4, credits_ects: 6, description: "Déterminants, géométrie affine et espaces euclidiens.", niveau: "L1", classes: ["L1-MPI", "L1-SML", "L1-MIASS"] },
-  { id: "17", filiere_id: "11111111-1111-1111-1111-111111111111", code: "MAG-REG", name: "Magnétostatique et Régime Variable", coefficient: 3, credits_ects: 4, description: "Champs magnétiques, force de Lorentz et induction électromagnétique.", niveau: "L2", classes: ["L2-MPI", "L2-SML"] },
-  { id: "18", filiere_id: "11111111-1111-1111-1111-111111111111", code: "OPT-GEO", name: "Optique Géométrique", coefficient: 2, credits_ects: 3, description: "Lois de Snell-Descartes, lentilles minces, miroirs et instruments d'optique.", niveau: "L1", classes: ["L1-MPI", "L1-SML"] },
-  { id: "19", filiere_id: "11111111-1111-1111-1111-111111111111", code: "LANG-C", name: "Langage C", coefficient: 3, credits_ects: 5, description: "Pointeurs, allocation dynamique, structures et gestion de la mémoire.", niveau: "L1", classes: ["L1-MPI"] },
+  { id: "1", filiere_id: "11111111-1111-1111-1111-111111111111", code: "MAT001", name: "Programmation Orientée Objet Python", coefficient: 3, credits_ects: 5, description: "Classes, objets, héritage, polymorphisme et design patterns en Python.", niveau: "L2", classes: ["L2-MPI", "L2-MIASS"] },
+  { id: "2", filiere_id: "11111111-1111-1111-1111-111111111111", code: "MAT002", name: "Base de données", coefficient: 3, credits_ects: 5, description: "Modèle relationnel, requêtes SQL, normalisation et transactions ACID.", niveau: "L2", classes: ["L2-MPI", "L2-MIASS"] },
+  { id: "3", filiere_id: "11111111-1111-1111-1111-111111111111", code: "MAT003", name: "Mécanique Générale", coefficient: 3, credits_ects: 5, description: "Cinématique, dynamique des solides et théorèmes énergétiques.", niveau: "L2", classes: ["L2-MPI", "L2-SML"] },
+  { id: "4", filiere_id: "11111111-1111-1111-1111-111111111111", code: "MAT004", name: "Analyse 3", coefficient: 3, credits_ects: 5, description: "Séries numériques, séries de Fourier et équations différentielles.", niveau: "L2", classes: ["L2-MPI", "L2-SML", "L2-MIASS"] },
+  { id: "5", filiere_id: "11111111-1111-1111-1111-111111111111", code: "MAT005", name: "Algèbre 3", coefficient: 3, credits_ects: 5, description: "Réduction d'endomorphismes, diagonalisation et formes bilinéaires.", niveau: "L2", classes: ["L2-MPI", "L2-SML", "L2-MIASS"] },
+  { id: "6", filiere_id: "11111111-1111-1111-1111-111111111111", code: "MAT006", name: "Thermodynamique", coefficient: 3, credits_ects: 4, description: "Premier et second principes, cycles thermiques et machines.", niveau: "L2", classes: ["L2-MPI", "L2-SML"] },
+  { id: "7", filiere_id: "11111111-1111-1111-1111-111111111111", code: "MAT007", name: "Analyse Numérique Matricielle", coefficient: 3, credits_ects: 5, description: "Résolution de systèmes linéaires, factorisation LU, QR et valeurs propres.", niveau: "L2", classes: ["L2-MPI", "L2-SML"] },
+  { id: "8", filiere_id: "33333333-3333-3333-3333-333333333333", code: "MAT008", name: "Economie", coefficient: 2, credits_ects: 3, description: "Microéconomie avancée et macroéconomie monétaire.", niveau: "L2", classes: ["L2-MIASS"] },
+  { id: "9", filiere_id: "11111111-1111-1111-1111-111111111111", code: "MAT009", name: "Analyse 1", coefficient: 4, credits_ects: 6, description: "Suites réelles, limites, continuité et fonctions dérivables.", niveau: "L1", classes: ["L1-MPI", "L1-SML", "L1-MIASS"] },
+  { id: "10", filiere_id: "11111111-1111-1111-1111-111111111111", code: "MAT010", name: "Algèbre 1", coefficient: 4, credits_ects: 6, description: "Espaces vectoriels, applications linéaires et calcul matriciel.", niveau: "L1", classes: ["L1-MPI", "L1-SML", "L1-MIASS"] },
+  { id: "11", filiere_id: "11111111-1111-1111-1111-111111111111", code: "MAT011", name: "Programmation Python", coefficient: 3, credits_ects: 5, description: "Syntaxe fondamentale, structures de données, boucles et fonctions.", niveau: "L1", classes: ["L1-MPI", "L1-MIASS"] },
+  { id: "12", filiere_id: "11111111-1111-1111-1111-111111111111", code: "MAT012", name: "Mécanique du point", coefficient: 3, credits_ects: 5, description: "Cinématique du point matériel et lois fondamentales de Newton.", niveau: "L1", classes: ["L1-MPI", "L1-SML"] },
+  { id: "13", filiere_id: "11111111-1111-1111-1111-111111111111", code: "MAT013", name: "Electricité", coefficient: 3, credits_ects: 4, description: "Circuits en régime continu et transitoire, théorèmes de Thévenin et Norton.", niveau: "L1", classes: ["L1-MPI", "L1-SML"] },
+  { id: "14", filiere_id: "33333333-3333-3333-3333-333333333333", code: "MAT014", name: "Economie Générale", coefficient: 2, credits_ects: 3, description: "Fondements de l'analyse économique et circuits de production.", niveau: "L1", classes: ["L1-MIASS"] },
+  { id: "15", filiere_id: "11111111-1111-1111-1111-111111111111", code: "MAT015", name: "Analyse 2", coefficient: 4, credits_ects: 6, description: "Calcul intégral, primitives, développements limités et intégrales généralisées.", niveau: "L1", classes: ["L1-MPI", "L1-SML", "L1-MIASS"] },
+  { id: "16", filiere_id: "11111111-1111-1111-1111-111111111111", code: "MAT016", name: "Algèbre 2", coefficient: 4, credits_ects: 6, description: "Déterminants, géométrie affine et espaces euclidiens.", niveau: "L1", classes: ["L1-MPI", "L1-SML", "L1-MIASS"] },
+  { id: "17", filiere_id: "11111111-1111-1111-1111-111111111111", code: "MAT017", name: "Magnétostatique et Régime Variable", coefficient: 3, credits_ects: 4, description: "Champs magnétiques, force de Lorentz et induction électromagnétique.", niveau: "L2", classes: ["L2-MPI", "L2-SML"] },
+  { id: "18", filiere_id: "11111111-1111-1111-1111-111111111111", code: "MAT018", name: "Optique Géométrique", coefficient: 2, credits_ects: 3, description: "Lois de Snell-Descartes, lentilles minces, miroirs et instruments d'optique.", niveau: "L1", classes: ["L1-MPI", "L1-SML"] },
+  { id: "19", filiere_id: "11111111-1111-1111-1111-111111111111", code: "MAT019", name: "Langage C", coefficient: 3, credits_ects: 5, description: "Pointeurs, allocation dynamique, structures et gestion de la mémoire.", niveau: "L1", classes: ["L1-MPI"] },
+  { id: "20", filiere_id: "11111111-1111-1111-1111-111111111111", code: "MAT020", name: "Probabilités et Statistiques", coefficient: 3, credits_ects: 5, description: "Calcul des probabilités, variables aléatoires et statistique inférentielle.", niveau: "L2", classes: ["L2-MPI", "L2-SML", "L2-MIASS"] },
 ];
 
 export type ProfesseurProfile = Profile & Professeur;
@@ -132,13 +133,13 @@ export const MOCK_PROFESSEURS: ProfesseurProfile[] = [
     niveaux: ["L1", "L2"],
     classes: ["L1 MPI", "L2 MPI", "L1 SML", "L2 SML", "L1 MIASS", "L2 MIASS"],
     matieres: [
-      { id: 9, nom: "Analyse 1", code: "ANA-1", niveau: "L1", classes: ["L1 MPI", "L1 SML", "L1 MIASS"] },
-      { id: 10, nom: "Algèbre 1", code: "ALG-1", niveau: "L1", classes: ["L1 MPI", "L1 SML", "L1 MIASS"] },
-      { id: 15, nom: "Analyse 2", code: "ANA-2", niveau: "L1", classes: ["L1 MPI", "L1 SML", "L1 MIASS"] },
-      { id: 16, nom: "Algèbre 2", code: "ALG-2", niveau: "L1", classes: ["L1 MPI", "L1 SML", "L1 MIASS"] },
-      { id: 4, nom: "Analyse 3", code: "ANA-3", niveau: "L2", classes: ["L2 MPI", "L2 SML", "L2 MIASS"] },
-      { id: 5, nom: "Algèbre 3", code: "ALG-3", niveau: "L2", classes: ["L2 MPI", "L2 SML", "L2 MIASS"] },
-      { id: 7, nom: "Analyse Numérique Matricielle", code: "ANM", niveau: "L2", classes: ["L2 MPI", "L2 SML"] },
+      { id: 9, nom: "Analyse 1", code: "MAT009", niveau: "L1", classes: ["L1 MPI", "L1 SML", "L1 MIASS"] },
+      { id: 10, nom: "Algèbre 1", code: "MAT010", niveau: "L1", classes: ["L1 MPI", "L1 SML", "L1 MIASS"] },
+      { id: 15, nom: "Analyse 2", code: "MAT015", niveau: "L1", classes: ["L1 MPI", "L1 SML", "L1 MIASS"] },
+      { id: 16, nom: "Algèbre 2", code: "MAT016", niveau: "L1", classes: ["L1 MPI", "L1 SML", "L1 MIASS"] },
+      { id: 4, nom: "Analyse 3", code: "MAT004", niveau: "L2", classes: ["L2 MPI", "L2 SML", "L2 MIASS"] },
+      { id: 5, nom: "Algèbre 3", code: "MAT005", niveau: "L2", classes: ["L2 MPI", "L2 SML", "L2 MIASS"] },
+      { id: 7, nom: "Analyse Numérique Matricielle", code: "MAT007", niveau: "L2", classes: ["L2 MPI", "L2 SML"] },
     ],
   },
   {
@@ -164,8 +165,8 @@ export const MOCK_PROFESSEURS: ProfesseurProfile[] = [
     niveaux: ["L2"],
     classes: ["L2 MPI", "L2 SML", "L2 MIASS"],
     matieres: [
-      { id: 1, nom: "Programmation Orientée Objet Python", code: "POO-PY", niveau: "L2", classes: ["L2 MPI", "L2 SML", "L2 MIASS"] },
-      { id: 2, nom: "Base de données", code: "BDD", niveau: "L2", classes: ["L2 MPI"] },
+      { id: 1, nom: "Programmation Orientée Objet Python", code: "MAT001", niveau: "L2", classes: ["L2 MPI", "L2 SML", "L2 MIASS"] },
+      { id: 2, nom: "Base de données", code: "MAT002", niveau: "L2", classes: ["L2 MPI"] },
     ],
   },
   {
@@ -191,10 +192,10 @@ export const MOCK_PROFESSEURS: ProfesseurProfile[] = [
     niveaux: ["L1", "L2"],
     classes: ["L1 MPI", "L2 MPI", "L1 SML", "L2 SML"],
     matieres: [
-      { id: 12, nom: "Mécanique du point", code: "MEC-PT", niveau: "L1", classes: ["L1 MPI", "L1 SML"] },
-      { id: 17, nom: "Magnétostatique et Régime Variable", code: "MAG-REG", niveau: "L1", classes: ["L1 MPI", "L1 SML"] },
-      { id: 18, nom: "Optique Géométrique", code: "OPT-GEO", niveau: "L1", classes: ["L1 MPI", "L1 SML"] },
-      { id: 6, nom: "Thermodynamique", code: "THERMO", niveau: "L2", classes: ["L2 MPI", "L2 SML"] },
+      { id: 12, nom: "Mécanique du point", code: "MAT012", niveau: "L1", classes: ["L1 MPI", "L1 SML"] },
+      { id: 17, nom: "Magnétostatique et Régime Variable", code: "MAT017", niveau: "L2", classes: ["L2 MPI", "L2 SML"] },
+      { id: 18, nom: "Optique Géométrique", code: "MAT018", niveau: "L1", classes: ["L1 MPI", "L1 SML"] },
+      { id: 6, nom: "Thermodynamique", code: "MAT006", niveau: "L2", classes: ["L2 MPI", "L2 SML"] },
     ],
   },
   {
@@ -220,7 +221,7 @@ export const MOCK_PROFESSEURS: ProfesseurProfile[] = [
     niveaux: ["L2"],
     classes: ["L2 MPI", "L2 SML"],
     matieres: [
-      { id: 3, nom: "Mécanique Générale", code: "MEC-GEN", niveau: "L2", classes: ["L2 MPI", "L2 SML"] },
+      { id: 3, nom: "Mécanique Générale", code: "MAT003", niveau: "L2", classes: ["L2 MPI", "L2 SML"] },
     ],
   },
   {
@@ -246,8 +247,8 @@ export const MOCK_PROFESSEURS: ProfesseurProfile[] = [
     niveaux: ["L1"],
     classes: ["L1 MPI", "L1 SML", "L1 MIASS"],
     matieres: [
-      { id: 11, nom: "Programmation Python", code: "PROG-PY", niveau: "L1", classes: ["L1 MPI", "L1 SML", "L1 MIASS"] },
-      { id: 19, nom: "Langage C", code: "LANG-C", niveau: "L1", classes: ["L1 MPI", "L1 SML", "L1 MIASS"] },
+      { id: 11, nom: "Programmation Python", code: "MAT011", niveau: "L1", classes: ["L1 MPI", "L1 SML", "L1 MIASS"] },
+      { id: 19, nom: "Langage C", code: "MAT019", niveau: "L1", classes: ["L1 MPI", "L1 SML", "L1 MIASS"] },
     ],
   },
   {
@@ -273,10 +274,10 @@ export const MOCK_PROFESSEURS: ProfesseurProfile[] = [
     niveaux: ["L1"],
     classes: ["L1 MPI", "L1 SML"],
     matieres: [
-      { id: 12, nom: "Mécanique du point", code: "MEC-PT", niveau: "L1", classes: ["L1 MPI", "L1 SML"] },
-      { id: 13, nom: "Electricité", code: "ELEC", niveau: "L1", classes: ["L1 MPI", "L1 SML"] },
-      { id: 17, nom: "Magnétostatique et Régime Variable", code: "MAG-REG", niveau: "L1", classes: ["L1 MPI", "L1 SML"] },
-      { id: 18, nom: "Optique Géométrique", code: "OPT-GEO", niveau: "L1", classes: ["L1 MPI", "L1 SML"] },
+      { id: 12, nom: "Mécanique du point", code: "MAT012", niveau: "L1", classes: ["L1 MPI", "L1 SML"] },
+      { id: 13, nom: "Electricité", code: "MAT013", niveau: "L1", classes: ["L1 MPI", "L1 SML"] },
+      { id: 17, nom: "Magnétostatique et Régime Variable", code: "MAT017", niveau: "L2", classes: ["L2 MPI", "L2 SML"] },
+      { id: 18, nom: "Optique Géométrique", code: "MAT018", niveau: "L1", classes: ["L1 MPI", "L1 SML"] },
     ],
   },
 ];

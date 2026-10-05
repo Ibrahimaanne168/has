@@ -22,7 +22,7 @@ const STORAGE_KEYS = {
   MESSAGES: "has_academic_direct_messages_v1",
   FILIERES: "has_academic_filieres_v2",
   CLASSES: "has_academic_classes_v2",
-  MATIERES: "has_academic_matieres_v2",
+  MATIERES: "has_academic_matieres_v3",
   SEANCES_EDT: "has_academic_seances_edt_v1",
 };
 
@@ -310,15 +310,18 @@ export function deleteClasse(id: string): void {
 // === GESTION DES MATIÈRES (PERSISTÉ EN LOCALSTORAGE AVEC CLASSES CONCERNÉES) ===
 export function getStoredMatieres(): Matiere[] {
   const list = getStorageItem<Matiere[]>(STORAGE_KEYS.MATIERES, MOCK_MATIERES);
-  // Garantir que chaque matière a ses classes assignées (y compris troncs communs)
-  return list.map((m) => {
-    if (!m.classes || m.classes.length === 0) {
-      const defaultM = MOCK_MATIERES.find((dm) => dm.code === m.code || dm.id === m.id);
-      if (defaultM?.classes) {
-        return { ...m, classes: defaultM.classes, niveau: defaultM.niveau || m.niveau };
-      }
-    }
-    return m;
+  // Garantir que chaque matière a son code MAT001..MAT020 et ses classes assignées
+  return list.map((m, idx) => {
+    const defaultM = MOCK_MATIERES.find((dm) => dm.id === m.id || dm.name.toLowerCase() === m.name.toLowerCase());
+    const code = m.code?.startsWith("MAT") ? m.code : (defaultM?.code || `MAT${String(idx + 1).padStart(3, "0")}`);
+    const classes = m.classes && m.classes.length > 0 ? m.classes : (defaultM?.classes || ["L1-MPI"]);
+    const niveau = defaultM?.niveau || m.niveau || (classes.some((c) => c.startsWith("L2")) ? "L2" : "L1");
+    return {
+      ...m,
+      code,
+      classes,
+      niveau,
+    };
   });
 }
 
