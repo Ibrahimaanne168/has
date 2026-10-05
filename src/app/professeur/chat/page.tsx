@@ -172,7 +172,7 @@ export default function ProfesseurChatPage() {
             roomTitle={activeSalon.titre}
             roomDescription={activeSalon.description}
             currentUser={{
-              id: String(prof.user_id || "2"),
+              id: prof.id || String(prof.user_id || "prof"),
               fullName: prof.full_name,
               role: "professeur",
               email: prof.email,

@@ -170,7 +170,11 @@ export default function ProfesseurCoursPage() {
 
   // Seuls les cours concernant ce professeur sont affichés
   const myCourses = courses.filter((c) => {
-    return c.professeur_id === prof.id || !c.professeur_id || c.professeur?.id === prof.id;
+    const profIdMatch = c.professeur_id === prof.id || c.professeur?.id === prof.id;
+    const profMatriculeMatch = prof.matricule && (c.professeur?.matricule === prof.matricule || c.professeur_id === prof.matricule);
+    const profEmailMatch = prof.email && c.professeur?.email === prof.email;
+    const profNameMatch = prof.nom && c.professeur?.full_name?.toLowerCase().includes(prof.nom.toLowerCase());
+    return profIdMatch || profMatriculeMatch || profEmailMatch || profNameMatch;
   });
 
   return (

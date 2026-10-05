@@ -20,13 +20,11 @@ import {
   saveDirectMessage,
   markDirectMessageRead,
 } from "@/lib/academicStorage";
-import { Message, Professeur } from "@/lib/types";
+import { useCurrentProfesseur } from "@/lib/useCurrentProfesseur";
+import { Message } from "@/lib/types";
 
 export default function ProfesseurMessagesPage() {
-  const [prof, setProf] = useState<Professeur>(() => {
-    const list = getStoredProfesseurs();
-    return list[0];
-  });
+  const { prof } = useCurrentProfesseur();
 
   const [tab, setTab] = useState<"inbox" | "sent">("inbox");
   const [allMessages, setAllMessages] = useState<Message[]>([]);
@@ -36,9 +34,6 @@ export default function ProfesseurMessagesPage() {
   const [replySent, setReplySent] = useState(false);
 
   const loadData = () => {
-    const profs = getStoredProfesseurs();
-    const current = profs[0];
-    setProf(current);
     const msgs = getStoredDirectMessages();
     setAllMessages(msgs);
   };

@@ -562,11 +562,11 @@ export function ChatRoom({
     }
   };
 
-  // Styles visuels des bulles WhatsApp
+  // Styles visuels des bulles WhatsApp avec coins arrondis élégants
   const getBubbleStyles = (role: UserRole, isMe: boolean) => {
     if (isMe) {
       return {
-        bubble: "bg-[#0f2744] text-white rounded-tr-none shadow-[0_2px_8px_rgba(15,39,68,0.18)]",
+        bubble: "bg-[#0f2744] text-white rounded-2xl sm:rounded-[22px] rounded-br-xs shadow-[0_2px_8px_rgba(15,39,68,0.18)]",
         name: "text-orange-200",
         avatar: "bg-[#0f2744] text-white border-2 border-white",
         accent: "#ffffff",
@@ -575,7 +575,7 @@ export function ChatRoom({
 
     if (role === "admin") {
       return {
-        bubble: "bg-white text-slate-800 border border-purple-200 rounded-tl-none shadow-[0_2px_8px_rgba(147,51,234,0.06)]",
+        bubble: "bg-white text-slate-800 border border-purple-200 rounded-2xl sm:rounded-[22px] rounded-bl-xs shadow-[0_2px_8px_rgba(147,51,234,0.06)]",
         name: "text-purple-700 font-bold",
         avatar: "bg-purple-600 text-white",
         accent: "#7e22ce",
@@ -584,7 +584,7 @@ export function ChatRoom({
 
     if (role === "professeur") {
       return {
-        bubble: "bg-white text-slate-800 border border-blue-200/90 rounded-tl-none shadow-[0_2px_8px_rgba(15,39,68,0.06)]",
+        bubble: "bg-white text-slate-800 border border-blue-200/90 rounded-2xl sm:rounded-[22px] rounded-bl-xs shadow-[0_2px_8px_rgba(15,39,68,0.06)]",
         name: "text-[#0f2744] font-bold",
         avatar: "bg-[#0f2744] text-white",
         accent: "#0f2744",
@@ -593,7 +593,7 @@ export function ChatRoom({
 
     // etudiant
     return {
-      bubble: "bg-white text-slate-800 border border-slate-200/90 rounded-tl-none shadow-[0_2px_6px_rgba(0,0,0,0.04)]",
+      bubble: "bg-white text-slate-800 border border-slate-200/90 rounded-2xl sm:rounded-[22px] rounded-bl-xs shadow-[0_2px_6px_rgba(0,0,0,0.04)]",
       name: "text-[#e0521c] font-bold",
       avatar: "bg-[#e0521c] text-white",
       accent: "#e0521c",
@@ -767,17 +767,17 @@ export function ChatRoom({
         </div>
       )}
 
-      {/* ─── Zone des messages avec le WaterRippleBackground ──────────────── */}
-      <div
-        ref={messagesContainerRef}
-        className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 relative"
-        onClick={() => setSelectedMsgId(null)}
-      >
-        {/* Fond blanc ultra-propre avec les ondulations concentriques de gouttes d'eau */}
+      {/* ─── Zone centrale avec fond fixe et liste défilante indépendante ── */}
+      <div className="relative flex-1 min-h-0 overflow-hidden bg-white">
+        {/* Fond blanc fixe avec les ondulations concentriques de gouttes d'eau (ne bouge jamais) */}
         <WaterRippleBackground />
 
-        {/* Contenu réel au-dessus du fond */}
-        <div className="relative z-10 space-y-4">
+        {/* Contenu des messages qui défile indépendamment par-dessus le fond fixe */}
+        <div
+          ref={messagesContainerRef}
+          className="absolute inset-0 overflow-y-auto p-4 sm:p-6 space-y-4 z-10"
+          onClick={() => setSelectedMsgId(null)}
+        >
           {isLoading ? (
             <div className="h-96 flex flex-col items-center justify-center text-slate-400 gap-3">
               <div className="animate-spin rounded-full h-9 w-9 border-b-2 border-[#0f2744]"></div>
@@ -847,7 +847,7 @@ export function ChatRoom({
                       </span>
                     </div>
 
-                    {/* Bulle de message façon WhatsApp */}
+                    {/* Bulle de message façon WhatsApp avec coins arrondis */}
                     <div
                       onClick={(e) => {
                         e.stopPropagation();
@@ -876,9 +876,9 @@ export function ChatRoom({
                       ) : (
                         <div className="break-words space-y-1">
                           <p className="whitespace-pre-wrap">{msg.content}</p>
-                          <div className={`flex items-center justify-end gap-1 text-[10px] ${isMe ? "text-orange-200" : "text-slate-400"}`}>
+                          <div className={`flex items-center justify-end gap-1.5 text-[10px] ${isMe ? "text-orange-200" : "text-slate-400"}`}>
                             <span>{formattedTime}</span>
-                            {isMe && <span className="font-bold text-emerald-400">✓✓</span>}
+                            {isMe && <span className="font-bold text-emerald-300 tracking-wider">Lu</span>}
                           </div>
                         </div>
                       )}

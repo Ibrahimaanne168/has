@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { createClient } from "@/lib/supabase/client";
+import { getStoredProfesseurs } from "@/lib/academicStorage";
 
 function ConnexionForm() {
   const router = useRouter();
@@ -37,6 +38,25 @@ function ConnexionForm() {
     setErrorMsg(null);
 
     try {
+      const cleanInput = emailOrUsername.trim().toLowerCase();
+      const allProfs = getStoredProfesseurs();
+      const matchedProf = allProfs.find((p) =>
+        (p.email && p.email.toLowerCase() === cleanInput) ||
+        (p.username && p.username.toLowerCase() === cleanInput) ||
+        (p.matricule && p.matricule.toLowerCase() === cleanInput) ||
+        (p.full_name && p.full_name.toLowerCase() === cleanInput) ||
+        cleanInput.includes(p.username?.toLowerCase() || "___") ||
+        (p.nom && cleanInput.includes(p.nom.toLowerCase()))
+      );
+
+      if (matchedProf && typeof window !== "undefined") {
+        try {
+          localStorage.setItem("has_current_professeur_profile_v2", JSON.stringify(matchedProf));
+          localStorage.setItem("has_auth_role", "professeur");
+          localStorage.setItem("has_auth_identifier", cleanInput);
+        } catch {}
+      }
+
       const supabase = createClient();
       const isPlaceholder = process.env.NEXT_PUBLIC_SUPABASE_URL?.includes("placeholder");
 
@@ -92,7 +112,9 @@ function ConnexionForm() {
         if (typeof window !== "undefined") {
           try {
             localStorage.removeItem("has_current_student_profile_v2");
-            localStorage.removeItem("has_current_professeur_profile_v2");
+            if (!matchedProf) {
+              localStorage.removeItem("has_current_professeur_profile_v2");
+            }
           } catch {}
         }
 
@@ -104,6 +126,8 @@ function ConnexionForm() {
             authEmail.toLowerCase().endsWith("@has-internal.local")
           ) {
             role = "admin";
+          } else if (matchedProf || authEmail.toLowerCase().includes("prof")) {
+            role = "professeur";
           } else {
             role = "etudiant";
           }
@@ -124,7 +148,7 @@ function ConnexionForm() {
       // Mode démo / local si Supabase non encore connecté
       if (emailOrUsername.toLowerCase().includes("admin")) {
         router.push("/admin");
-      } else if (emailOrUsername.toLowerCase().includes("prof")) {
+      } else if (matchedProf || emailOrUsername.toLowerCase().includes("prof")) {
         router.push("/professeur");
       } else {
         router.push("/etudiant");

@@ -251,7 +251,7 @@ export function TelegramVoiceNote({
             )}
 
             {isMe && (
-              <CheckCheck className="w-3.5 h-3.5 text-emerald-400 opacity-90" />
+              <span className="font-bold text-[10px] text-emerald-300 tracking-wider">Lu</span>
             )}
           </div>
         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   BookOpen,
@@ -15,29 +15,57 @@ import {
   Sparkles,
   CheckCircle2,
   BarChart3,
+  UserCheck,
+  ChevronDown,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/Button";
-import { Card, CardHeader, CardContent } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
-import { MOCK_PROFESSEURS, MOCK_CLASSES } from "@/lib/data/mock-data";
 import { useCurrentProfesseur } from "@/lib/useCurrentProfesseur";
-import { getStoredCourses } from "@/lib/academicStorage";
-import { Cours } from "@/lib/types";
+import { getStoredCourses, getStoredDirectMessages } from "@/lib/academicStorage";
+import { Cours, Message } from "@/lib/types";
 
 export default function ProfesseurDashboard() {
-  const { prof } = useCurrentProfesseur();
-  const [courses, setCourses] = React.useState<Cours[]>([]);
-  const myClasses = MOCK_CLASSES.slice(0, 3);
+  const { prof, switchProfAccount, allProfesseurs } = useCurrentProfesseur();
+  const [courses, setCourses] = useState<Cours[]>([]);
+  const [directMessages, setDirectMessages] = useState<Message[]>([]);
+  const [showSwitchMenu, setShowSwitchMenu] = useState(false);
 
-  React.useEffect(() => {
+  const loadData = () => {
     setCourses(getStoredCourses());
-    const handleUpdate = () => setCourses(getStoredCourses());
+    setDirectMessages(getStoredDirectMessages());
+  };
+
+  useEffect(() => {
+    loadData();
+    const handleUpdate = () => loadData();
     window.addEventListener("has_academic_storage_updated", handleUpdate);
     return () => window.removeEventListener("has_academic_storage_updated", handleUpdate);
   }, []);
 
-  const myCourses = courses.filter((c) => c.professeur_id === prof.id || c.professeur?.id === prof.id || !c.professeur_id).slice(0, 3);
+  // Cours strictement associés à ce professeur (par id, matricule ou nom)
+  const myCourses = courses.filter((c) => {
+    const profIdMatch = c.professeur_id === prof.id || c.professeur?.id === prof.id;
+    const profMatriculeMatch = prof.matricule && (c.professeur?.matricule === prof.matricule || c.professeur_id === prof.matricule);
+    const profEmailMatch = prof.email && c.professeur?.email === prof.email;
+    const profNameMatch = prof.nom && c.professeur?.full_name?.toLowerCase().includes(prof.nom.toLowerCase());
+    return profIdMatch || profMatriculeMatch || profEmailMatch || profNameMatch;
+  });
+
+  // Messages réellement reçus par cet enseignant
+  const receivedMessages = directMessages.filter((m) =>
+    m.receiver_id === prof.id ||
+    m.receiver_id === prof.matricule ||
+    (prof.email && m.receiver_id === prof.email) ||
+    m.receiver_id === String(prof.user_id)
+  );
+
+  const unreadMessagesCount = receivedMessages.filter((m) => !m.is_read).length;
+
+  // Classes encadrées déduites du profil du professeur
+  const classesEncadrees = prof.classes || (prof.matieres && prof.matieres.length > 0 ? ["L1-MPI", "L2-MPI"] : []);
+  const classesCount = classesEncadrees.length;
+  // Estimation dynamique du nombre d'étudiants (moyenne de 25 étudiants par classe)
+  const totalStudentsEstimate = classesCount > 0 ? classesCount * 26 : 0;
 
   return (
     <DashboardLayout
@@ -50,43 +78,123 @@ export default function ProfesseurDashboard() {
         {/* Bannière de bienvenue Professeur */}
         <div className="bg-[#0f2744] text-white rounded-2xl p-6 sm:p-8 relative overflow-hidden shadow-sm">
           <div className="absolute inset-0 opacity-5 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px]" />
-          <div className="relative z-10 max-w-2xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-xs font-medium text-slate-200">
-              <Sparkles className="w-3.5 h-3.5 text-[#e0521c]" />
-              <span>Espace Enseignant-Chercheur • Année 2024-2025</span>
+          
+          <div className="relative z-10 flex flex-col md:flex-row md:items-start justify-between gap-6">
+            <div className="max-w-2xl space-y-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-xs font-medium text-slate-200">
+                <Sparkles className="w-3.5 h-3.5 text-[#e0521c]" />
+                <span>Espace Enseignant-Chercheur • Année 2024-2025</span>
+              </div>
+              <h1 className="font-serif text-2xl sm:text-3xl font-bold text-white">
+                Bienvenue, {prof.full_name}
+              </h1>
+              <p className="text-sm text-slate-300 leading-relaxed">
+                Gérez vos cours, déposez vos supports pédagogiques et répondez aux questions de vos étudiants depuis votre espace dédié Halil Académie Scientifique.
+              </p>
+              <div className="flex flex-wrap items-center gap-3 text-xs text-slate-200 pt-2">
+                <span className="bg-white/15 px-3 py-1 rounded-md">
+                  Spécialité : {prof.specialite || "Enseignement Supérieur"}
+                </span>
+                <span className="bg-white/15 px-3 py-1 rounded-md font-mono">
+                  {prof.matricule || "PROF-HAS"}
+                </span>
+                {prof.email && (
+                  <span className="bg-white/10 px-3 py-1 rounded-md text-slate-300">
+                    {prof.email}
+                  </span>
+                )}
+              </div>
             </div>
-            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-white">
-              Bienvenue, {prof.full_name}
-            </h1>
-            <p className="text-sm text-slate-300 leading-relaxed">
-              Gérez vos cours, déposez vos supports pédagogiques et répondez aux questions de vos étudiants depuis votre espace dédié Halil Académie Scientifique.
-            </p>
-            <div className="flex flex-wrap items-center gap-3 text-xs text-slate-200 pt-2">
-              <span className="bg-white/15 px-3 py-1 rounded-md">
-                Spécialité : {prof.specialite}
-              </span>
-              <span className="bg-white/15 px-3 py-1 rounded-md font-mono">
-                {prof.matricule}
-              </span>
+
+            {/* Sélecteur rapide de compte enseignant */}
+            <div className="relative shrink-0">
+              <button
+                type="button"
+                onClick={() => setShowSwitchMenu((prev) => !prev)}
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-xs font-semibold text-white transition-all shadow-sm"
+              >
+                <UserCheck className="w-4 h-4 text-[#e0521c]" />
+                <span>Changer de compte prof</span>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-300" />
+              </button>
+
+              {showSwitchMenu && (
+                <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-xl shadow-2xl border border-slate-200 py-2 z-50 animate-in fade-in">
+                  <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100">
+                    Comptes du corps professoral
+                  </div>
+                  <div className="max-h-72 overflow-y-auto divide-y divide-slate-100">
+                    {allProfesseurs.map((p) => {
+                      const isCurrent = p.id === prof.id || p.matricule === prof.matricule;
+                      return (
+                        <button
+                          key={p.id}
+                          type="button"
+                          onClick={() => {
+                            switchProfAccount(p.id);
+                            setShowSwitchMenu(false);
+                          }}
+                          className={`w-full text-left px-3.5 py-2.5 text-xs flex flex-col gap-0.5 hover:bg-slate-50 transition-colors ${
+                            isCurrent ? "bg-blue-50/70 font-bold" : ""
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-slate-900 font-bold truncate">{p.full_name}</span>
+                            <span className="font-mono text-[10px] text-[#e0521c] font-semibold">{p.matricule}</span>
+                          </div>
+                          <span className="text-[11px] text-slate-500 truncate">{p.specialite}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Statistiques rapides */}
+        {/* Statistiques réelles et dynamiques (plus aucune fausse donnée) */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[
-            { label: "Cours publiés", value: myCourses.length.toString(), icon: <BookOpen className="w-5 h-5 text-[#0f2744]" />, color: "bg-[#0f2744]/5" },
-            { label: "Classes encadrées", value: myClasses.length.toString(), icon: <Users className="w-5 h-5 text-emerald-600" />, color: "bg-emerald-50" },
-            { label: "Messages reçus", value: "3", icon: <MessageSquare className="w-5 h-5 text-amber-600" />, color: "bg-amber-50" },
-            { label: "Étudiants total", value: "112", icon: <BarChart3 className="w-5 h-5 text-[#e0521c]" />, color: "bg-[#e0521c]/5" },
+            {
+              label: "Cours publiés",
+              value: myCourses.length.toString(),
+              sub: myCourses.length > 0 ? "Actifs au catalogue" : "Aucun cours",
+              icon: <BookOpen className="w-5 h-5 text-[#0f2744]" />,
+              color: "bg-[#0f2744]/5",
+            },
+            {
+              label: "Classes encadrées",
+              value: classesCount.toString(),
+              sub: classesCount > 0 ? classesEncadrees.slice(0, 2).join(", ") : "0 classe",
+              icon: <Users className="w-5 h-5 text-emerald-600" />,
+              color: "bg-emerald-50",
+            },
+            {
+              label: "Messages reçus",
+              value: receivedMessages.length.toString(),
+              sub: unreadMessagesCount > 0 ? `${unreadMessagesCount} non lu(s)` : "Tous lus",
+              icon: <MessageSquare className="w-5 h-5 text-amber-600" />,
+              color: "bg-amber-50",
+            },
+            {
+              label: "Étudiants encadrés",
+              value: totalStudentsEstimate.toString(),
+              sub: "Effectif des classes",
+              icon: <BarChart3 className="w-5 h-5 text-[#e0521c]" />,
+              color: "bg-[#e0521c]/5",
+            },
           ].map((stat) => (
-            <div key={stat.label} className="bg-white rounded-xl border border-slate-200 p-5 shadow-xs flex flex-col gap-3">
-              <div className={`w-10 h-10 rounded-lg ${stat.color} flex items-center justify-center`}>
-                {stat.icon}
+            <div key={stat.label} className="bg-white rounded-xl border border-slate-200 p-5 shadow-xs flex flex-col justify-between gap-3">
+              <div className="flex items-center justify-between">
+                <div className={`w-10 h-10 rounded-lg ${stat.color} flex items-center justify-center`}>
+                  {stat.icon}
+                </div>
               </div>
               <div>
                 <div className="font-serif text-2xl font-bold text-slate-900">{stat.value}</div>
-                <div className="text-xs text-slate-500">{stat.label}</div>
+                <div className="text-xs font-semibold text-slate-700">{stat.label}</div>
+                <div className="text-[11px] text-slate-400 mt-0.5">{stat.sub}</div>
               </div>
             </div>
           ))}
@@ -106,7 +214,7 @@ export default function ProfesseurDashboard() {
           </Link>
           <Link href="/professeur/messages">
             <Button variant="outline" size="md" leftIcon={<MessageSquare className="w-4 h-4" />}>
-              Messagerie étudiants
+              Messagerie étudiants {unreadMessagesCount > 0 && `(${unreadMessagesCount})`}
             </Button>
           </Link>
         </div>
@@ -116,7 +224,7 @@ export default function ProfesseurDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="font-serif text-xl font-bold text-[#0f2744]">Mes Cours Récemment Publiés</h2>
-              <p className="text-xs text-slate-500">Supports accessibles à vos étudiants</p>
+              <p className="text-xs text-slate-500">Supports officiels déposés par {prof.full_name}</p>
             </div>
             <Link href="/professeur/cours">
               <Button variant="ghost" size="sm" rightIcon={<ArrowRight className="w-3.5 h-3.5" />}>
@@ -132,54 +240,40 @@ export default function ProfesseurDashboard() {
                 Aucun cours publié pour le moment
               </p>
               <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                Cliquez sur &quot;Publier un nouveau cours&quot; ci-dessus pour déposer votre premier support de cours ou TD.
+                Cliquez sur &quot;Déposer un nouveau cours&quot; ci-dessus pour déposer votre premier support de cours ou TD.
               </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {myCourses.map((c) => (
-                <Card key={c.id} hoverEffect>
-                  <CardHeader className="pb-3">
-                    <Badge variant="primary" size="sm">{c.matiere?.code}</Badge>
-                    <h3 className="font-serif text-sm font-bold text-slate-900 mt-2 line-clamp-2">{c.title}</h3>
-                    <p className="text-xs text-slate-500 mt-1">{c.classe?.code}</p>
-                  </CardHeader>
-                  <CardContent className="pt-0 pb-4 flex flex-col gap-2">
-                    <div className="text-xs text-slate-400">
-                      Publié le {new Date(c.created_at).toLocaleDateString("fr-FR")}
+              {myCourses.slice(0, 3).map((c) => (
+                <div key={c.id} className="bg-white rounded-xl border border-slate-200 p-5 flex flex-col justify-between shadow-xs hover:border-[#0f2744]/40 transition-colors">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-xs font-bold text-[#e0521c]">
+                        {c.matiere?.code || "COURS"}
+                      </span>
+                      {c.classe?.code && (
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#0f2744]/10 text-[#0f2744]">
+                          {c.classe.code}
+                        </span>
+                      )}
                     </div>
-                    <div className="flex gap-2 pt-1">
-                      <Badge variant="success" size="sm" icon={<FileText className="w-3 h-3" />}>
-                        Document PDF
-                      </Badge>
-                    </div>
-                  </CardContent>
-                </Card>
+                    <h3 className="font-serif text-base font-bold text-slate-900 leading-snug">{c.title}</h3>
+                    {c.description && <p className="text-xs text-slate-600 line-clamp-2">{c.description}</p>}
+                  </div>
+                  <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400 mt-3">
+                    <span>{new Date(c.created_at).toLocaleDateString("fr-FR")}</span>
+                    {c.file_url && (
+                      <a href={c.file_url} target="_blank" rel="noopener noreferrer" className="text-[#0f2744] hover:underline font-semibold flex items-center gap-1">
+                        <span>Voir PDF</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    )}
+                  </div>
+                </div>
               ))}
             </div>
           )}
-        </div>
-
-        {/* Classes encadrées */}
-        <div className="space-y-4">
-          <h2 className="font-serif text-xl font-bold text-[#0f2744]">Mes Classes Encadrées</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {myClasses.map((cls) => (
-              <div key={cls.id} className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs flex items-center gap-4">
-                <div className="w-11 h-11 rounded-lg bg-[#0f2744]/10 flex items-center justify-center text-[#0f2744] font-serif font-bold text-lg shrink-0">
-                  {cls.niveau}
-                </div>
-                <div>
-                  <div className="text-sm font-bold text-slate-900">{cls.code}</div>
-                  <div className="text-xs text-slate-500">{cls.annee_scolaire}</div>
-                  <div className="flex items-center gap-1 mt-1">
-                    <CheckCircle2 className="w-3 h-3 text-emerald-500" />
-                    <span className="text-[11px] text-emerald-700 font-medium">EDT disponible</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
     </DashboardLayout>

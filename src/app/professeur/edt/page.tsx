@@ -5,7 +5,7 @@ import {
   Calendar, Clock, Video, CheckCircle2, ExternalLink, Copy, GraduationCap, Filter,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
-import { useCurrentUser } from "@/lib/useCurrentUser";
+import { useCurrentProfesseur } from "@/lib/useCurrentProfesseur";
 import { getStoredSeancesEDT } from "@/lib/academicStorage";
 import { SeanceEDT, JourSemaine } from "@/lib/types";
 
@@ -17,7 +17,7 @@ const TYPE_COLORS: Record<string, { bg: string; text: string; border: string }> 
 };
 
 export default function ProfesseurEDTPage() {
-  const { user } = useCurrentUser();
+  const { prof } = useCurrentProfesseur();
   const [seances, setSeances] = useState<SeanceEDT[]>([]);
   const [activeNiveau, setActiveNiveau] = useState<"L1" | "L2">("L1");
   const [copiedLink, setCopiedLink] = useState<string | null>(null);
@@ -34,11 +34,13 @@ export default function ProfesseurEDTPage() {
   const mySeances = useMemo(() =>
     seances.filter((s) => {
       const isMe =
-        (user.id && s.professeur_id === user.id) ||
-        (user.full_name && s.professeur_nom.toLowerCase().includes(user.full_name.split(" ")[0].toLowerCase()));
+        (prof.id && s.professeur_id === prof.id) ||
+        (prof.matricule && s.professeur_id === prof.matricule) ||
+        (prof.full_name && s.professeur_nom.toLowerCase().includes(prof.full_name.toLowerCase())) ||
+        (prof.nom && s.professeur_nom.toLowerCase().includes(prof.nom.toLowerCase()));
       return isMe && (s.niveau || "L1") === activeNiveau;
     }),
-    [seances, user, activeNiveau]
+    [seances, prof, activeNiveau]
   );
 
   const timeSlots = useMemo(() => {
@@ -54,16 +56,18 @@ export default function ProfesseurEDTPage() {
   };
 
   const totalMySessions = seances.filter((s) =>
-    (user.id && s.professeur_id === user.id) ||
-    (user.full_name && s.professeur_nom.toLowerCase().includes(user.full_name.split(" ")[0].toLowerCase()))
+    (prof.id && s.professeur_id === prof.id) ||
+    (prof.matricule && s.professeur_id === prof.matricule) ||
+    (prof.full_name && s.professeur_nom.toLowerCase().includes(prof.full_name.toLowerCase())) ||
+    (prof.nom && s.professeur_nom.toLowerCase().includes(prof.nom.toLowerCase()))
   ).length;
 
   return (
     <DashboardLayout
       role="professeur"
-      userName={user.full_name}
-      userEmail={user.email}
-      matriculeOrTitle={user.matricule || "PROF001"}
+      userName={prof.full_name}
+      userEmail={prof.email}
+      matriculeOrTitle={prof.matricule || "PROF001"}
     >
       <div className="space-y-5">
         {/* En-tête */}
@@ -88,8 +92,10 @@ export default function ProfesseurEDTPage() {
         <div className="flex gap-2 p-1 bg-slate-100 rounded-xl w-fit">
           {(["L1", "L2"] as const).map((niv) => {
             const cnt = seances.filter((s) =>
-              ((user.id && s.professeur_id === user.id) ||
-              (user.full_name && s.professeur_nom.toLowerCase().includes(user.full_name.split(" ")[0].toLowerCase()))) &&
+              ((prof.id && s.professeur_id === prof.id) ||
+              (prof.matricule && s.professeur_id === prof.matricule) ||
+              (prof.full_name && s.professeur_nom.toLowerCase().includes(prof.full_name.toLowerCase())) ||
+              (prof.nom && s.professeur_nom.toLowerCase().includes(prof.nom.toLowerCase()))) &&
               (s.niveau || "L1") === niv
             ).length;
             return (

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Phone,
   Mail,
@@ -18,16 +18,16 @@ import {
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { useCurrentUser } from "@/lib/useCurrentUser";
+import { useCurrentProfesseur } from "@/lib/useCurrentProfesseur";
 import { passwordRegex, passwordRequirementsMessage } from "@/lib/validators";
 import { createClient } from "@/lib/supabase/client";
 
 export default function ProfesseurProfilPage() {
-  const { user, updateProfile } = useCurrentUser();
+  const { prof, updateProfProfile } = useCurrentProfesseur();
 
-  const [phone, setPhone] = useState(user.phone || "");
-  const [specialite, setSpecialite] = useState(user.specialite || "");
-  const [bio, setBio] = useState(user.bio || "");
+  const [phone, setPhone] = useState(prof.phone || "");
+  const [specialite, setSpecialite] = useState(prof.specialite || "");
+  const [bio, setBio] = useState(prof.bio || "");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -41,15 +41,21 @@ export default function ProfesseurProfilPage() {
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
+  useEffect(() => {
+    setPhone(prof.phone || "");
+    setSpecialite(prof.specialite || "");
+    setBio(prof.bio || "");
+  }, [prof]);
+
   // Initiales pour l'avatar
-  const initials = user.full_name
-    ? user.full_name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()
+  const initials = prof.full_name
+    ? prof.full_name.split(" ").filter(Boolean).map((n) => n[0]).join("").slice(0, 2).toUpperCase()
     : "PR";
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
-    await updateProfile({ phone, specialite, bio });
+    await updateProfProfile({ phone, specialite, bio });
     setIsSaving(false);
     setProfileSuccess("Votre profil académique a été mis à jour.");
     setTimeout(() => setProfileSuccess(null), 3500);
@@ -76,9 +82,9 @@ export default function ProfesseurProfilPage() {
   return (
     <DashboardLayout
       role="professeur"
-      userName={user.full_name}
-      userEmail={user.email}
-      matriculeOrTitle={user.matricule || "PROF001"}
+      userName={prof.full_name}
+      userEmail={prof.email}
+      matriculeOrTitle={prof.matricule || "PROF001"}
     >
       <div className="space-y-6 max-w-4xl">
 
@@ -105,16 +111,16 @@ export default function ProfesseurProfilPage() {
                   <span className="w-1 h-1 rounded-full bg-white/30" />
                   <span className="text-[11px] font-bold uppercase tracking-wider text-blue-300">Actif</span>
                 </div>
-                <h1 className="text-xl sm:text-2xl font-bold text-white font-serif leading-tight">{user.full_name}</h1>
-                <p className="text-sm text-white/60 mt-0.5">{user.specialite || "Enseignant-Chercheur HAS"}</p>
+                <h1 className="text-xl sm:text-2xl font-bold text-white font-serif leading-tight">{prof.full_name}</h1>
+                <p className="text-sm text-white/60 mt-0.5">{prof.specialite || "Enseignant-Chercheur HAS"}</p>
                 <div className="flex flex-wrap items-center gap-3 mt-2">
                   <span className="flex items-center gap-1.5 text-xs text-white/70">
                     <Hash className="w-3.5 h-3.5 text-[#e0521c]" />
-                    {user.matricule || "PROF001"}
+                    {prof.matricule || "PROF001"}
                   </span>
                   <span className="flex items-center gap-1.5 text-xs text-white/70">
                     <Mail className="w-3.5 h-3.5 text-[#e0521c]" />
-                    {user.email}
+                    {prof.email}
                   </span>
                 </div>
               </div>
@@ -159,7 +165,7 @@ export default function ProfesseurProfilPage() {
               </div>
               <div>
                 <p className="text-sm font-bold text-slate-900">Profil Public & Coordonnées</p>
-                <p className="text-xs text-slate-500">{user.specialite || "Spécialité non renseignée"}</p>
+                <p className="text-xs text-slate-500">{prof.specialite || "Spécialité non renseignée"}</p>
               </div>
             </div>
             <Edit3 className={`w-4 h-4 transition-colors ${editingProfile ? "text-[#e0521c]" : "text-slate-400"}`} />
@@ -218,8 +224,8 @@ export default function ProfesseurProfilPage() {
                 <Lock className="w-4 h-4 text-amber-600" />
               </div>
               <div>
-                <p className="text-sm font-bold text-slate-900">Mot de passe</p>
-                <p className="text-xs text-slate-500">Modifier mon mot de passe de connexion</p>
+                <p className="text-sm font-bold text-slate-900">Mot de passe & Sécurité</p>
+                <p className="text-xs text-slate-500">Mettre à jour vos accès académiques</p>
               </div>
             </div>
             <Edit3 className={`w-4 h-4 transition-colors ${editingPassword ? "text-[#e0521c]" : "text-slate-400"}`} />
@@ -228,41 +234,54 @@ export default function ProfesseurProfilPage() {
           {editingPassword && (
             <div className="px-5 pb-5 border-t border-slate-100">
               {passwordSuccess && (
-                <div className="mt-4 p-3.5 rounded-lg bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" /><span>{passwordSuccess}</span>
+                <div className="mt-4 p-3.5 rounded-lg bg-emerald-50 border border-emerald-200/80 text-xs text-emerald-800 flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <span>{passwordSuccess}</span>
                 </div>
               )}
               {passwordError && (
-                <div className="mt-4 p-3.5 rounded-lg bg-red-50 border border-red-200 text-xs text-red-800">{passwordError}</div>
+                <div className="mt-4 p-3.5 rounded-lg bg-red-50 border border-red-200 text-xs text-red-700">
+                  {passwordError}
+                </div>
               )}
-              <form onSubmit={handleUpdatePassword} className="mt-4 space-y-4 max-w-md">
+              <form onSubmit={handleUpdatePassword} className="mt-4 space-y-4">
                 <div className="relative">
                   <Input
                     label="Nouveau mot de passe"
                     type={showNewPwd ? "text" : "password"}
-                    placeholder="••••••••••••"
+                    required
+                    leftIcon={<Lock className="w-4 h-4" />}
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    helperText="Min. 8 caractères dont majuscule, minuscule, chiffre et symbole."
                   />
-                  <button type="button" onClick={() => setShowNewPwd(!showNewPwd)} className="absolute right-3 top-8 text-slate-400 hover:text-slate-700">
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPwd(!showNewPwd)}
+                    className="absolute right-3 top-8 text-slate-400 hover:text-slate-600"
+                  >
                     {showNewPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
                 <div className="relative">
                   <Input
-                    label="Confirmer le nouveau mot de passe"
+                    label="Confirmer le mot de passe"
                     type={showConfirmPwd ? "text" : "password"}
-                    placeholder="••••••••••••"
+                    required
+                    leftIcon={<Lock className="w-4 h-4" />}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                   />
-                  <button type="button" onClick={() => setShowConfirmPwd(!showConfirmPwd)} className="absolute right-3 top-8 text-slate-400 hover:text-slate-700">
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPwd(!showConfirmPwd)}
+                    className="absolute right-3 top-8 text-slate-400 hover:text-slate-600"
+                  >
                     {showConfirmPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
-                <Button type="submit" variant="accent" size="sm" disabled={!newPassword || newPassword !== confirmPassword}>
-                  Mettre à jour le mot de passe
+                <p className="text-xs text-slate-400">{passwordRequirementsMessage}</p>
+                <Button type="submit" variant="outline" size="sm" leftIcon={<Save className="w-3.5 h-3.5" />}>
+                  Changer le mot de passe
                 </Button>
               </form>
             </div>

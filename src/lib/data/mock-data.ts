@@ -113,7 +113,7 @@ export const MOCK_PROFESSEURS: ProfesseurProfile[] = [
   {
     id: "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
     user_id: 2,
-    email: "",
+    email: "halilsamb@halil-academie.com",
     username: "halilsamb",
     prenom: "Pape Ibrahima",
     nom: "Samb",
@@ -145,7 +145,7 @@ export const MOCK_PROFESSEURS: ProfesseurProfile[] = [
   {
     id: "32e74ddd-3e79-410a-8a87-4bfdff1fc099",
     user_id: 3,
-    email: "",
+    email: "ibrahima.anne@halil-academie.com",
     username: "ibusaki",
     prenom: "Ibrahima",
     nom: "Anne",
@@ -172,7 +172,7 @@ export const MOCK_PROFESSEURS: ProfesseurProfile[] = [
   {
     id: "25013b47-9a78-4f97-8552-977450abdad2",
     user_id: 4,
-    email: "",
+    email: "ndiogou.ndiaye@halil-academie.com",
     username: "ndiogou",
     prenom: "Ndiogou",
     nom: "Ndiaye",
@@ -201,7 +201,7 @@ export const MOCK_PROFESSEURS: ProfesseurProfile[] = [
   {
     id: "0ffa8cbd-6c98-409a-948d-0988754c1b32",
     user_id: 5,
-    email: "",
+    email: "diop.sow@halil-academie.com",
     username: "diopsow",
     prenom: "El Hadji Ibrahima Diop",
     nom: "Sow",
@@ -227,7 +227,7 @@ export const MOCK_PROFESSEURS: ProfesseurProfile[] = [
   {
     id: "5bfff82c-62a6-48d4-801f-9e9ac5421df5",
     user_id: 6,
-    email: "",
+    email: "pape.thiam@halil-academie.com",
     username: "pape",
     prenom: "Pape",
     nom: "Thiam",
@@ -254,7 +254,7 @@ export const MOCK_PROFESSEURS: ProfesseurProfile[] = [
   {
     id: "b3624bdb-2544-4995-989d-fc38e478d256",
     user_id: 7,
-    email: "",
+    email: "kalidou.ba@halil-academie.com",
     username: "kalidou",
     prenom: "Kalidou",
     nom: "Ba",
