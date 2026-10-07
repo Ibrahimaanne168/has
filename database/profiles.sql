@@ -33,10 +33,10 @@ CREATE POLICY "service_role_all_profiles"
     ON profiles FOR ALL TO service_role
     USING (true) WITH CHECK (true);
 
--- Lecture publique des profils
+-- Lecture réservée aux utilisateurs authentifiés de la plateforme
 DROP POLICY IF EXISTS "public_read_profiles" ON profiles;
-CREATE POLICY "public_read_profiles"
-    ON profiles FOR SELECT TO anon, authenticated
+CREATE POLICY "authenticated_read_profiles"
+    ON profiles FOR SELECT TO authenticated
     USING (true);
 
 -- Mise à jour uniquement de son propre profil
@@ -61,7 +61,6 @@ CREATE TRIGGER profiles_updated_at
 
 -- ============================================================
 -- NOTE : Après avoir exécuté ce script dans Supabase :
--- 1. Configurez vos clés dans .env.local
--- 2. Lancez : http://localhost:3000/api/admin/create-admin?token=has-admin-seed-2024
--- 3. Connectez-vous avec : halil@has-academie.online / Admin123!
+-- 1. Configurez vos clés sécurisées dans .env.local
+-- 2. Connectez-vous sur votre plateforme HAS
 -- ============================================================

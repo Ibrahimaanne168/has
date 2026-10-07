@@ -125,9 +125,9 @@ export function InstallAppPrompt() {
             <div className="relative w-11 h-11 rounded-xl overflow-hidden shrink-0 shadow-xs border border-slate-200 dark:border-[#263241] bg-white">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/images/logo-has.jpg"
+                src="/apple-touch-icon.png"
                 alt="HAS"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
               />
               <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white dark:border-[#111821] animate-pulse" />
             </div>
@@ -178,9 +178,9 @@ export function InstallAppPrompt() {
           <div className="bg-white dark:bg-[#111821] border border-slate-200 dark:border-[#263241] rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-5 animate-in slide-in-from-bottom-6 sm:zoom-in-95 duration-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl overflow-hidden border border-slate-200 dark:border-[#263241]">
+                <div className="w-11 h-11 rounded-2xl overflow-hidden border border-slate-200 dark:border-[#263241] bg-white shadow-xs p-0.5">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/images/logo-has.jpg" alt="HAS" className="w-full h-full object-cover" />
+                  <img src="/apple-touch-icon.png" alt="HAS" className="w-full h-full object-contain" />
                 </div>
                 <div>
                   <h3 className="font-serif text-base font-bold text-slate-900 dark:text-[#F5F7FA]">

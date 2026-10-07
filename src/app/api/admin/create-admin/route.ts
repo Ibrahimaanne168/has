@@ -8,12 +8,17 @@ const ADMIN_USERNAME = "halil";
 const ADMIN_FULLNAME = "Administration HAS";
 
 export async function GET(request: NextRequest) {
-  const token = request.nextUrl.searchParams.get("token");
-  const expectedToken = process.env.ADMIN_SEED_TOKEN || "has-admin-seed-2024";
+  // En production, cette route est désactivée par défaut sauf si ADMIN_SEED_TOKEN est explicitement configuré
+  if (process.env.NODE_ENV === "production" && !process.env.ADMIN_SEED_TOKEN) {
+    return NextResponse.json({ error: "Route non disponible." }, { status: 404 });
+  }
 
-  if (token !== expectedToken) {
+  const token = request.nextUrl.searchParams.get("token");
+  const expectedToken = process.env.ADMIN_SEED_TOKEN || (process.env.NODE_ENV !== "production" ? "has-admin-seed-2024" : null);
+
+  if (!token || !expectedToken || token !== expectedToken) {
     return NextResponse.json(
-      { error: "Accès non autorisé. Ajoutez ?token=has-admin-seed-2024 à l'URL." },
+      { error: "Accès non autorisé." },
       { status: 401 }
     );
   }
@@ -57,7 +62,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         success: true,
         message: "✅ Compte admin 'halil' déjà existant — rôle admin confirmé.",
-        identifiants: { username: ADMIN_USERNAME, password: ADMIN_PASSWORD },
+        identifiants: { username: ADMIN_USERNAME },
       });
     }
 
@@ -96,13 +101,12 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: "✅ Compte admin créé avec succès !",
+      message: "✅ Compte admin configuré avec succès !",
       identifiants: {
         username: ADMIN_USERNAME,
-        password: ADMIN_PASSWORD,
         userId,
       },
-      prochaine_etape: "Connectez-vous sur /connexion avec identifiant: halil",
+      prochaine_etape: "Connectez-vous sur /connexion avec votre identifiant admin.",
     });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : "Erreur interne";

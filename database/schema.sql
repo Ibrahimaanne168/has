@@ -31,13 +31,21 @@ DROP TABLE IF EXISTS filieres CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS roles CASCADE;
 
+-- ⚠️ ATTENTION : NE PAS EXÉCUTER CE FICHIER SUR UNE BASE ACTIVE SUPABASE AUTH !
+-- Ce fichier contient un schéma relationnel hérité autonome (avec table users séparée).
+-- Pour la plateforme HAS connectée à Supabase Auth, utilisez :
+-- 1. database/profiles.sql
+-- 2. database/verification_codes.sql
+-- ============================================================
+
 -- Nettoyage des tables d'anciens schémas (compatibilité totale)
-DROP TABLE IF EXISTS profiles CASCADE;
+-- Note de sécurité : conservation des tables profiles, verification_codes et audit_logs
+-- DROP TABLE IF EXISTS profiles CASCADE;
+-- DROP TABLE IF EXISTS verification_codes CASCADE;
+-- DROP TABLE IF EXISTS audit_logs CASCADE;
 DROP TABLE IF EXISTS favoris_cours CASCADE;
 DROP TABLE IF EXISTS messages CASCADE;
 DROP TABLE IF EXISTS contact_messages CASCADE;
-DROP TABLE IF EXISTS verification_codes CASCADE;
-DROP TABLE IF EXISTS audit_logs CASCADE;
 
 -- ============================================================
 -- 2. CRÉATION DES TABLES ET CONTRAINTES

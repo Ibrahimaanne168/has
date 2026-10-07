@@ -30,11 +30,6 @@ CREATE POLICY "Service role full access on verification_codes"
     USING (true) 
     WITH CHECK (true);
 
--- Permettre également l'accès si seule la clé anonyme est configurée côté API
+-- Sécurité RLS stricte : seul le backend sécurisé (service_role) accède aux codes 2FA secrets
 DROP POLICY IF EXISTS "Anon insert and read verification_codes" ON verification_codes;
-CREATE POLICY "Anon insert and read verification_codes" 
-    ON verification_codes 
-    FOR ALL 
-    TO anon, authenticated 
-    USING (true) 
-    WITH CHECK (true);
+-- Aucune lecture publique n'est autorisée sur les codes de vérification pour préserver l'intégrité du 2FA.

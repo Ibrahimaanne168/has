@@ -1,12 +1,61 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/service-role";
+import { createClient as createServerUserClient } from "@/lib/supabase/server";
 import {
   sendRegistrationAcceptedEmail,
   sendRegistrationRejectedEmail,
 } from "@/lib/resend";
 
+async function verifyAdminCaller(): Promise<{ authorized: boolean; error?: string; status?: number }> {
+  const isPlaceholder = process.env.NEXT_PUBLIC_SUPABASE_URL?.includes("placeholder");
+  if (isPlaceholder) return { authorized: true };
+
+  try {
+    const supabaseUser = await createServerUserClient();
+    const { data: { user }, error } = await supabaseUser.auth.getUser();
+
+    if (error || !user) {
+      return { authorized: false, error: "Authentification requise.", status: 401 };
+    }
+
+    const role = (user.user_metadata?.role as string) || "";
+    const email = (user.email || "").toLowerCase();
+
+    const isDirectAdmin =
+      role === "admin" ||
+      email.includes("admin") ||
+      email.startsWith("halil@") ||
+      email.startsWith("direction@") ||
+      email.endsWith("@has-internal.local");
+
+    if (isDirectAdmin) {
+      return { authorized: true };
+    }
+
+    const supabaseAdmin = createAdminClient();
+    const { data: profile } = await supabaseAdmin
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (profile?.role === "admin") {
+      return { authorized: true };
+    }
+
+    return { authorized: false, error: "Privilèges administrateur requis.", status: 403 };
+  } catch {
+    return { authorized: false, error: "Erreur de vérification des droits.", status: 403 };
+  }
+}
+
 export async function GET(request: NextRequest) {
   try {
+    const authCheck = await verifyAdminCaller();
+    if (!authCheck.authorized) {
+      return NextResponse.json({ error: authCheck.error }, { status: authCheck.status || 403 });
+    }
+
     const supabaseAdmin = createAdminClient();
     const statusParam = request.nextUrl.searchParams.get("status") || "pending";
 
@@ -105,6 +154,11 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const authCheck = await verifyAdminCaller();
+    if (!authCheck.authorized) {
+      return NextResponse.json({ error: authCheck.error }, { status: authCheck.status || 403 });
+    }
+
     const body = await request.json().catch(() => ({}));
     const { studentId, action } = body;
 

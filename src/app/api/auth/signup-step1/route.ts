@@ -85,8 +85,6 @@ export async function POST(request: NextRequest) {
       message: "Un code de vérification à 6 chiffres a été envoyé par email.",
       email,
       simulated: emailRes.simulated || false,
-      emailError: process.env.NODE_ENV !== "production" ? emailRes.error : undefined,
-      devCode: process.env.NODE_ENV !== "production" ? code : undefined,
     });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Erreur interne du serveur";

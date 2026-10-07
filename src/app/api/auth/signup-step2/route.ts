@@ -130,6 +130,26 @@ export async function POST(request: NextRequest) {
         }
       }
     }
+
+    try {
+      const { data: dbProfiles } = await supabaseAdmin
+        .from("profiles")
+        .select("matricule")
+        .eq("role", "etudiant");
+      if (dbProfiles) {
+        for (const p of dbProfiles) {
+          const m = (p.matricule || "").trim();
+          const match = m.match(/^ETU(\d+)$/i);
+          if (match) {
+            const num = parseInt(match[1], 10);
+            if (!isNaN(num) && num > maxEtudiantNum) {
+              maxEtudiantNum = num;
+            }
+          }
+        }
+      }
+    } catch {}
+
     const matricule = `ETU${String(maxEtudiantNum + 1).padStart(3, "0")}`;
 
     const filiereChoice = parseResult.data.filiere || "MPI";

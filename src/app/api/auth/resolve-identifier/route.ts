@@ -1,7 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/service-role";
 
+// Limitation de débit en mémoire pour empêcher le scraping/l'énumération massive
+const RESOLVE_RATE_LIMIT = new Map<string, { count: number; lastTime: number }>();
+
+function isRateLimited(ip: string, maxRequests = 12, windowMs = 60000): boolean {
+  const now = Date.now();
+  const entry = RESOLVE_RATE_LIMIT.get(ip);
+  if (!entry) {
+    RESOLVE_RATE_LIMIT.set(ip, { count: 1, lastTime: now });
+    return false;
+  }
+  if (now - entry.lastTime > windowMs) {
+    RESOLVE_RATE_LIMIT.set(ip, { count: 1, lastTime: now });
+    return false;
+  }
+  if (entry.count >= maxRequests) {
+    return true;
+  }
+  entry.count += 1;
+  return false;
+}
+
 export async function GET(request: NextRequest) {
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  if (isRateLimited(ip)) {
+    return NextResponse.json(
+      { error: "Trop de requêtes. Veuillez patienter un instant." },
+      { status: 429 }
+    );
+  }
+
   const identifier = request.nextUrl.searchParams.get("identifier")?.trim();
 
   if (!identifier) {

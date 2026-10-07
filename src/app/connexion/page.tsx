@@ -193,13 +193,43 @@ function ConnexionForm() {
 
   const handleForgotPasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const input = forgotEmail.trim();
+    if (!input) return;
+
     setForgotLoading(true);
     setForgotSuccess(null);
+
     try {
-      // Simule ou déclenche l'envoi de réinitialisation
-      await new Promise((res) => setTimeout(res, 800));
+      let targetEmail = input.toLowerCase();
+
+      // Résoudre si l'utilisateur a saisi son nom d'utilisateur au lieu de son email
+      if (!targetEmail.includes("@")) {
+        try {
+          const res = await fetch(`/api/auth/resolve-identifier?identifier=${encodeURIComponent(targetEmail)}`);
+          if (res.ok) {
+            const resolved = await res.json();
+            if (resolved?.email) targetEmail = resolved.email.toLowerCase();
+          }
+        } catch {}
+      }
+
+      const supabase = createClient();
+      const isPlaceholder = process.env.NEXT_PUBLIC_SUPABASE_URL?.includes("placeholder");
+
+      if (!isPlaceholder) {
+        const origin = window.location.origin || "https://www.has-academie.online";
+        await supabase.auth.resetPasswordForEmail(targetEmail, {
+          redirectTo: `${origin}/reinitialisation-mot-de-passe`,
+        });
+      }
+
       setForgotSuccess(
-        `Si un compte est associé à l'adresse ${forgotEmail}, un lien de réinitialisation vient de vous être envoyé par email.`
+        `Si un compte existe pour « ${input} », un lien sécurisé de réinitialisation a été envoyé par email.`
+      );
+    } catch (err: unknown) {
+      // Protection contre l'énumération d'utilisateurs : message identique
+      setForgotSuccess(
+        `Si un compte existe pour « ${input} », un lien sécurisé de réinitialisation a été envoyé par email.`
       );
     } finally {
       setForgotLoading(false);

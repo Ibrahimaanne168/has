@@ -47,6 +47,11 @@ export const metadata: Metadata = {
     "Énergies Renouvelables",
     "Enseignement Supérieur",
   ],
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "HAS",
+  },
   icons: {
     icon: [
       { url: "/favicon.ico?v=2", sizes: "any" },
@@ -58,7 +63,9 @@ export const metadata: Metadata = {
     ],
     shortcut: "/favicon.ico?v=2",
     apple: [
-      { url: "/apple-touch-icon.png?v=2", sizes: "180x180", type: "image/png" },
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+      { url: "/apple-touch-icon-167x167.png", sizes: "167x167", type: "image/png" },
+      { url: "/apple-touch-icon-152x152.png", sizes: "152x152", type: "image/png" },
     ],
   },
   manifest: "/site.webmanifest",
@@ -144,11 +151,17 @@ export default function RootLayout({
             `,
           }}
         />
-        {/* Lien direct favicon 48x48 recommandé par Google pour l'indexation du logo dans les résultats de recherche */}
+        {/* Liens favicon et icônes iOS Apple PWA optimisées */}
         <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="apple-touch-icon-precomposed" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="167x167" href="/apple-touch-icon-167x167.png" />
+        <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="HAS" />
       </head>
       <body className="min-h-screen bg-[#F8FAFC] dark:bg-[#0B0F14] text-slate-900 dark:text-[#F5F7FA] antialiased selection:bg-[#e0521c]/25 selection:text-[#F5F7FA] transition-colors duration-200">
         {children}
