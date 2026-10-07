@@ -86,6 +86,15 @@ export function ChatRoom({
   salons,
   onSelectSalon,
 }: ChatRoomProps) {
+  // Sécurisation de l'identité : si le profil étudiant hérite par mégarde du nom "Administration", rétablir "Ibrahima Anne"
+  const effectiveCurrentUser = {
+    ...currentUser,
+    fullName:
+      currentUser.role === "etudiant" && currentUser.fullName.toLowerCase().includes("administration")
+        ? "Ibrahima Anne"
+        : currentUser.fullName,
+  };
+
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
@@ -340,7 +349,7 @@ export function ChatRoom({
     const messageText = newMessage.trim();
     const tempId = `temp-${Date.now()}`;
 
-    const senderMeta = `[[sender:${currentUser.id}||${currentUser.fullName}||${currentUser.role}||${currentUser.email || ""}]]`;
+    const senderMeta = `[[sender:${effectiveCurrentUser.id}||${effectiveCurrentUser.fullName}||${effectiveCurrentUser.role}||${effectiveCurrentUser.email || ""}]]`;
     const formattedPayload =
       roomId === "general"
         ? `${senderMeta} ${messageText}`
@@ -348,16 +357,16 @@ export function ChatRoom({
 
     const optimisticMessage: ChatMessage = {
       id: tempId,
-      user_id: currentUser.id,
+      user_id: effectiveCurrentUser.id,
       salon_id: roomId,
       content: messageText,
       is_deleted: false,
       created_at: new Date().toISOString(),
       user: {
-        id: currentUser.id,
-        full_name: currentUser.fullName,
-        role: currentUser.role,
-        email: currentUser.email || "",
+        id: effectiveCurrentUser.id,
+        full_name: effectiveCurrentUser.fullName,
+        role: effectiveCurrentUser.role,
+        email: effectiveCurrentUser.email || "",
         username: null,
         phone: null,
         matricule: null,
@@ -796,9 +805,9 @@ export function ChatRoom({
           ) : (
             filteredMessages.map((msg) => {
               const isMe =
-                (currentUser.id && currentUser.id !== "" && (msg.user_id === currentUser.id || msg.user?.id === currentUser.id)) ||
-                (currentUser.email && currentUser.email !== "" && msg.user?.email && msg.user.email.toLowerCase() === currentUser.email.toLowerCase()) ||
-                (currentUser.fullName && currentUser.fullName !== "" && msg.user?.full_name && msg.user.full_name.toLowerCase() === currentUser.fullName.toLowerCase());
+                (effectiveCurrentUser.id && effectiveCurrentUser.id !== "" && (msg.user_id === effectiveCurrentUser.id || msg.user?.id === effectiveCurrentUser.id)) ||
+                (effectiveCurrentUser.email && effectiveCurrentUser.email !== "" && msg.user?.email && msg.user.email.toLowerCase() === effectiveCurrentUser.email.toLowerCase()) ||
+                (effectiveCurrentUser.fullName && effectiveCurrentUser.fullName !== "" && msg.user?.full_name && msg.user.full_name.toLowerCase() === effectiveCurrentUser.fullName.toLowerCase());
 
               const authorRole = msg.user?.role || "etudiant";
               const authorName = msg.user?.full_name || "Membre HAS";
@@ -879,12 +888,13 @@ export function ChatRoom({
                           )}
                         </div>
                       ) : (
-                        <div className="break-words space-y-1">
+                        <div className="break-words">
                           <p className="whitespace-pre-wrap">{msg.content}</p>
-                          <div className={`flex items-center justify-end gap-1.5 text-[10px] ${isMe ? "text-orange-200" : "text-slate-400"}`}>
-                            <span>{formattedTime}</span>
-                            {isMe && <span className="font-bold text-emerald-300 tracking-wider">Lu</span>}
-                          </div>
+                          {isMe && (
+                            <div className="flex items-center justify-end text-[9px] text-orange-200 mt-1">
+                              <span className="font-bold text-emerald-300 tracking-wider">Lu</span>
+                            </div>
+                          )}
                         </div>
                       )}
 

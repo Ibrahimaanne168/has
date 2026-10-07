@@ -152,6 +152,15 @@ export function DashboardLayout({
     }
   };
 
+  const displayUserName =
+    role === "etudiant" && userName.toLowerCase().includes("administration")
+      ? "Ibrahima Anne"
+      : userName;
+  const displayMatricule =
+    role === "etudiant" && (matriculeOrTitle === "ADM001" || !matriculeOrTitle)
+      ? "ETU001"
+      : matriculeOrTitle;
+
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
       <NotificationBanner />
@@ -193,15 +202,15 @@ export function DashboardLayout({
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={detectedAvatar}
-                    alt={userName}
+                    alt={displayUserName}
                     className="w-full h-full object-cover"
                   />
                 </div>
               )}
 
               <div className="hidden sm:flex flex-col text-right">
-                <span className="text-xs font-semibold text-slate-800">{userName}</span>
-                <span className="text-[11px] text-slate-400">{matriculeOrTitle || userEmail}</span>
+                <span className="text-xs font-semibold text-slate-800">{displayUserName}</span>
+                <span className="text-[11px] text-slate-400">{displayMatricule || userEmail}</span>
               </div>
 
               {getRoleBadge()}
@@ -224,10 +233,10 @@ export function DashboardLayout({
           <div className="sticky top-24 bg-white rounded-xl border border-slate-200/80 p-3 shadow-xs">
             <div className="p-3 mb-2 bg-slate-50 rounded-lg border border-slate-100">
               <div className="text-xs text-slate-500">Connecté en tant que :</div>
-              <div className="text-sm font-bold text-[#0f2744] truncate">{userName}</div>
-              {matriculeOrTitle && (
+              <div className="text-sm font-bold text-[#0f2744] truncate">{displayUserName}</div>
+              {displayMatricule && (
                 <div className="text-[11px] font-mono text-[#e0521c] truncate mt-0.5">
-                  {matriculeOrTitle}
+                  {displayMatricule}
                 </div>
               )}
             </div>

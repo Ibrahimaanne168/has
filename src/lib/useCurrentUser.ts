@@ -12,7 +12,20 @@ export function useCurrentUser() {
     if (typeof window !== "undefined") {
       try {
         const cached = localStorage.getItem(LOCAL_STORAGE_KEY);
-        if (cached) return JSON.parse(cached);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          // Si le cache contient par erreur un compte administrateur ou le nom "Administration", purger immédiatement
+          if (
+            parsed &&
+            parsed.full_name &&
+            !parsed.full_name.toLowerCase().includes("administration") &&
+            parsed.role !== "admin"
+          ) {
+            return parsed;
+          } else {
+            localStorage.removeItem(LOCAL_STORAGE_KEY);
+          }
+        }
       } catch {
         // ignore
       }
@@ -30,10 +43,53 @@ export function useCurrentUser() {
         const { data: { user: authUser } } = await supabase.auth.getUser();
 
         if (authUser && mounted) {
+          // 1. Tenter d'abord de lire le profil réel depuis la table profiles
+          let dbProfile: Partial<Profile> | null = null;
+          try {
+            const { data: p } = await supabase
+              .from("profiles")
+              .select("*")
+              .eq("id", authUser.id)
+              .maybeSingle();
+            if (p) dbProfile = p;
+          } catch {}
+
           const meta = authUser.user_metadata || {};
-          const fullName = meta.full_name || meta.name || authUser.email?.split("@")[0] || "Étudiant HAS";
-          const username = meta.username || authUser.email?.split("@")[0] || "etudiant";
-          const matricule = meta.matricule || "ETU001";
+          const detectedRole = dbProfile?.role || meta.role;
+
+          const isAdminOrProf =
+            detectedRole === "admin" ||
+            detectedRole === "professeur" ||
+            authUser.email?.includes("admin") ||
+            authUser.email?.startsWith("halil@") ||
+            authUser.email?.startsWith("direction@") ||
+            authUser.email?.endsWith("@has-internal.local") ||
+            (dbProfile?.full_name || meta.full_name || "").toLowerCase().includes("administration");
+
+          // Si l'utilisateur connecté dans Supabase est un compte administrateur ou enseignant,
+          // on ne doit ABSOLUMENT PAS écraser l'espace étudiant avec les données admin !
+          if (isAdminOrProf) {
+            setUser(MOCK_STUDENT);
+            localStorage.removeItem(LOCAL_STORAGE_KEY);
+            return;
+          }
+
+          const fullName =
+            dbProfile?.full_name ||
+            meta.full_name ||
+            meta.name ||
+            authUser.email?.split("@")[0] ||
+            "Ibrahima Anne";
+
+          // Sécurité supplémentaire : si le nom contient "Administration", rétablir l'étudiant officiel
+          if (fullName.toLowerCase().includes("administration")) {
+            setUser(MOCK_STUDENT);
+            localStorage.removeItem(LOCAL_STORAGE_KEY);
+            return;
+          }
+
+          const username = dbProfile?.username || meta.username || authUser.email?.split("@")[0] || "ibou";
+          const matricule = dbProfile?.matricule || meta.matricule || "ETU001";
           const filiereCode = meta.filiere || "MPI";
           const niveau = meta.niveau || "L1";
           const classeCode = `${niveau}-${filiereCode}`;
@@ -41,29 +97,19 @@ export function useCurrentUser() {
           const foundClasse = MOCK_CLASSES.find((c) => c.code === classeCode) || MOCK_CLASSES[0];
           const foundFiliere = MOCK_FILIERES.find((f) => f.code === filiereCode) || MOCK_FILIERES[0];
 
-          // Ne pas écraser le profil étudiant si l'utilisateur connecté est un compte admin ou enseignant
-          const isAdminAccount =
-            meta.role === "admin" ||
-            meta.role === "professeur" ||
-            authUser.email?.includes("admin") ||
-            authUser.email?.startsWith("halil@") ||
-            authUser.email?.startsWith("direction@") ||
-            authUser.email?.endsWith("@has-internal.local");
-
-          const effectiveRole = isAdminAccount ? (meta.role || "admin") : "etudiant";
           const updated: Profile = {
             id: authUser.id,
             email: authUser.email || MOCK_STUDENT.email,
             username,
             full_name: fullName,
-            role: effectiveRole,
-            phone: meta.phone || MOCK_STUDENT.phone,
+            role: "etudiant",
+            phone: dbProfile?.phone || meta.phone || MOCK_STUDENT.phone,
             matricule,
             filiere_id: foundFiliere.id,
             classe_id: foundClasse.id,
-            bio: meta.bio || `Étudiant à Halil Académie Scientifique — Filière ${filiereCode}.`,
+            bio: dbProfile?.bio || meta.bio || `Étudiant à Halil Académie Scientifique — Filière ${filiereCode}.`,
             specialite: foundFiliere.name,
-            avatar_url: meta.avatar_url || null,
+            avatar_url: dbProfile?.avatar_url || meta.avatar_url || null,
             is_active: true,
             created_at: authUser.created_at,
             updated_at: new Date().toISOString(),
@@ -72,10 +118,7 @@ export function useCurrentUser() {
           };
 
           setUser(updated);
-          // Ne persister dans le cache étudiant QUE si c'est réellement un étudiant
-          if (!isAdminAccount) {
-            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
-          }
+          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
         }
       } catch (err) {
         console.warn("Erreur chargement useCurrentUser:", err);
