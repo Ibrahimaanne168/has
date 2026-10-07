@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, IBM_Plex_Sans } from "next/font/google";
 import "./globals.css";
+import { InstallAppPrompt } from "@/components/ui/InstallAppPrompt";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -151,6 +152,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen bg-[#F8FAFC] dark:bg-[#0B0F14] text-slate-900 dark:text-[#F5F7FA] antialiased selection:bg-[#e0521c]/25 selection:text-[#F5F7FA] transition-colors duration-200">
         {children}
+        <InstallAppPrompt />
       </body>
     </html>
   );
