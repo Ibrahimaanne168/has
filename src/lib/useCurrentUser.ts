@@ -154,15 +154,21 @@ export function useCurrentUser() {
       const foundClasse = MOCK_CLASSES.find((c) => c.code === nextClasseCode) || MOCK_CLASSES[0];
       const foundFiliere = MOCK_FILIERES.find((f) => f.code === nextFiliere) || MOCK_FILIERES[0];
 
-      // Mettre à jour Supabase Auth metadata
+      // Mettre à jour Supabase Auth metadata (SANS avatar_url pour éviter l'erreur HTTP 431 / header data too large)
+      // Supabase Auth encode user_metadata dans le token JWT et les cookies de session.
+      // Y stocker des données d'image alourdit les en-têtes HTTP au-delà de la limite du serveur.
+      const safeMeta = { ...currentMeta };
+      delete (safeMeta as Record<string, unknown>).avatar_url;
+      delete (safeMeta as Record<string, unknown>).photo;
+
       await supabase.auth.updateUser({
         data: {
-          ...currentMeta,
+          ...safeMeta,
           filiere: nextFiliere,
           niveau: nextNiveau,
           phone: nextPhone,
           classe: nextClasseCode,
-          avatar_url: nextAvatar,
+          avatar_url: null, // Purge le token JWT et le cookie d'authentification
           ...(updates.specialite !== undefined ? { specialite: updates.specialite } : {}),
           ...(updates.bio !== undefined ? { bio: updates.bio } : {}),
         },

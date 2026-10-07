@@ -176,6 +176,8 @@ export function useCurrentProfesseur() {
             phone: updated.phone,
             bio: updated.bio,
             specialite: updated.specialite,
+            photo: null,
+            avatar_url: null,
           },
         });
       } catch {
