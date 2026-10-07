@@ -15,14 +15,14 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="w-full space-y-1.5">
         {label && (
-          <label htmlFor={inputId} className="block text-sm font-medium text-slate-700">
+          <label htmlFor={inputId} className="block text-sm font-medium text-slate-700 dark:text-[#F5F7FA]">
             {label}
             {props.required && <span className="text-red-500 ml-1">*</span>}
           </label>
         )}
         <div className="relative rounded-md shadow-sm">
           {leftIcon && (
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 dark:text-[#687585]">
               {leftIcon}
             </div>
           )}
@@ -33,19 +33,19 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
               leftIcon ? "pl-10" : "pl-3"
             } ${rightIcon ? "pr-10" : "pr-3"} ${
               error
-                ? "border-red-400 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-1 focus:ring-red-500"
-                : "border-slate-300 bg-white text-slate-900 placeholder-slate-400 focus:border-[#0f2744] focus:ring-1 focus:ring-[#0f2744]"
-            } disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 ${className}`}
+                ? "border-red-400 text-red-900 placeholder-red-300 focus:border-red-500 focus:ring-1 focus:ring-red-500 dark:border-rose-500 dark:bg-[#151D27] dark:text-rose-200 dark:placeholder-rose-400/50"
+                : "border-slate-300 bg-white text-slate-900 placeholder-slate-400 focus:border-[#0f2744] focus:ring-1 focus:ring-[#0f2744] dark:border-[#263241] dark:bg-[#151D27] dark:text-[#F5F7FA] dark:placeholder-[#687585] dark:focus:border-[#e0521c] dark:focus:ring-1 dark:focus:ring-[#e0521c]"
+            } disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 dark:disabled:bg-[#111821] dark:disabled:text-[#687585] dark:disabled:border-[#263241] ${className}`}
             {...props}
           />
           {rightIcon && (
-            <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+            <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 dark:text-[#687585]">
               {rightIcon}
             </div>
           )}
         </div>
-        {error && <p className="text-xs text-red-600 font-medium">{error}</p>}
-        {!error && helperText && <p className="text-xs text-slate-500">{helperText}</p>}
+        {error && <p className="text-xs text-red-600 dark:text-rose-400 font-medium">{error}</p>}
+        {!error && helperText && <p className="text-xs text-slate-500 dark:text-[#AAB4C0]">{helperText}</p>}
       </div>
     );
   }

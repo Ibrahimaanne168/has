@@ -19,7 +19,7 @@ import { MatieresSection } from "@/components/home/MatieresSection";
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen flex flex-col bg-[#F8FAFC]">
+    <div className="min-h-screen flex flex-col bg-[#F8FAFC] dark:bg-[#0B0F14] transition-colors">
       <Navbar />
 
       <main className="flex-1">
@@ -84,19 +84,19 @@ export default function HomePage() {
         {/* ================================================================ */}
         {/* 2. APPROCHE & PILIERS D'EXCELLENCE                               */}
         {/* ================================================================ */}
-        <section id="presentation" className="py-16 sm:py-24 bg-white border-b border-slate-200/80">
+        <section id="presentation" className="py-16 sm:py-24 bg-white dark:bg-[#0B0F14] border-b border-slate-200/80 dark:border-[#263241] transition-colors">
           <div className="max-w-5xl mx-auto px-5 sm:px-8 lg:px-10">
             {/* En-tête de section */}
             <div className="max-w-xl mb-12 sm:mb-16">
               <p className="text-[#e0521c] text-[11px] font-bold tracking-wider uppercase mb-3">
                 Notre Approche Pédagogique
               </p>
-              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#0f2744] leading-snug">
+              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#0f2744] dark:text-[#F5F7FA] leading-snug">
                 Une pédagogie active,
                 <br className="hidden sm:block" /> centrée sur la pratique
               </h2>
-              <p className="mt-3 text-slate-500 text-sm sm:text-base leading-relaxed">
-                À <strong className="text-slate-800 font-semibold">Halil Académie Scientifique</strong>, chaque étudiant
+              <p className="mt-3 text-slate-500 dark:text-[#AAB4C0] text-sm sm:text-base leading-relaxed">
+                À <strong className="text-slate-800 dark:text-[#F5F7FA] font-semibold">Halil Académie Scientifique</strong>, chaque étudiant
                 bénéficie d&apos;une attention réelle et d&apos;une méthode rigoureuse pour exceller.
               </p>
             </div>
@@ -104,15 +104,15 @@ export default function HomePage() {
             {/* Cartes des 3 piliers géométriques */}
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-5 sm:gap-6">
               {/* Carte 1 : Pratique intensive des TD */}
-              <div className="lg:col-span-3 bg-[#0f2744] rounded-xl p-7 sm:p-9 text-white flex flex-col justify-between min-h-[260px] shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] border border-[#0f2744]">
+              <div className="lg:col-span-3 bg-[#0f2744] dark:bg-[#111821] rounded-xl p-7 sm:p-9 text-white flex flex-col justify-between min-h-[260px] shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] border border-[#0f2744] dark:border-[#263241]">
                 <div>
-                  <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center mb-5">
+                  <div className="w-10 h-10 rounded-lg bg-white/10 dark:bg-[#151D27] flex items-center justify-center mb-5 border border-transparent dark:border-[#263241]">
                     <Target className="w-5 h-5 text-[#e0521c]" />
                   </div>
-                  <h3 className="font-serif text-2xl sm:text-3xl font-bold mb-3 leading-snug">
+                  <h3 className="font-serif text-2xl sm:text-3xl font-bold mb-3 leading-snug text-white dark:text-[#F5F7FA]">
                     Pratique intensive des TD
                   </h3>
-                  <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+                  <p className="text-slate-300 dark:text-[#AAB4C0] text-sm sm:text-base leading-relaxed">
                     Résolution méthodique de chaque exercice : nous décortiquons chaque démonstration,
                     formule et algorithme jusqu&apos;à ce que le réflexe soit parfaitement ancré.
                   </p>
@@ -122,28 +122,28 @@ export default function HomePage() {
               {/* Colonne droite : 2 cartes empilées */}
               <div className="lg:col-span-2 flex flex-col gap-5 sm:gap-6">
                 {/* Carte 2 : Examens Antérieurs */}
-                <div className="bg-[#F8FAFC] border border-slate-200/90 rounded-xl p-6 sm:p-7 flex-1 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] hover:shadow-md transition-all duration-200">
-                  <div className="w-9 h-9 rounded-lg bg-white border border-slate-200/80 flex items-center justify-center mb-4">
-                    <BookOpen className="w-4 h-4 text-[#0f2744]" />
+                <div className="bg-[#F8FAFC] dark:bg-[#111821] border border-slate-200/90 dark:border-[#263241] rounded-xl p-6 sm:p-7 flex-1 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] hover:shadow-md transition-all duration-200">
+                  <div className="w-9 h-9 rounded-lg bg-white dark:bg-[#151D27] border border-slate-200/80 dark:border-[#263241] flex items-center justify-center mb-4">
+                    <BookOpen className="w-4 h-4 text-[#0f2744] dark:text-[#e0521c]" />
                   </div>
-                  <h3 className="font-serif text-lg sm:text-xl font-bold text-slate-900 mb-2 leading-snug">
+                  <h3 className="font-serif text-lg sm:text-xl font-bold text-slate-900 dark:text-[#F5F7FA] mb-2 leading-snug">
                     Examens Antérieurs
                   </h3>
-                  <p className="text-slate-500 text-sm leading-relaxed">
+                  <p className="text-slate-500 dark:text-[#AAB4C0] text-sm leading-relaxed">
                     Entraînement ciblé sur les véritables sujets d&apos;examen, corrigés pas à pas,
                     pour aborder les épreuves avec sérénité et maîtrise.
                   </p>
                 </div>
 
                 {/* Carte 3 : Soutien des Profs */}
-                <div className="bg-[#F8FAFC] border border-slate-200/90 rounded-xl p-6 sm:p-7 flex-1 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] hover:shadow-md transition-all duration-200">
-                  <div className="w-9 h-9 rounded-lg bg-white border border-slate-200/80 flex items-center justify-center mb-4">
+                <div className="bg-[#F8FAFC] dark:bg-[#111821] border border-slate-200/90 dark:border-[#263241] rounded-xl p-6 sm:p-7 flex-1 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] hover:shadow-md transition-all duration-200">
+                  <div className="w-9 h-9 rounded-lg bg-white dark:bg-[#151D27] border border-slate-200/80 dark:border-[#263241] flex items-center justify-center mb-4">
                     <Users className="w-4 h-4 text-[#e0521c]" />
                   </div>
-                  <h3 className="font-serif text-lg sm:text-xl font-bold text-slate-900 mb-2 leading-snug">
+                  <h3 className="font-serif text-lg sm:text-xl font-bold text-slate-900 dark:text-[#F5F7FA] mb-2 leading-snug">
                     Soutien des Profs
                   </h3>
-                  <p className="text-slate-500 text-sm leading-relaxed">
+                  <p className="text-slate-500 dark:text-[#AAB4C0] text-sm leading-relaxed">
                     Encadrement personnalisé par des enseignants dévoués, toujours disponibles
                     pour répondre à vos interrogations et guider votre progression.
                   </p>
@@ -152,12 +152,12 @@ export default function HomePage() {
             </div>
 
             {/* Bandeau Valeurs */}
-            <div className="mt-6 bg-white border border-slate-200/90 rounded-xl p-5 sm:p-6 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-5">
-              <div className="w-8 h-8 rounded-lg bg-[#e0521c]/10 text-[#e0521c] flex items-center justify-center shrink-0">
+            <div className="mt-6 bg-white dark:bg-[#111821] border border-slate-200/90 dark:border-[#263241] rounded-xl p-5 sm:p-6 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-5">
+              <div className="w-8 h-8 rounded-lg bg-[#e0521c]/10 dark:bg-[#151D27] text-[#e0521c] border border-transparent dark:border-[#263241] flex items-center justify-center shrink-0">
                 <Sparkles className="w-4 h-4" />
               </div>
-              <p className="text-slate-700 text-sm sm:text-base">
-                <strong className="font-bold text-slate-900">Rigueur &amp; Fraternité</strong> —
+              <p className="text-slate-700 dark:text-[#AAB4C0] text-sm sm:text-base">
+                <strong className="font-bold text-slate-900 dark:text-[#F5F7FA]">Rigueur &amp; Fraternité</strong> —
                 {" "}les valeurs cardinales qui guident chaque séance et chaque étudiant vers l&apos;excellence académique.
               </p>
             </div>
@@ -172,13 +172,13 @@ export default function HomePage() {
         {/* ================================================================ */}
         {/* 4. MOT DU DIRECTEUR (Photo 1:1, texte soigné et sobre)           */}
         {/* ================================================================ */}
-        <section id="mot-directeur" className="py-16 sm:py-24 bg-white border-b border-slate-200/80">
+        <section id="mot-directeur" className="py-16 sm:py-24 bg-white dark:bg-[#0B0F14] border-b border-slate-200/80 dark:border-[#263241] transition-colors">
           <div className="max-w-4xl mx-auto px-5 sm:px-8 lg:px-10">
-            <div className="bg-[#F8FAFC] border border-slate-200/90 rounded-xl p-6 sm:p-9 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)]">
+            <div className="bg-[#F8FAFC] dark:bg-[#111821] border border-slate-200/90 dark:border-[#263241] rounded-xl p-6 sm:p-9 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)]">
               <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-8">
                 {/* Photo ratio 1:1 */}
                 <div className="shrink-0 flex flex-col items-center">
-                  <div className="w-40 h-40 sm:w-44 sm:h-44 aspect-square rounded-xl overflow-hidden ring-1 ring-slate-200 shadow-sm">
+                  <div className="w-40 h-40 sm:w-44 sm:h-44 aspect-square rounded-xl overflow-hidden ring-1 ring-slate-200 dark:ring-[#263241] shadow-sm">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src="/images/directeur-pape-ibrahima-samb.jpg"
@@ -186,7 +186,7 @@ export default function HomePage() {
                       className="w-full h-full object-cover object-top aspect-square"
                     />
                   </div>
-                  <p className="font-serif text-base font-bold text-[#0f2744] mt-3 text-center">
+                  <p className="font-serif text-base font-bold text-[#0f2744] dark:text-[#F5F7FA] mt-3 text-center">
                     Pape Ibrahima Samb
                   </p>
                   <p className="text-[11px] text-[#e0521c] font-bold uppercase tracking-wider text-center">
@@ -200,13 +200,13 @@ export default function HomePage() {
                     Mot du Directeur
                   </p>
 
-                  <blockquote className="font-serif text-xl sm:text-2xl font-bold text-[#0f2744] leading-snug mb-4">
+                  <blockquote className="font-serif text-xl sm:text-2xl font-bold text-[#0f2744] dark:text-[#F5F7FA] leading-snug mb-4">
                     « Notre mission : donner à chaque étudiant les clés méthodologiques et scientifiques de sa réussite. »
                   </blockquote>
 
-                  <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-                    Bienvenue à la <strong className="text-slate-900 font-semibold">Halil Académie Scientifique</strong>.
-                    Notre ambition est d&apos;offrir aux étudiants de <strong className="text-slate-900 font-semibold">Licence 1 et Licence 2</strong> un accompagnement
+                  <p className="text-slate-600 dark:text-[#AAB4C0] text-sm sm:text-base leading-relaxed">
+                    Bienvenue à la <strong className="text-slate-900 dark:text-[#F5F7FA] font-semibold">Halil Académie Scientifique</strong>.
+                    Notre ambition est d&apos;offrir aux étudiants de <strong className="text-slate-900 dark:text-[#F5F7FA] font-semibold">Licence 1 et Licence 2</strong> un accompagnement
                     méthodique et de haute rigueur en Mathématiques, Physique et Informatique. À travers la pratique intensive
                     des travaux dirigés et l&apos;encadrement de nos enseignants dévoués, nous forgeons l&apos;assurance et les compétences
                     nécessaires à votre succès universitaire.

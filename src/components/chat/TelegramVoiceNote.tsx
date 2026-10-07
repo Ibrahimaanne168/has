@@ -150,12 +150,14 @@ export function TelegramVoiceNote({
   const currentBarIndex = Math.floor(progress * bars.length);
 
   // Couleurs dynamiques
-  const playButtonBg = isMe ? "bg-white text-[#0f2744]" : "bg-[#0f2744] text-white";
-  const activeBarColor = isMe ? "bg-white" : "bg-[#0f2744]";
-  const inactiveBarColor = isMe ? "bg-white/40" : "bg-slate-300";
+  const playButtonBg = isMe
+    ? "bg-white text-[#0f2744]"
+    : "bg-[#0f2744] dark:bg-[#e0521c] text-white";
+  const activeBarColor = isMe ? "bg-white" : "bg-[#0f2744] dark:bg-[#e0521c]";
+  const inactiveBarColor = isMe ? "bg-white/40" : "bg-slate-300 dark:bg-[#354559]";
   const speedBtnStyle = isMe
     ? "bg-white/20 text-white hover:bg-white/30"
-    : "bg-slate-100 text-slate-700 hover:bg-slate-200";
+    : "bg-slate-100 dark:bg-[#263241] text-slate-700 dark:text-[#F5F7FA] hover:bg-slate-200 dark:hover:bg-[#354559]";
 
   return (
     <div

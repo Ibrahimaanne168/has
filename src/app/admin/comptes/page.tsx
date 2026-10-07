@@ -263,8 +263,8 @@ export default function AdminComptesPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <p className="text-[11px] font-bold tracking-wider uppercase text-[#e0521c] mb-1">Administration</p>
-            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] leading-snug">Gestion des Comptes &amp; Enseignants</h1>
-            <p className="text-xs text-slate-500 mt-1">Création de comptes, affectation de matières, niveaux et classes aux professeurs</p>
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] dark:text-[#F5F7FA] leading-snug">Gestion des Comptes &amp; Enseignants</h1>
+            <p className="text-xs text-slate-500 dark:text-[#AAB4C0] mt-1">Création de comptes, affectation de matières, niveaux et classes aux professeurs</p>
           </div>
           <Button variant="accent" size="md" onClick={openCreate} leftIcon={<Plus className="w-4 h-4" />}>
             Ajouter un compte / Professeur
@@ -272,22 +272,22 @@ export default function AdminComptesPage() {
         </div>
 
         {successMsg && (
-          <div className="p-4 rounded-lg bg-emerald-50 border border-emerald-200/90 flex items-center gap-3 shadow-xs">
-            <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-            <p className="text-sm font-medium text-emerald-800">{successMsg}</p>
+          <div className="p-4 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200/90 dark:border-emerald-800 flex items-center gap-3 shadow-xs">
+            <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200">{successMsg}</p>
           </div>
         )}
 
         {/* Filtres */}
-        <div className="bg-white p-4 rounded-xl border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] flex flex-col sm:flex-row gap-3 items-center">
+        <div className="bg-white dark:bg-[#111821] p-4 rounded-xl border border-slate-200/90 dark:border-[#263241] shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] flex flex-col sm:flex-row gap-3 items-center">
           <div className="relative flex-1 w-full">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-slate-400 dark:text-[#687585] absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Rechercher par nom, email ou matricule..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#0f2744]"
+              className="w-full pl-9 pr-3 py-2 text-sm border border-slate-300 dark:border-[#263241] bg-white dark:bg-[#151D27] text-slate-900 dark:text-[#F5F7FA] placeholder-slate-400 dark:placeholder-[#687585] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#0f2744] dark:focus:ring-[#e0521c]"
             />
           </div>
           <div className="flex gap-2 w-full sm:w-auto">
@@ -295,10 +295,10 @@ export default function AdminComptesPage() {
               <button
                 key={r}
                 onClick={() => setRoleFilter(r)}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors ${
+                className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors cursor-pointer ${
                   roleFilter === r
-                    ? "bg-[#0f2744] text-white border-[#0f2744]"
-                    : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+                    ? "bg-[#0f2744] dark:bg-[#e0521c] text-white border-[#0f2744] dark:border-[#e0521c]"
+                    : "bg-white dark:bg-[#151D27] text-slate-600 dark:text-[#AAB4C0] border-slate-200 dark:border-[#263241] hover:bg-slate-50 dark:hover:bg-[#1c2633]"
                 }`}
               >
                 {r === "all" ? "Tous" : r === "professeur" ? "Enseignants" : r.charAt(0).toUpperCase() + r.slice(1)}
@@ -308,63 +308,63 @@ export default function AdminComptesPage() {
         </div>
 
         {/* Table des utilisateurs */}
-        <div className="bg-white rounded-xl border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] overflow-hidden">
+        <div className="bg-white dark:bg-[#111821] rounded-xl border border-slate-200/90 dark:border-[#263241] shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-slate-50 border-b border-slate-200">
+                <tr className="bg-slate-50 dark:bg-[#151D27] border-b border-slate-200 dark:border-[#263241]">
                   {["Utilisateur", "Matricule", "Rôle", "Matières / Affectation", "Contact", "Actions"].map((h) => (
-                    <th key={h} className="text-left text-xs font-bold text-slate-500 uppercase tracking-wider px-4 py-3">{h}</th>
+                    <th key={h} className="text-left text-xs font-bold text-slate-500 dark:text-[#AAB4C0] uppercase tracking-wider px-4 py-3">{h}</th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-slate-100 dark:divide-[#263241]">
                 {filtered.map((u) => {
                   const profDetails = profs.find((p) => p.id === u.id);
 
                   return (
-                    <tr key={u.id} className="hover:bg-slate-50/50 transition-colors">
+                    <tr key={u.id} className="hover:bg-slate-50/50 dark:hover:bg-[#151D27]/50 transition-colors">
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-full bg-[#0f2744]/10 flex items-center justify-center text-[#0f2744] shrink-0 font-bold">
+                          <div className="w-9 h-9 rounded-full bg-[#0f2744]/10 dark:bg-[#151D27] flex items-center justify-center text-[#0f2744] dark:text-[#F5F7FA] shrink-0 font-bold border border-transparent dark:border-[#263241]">
                             {roleInfo[u.role].icon}
                           </div>
                           <div>
-                            <div className="font-semibold text-slate-900 text-xs">{u.full_name}</div>
-                            <div className="text-[11px] text-slate-400 font-mono">{u.email}</div>
+                            <div className="font-semibold text-slate-900 dark:text-[#F5F7FA] text-xs">{u.full_name}</div>
+                            <div className="text-[11px] text-slate-400 dark:text-[#687585] font-mono">{u.email}</div>
                           </div>
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <span className="font-mono text-xs text-slate-700">{u.matricule || "—"}</span>
+                        <span className="font-mono text-xs text-slate-700 dark:text-[#AAB4C0]">{u.matricule || "—"}</span>
                       </td>
                       <td className="px-4 py-3">{roleInfo[u.role].badge}</td>
                       <td className="px-4 py-3">
                         {profDetails ? (
                           <div className="space-y-1">
-                            <div className="text-xs font-semibold text-[#0f2744]">
+                            <div className="text-xs font-semibold text-[#0f2744] dark:text-cyan-400">
                               {profDetails.matieres?.length || 0} matière(s) • {profDetails.niveaux?.join(", ")}
                             </div>
-                            <div className="text-[11px] text-slate-500 truncate max-w-xs">
+                            <div className="text-[11px] text-slate-500 dark:text-[#AAB4C0] truncate max-w-xs">
                               {profDetails.classes?.join(", ") || "Classes non assignées"}
                             </div>
                           </div>
                         ) : u.role === "etudiant" ? (
                           <div>
-                            <div className="text-xs text-slate-700 font-semibold">L1 MPI</div>
-                            <div className="text-[11px] text-slate-400">Licence 1</div>
+                            <div className="text-xs text-slate-700 dark:text-[#AAB4C0] font-semibold">L1 MPI</div>
+                            <div className="text-[11px] text-slate-400 dark:text-[#687585]">Licence 1</div>
                           </div>
                         ) : (
-                          <div className="text-xs text-slate-400">—</div>
+                          <div className="text-xs text-slate-400 dark:text-[#687585]">—</div>
                         )}
                       </td>
-                      <td className="px-4 py-3 text-xs text-slate-600 font-mono">{u.phone || "—"}</td>
+                      <td className="px-4 py-3 text-xs text-slate-600 dark:text-[#AAB4C0] font-mono">{u.phone || "—"}</td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
-                          <button onClick={() => openEdit(u)} title="Modifier" className="p-1.5 text-slate-500 hover:text-[#0f2744] hover:bg-slate-100 rounded-md">
+                          <button onClick={() => openEdit(u)} title="Modifier" className="p-1.5 text-slate-500 dark:text-[#AAB4C0] hover:text-[#0f2744] dark:hover:text-[#F5F7FA] hover:bg-slate-100 dark:hover:bg-[#151D27] rounded-md cursor-pointer">
                             <Edit2 className="w-4 h-4" />
                           </button>
-                          <button onClick={() => setDeleteConfirm(u.id)} title="Supprimer" className="p-1.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-md">
+                          <button onClick={() => setDeleteConfirm(u.id)} title="Supprimer" className="p-1.5 text-slate-500 dark:text-[#AAB4C0] hover:text-red-600 dark:hover:text-rose-400 hover:bg-red-50 dark:hover:bg-rose-950/30 rounded-md cursor-pointer">
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
@@ -379,16 +379,16 @@ export default function AdminComptesPage() {
 
         {/* Modal Création / Édition */}
         {modalOpen && (
-          <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl max-w-2xl w-full p-6 shadow-xl border border-slate-200/90 max-h-[90vh] overflow-y-auto">
-              <div className="flex items-center justify-between mb-5 pb-3 border-b border-slate-100">
+          <div className="fixed inset-0 z-50 bg-slate-900/60 dark:bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-white dark:bg-[#111821] rounded-xl max-w-2xl w-full p-6 shadow-xl border border-slate-200/90 dark:border-[#263241] max-h-[90vh] overflow-y-auto">
+              <div className="flex items-center justify-between mb-5 pb-3 border-b border-slate-100 dark:border-[#263241]">
                 <div>
                   <p className="text-[11px] font-bold uppercase tracking-wider text-[#e0521c] mb-0.5">Administration</p>
-                  <h3 className="font-serif text-xl font-bold text-[#0f2744]">
+                  <h3 className="font-serif text-xl font-bold text-[#0f2744] dark:text-[#F5F7FA]">
                     {editUser ? `Modifier ${editUser.full_name}` : "Ajouter un Enseignant ou Utilisateur"}
                   </h3>
                 </div>
-                <button onClick={() => setModalOpen(false)} className="p-1.5 text-slate-400 hover:bg-slate-100 rounded-md">
+                <button onClick={() => setModalOpen(false)} className="p-1.5 text-slate-400 dark:text-[#687585] hover:bg-slate-100 dark:hover:bg-[#151D27] hover:text-slate-600 dark:hover:text-[#F5F7FA] rounded-md cursor-pointer">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -401,11 +401,11 @@ export default function AdminComptesPage() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="block text-sm font-medium text-slate-700">Rôle <span className="text-red-500">*</span></label>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-[#F5F7FA]">Rôle <span className="text-red-500">*</span></label>
                     <select
                       value={formRole}
                       onChange={(e) => setFormRole(e.target.value as UserRole)}
-                      className="w-full text-sm border border-slate-300 rounded-md px-3 py-2.5 bg-white focus:outline-none focus:ring-1 focus:ring-[#0f2744]"
+                      className="w-full text-sm border border-slate-300 dark:border-[#263241] rounded-md px-3 py-2.5 bg-white dark:bg-[#151D27] text-slate-900 dark:text-[#F5F7FA] focus:outline-none focus:ring-1 focus:ring-[#0f2744] dark:focus:ring-[#e0521c]"
                     >
                       <option value="professeur">Professeur / Enseignant</option>
                       <option value="etudiant">Étudiant</option>
@@ -417,15 +417,15 @@ export default function AdminComptesPage() {
 
                 {/* Configuration spécifique Enseignant */}
                 {formRole === "professeur" && (
-                  <div className="p-4 bg-slate-50 rounded-xl border border-slate-200/90 space-y-4">
+                  <div className="p-4 bg-slate-50 dark:bg-[#151D27] rounded-xl border border-slate-200/90 dark:border-[#263241] space-y-4">
                     <div className="space-y-1.5">
-                      <label className="block text-sm font-medium text-slate-700">
+                      <label className="block text-sm font-medium text-slate-700 dark:text-[#F5F7FA]">
                         Spécialité officielle
                       </label>
                       <select
                         value={formSpecialite}
                         onChange={(e) => setFormSpecialite(e.target.value)}
-                        className="w-full text-sm border border-slate-300 rounded-md p-2.5 bg-white font-medium text-slate-800"
+                        className="w-full text-sm border border-slate-300 dark:border-[#263241] rounded-md p-2.5 bg-white dark:bg-[#111821] font-medium text-slate-800 dark:text-[#F5F7FA]"
                       >
                         <option value="Informatique">Informatique</option>
                         <option value="Math">Math</option>
@@ -435,29 +435,29 @@ export default function AdminComptesPage() {
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="block text-sm font-medium text-slate-700">Biographie académique</label>
+                      <label className="block text-sm font-medium text-slate-700 dark:text-[#F5F7FA]">Biographie académique</label>
                       <textarea
                         rows={2}
                         value={formBio}
                         onChange={(e) => setFormBio(e.target.value)}
                         placeholder="Titres universitaires, domaine de recherche..."
-                        className="w-full text-sm border border-slate-300 rounded-md p-2.5 bg-white"
+                        className="w-full text-sm border border-slate-300 dark:border-[#263241] rounded-md p-2.5 bg-white dark:bg-[#111821] text-slate-900 dark:text-[#F5F7FA] placeholder-slate-400 dark:placeholder-[#687585]"
                       />
                     </div>
 
                     {/* Niveaux enseignés */}
                     <div className="space-y-1.5">
-                      <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                      <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-[#F5F7FA]">
                         Niveaux enseignés (L1 / L2)
                       </label>
                       <div className="flex gap-3">
                         {["L1", "L2"].map((niv) => (
-                          <label key={niv} className="inline-flex items-center gap-2 text-xs font-semibold cursor-pointer">
+                          <label key={niv} className="inline-flex items-center gap-2 text-xs font-semibold cursor-pointer text-slate-800 dark:text-[#F5F7FA]">
                             <input
                               type="checkbox"
                               checked={selectedNiveaux.includes(niv)}
                               onChange={() => toggleNiveau(niv)}
-                              className="rounded text-[#0f2744] focus:ring-[#0f2744]"
+                              className="rounded text-[#0f2744] dark:text-[#e0521c] focus:ring-[#0f2744]"
                             />
                             <span>Licence {niv === "L1" ? "1 (L1)" : "2 (L2)"}</span>
                           </label>
@@ -467,19 +467,19 @@ export default function AdminComptesPage() {
 
                     {/* Classes assignées */}
                     <div className="space-y-1.5">
-                      <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                      <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-[#F5F7FA]">
                         Classes assignées à cet enseignant
                       </label>
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                         {availableClassesList.map((cls) => (
-                          <label key={cls} className="inline-flex items-center gap-2 p-2 rounded-lg border bg-white text-xs cursor-pointer hover:bg-slate-100">
+                          <label key={cls} className="inline-flex items-center gap-2 p-2 rounded-lg border border-slate-200 dark:border-[#263241] bg-white dark:bg-[#111821] text-xs cursor-pointer hover:bg-slate-100 dark:hover:bg-[#1c2633]">
                             <input
                               type="checkbox"
                               checked={selectedClasses.includes(cls)}
                               onChange={() => toggleClasse(cls)}
-                              className="rounded text-[#0f2744] focus:ring-[#0f2744]"
+                              className="rounded text-[#0f2744] dark:text-[#e0521c] focus:ring-[#0f2744]"
                             />
-                            <span className="font-semibold text-slate-800">{cls}</span>
+                            <span className="font-semibold text-slate-800 dark:text-[#F5F7FA]">{cls}</span>
                           </label>
                         ))}
                       </div>
@@ -487,20 +487,20 @@ export default function AdminComptesPage() {
 
                     {/* Matières enseignées */}
                     <div className="space-y-1.5">
-                      <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                      <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-[#F5F7FA]">
                         Matières enseignées ({selectedMatieres.length} sélectionnée(s))
                       </label>
-                      <div className="max-h-40 overflow-y-auto border border-slate-200 rounded-lg p-2 bg-white space-y-1">
+                      <div className="max-h-40 overflow-y-auto border border-slate-200 dark:border-[#263241] rounded-lg p-2 bg-white dark:bg-[#111821] space-y-1">
                         {MOCK_MATIERES.map((mat) => (
-                          <label key={mat.id} className="flex items-center gap-2 text-xs p-1.5 rounded hover:bg-slate-50 cursor-pointer">
+                          <label key={mat.id} className="flex items-center gap-2 text-xs p-1.5 rounded hover:bg-slate-50 dark:hover:bg-[#151D27] cursor-pointer">
                             <input
                               type="checkbox"
                               checked={selectedMatieres.includes(mat.name)}
                               onChange={() => toggleMatiere(mat.name)}
-                              className="rounded text-[#0f2744] focus:ring-[#0f2744]"
+                              className="rounded text-[#0f2744] dark:text-[#e0521c] focus:ring-[#0f2744]"
                             />
-                            <span className="font-mono text-[10px] text-slate-400">{mat.code}</span>
-                            <span className="text-slate-800">{mat.name}</span>
+                            <span className="font-mono text-[10px] text-slate-400 dark:text-[#687585]">{mat.code}</span>
+                            <span className="text-slate-800 dark:text-[#F5F7FA]">{mat.name}</span>
                           </label>
                         ))}
                       </div>
@@ -508,7 +508,7 @@ export default function AdminComptesPage() {
                   </div>
                 )}
 
-                <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
+                <div className="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-[#263241]">
                   <Button type="button" variant="ghost" size="sm" className="rounded-lg text-xs" onClick={() => setModalOpen(false)}>Annuler</Button>
                   <Button type="submit" variant="accent" size="sm" className="rounded-lg text-xs" leftIcon={<Save className="w-3.5 h-3.5" />}>
                     {editUser ? "Enregistrer les modifications" : "Créer le compte"}
@@ -521,18 +521,18 @@ export default function AdminComptesPage() {
 
         {/* Modal suppression */}
         {deleteConfirm && (
-          <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl max-w-sm w-full p-6 shadow-xl border border-slate-200/90 space-y-4">
+          <div className="fixed inset-0 z-50 bg-slate-900/60 dark:bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-white dark:bg-[#111821] rounded-xl max-w-sm w-full p-6 shadow-xl border border-slate-200/90 dark:border-[#263241] space-y-4">
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-lg bg-red-50 border border-red-200/80 flex items-center justify-center shrink-0">
-                  <AlertCircle className="w-5 h-5 text-red-600" />
+                <div className="w-10 h-10 rounded-lg bg-red-50 dark:bg-rose-950/40 border border-red-200/80 dark:border-rose-900/60 flex items-center justify-center shrink-0">
+                  <AlertCircle className="w-5 h-5 text-red-600 dark:text-rose-400" />
                 </div>
                 <div>
-                  <h3 className="font-serif text-base font-bold text-slate-900">Supprimer ce compte</h3>
-                  <p className="text-xs text-slate-600 mt-1">Le compte sera retiré de la liste académique. Cette action est irréversible.</p>
+                  <h3 className="font-serif text-base font-bold text-slate-900 dark:text-[#F5F7FA]">Supprimer ce compte</h3>
+                  <p className="text-xs text-slate-600 dark:text-[#AAB4C0] mt-1">Le compte sera retiré de la liste académique. Cette action est irréversible.</p>
                 </div>
               </div>
-              <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
+              <div className="flex justify-end gap-2 pt-2 border-t border-slate-100 dark:border-[#263241]">
                 <Button variant="ghost" size="sm" className="rounded-lg text-xs" onClick={() => setDeleteConfirm(null)}>Annuler</Button>
                 <Button variant="danger" size="sm" className="rounded-lg text-xs" onClick={() => handleDelete(deleteConfirm)}>Supprimer</Button>
               </div>

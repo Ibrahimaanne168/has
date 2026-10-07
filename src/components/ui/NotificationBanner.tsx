@@ -140,9 +140,9 @@ export function NotificationBanner() {
           role="alert"
           aria-live="polite"
         >
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
+          <div className="bg-white dark:bg-[#111821] rounded-2xl shadow-2xl border border-slate-200 dark:border-[#263241] overflow-hidden">
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 bg-[#0f2744] text-white">
+            <div className="flex items-center justify-between px-4 py-3 bg-[#0f2744] dark:bg-[#151D27] text-white border-b border-transparent dark:border-[#263241]">
               <div className="flex items-center gap-2">
                 <div className="w-7 h-7 rounded-lg overflow-hidden bg-white shadow-xs flex items-center justify-center p-0.5 shrink-0">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -152,13 +152,13 @@ export function NotificationBanner() {
                     className="w-full h-full object-contain"
                   />
                 </div>
-                <span className="text-xs font-bold">
+                <span className="text-xs font-bold text-white dark:text-[#F5F7FA]">
                   {missed.length} notification{missed.length > 1 ? "s" : ""} récente{missed.length > 1 ? "s" : ""}
                 </span>
               </div>
               <button
                 onClick={() => setShowMissed(false)}
-                className="p-1 rounded-md hover:bg-white/10 transition-colors"
+                className="p-1 rounded-md hover:bg-white/10 transition-colors cursor-pointer"
                 aria-label="Fermer"
               >
                 <X className="w-4 h-4 text-white/70" />
@@ -166,23 +166,23 @@ export function NotificationBanner() {
             </div>
 
             {/* Liste */}
-            <div className="divide-y divide-slate-100 max-h-72 overflow-y-auto">
+            <div className="divide-y divide-slate-100 dark:divide-[#263241] max-h-72 overflow-y-auto">
               {missed.map((n) => (
                 <a
                   key={n.id}
                   href={n.url || "/"}
                   onClick={() => setShowMissed(false)}
-                  className="flex items-start gap-3 px-4 py-3 hover:bg-slate-50 transition-colors group"
+                  className="flex items-start gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-[#151D27] transition-colors group"
                 >
                   <span className="mt-0.5 shrink-0">
-                    {TYPE_ICON[n.type] || <Bell className="w-4 h-4 text-slate-400" />}
+                    {TYPE_ICON[n.type] || <Bell className="w-4 h-4 text-slate-400 dark:text-[#687585]" />}
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-bold text-slate-900 truncate group-hover:text-[#0f2744]">
+                    <p className="text-xs font-bold text-slate-900 dark:text-[#F5F7FA] truncate group-hover:text-[#0f2744] dark:group-hover:text-[#e0521c]">
                       {n.title}
                     </p>
-                    <p className="text-[11px] text-slate-500 truncate">{n.body}</p>
-                    <p className="text-[10px] text-slate-400 mt-0.5">
+                    <p className="text-[11px] text-slate-500 dark:text-[#AAB4C0] truncate">{n.body}</p>
+                    <p className="text-[10px] text-slate-400 dark:text-[#687585] mt-0.5">
                       {new Date(n.stored_at).toLocaleString("fr-FR", {
                         day: "numeric",
                         month: "short",
@@ -196,10 +196,10 @@ export function NotificationBanner() {
             </div>
 
             {/* Footer */}
-            <div className="px-4 py-2.5 bg-slate-50 border-t border-slate-100 flex justify-end">
+            <div className="px-4 py-2.5 bg-slate-50 dark:bg-[#151D27] border-t border-slate-100 dark:border-[#263241] flex justify-end">
               <button
                 onClick={() => setShowMissed(false)}
-                className="text-xs font-semibold text-[#0f2744] hover:text-[#e0521c] transition-colors"
+                className="text-xs font-semibold text-[#0f2744] dark:text-[#e0521c] hover:underline transition-colors cursor-pointer"
               >
                 Tout marquer comme lu
               </button>

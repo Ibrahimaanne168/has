@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { NotificationBanner } from "@/components/ui/NotificationBanner";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { UserRole } from "@/lib/types";
 
 interface NavItem {
@@ -162,21 +163,21 @@ export function DashboardLayout({
       : matriculeOrTitle;
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0B0F14] text-slate-900 dark:text-[#F5F7FA] flex flex-col transition-colors duration-200">
       <NotificationBanner />
-      <header className="sticky top-0 z-30 bg-white border-b border-slate-200">
+      <header className="sticky top-0 z-30 bg-white/95 dark:bg-[#111821]/95 backdrop-blur-md border-b border-slate-200 dark:border-[#263241] transition-colors">
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
-                className="lg:hidden p-2 rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                className="lg:hidden p-2 rounded-md text-slate-600 dark:text-[#AAB4C0] hover:text-slate-900 dark:hover:text-[#F5F7FA] hover:bg-slate-100 dark:hover:bg-[#151D27]"
               >
                 {mobileSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </button>
 
               <Link href="/" className="flex items-center gap-2.5">
-                <div className="w-10 h-10 rounded-full overflow-hidden bg-white shadow-xs ring-1 ring-slate-200 flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-full overflow-hidden bg-white shadow-xs ring-1 ring-slate-200 dark:ring-[#263241] flex items-center justify-center shrink-0">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src="/images/logo-has.jpg"
@@ -185,7 +186,7 @@ export function DashboardLayout({
                   />
                 </div>
                 <div className="hidden sm:block">
-                  <span className="font-serif text-base font-bold text-[#0f2744] block leading-tight">
+                  <span className="font-serif text-base font-bold text-[#0f2744] dark:text-[#F5F7FA] block leading-tight">
                     Halil Académie Scientifique
                   </span>
                   <span className="text-[10px] text-[#e0521c] font-semibold tracking-wider">
@@ -196,9 +197,11 @@ export function DashboardLayout({
             </div>
 
             {/* Profil & Actions header */}
-            <div className="flex items-center gap-3 sm:gap-4">
+            <div className="flex items-center gap-2.5 sm:gap-4">
+              <ThemeToggle />
+
               {detectedAvatar && (
-                <div className="w-8 h-8 rounded-full overflow-hidden bg-slate-100 ring-2 ring-[#0f2744]/10 shrink-0">
+                <div className="w-8 h-8 rounded-full overflow-hidden bg-slate-100 dark:bg-[#151D27] ring-2 ring-[#0f2744]/10 dark:ring-[#263241] shrink-0">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={detectedAvatar}
@@ -209,8 +212,8 @@ export function DashboardLayout({
               )}
 
               <div className="hidden sm:flex flex-col text-right">
-                <span className="text-xs font-semibold text-slate-800">{displayUserName}</span>
-                <span className="text-[11px] text-slate-400">{displayMatricule || userEmail}</span>
+                <span className="text-xs font-semibold text-slate-800 dark:text-[#F5F7FA]">{displayUserName}</span>
+                <span className="text-[11px] text-slate-400 dark:text-[#AAB4C0]">{displayMatricule || userEmail}</span>
               </div>
 
               {getRoleBadge()}
@@ -218,7 +221,7 @@ export function DashboardLayout({
               <button
                 onClick={handleLogout}
                 title="Déconnexion"
-                className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 dark:text-[#AAB4C0] dark:hover:text-rose-400 dark:hover:bg-rose-950/30 rounded-lg transition-colors cursor-pointer"
               >
                 <LogOut className="w-4 h-4" />
               </button>
@@ -230,10 +233,10 @@ export function DashboardLayout({
       <div className="flex-1 flex max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 gap-8">
         {/* Sidebar Desktop */}
         <aside className="hidden lg:block w-64 shrink-0">
-          <div className="sticky top-24 bg-white rounded-xl border border-slate-200/80 p-3 shadow-xs">
-            <div className="p-3 mb-2 bg-slate-50 rounded-lg border border-slate-100">
-              <div className="text-xs text-slate-500">Connecté en tant que :</div>
-              <div className="text-sm font-bold text-[#0f2744] truncate">{displayUserName}</div>
+          <div className="sticky top-24 bg-white dark:bg-[#111821] rounded-xl border border-slate-200/80 dark:border-[#263241] p-3 shadow-xs transition-colors">
+            <div className="p-3 mb-2 bg-slate-50 dark:bg-[#151D27] rounded-lg border border-slate-100 dark:border-[#263241]/80">
+              <div className="text-xs text-slate-500 dark:text-[#AAB4C0]">Connecté en tant que :</div>
+              <div className="text-sm font-bold text-[#0f2744] dark:text-[#F5F7FA] truncate">{displayUserName}</div>
               {displayMatricule && (
                 <div className="text-[11px] font-mono text-[#e0521c] truncate mt-0.5">
                   {displayMatricule}
@@ -250,12 +253,12 @@ export function DashboardLayout({
                     href={item.href}
                     className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                       isActive
-                        ? "bg-[#0f2744] text-white shadow-xs"
-                        : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+                        ? "bg-[#0f2744] dark:bg-[#1a385c] text-white shadow-xs dark:border dark:border-[#2b4c73]"
+                        : "text-slate-700 dark:text-[#AAB4C0] hover:bg-slate-100 dark:hover:bg-[#151D27] hover:text-slate-900 dark:hover:text-[#F5F7FA]"
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <span className={isActive ? "text-[#e0521c]" : "text-slate-400"}>
+                      <span className={isActive ? "text-[#e0521c]" : "text-slate-400 dark:text-[#687585]"}>
                         {item.icon}
                       </span>
                       <span>{item.label}</span>
@@ -266,8 +269,8 @@ export function DashboardLayout({
                           isActive
                             ? "bg-white/20 text-white"
                             : item.badge === "En direct"
-                            ? "bg-emerald-100 text-emerald-800"
-                            : "bg-[#e0521c]/10 text-[#e0521c]"
+                            ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300"
+                            : "bg-[#e0521c]/10 text-[#e0521c] dark:bg-[#e0521c]/20 dark:text-[#f69562]"
                         }`}
                       >
                         {item.badge}
@@ -278,12 +281,12 @@ export function DashboardLayout({
               })}
             </nav>
 
-            <div className="mt-6 pt-4 border-t border-slate-100">
+            <div className="mt-6 pt-4 border-t border-slate-100 dark:border-[#263241]">
               <Link
                 href="/#contact"
-                className="flex items-center gap-2 px-3 py-2 text-xs text-slate-500 hover:text-slate-900"
+                className="flex items-center gap-2 px-3 py-2 text-xs text-slate-500 dark:text-[#AAB4C0] hover:text-slate-900 dark:hover:text-[#F5F7FA] transition-colors"
               >
-                <LifeBuoy className="w-4 h-4 text-slate-400" />
+                <LifeBuoy className="w-4 h-4 text-slate-400 dark:text-[#687585]" />
                 <span>Assistance technique HAS</span>
               </Link>
             </div>
@@ -292,14 +295,14 @@ export function DashboardLayout({
 
         {/* Mobile Drawer */}
         {mobileSidebarOpen && (
-          <div className="lg:hidden fixed inset-0 z-40 bg-slate-900/50 backdrop-blur-xs flex">
-            <div className="w-72 bg-white h-full p-4 flex flex-col justify-between shadow-2xl">
+          <div className="lg:hidden fixed inset-0 z-40 bg-slate-900/60 dark:bg-black/70 backdrop-blur-xs flex">
+            <div className="w-72 bg-white dark:bg-[#111821] h-full p-4 flex flex-col justify-between shadow-2xl border-r border-slate-200 dark:border-[#263241]">
               <div>
-                <div className="flex items-center justify-between pb-4 border-b border-slate-200 mb-4">
-                  <span className="font-serif font-bold text-[#0f2744]">Menu Académique</span>
+                <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-[#263241] mb-4">
+                  <span className="font-serif font-bold text-[#0f2744] dark:text-[#F5F7FA]">Menu Académique</span>
                   <button
                     onClick={() => setMobileSidebarOpen(false)}
-                    className="p-1 rounded-md text-slate-500 hover:bg-slate-100"
+                    className="p-1 rounded-md text-slate-500 dark:text-[#AAB4C0] hover:bg-slate-100 dark:hover:bg-[#151D27]"
                   >
                     <X className="w-5 h-5" />
                   </button>
@@ -315,8 +318,8 @@ export function DashboardLayout({
                         onClick={() => setMobileSidebarOpen(false)}
                         className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium ${
                           isActive
-                            ? "bg-[#0f2744] text-white"
-                            : "text-slate-700 hover:bg-slate-100"
+                            ? "bg-[#0f2744] dark:bg-[#1a385c] text-white"
+                            : "text-slate-700 dark:text-[#AAB4C0] hover:bg-slate-100 dark:hover:bg-[#151D27]"
                         }`}
                       >
                         <div className="flex items-center gap-3">
@@ -324,7 +327,7 @@ export function DashboardLayout({
                           <span>{item.label}</span>
                         </div>
                         {item.badge && (
-                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-700">
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-[#151D27] text-slate-700 dark:text-[#AAB4C0]">
                             {item.badge}
                           </span>
                         )}
@@ -334,10 +337,10 @@ export function DashboardLayout({
                 </nav>
               </div>
 
-              <div className="pt-4 border-t border-slate-200">
+              <div className="pt-4 border-t border-slate-200 dark:border-[#263241]">
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 font-medium hover:bg-red-50 rounded-lg"
+                  className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 dark:text-rose-400 font-medium hover:bg-red-50 dark:hover:bg-rose-950/30 rounded-lg cursor-pointer transition-colors"
                 >
                   <LogOut className="w-4 h-4" />
                   <span>Déconnexion</span>

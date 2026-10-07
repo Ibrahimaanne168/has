@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export default function InscriptionPage() {
   const router = useRouter();
@@ -263,12 +264,12 @@ export default function InscriptionPage() {
 
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-between">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0B0F14] text-slate-900 dark:text-[#F5F7FA] flex flex-col justify-between transition-colors">
       {/* Header simplifié */}
-      <header className="bg-white border-b border-slate-200 py-3 sm:py-4 px-4 sm:px-6">
+      <header className="bg-white dark:bg-[#111821] border-b border-slate-200 dark:border-[#263241] py-3 sm:py-4 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
           <Link href="/" className="flex items-center gap-2.5 sm:gap-3 min-w-0">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden bg-white shadow-xs ring-1 ring-slate-200 flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden bg-white shadow-xs ring-1 ring-slate-200 dark:ring-[#263241] flex items-center justify-center shrink-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/images/logo-has.jpg"
@@ -277,7 +278,7 @@ export default function InscriptionPage() {
               />
             </div>
             <div className="min-w-0">
-              <span className="font-serif text-base sm:text-lg font-bold text-[#0f2744] block leading-tight truncate">
+              <span className="font-serif text-base sm:text-lg font-bold text-[#0f2744] dark:text-[#F5F7FA] block leading-tight truncate">
                 <span className="hidden sm:inline">Halil Académie Scientifique</span>
                 <span className="sm:hidden">HAS</span>
               </span>
@@ -286,22 +287,25 @@ export default function InscriptionPage() {
               </span>
             </div>
           </Link>
-          <Link href="/connexion" className="shrink-0">
-            <Button variant="ghost" size="sm" className="text-xs font-semibold px-2.5 sm:px-3">
-              <span className="hidden sm:inline">Déjà inscrit ? Se connecter</span>
-              <span className="sm:hidden">Connexion</span>
-            </Button>
-          </Link>
+          <div className="flex items-center gap-2 shrink-0">
+            <ThemeToggle />
+            <Link href="/connexion">
+              <Button variant="ghost" size="sm" className="text-xs font-semibold px-2.5 sm:px-3">
+                <span className="hidden sm:inline">Déjà inscrit ? Se connecter</span>
+                <span className="sm:hidden">Connexion</span>
+              </Button>
+            </Link>
+          </div>
         </div>
       </header>
 
       {/* Main Container */}
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6 my-8">
-        <div className="w-full max-w-xl bg-white border border-slate-200/90 rounded-xl shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] p-6 sm:p-10">
+        <div className="w-full max-w-xl bg-white dark:bg-[#111821] border border-slate-200/90 dark:border-[#263241] rounded-xl shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] dark:shadow-[0_4px_24px_-4px_rgba(0,0,0,0.6)] p-6 sm:p-10">
           {/* Fil d'Ariane des étapes */}
           <div className="mb-8">
             <div className="flex items-center justify-between relative">
-              <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-slate-200 -z-0" />
+              <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-slate-200 dark:bg-[#263241] -z-0" />
               {[
                 { num: 1, label: "Identité" },
                 { num: 2, label: "Confirmation Email" },
@@ -311,15 +315,15 @@ export default function InscriptionPage() {
                   <div
                     className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
                       step >= s.num
-                        ? "bg-[#0f2744] text-white"
-                        : "bg-white border-2 border-slate-300 text-slate-400"
+                        ? "bg-[#0f2744] dark:bg-[#e0521c] text-white"
+                        : "bg-white dark:bg-[#151D27] border-2 border-slate-300 dark:border-[#263241] text-slate-400 dark:text-[#687585]"
                     }`}
                   >
                     {step > s.num ? "✓" : s.num}
                   </div>
                   <span
                     className={`text-[11px] font-medium mt-1.5 ${
-                      step >= s.num ? "text-[#0f2744] font-semibold" : "text-slate-400"
+                      step >= s.num ? "text-[#0f2744] dark:text-[#F5F7FA] font-semibold" : "text-slate-400 dark:text-[#687585]"
                     }`}
                   >
                     {s.label}
@@ -332,13 +336,13 @@ export default function InscriptionPage() {
           {/* En-tête de section */}
           <div className="mb-6 text-center">
             <p className="text-[11px] font-bold tracking-wider uppercase text-[#e0521c] mb-1">Portail d&apos;Admission</p>
-            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] leading-snug">
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] dark:text-[#F5F7FA] leading-snug">
               {step === 1 && "Inscription Étudiant — Étape 1/2"}
               {step === 2 && "Code de confirmation par email"}
               {step === 3 && "Finalisation du Compte — Étape 2/2"}
               {step === 4 && "Inscription Validée"}
             </h1>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1">
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-[#AAB4C0] mt-1">
               {step === 1 && "Renseignez vos coordonnées pour recevoir votre code de confirmation."}
               {step === 2 && `Un code à 6 chiffres a été expédié à l'adresse ${email}.`}
               {step === 3 && "Définissez votre identifiant et votre mot de passe."}
@@ -348,21 +352,21 @@ export default function InscriptionPage() {
 
           {/* Alertes d'information & d'erreur */}
           {errorMsg && (
-            <div className="mb-6 p-4 rounded-lg bg-red-50 border border-red-200/80 flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-              <p className="text-sm font-medium text-red-800">{errorMsg}</p>
+            <div className="mb-6 p-4 rounded-lg bg-red-50 dark:bg-rose-950/30 border border-red-200/80 dark:border-rose-900/50 flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 dark:text-rose-400 shrink-0 mt-0.5" />
+              <p className="text-sm font-medium text-red-800 dark:text-rose-200">{errorMsg}</p>
             </div>
           )}
 
           {infoMsg && (
-            <div className="mb-6 p-4 rounded-lg bg-emerald-50 border border-emerald-200/80 flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-              <p className="text-sm font-medium text-emerald-800">{infoMsg}</p>
+            <div className="mb-6 p-4 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200/80 dark:border-emerald-800 flex items-start gap-3">
+              <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+              <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200">{infoMsg}</p>
             </div>
           )}
 
           {devCode && (
-            <div className="mb-6 p-3 rounded-md bg-amber-50 border border-amber-200 text-xs text-amber-900">
+            <div className="mb-6 p-3 rounded-md bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 text-xs text-amber-900 dark:text-amber-200">
               <strong>Code de confirmation (Test local / Démo) :</strong>{" "}
               <span className="font-mono text-sm font-bold tracking-widest text-[#e0521c]">
                 {devCode}
@@ -397,13 +401,13 @@ export default function InscriptionPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-[#F5F7FA] mb-1.5">
                     Filière d&apos;inscription
                   </label>
                   <select
                     value={filiere}
                     onChange={(e) => setFiliere(e.target.value as "MPI" | "SML" | "MIASS")}
-                    className="w-full h-10 px-3 rounded-lg border border-slate-200 bg-white text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0f2744]"
+                    className="w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-[#263241] bg-white dark:bg-[#151D27] text-xs font-medium text-slate-900 dark:text-[#F5F7FA] focus:outline-none focus:ring-2 focus:ring-[#0f2744] dark:focus:ring-[#e0521c]"
                   >
                     <option value="MPI">MPI (Maths, Physique, Info)</option>
                     <option value="SML">SML (Sciences Matière, Logiciel)</option>
@@ -412,21 +416,19 @@ export default function InscriptionPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-[#F5F7FA] mb-1.5">
                     Niveau d&apos;études
                   </label>
                   <select
                     value={niveau}
                     onChange={(e) => setNiveau(e.target.value as "L1" | "L2")}
-                    className="w-full h-10 px-3 rounded-lg border border-slate-200 bg-white text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0f2744]"
+                    className="w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-[#263241] bg-white dark:bg-[#151D27] text-xs font-medium text-slate-900 dark:text-[#F5F7FA] focus:outline-none focus:ring-2 focus:ring-[#0f2744] dark:focus:ring-[#e0521c]"
                   >
                     <option value="L1">Licence 1 (L1)</option>
                     <option value="L2">Licence 2 (L2)</option>
                   </select>
                 </div>
               </div>
-
-
 
               <Button
                 type="submit"
@@ -447,7 +449,7 @@ export default function InscriptionPage() {
           {step === 2 && (
             <form onSubmit={handleStep2Submit} className="space-y-6">
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-slate-700 text-center">
+                <label className="block text-sm font-medium text-slate-700 dark:text-[#F5F7FA] text-center">
                   Saisissez le code à 6 chiffres reçu
                 </label>
                 <div className="flex justify-center">
@@ -459,10 +461,10 @@ export default function InscriptionPage() {
                     placeholder="••••••"
                     value={code2FA}
                     onChange={(e) => setCode2FA(e.target.value.replace(/\D/g, ""))}
-                    className="w-48 text-center tracking-[12px] font-mono font-bold text-2xl py-3 border-2 border-[#0f2744] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0f2744]"
+                    className="w-48 text-center tracking-[12px] font-mono font-bold text-2xl py-3 border-2 border-[#0f2744] dark:border-[#e0521c] bg-white dark:bg-[#151D27] text-slate-900 dark:text-[#F5F7FA] placeholder-slate-400 dark:placeholder-[#687585] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0f2744] dark:focus:ring-[#e0521c]"
                   />
                 </div>
-                <p className="text-xs text-center text-slate-400">
+                <p className="text-xs text-center text-slate-400 dark:text-[#687585]">
                   Code valable pendant 10 minutes (5 tentatives max).
                 </p>
               </div>
@@ -484,7 +486,7 @@ export default function InscriptionPage() {
                   <button
                     type="button"
                     onClick={() => setStep(1)}
-                    className="text-xs text-slate-500 hover:text-slate-800 flex items-center gap-1"
+                    className="text-xs text-slate-500 dark:text-[#AAB4C0] hover:text-slate-800 dark:hover:text-[#F5F7FA] flex items-center gap-1 cursor-pointer"
                   >
                     <ArrowLeft className="w-3.5 h-3.5" /> Modifier l&apos;adresse email
                   </button>
@@ -493,7 +495,7 @@ export default function InscriptionPage() {
                     type="button"
                     onClick={handleResendCode}
                     disabled={resendCooldown > 0 || isLoading}
-                    className="text-xs text-[#0f2744] font-medium hover:underline disabled:opacity-50 disabled:no-underline flex items-center gap-1"
+                    className="text-xs text-[#0f2744] dark:text-[#e0521c] font-medium hover:underline disabled:opacity-50 disabled:no-underline flex items-center gap-1 cursor-pointer"
                   >
                     <RefreshCw className="w-3.5 h-3.5" />
                     {resendCooldown > 0 ? `Renvoyer (${resendCooldown}s)` : "Renvoyer un nouveau code"}
@@ -510,11 +512,11 @@ export default function InscriptionPage() {
             <form onSubmit={handleStep3Submit} className="space-y-5">
               {/* Champ identifiant avec vérification temps réel */}
               <div className="space-y-1.5">
-                <label className="block text-sm font-medium text-slate-700">
+                <label className="block text-sm font-medium text-slate-700 dark:text-[#F5F7FA]">
                   Identifiant unique (Login) <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-[#687585] pointer-events-none">
                     <KeyRound className="w-4 h-4" />
                   </div>
                   <input
@@ -525,16 +527,16 @@ export default function InscriptionPage() {
                     autoComplete="username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value.replace(/\s/g, "").toLowerCase())}
-                    className={`w-full pl-10 pr-10 py-2.5 text-sm border rounded-lg bg-white focus:outline-none focus:ring-1 transition-colors ${
+                    className={`w-full pl-10 pr-10 py-2.5 text-sm border rounded-lg bg-white dark:bg-[#151D27] text-slate-900 dark:text-[#F5F7FA] placeholder-slate-400 dark:placeholder-[#687585] focus:outline-none focus:ring-1 transition-colors ${
                       usernameStatus === "available"
-                        ? "border-emerald-400 focus:ring-emerald-400 bg-emerald-50/30"
+                        ? "border-emerald-400 focus:ring-emerald-400 bg-emerald-50/30 dark:bg-emerald-950/20"
                         : usernameStatus === "taken" || usernameStatus === "invalid"
-                        ? "border-red-400 focus:ring-red-400 bg-red-50/30"
-                        : "border-slate-200 focus:ring-[#0f2744]"
+                        ? "border-red-400 focus:ring-red-400 bg-red-50/30 dark:bg-rose-950/20"
+                        : "border-slate-200 dark:border-[#263241] focus:ring-[#0f2744] dark:focus:ring-[#e0521c]"
                     }`}
                   />
                   <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                    {usernameStatus === "checking" && <Loader2 className="w-4 h-4 text-slate-400 animate-spin" />}
+                    {usernameStatus === "checking" && <Loader2 className="w-4 h-4 text-slate-400 dark:text-[#687585] animate-spin" />}
                     {usernameStatus === "available" && <CheckCircle2 className="w-4 h-4 text-emerald-500" />}
                     {(usernameStatus === "taken" || usernameStatus === "invalid") && <XCircle className="w-4 h-4 text-red-500" />}
                   </div>
@@ -543,19 +545,19 @@ export default function InscriptionPage() {
                 {/* Message de statut */}
                 {usernameMsg && (
                   <p className={`text-[11px] font-medium flex items-center gap-1 ${
-                    usernameStatus === "available" ? "text-emerald-600" : "text-red-600"
+                    usernameStatus === "available" ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-rose-400"
                   }`}>
                     {usernameMsg}
                   </p>
                 )}
                 {usernameStatus === "idle" && (
-                  <p className="text-[11px] text-slate-400">Lettres, chiffres, tirets ou underscore. 3–30 caractères.</p>
+                  <p className="text-[11px] text-slate-400 dark:text-[#687585]">Lettres, chiffres, tirets ou underscore. 3–30 caractères.</p>
                 )}
 
                 {/* Suggestions d'identifiants alternatifs */}
                 {usernameSuggestions.length > 0 && (
-                  <div className="mt-2 p-3 bg-amber-50 border border-amber-200/80 rounded-lg space-y-1.5">
-                    <p className="text-[11px] font-semibold text-amber-800">
+                  <div className="mt-2 p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-800/60 rounded-lg space-y-1.5">
+                    <p className="text-[11px] font-semibold text-amber-800 dark:text-amber-200">
                       Identifiants disponibles suggérés — cliquez pour choisir :
                     </p>
                     <div className="flex flex-wrap gap-2">
@@ -564,7 +566,7 @@ export default function InscriptionPage() {
                           key={s}
                           type="button"
                           onClick={() => setUsername(s)}
-                          className="px-3 py-1 rounded-full text-[11px] font-bold bg-white border border-amber-300 text-amber-900 hover:bg-amber-100 hover:border-amber-400 transition-colors font-mono"
+                          className="px-3 py-1 rounded-full text-[11px] font-bold bg-white dark:bg-[#111821] border border-amber-300 dark:border-amber-700 text-amber-900 dark:text-amber-200 hover:bg-amber-100 dark:hover:bg-amber-900/40 hover:border-amber-400 transition-colors font-mono cursor-pointer"
                         >
                           {s}
                         </button>
@@ -585,7 +587,7 @@ export default function InscriptionPage() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="text-slate-400 hover:text-slate-600 focus:outline-none"
+                      className="text-slate-400 dark:text-[#687585] hover:text-slate-600 dark:hover:text-[#F5F7FA] focus:outline-none cursor-pointer"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -595,24 +597,24 @@ export default function InscriptionPage() {
                 />
 
                 {/* Critères de robustesse affichés et validés en temps réel */}
-                <div className="p-3 bg-slate-50 rounded-md border border-slate-200 space-y-1 text-xs">
-                  <span className="font-semibold text-slate-700 block mb-1">
+                <div className="p-3 bg-slate-50 dark:bg-[#151D27] rounded-md border border-slate-200 dark:border-[#263241] space-y-1 text-xs">
+                  <span className="font-semibold text-slate-700 dark:text-[#F5F7FA] block mb-1">
                     Exigences de sécurité du mot de passe :
                   </span>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-[11px]">
-                    <div className={passwordChecks.length ? "text-emerald-700 font-medium" : "text-slate-500"}>
+                    <div className={passwordChecks.length ? "text-emerald-700 dark:text-emerald-400 font-medium" : "text-slate-500 dark:text-[#687585]"}>
                       {passwordChecks.length ? "✓" : "○"} Au moins 8 caractères
                     </div>
-                    <div className={passwordChecks.hasUpper ? "text-emerald-700 font-medium" : "text-slate-500"}>
+                    <div className={passwordChecks.hasUpper ? "text-emerald-700 dark:text-emerald-400 font-medium" : "text-slate-500 dark:text-[#687585]"}>
                       {passwordChecks.hasUpper ? "✓" : "○"} Une majuscule (A-Z)
                     </div>
-                    <div className={passwordChecks.hasLower ? "text-emerald-700 font-medium" : "text-slate-500"}>
+                    <div className={passwordChecks.hasLower ? "text-emerald-700 dark:text-emerald-400 font-medium" : "text-slate-500 dark:text-[#687585]"}>
                       {passwordChecks.hasLower ? "✓" : "○"} Une minuscule (a-z)
                     </div>
-                    <div className={passwordChecks.hasNumber ? "text-emerald-700 font-medium" : "text-slate-500"}>
+                    <div className={passwordChecks.hasNumber ? "text-emerald-700 dark:text-emerald-400 font-medium" : "text-slate-500 dark:text-[#687585]"}>
                       {passwordChecks.hasNumber ? "✓" : "○"} Un chiffre (0-9)
                     </div>
-                    <div className={passwordChecks.hasSpecial ? "text-emerald-700 font-medium" : "text-slate-500"}>
+                    <div className={passwordChecks.hasSpecial ? "text-emerald-700 dark:text-emerald-400 font-medium" : "text-slate-500 dark:text-[#687585]"}>
                       {passwordChecks.hasSpecial ? "✓" : "○"} Un caractère spécial (@$!%*?&_-#)
                     </div>
                   </div>
@@ -647,28 +649,28 @@ export default function InscriptionPage() {
           {/* ============================================================================== */}
           {step === 4 && (
             <div className="text-center space-y-6 py-4">
-              <div className="w-16 h-16 bg-emerald-50 border border-emerald-200/80 text-emerald-600 rounded-xl flex items-center justify-center mx-auto">
+              <div className="w-16 h-16 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 rounded-xl flex items-center justify-center mx-auto">
                 <CheckCircle2 className="w-10 h-10" />
               </div>
 
               <div className="space-y-2">
-                <h3 className="font-serif text-2xl font-bold text-[#0f2744]">
+                <h3 className="font-serif text-2xl font-bold text-[#0f2744] dark:text-[#F5F7FA]">
                   Bienvenue à Halil Académie Scientifique !
                 </h3>
-                <p className="text-sm text-slate-600">
+                <p className="text-sm text-slate-600 dark:text-[#AAB4C0]">
                   Félicitations <strong>{createdUser?.fullName}</strong>, votre compte étudiant a été créé
                   et votre identité a été certifiée par double facteur.
                 </p>
               </div>
 
-              <div className="p-4 bg-slate-50 rounded-xl border border-slate-200/90 inline-block text-left w-full max-w-sm">
-                <span className="text-xs text-slate-500 uppercase tracking-wider block">
+              <div className="p-4 bg-slate-50 dark:bg-[#151D27] rounded-xl border border-slate-200/90 dark:border-[#263241] inline-block text-left w-full max-w-sm">
+                <span className="text-xs text-slate-500 dark:text-[#AAB4C0] uppercase tracking-wider block">
                   Matricule officiel attribué :
                 </span>
-                <span className="font-mono text-lg font-bold text-[#0f2744] block mt-1">
+                <span className="font-mono text-lg font-bold text-[#0f2744] dark:text-[#e0521c] block mt-1">
                   {createdUser?.matricule}
                 </span>
-                <span className="text-xs text-slate-400 block mt-2">
+                <span className="text-xs text-slate-400 dark:text-[#687585] block mt-2">
                   Conservez ce matricule pour vos examens et relevés de notes.
                 </span>
               </div>
@@ -690,7 +692,7 @@ export default function InscriptionPage() {
       </main>
 
       {/* Footer minimal */}
-      <footer className="py-4 text-center text-xs text-slate-400 border-t border-slate-200 bg-white">
+      <footer className="py-4 text-center text-xs text-slate-400 dark:text-[#687585] border-t border-slate-200 dark:border-[#263241] bg-white dark:bg-[#111821]">
         © {new Date().getFullYear()} Halil Académie Scientifique (HAS) — Tous droits réservés.
       </footer>
     </div>

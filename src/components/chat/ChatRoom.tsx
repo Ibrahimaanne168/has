@@ -639,17 +639,17 @@ export function ChatRoom({
   const getBubbleStyles = (role: UserRole, isMe: boolean) => {
     if (isMe) {
       return {
-        bubble: "bg-[#0f2744] text-white rounded-2xl sm:rounded-[22px] rounded-br-xs shadow-[0_2px_8px_rgba(15,39,68,0.18)]",
-        name: "text-orange-200",
-        avatar: "bg-[#0f2744] text-white border-2 border-white",
+        bubble: "bg-[#0f2744] dark:bg-[#e0521c] text-white rounded-2xl sm:rounded-[22px] rounded-br-xs shadow-[0_2px_8px_rgba(15,39,68,0.18)] dark:shadow-[0_2px_12px_rgba(224,82,28,0.25)]",
+        name: "text-orange-200 dark:text-orange-100",
+        avatar: "bg-[#0f2744] dark:bg-[#e0521c] text-white border-2 border-white dark:border-[#151D27]",
         accent: "#ffffff",
       };
     }
 
     if (role === "admin") {
       return {
-        bubble: "bg-white text-slate-800 border border-purple-200 rounded-2xl sm:rounded-[22px] rounded-bl-xs shadow-[0_2px_8px_rgba(147,51,234,0.06)]",
-        name: "text-purple-700 font-bold",
+        bubble: "bg-white dark:bg-[#151D27] text-slate-800 dark:text-[#F5F7FA] border border-purple-200 dark:border-purple-900/50 rounded-2xl sm:rounded-[22px] rounded-bl-xs shadow-[0_2px_8px_rgba(147,51,234,0.06)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.4)]",
+        name: "text-purple-700 dark:text-purple-400 font-bold",
         avatar: "bg-purple-600 text-white",
         accent: "#7e22ce",
       };
@@ -657,17 +657,17 @@ export function ChatRoom({
 
     if (role === "professeur") {
       return {
-        bubble: "bg-white text-slate-800 border border-blue-200/90 rounded-2xl sm:rounded-[22px] rounded-bl-xs shadow-[0_2px_8px_rgba(15,39,68,0.06)]",
-        name: "text-[#0f2744] font-bold",
-        avatar: "bg-[#0f2744] text-white",
+        bubble: "bg-white dark:bg-[#151D27] text-slate-800 dark:text-[#F5F7FA] border border-blue-200/90 dark:border-[#263241] rounded-2xl sm:rounded-[22px] rounded-bl-xs shadow-[0_2px_8px_rgba(15,39,68,0.06)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.4)]",
+        name: "text-[#0f2744] dark:text-sky-400 font-bold",
+        avatar: "bg-[#0f2744] dark:bg-sky-700 text-white",
         accent: "#0f2744",
       };
     }
 
     // etudiant
     return {
-      bubble: "bg-white text-slate-800 border border-slate-200/90 rounded-2xl sm:rounded-[22px] rounded-bl-xs shadow-[0_2px_6px_rgba(0,0,0,0.04)]",
-      name: "text-[#e0521c] font-bold",
+      bubble: "bg-white dark:bg-[#151D27] text-slate-800 dark:text-[#F5F7FA] border border-slate-200/90 dark:border-[#263241] rounded-2xl sm:rounded-[22px] rounded-bl-xs shadow-[0_2px_6px_rgba(0,0,0,0.04)] dark:shadow-[0_2px_8px_rgba(0,0,0,0.4)]",
+      name: "text-[#e0521c] dark:text-[#ff7539] font-bold",
       avatar: "bg-[#e0521c] text-white",
       accent: "#e0521c",
     };
@@ -682,7 +682,7 @@ export function ChatRoom({
 
   const chatContainer = (
     <div
-      className={`bg-white rounded-2xl flex flex-col overflow-hidden border border-slate-200/90 shadow-2xl relative ${
+      className={`bg-white dark:bg-[#111821] rounded-2xl flex flex-col overflow-hidden border border-slate-200/90 dark:border-[#263241] shadow-2xl relative ${
         isPopup
           ? isFullscreen
             ? "fixed inset-0 z-50 rounded-none w-screen h-screen"
@@ -691,7 +691,7 @@ export function ChatRoom({
       }`}
     >
       {/* ─── Top Header WhatsApp ────────────────────────────────────────────── */}
-      <div className="px-4 py-3 sm:px-6 sm:py-3.5 bg-slate-50/95 backdrop-blur-md border-b border-slate-200/90 flex items-center justify-between shrink-0 z-20">
+      <div className="px-4 py-3 sm:px-6 sm:py-3.5 bg-slate-50/95 dark:bg-[#111821]/95 backdrop-blur-md border-b border-slate-200/90 dark:border-[#263241] flex items-center justify-between shrink-0 z-20">
         <div className="flex items-center gap-3 min-w-0">
           {/* Bouton retour / fermer WhatsApp */}
           {onClose && (
@@ -699,7 +699,7 @@ export function ChatRoom({
               type="button"
               onClick={onClose}
               title="Fermer le chat"
-              className="p-2 -ml-1 text-slate-600 hover:text-slate-900 hover:bg-slate-200/70 rounded-full transition-colors flex items-center justify-center shrink-0"
+              className="p-2 -ml-1 text-slate-600 dark:text-[#AAB4C0] hover:text-slate-900 dark:hover:text-[#F5F7FA] hover:bg-slate-200/70 dark:hover:bg-[#151D27] rounded-full transition-colors flex items-center justify-center shrink-0 cursor-pointer"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
@@ -711,7 +711,7 @@ export function ChatRoom({
               <MessagesSquare className="w-5 h-5 text-[#e0521c]" />
             </div>
             <span
-              className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white animate-pulse"
+              className="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-500 border-2 border-white dark:border-[#111821] animate-pulse"
               title="Salon en direct"
             />
           </div>
@@ -719,7 +719,7 @@ export function ChatRoom({
           {/* Titre & métadonnées du salon */}
           <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <h2 className="font-serif text-base sm:text-lg font-bold text-[#0f2744] truncate">
+              <h2 className="font-serif text-base sm:text-lg font-bold text-[#0f2744] dark:text-[#F5F7FA] truncate">
                 {roomTitle}
               </h2>
 
@@ -729,15 +729,15 @@ export function ChatRoom({
                   <button
                     type="button"
                     onClick={() => setSalonsDropdownOpen((prev) => !prev)}
-                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-200/70 text-slate-700 hover:bg-slate-300/70 transition-colors"
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-200/70 dark:bg-[#151D27] text-slate-700 dark:text-[#AAB4C0] hover:bg-slate-300/70 dark:hover:bg-[#1c2633] transition-colors cursor-pointer"
                   >
                     <span>Changer</span>
-                    <ChevronDown className="w-3 h-3 text-slate-500" />
+                    <ChevronDown className="w-3 h-3 text-slate-500 dark:text-[#687585]" />
                   </button>
 
                   {salonsDropdownOpen && (
-                    <div className="absolute left-0 top-full mt-1.5 w-56 bg-white rounded-xl shadow-xl border border-slate-200/90 py-1.5 z-50">
-                      <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    <div className="absolute left-0 top-full mt-1.5 w-56 bg-white dark:bg-[#151D27] rounded-xl shadow-xl border border-slate-200/90 dark:border-[#263241] py-1.5 z-50">
+                      <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-[#687585]">
                         Basculer vers un salon
                       </div>
                       {salons.map((s) => (
@@ -747,8 +747,8 @@ export function ChatRoom({
                             onSelectSalon(s.id);
                             setSalonsDropdownOpen(false);
                           }}
-                          className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-slate-50 transition-colors ${
-                            s.id === roomId ? "font-bold text-[#0f2744] bg-blue-50/50" : "text-slate-700"
+                          className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between hover:bg-slate-50 dark:hover:bg-[#111821] transition-colors cursor-pointer ${
+                            s.id === roomId ? "font-bold text-[#0f2744] dark:text-[#F5F7FA] bg-blue-50/50 dark:bg-white/5" : "text-slate-700 dark:text-[#AAB4C0]"
                           }`}
                         >
                           <span className="truncate">{s.titre}</span>
@@ -761,12 +761,12 @@ export function ChatRoom({
               )}
             </div>
 
-            <div className="flex items-center gap-2 text-xs text-slate-500 truncate mt-0.5">
+            <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-[#AAB4C0] truncate mt-0.5">
               <span className="inline-flex items-center gap-1 font-mono text-[10.5px] text-[#e0521c] font-semibold">
                 <Hash className="w-3 h-3" />
                 {roomId}
               </span>
-              <span className="text-slate-300">•</span>
+              <span className="text-slate-300 dark:text-[#263241]">•</span>
               <span className="truncate">{roomDescription}</span>
             </div>
           </div>
@@ -778,8 +778,8 @@ export function ChatRoom({
             type="button"
             onClick={() => setIsSearchOpen((prev) => !prev)}
             title="Rechercher dans la conversation"
-            className={`p-2 rounded-full transition-colors ${
-              isSearchOpen ? "bg-[#0f2744] text-white" : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
+            className={`p-2 rounded-full transition-colors cursor-pointer ${
+              isSearchOpen ? "bg-[#0f2744] dark:bg-[#e0521c] text-white" : "text-slate-600 dark:text-[#AAB4C0] hover:text-slate-900 dark:hover:text-[#F5F7FA] hover:bg-slate-200/60 dark:hover:bg-[#151D27]"
             }`}
           >
             <Search className="w-4 h-4" />
@@ -790,15 +790,15 @@ export function ChatRoom({
               type="button"
               onClick={() => setIsFullscreen((prev) => !prev)}
               title={isFullscreen ? "Réduire la fenêtre" : "Plein écran"}
-              className="p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 rounded-full transition-colors hidden sm:flex items-center justify-center"
+              className="p-2 text-slate-600 dark:text-[#AAB4C0] hover:text-slate-900 dark:hover:text-[#F5F7FA] hover:bg-slate-200/60 dark:hover:bg-[#151D27] rounded-full transition-colors hidden sm:flex items-center justify-center cursor-pointer"
             >
               {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
             </button>
           )}
 
           {isAdmin && (
-            <span className="hidden md:inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
-              <ShieldCheck className="w-3 h-3 text-amber-600" />
+            <span className="hidden md:inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60">
+              <ShieldCheck className="w-3 h-3 text-amber-600 dark:text-amber-400" />
               Modérateur
             </span>
           )}
@@ -808,7 +808,7 @@ export function ChatRoom({
               type="button"
               onClick={onClose}
               title="Fermer"
-              className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-200/70 rounded-full transition-colors ml-1"
+              className="p-2 text-slate-400 dark:text-[#687585] hover:text-slate-700 dark:hover:text-[#F5F7FA] hover:bg-slate-200/70 dark:hover:bg-[#151D27] rounded-full transition-colors ml-1 cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -818,21 +818,21 @@ export function ChatRoom({
 
       {/* Barre de recherche toggleable */}
       {isSearchOpen && (
-        <div className="px-4 py-2 bg-slate-100/90 border-b border-slate-200 flex items-center gap-2 z-20">
-          <Search className="w-4 h-4 text-slate-400 shrink-0" />
+        <div className="px-4 py-2 bg-slate-100/90 dark:bg-[#151D27] border-b border-slate-200 dark:border-[#263241] flex items-center gap-2 z-20">
+          <Search className="w-4 h-4 text-slate-400 dark:text-[#687585] shrink-0" />
           <input
             type="text"
             placeholder="Rechercher dans les messages..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="flex-1 bg-transparent text-xs text-slate-800 placeholder-slate-400 focus:outline-none"
+            className="flex-1 bg-transparent text-xs text-slate-800 dark:text-[#F5F7FA] placeholder-slate-400 dark:placeholder-[#687585] focus:outline-none"
             autoFocus
           />
           {searchQuery && (
             <button
               type="button"
               onClick={() => setSearchQuery("")}
-              className="text-xs text-slate-400 hover:text-slate-600"
+              className="text-xs text-slate-400 dark:text-[#687585] hover:text-slate-600 dark:hover:text-[#F5F7FA] cursor-pointer"
             >
               Effacer
             </button>
@@ -989,7 +989,7 @@ export function ChatRoom({
                       {/* Menu de modération pour administrateurs */}
                       {selectedMsgId === msg.id && (isAdmin || currentUser.role === "admin") && (
                         <div
-                          className={`absolute ${isMe ? "right-0" : "left-0"} top-full mt-1.5 z-50 bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden min-w-[150px] animate-in fade-in zoom-in-95`}
+                          className={`absolute ${isMe ? "right-0" : "left-0"} top-full mt-1.5 z-50 bg-white dark:bg-[#151D27] rounded-xl shadow-2xl border border-slate-200 dark:border-[#263241] overflow-hidden min-w-[150px] animate-in fade-in zoom-in-95`}
                           onClick={(e) => e.stopPropagation()}
                         >
                           <button
@@ -998,7 +998,7 @@ export function ChatRoom({
                               handleDeleteMessage(msg.id);
                               setSelectedMsgId(null);
                             }}
-                            className="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-red-600 hover:bg-red-50 transition-colors"
+                            className="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs font-semibold text-red-600 dark:text-rose-400 hover:bg-red-50 dark:hover:bg-rose-950/30 transition-colors cursor-pointer"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                             Supprimer ce message
@@ -1016,15 +1016,15 @@ export function ChatRoom({
       </div>
 
       {/* ─── Barre de saisie inférieure (WhatsApp / Telegram) ──────────────── */}
-      <div className="p-3 sm:p-4 bg-slate-50/95 backdrop-blur-md border-t border-slate-200/90 shrink-0 z-20">
+      <div className="p-3 sm:p-4 bg-slate-50/95 dark:bg-[#111821]/95 backdrop-blur-md border-t border-slate-200/90 dark:border-[#263241] shrink-0 z-20">
         {isRecording ? (
           /* Enregistreur vocal professionnel façon Telegram */
-          <div className="flex items-center justify-between gap-3 px-4 py-2.5 bg-red-50/90 border border-red-200 rounded-2xl shadow-sm animate-in fade-in duration-150">
+          <div className="flex items-center justify-between gap-3 px-4 py-2.5 bg-red-50/90 dark:bg-red-950/30 border border-red-200 dark:border-red-900/60 rounded-2xl shadow-sm animate-in fade-in duration-150">
             <div className="flex items-center gap-3">
               <span className="w-3 h-3 rounded-full bg-red-600 animate-ping shrink-0" />
               <div className="flex items-center gap-2">
-                <Mic className="w-4 h-4 text-red-600 animate-pulse" />
-                <span className="font-mono text-xs font-bold text-red-700">
+                <Mic className="w-4 h-4 text-red-600 dark:text-red-400 animate-pulse" />
+                <span className="font-mono text-xs font-bold text-red-700 dark:text-red-300">
                   {Math.floor(recordingSeconds / 60)}:
                   {(recordingSeconds % 60).toString().padStart(2, "0")}
                 </span>
@@ -1049,14 +1049,14 @@ export function ChatRoom({
               <button
                 type="button"
                 onClick={handleCancelRecording}
-                className="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-red-700 hover:bg-red-100 transition-colors"
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-[#AAB4C0] hover:text-red-700 dark:hover:text-rose-300 hover:bg-red-100 dark:hover:bg-red-950/40 transition-colors cursor-pointer"
               >
                 Annuler
               </button>
               <button
                 type="button"
                 onClick={handleStopAndSendRecording}
-                className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-red-600 text-white text-xs font-bold shadow-md hover:bg-red-700 transition-transform active:scale-95"
+                className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-red-600 text-white text-xs font-bold shadow-md hover:bg-red-700 transition-transform active:scale-95 cursor-pointer"
               >
                 <Send className="w-3.5 h-3.5" />
                 <span>Envoyer la note vocale</span>
@@ -1078,7 +1078,7 @@ export function ChatRoom({
                     if (newMessage.trim()) handleSendMessage();
                   }
                 }}
-                className="w-full rounded-2xl border border-slate-200/90 bg-white px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:border-[#0f2744] focus:ring-2 focus:ring-[#0f2744]/15 transition-all shadow-xs"
+                className="w-full rounded-2xl border border-slate-200/90 dark:border-[#263241] bg-white dark:bg-[#151D27] px-4 py-3 text-sm text-slate-900 dark:text-[#F5F7FA] placeholder-slate-400 dark:placeholder-[#687585] focus:border-[#0f2744] dark:focus:border-[#e0521c] focus:ring-2 focus:ring-[#0f2744]/15 dark:focus:ring-[#e0521c]/20 transition-all shadow-xs"
               />
             </div>
 
@@ -1087,7 +1087,7 @@ export function ChatRoom({
               type="button"
               onClick={handleStartRecording}
               title="Enregistrer un message vocal (façon Telegram)"
-              className="flex items-center justify-center w-11 h-11 rounded-2xl bg-white border border-slate-200 text-[#0f2744] hover:bg-orange-50 hover:text-[#e0521c] hover:border-orange-200 shadow-xs transition-all active:scale-95 shrink-0"
+              className="flex items-center justify-center w-11 h-11 rounded-2xl bg-white dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] text-[#0f2744] dark:text-[#F5F7FA] hover:bg-orange-50 dark:hover:bg-orange-950/30 hover:text-[#e0521c] hover:border-orange-200 dark:hover:border-orange-900/50 shadow-xs transition-all active:scale-95 shrink-0 cursor-pointer"
             >
               <Mic className="w-5 h-5" />
             </button>
@@ -1097,14 +1097,14 @@ export function ChatRoom({
               type="submit"
               disabled={!newMessage.trim() || isSending}
               title="Envoyer le message"
-              className="flex items-center justify-center w-11 h-11 rounded-2xl bg-[#0f2744] text-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#163860] active:scale-95 shadow-md transition-all shrink-0"
+              className="flex items-center justify-center w-11 h-11 rounded-2xl bg-[#0f2744] dark:bg-[#e0521c] text-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#163860] dark:hover:bg-[#f06129] active:scale-95 shadow-md transition-all shrink-0 cursor-pointer"
             >
-              <Send className="w-4 h-4 text-[#e0521c]" />
+              <Send className="w-4 h-4 text-[#e0521c] dark:text-white" />
             </button>
           </form>
         )}
 
-        <div className="flex items-center justify-between text-[11px] text-slate-400 mt-2 px-1">
+        <div className="flex items-center justify-between text-[11px] text-slate-400 dark:text-[#687585] mt-2 px-1">
           <span>Touche Entrée pour envoyer • Cliquez sur le micro 🎙 pour une note vocale</span>
           <span className="hidden sm:inline font-mono">Halil Académie Scientifique • Live Chat</span>
         </div>

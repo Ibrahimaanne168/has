@@ -53,11 +53,11 @@ export function WaterRippleBackground({ className = "" }: WaterRippleBackgroundP
 
   return (
     <div
-      className={`absolute inset-0 overflow-hidden pointer-events-none select-none bg-white ${className}`}
+      className={`absolute inset-0 overflow-hidden pointer-events-none select-none bg-white dark:bg-[#0B0F14] transition-colors ${className}`}
       aria-hidden="true"
     >
       {/* Léger voile de brillance propre */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-50/20 via-white to-orange-50/15" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-50/20 via-white to-orange-50/15 dark:from-slate-900/30 dark:via-[#0B0F14] dark:to-orange-950/20" />
 
       {/* Rendu SVG des ondulations concentriques de gouttes d'eau */}
       <svg

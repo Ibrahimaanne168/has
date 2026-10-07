@@ -83,11 +83,11 @@ export default function EtudiantEDTPage() {
                 Emploi du Temps — Semaine en cours
               </span>
             </div>
-            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] leading-snug">
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] dark:text-[#F5F7FA] leading-snug">
               Planning Hebdomadaire
             </h1>
-            <p className="text-xs text-slate-500 mt-1">
-              <strong className="text-[#0f2744]">{userNiveau}</strong> —{" "}
+            <p className="text-xs text-slate-500 dark:text-[#AAB4C0] mt-1">
+              <strong className="text-[#0f2744] dark:text-[#F5F7FA]">{userNiveau}</strong> —{" "}
               <strong className="text-[#e0521c]">{userFiliere}</strong>
             </p>
           </div>
@@ -95,9 +95,9 @@ export default function EtudiantEDTPage() {
             <a
               href={currentEDT.file_url}
               download={currentEDT.file_name || `${(currentEDT.title || "Emploi_du_temps").replace(/[/\\?%*:|"<>]/g, "_")}.pdf`}
-              className="inline-flex items-center gap-2 px-3.5 py-2 bg-[#0f2744] hover:bg-[#183a62] text-white text-xs font-semibold rounded-lg shadow-xs transition-colors shrink-0"
+              className="inline-flex items-center gap-2 px-3.5 py-2 bg-[#0f2744] dark:bg-[#e0521c] hover:bg-[#183a62] dark:hover:bg-[#c84418] text-white text-xs font-semibold rounded-lg shadow-xs transition-colors shrink-0"
             >
-              <Download className="w-3.5 h-3.5 text-[#e0521c]" />
+              <Download className="w-3.5 h-3.5 text-[#e0521c] dark:text-white" />
               EDT officiel (PDF)
             </a>
           )}
@@ -105,27 +105,27 @@ export default function EtudiantEDTPage() {
 
         {/* Tableau EDT */}
         {timeSlots.length === 0 ? (
-          <div className="bg-white rounded-xl border border-slate-200/90 shadow-sm p-12 text-center">
-            <Calendar className="w-10 h-10 text-slate-200 mx-auto mb-3" />
-            <p className="text-sm font-semibold text-slate-500">Aucun cours cette semaine</p>
-            <p className="text-xs text-slate-400 mt-1">
+          <div className="bg-white dark:bg-[#111821] rounded-xl border border-slate-200/90 dark:border-[#263241] shadow-sm p-12 text-center">
+            <Calendar className="w-10 h-10 text-slate-200 dark:text-[#263241] mx-auto mb-3" />
+            <p className="text-sm font-semibold text-slate-500 dark:text-[#AAB4C0]">Aucun cours cette semaine</p>
+            <p className="text-xs text-slate-400 dark:text-[#687585] mt-1">
               L&apos;administration n&apos;a pas encore publié de cours pour votre classe.
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-xl border border-slate-200/90 shadow-sm">
-            <table className="w-full min-w-[800px] bg-white text-sm">
+          <div className="overflow-x-auto rounded-xl border border-slate-200/90 dark:border-[#263241] shadow-sm">
+            <table className="w-full min-w-[800px] bg-white dark:bg-[#111821] text-sm">
               <thead>
-                <tr className="bg-[#0f2744]">
-                  <th className="px-4 py-3 text-left text-xs font-bold text-white/70 uppercase tracking-wider w-24">
+                <tr className="bg-[#0f2744] dark:bg-[#151D27]">
+                  <th className="px-4 py-3 text-left text-xs font-bold text-white/70 dark:text-[#AAB4C0] uppercase tracking-wider w-24">
                     Heure
                   </th>
                   {JOURS.map((jour) => {
                     const cnt = mySeances.filter((s) => s.jour === jour).length;
                     return (
-                      <th key={jour} className="px-4 py-3 text-center text-xs font-bold text-white uppercase tracking-wider">
+                      <th key={jour} className="px-4 py-3 text-center text-xs font-bold text-white dark:text-[#F5F7FA] uppercase tracking-wider">
                         <div>{jour}</div>
-                        {cnt > 0 && <div className="text-[10px] font-normal text-white/50 mt-0.5">{cnt}</div>}
+                        {cnt > 0 && <div className="text-[10px] font-normal text-white/50 dark:text-[#687585] mt-0.5">{cnt}</div>}
                       </th>
                     );
                   })}
@@ -133,9 +133,9 @@ export default function EtudiantEDTPage() {
               </thead>
               <tbody>
                 {timeSlots.map((slot, i) => (
-                  <tr key={slot} className={i % 2 === 0 ? "bg-white" : "bg-slate-50/60"}>
-                    <td className="px-4 py-3 border-r border-slate-100">
-                      <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-600 whitespace-nowrap">
+                  <tr key={slot} className={i % 2 === 0 ? "bg-white dark:bg-[#111821]" : "bg-slate-50/60 dark:bg-[#151D27]/50"}>
+                    <td className="px-4 py-3 border-r border-slate-100 dark:border-[#263241]">
+                      <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-600 dark:text-[#AAB4C0] whitespace-nowrap">
                         <Clock className="w-3 h-3 text-[#e0521c]" />
                         {slot}
                       </div>
@@ -145,7 +145,7 @@ export default function EtudiantEDTPage() {
                         (s) => s.jour === jour && `${s.heure_debut}–${s.heure_fin}` === slot
                       );
                       return (
-                        <td key={jour} className="px-2 py-2 border-r border-slate-100 align-top">
+                        <td key={jour} className="px-2 py-2 border-r border-slate-100 dark:border-[#263241] align-top">
                           {cells.map((s) => {
                             const tc = TYPE_COLORS[s.type_seance || "CM"] || TYPE_COLORS.CM;
                             const fLabel =

@@ -53,18 +53,18 @@ export function ContactSection() {
   };
 
   return (
-    <section id="contact" className="py-16 sm:py-24 bg-[#F8FAFC] border-t border-slate-200/80">
+    <section id="contact" className="py-16 sm:py-24 bg-[#F8FAFC] dark:bg-[#0B0F14] border-t border-slate-200/80 dark:border-[#263241] transition-colors">
       <div className="max-w-2xl mx-auto px-5 sm:px-8">
-        <div className="bg-white border border-slate-200/90 rounded-xl p-6 sm:p-10 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)]">
+        <div className="bg-white dark:bg-[#111821] border border-slate-200/90 dark:border-[#263241] rounded-xl p-6 sm:p-10 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] dark:shadow-[0_4px_20px_-4px_rgba(0,0,0,0.5)]">
           {/* En-tête */}
           <div className="mb-8">
             <p className="text-[#e0521c] text-[11px] font-bold tracking-wider uppercase mb-2">
               Formulaire de Contact
             </p>
-            <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] leading-snug">
+            <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] dark:text-[#F5F7FA] leading-snug">
               Nous Contacter
             </h2>
-            <p className="mt-2 text-slate-500 text-xs sm:text-sm leading-relaxed">
+            <p className="mt-2 text-slate-500 dark:text-[#AAB4C0] text-xs sm:text-sm leading-relaxed">
               Une question sur nos séances de renforcement, les modalités d&apos;inscription ou notre encadrement ?
               Transmettez-nous votre demande, notre secrétariat vous répondra dans les plus brefs délais.
             </p>
@@ -72,15 +72,15 @@ export function ContactSection() {
 
           {/* Feedback */}
           {successMsg && (
-            <div className="mb-6 p-4 rounded-lg bg-emerald-50 border border-emerald-200 flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-              <p className="text-xs sm:text-sm font-medium text-emerald-800">{successMsg}</p>
+            <div className="mb-6 p-4 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 flex items-start gap-3">
+              <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+              <p className="text-xs sm:text-sm font-medium text-emerald-800 dark:text-emerald-200">{successMsg}</p>
             </div>
           )}
           {errorMsg && (
-            <div className="mb-6 p-4 rounded-lg bg-red-50 border border-red-200 flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-              <p className="text-xs sm:text-sm font-medium text-red-800">{errorMsg}</p>
+            <div className="mb-6 p-4 rounded-lg bg-red-50 dark:bg-rose-950/30 border border-red-200 dark:border-rose-900/50 flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 dark:text-rose-400 shrink-0 mt-0.5" />
+              <p className="text-xs sm:text-sm font-medium text-red-800 dark:text-rose-200">{errorMsg}</p>
             </div>
           )}
 
@@ -88,7 +88,7 @@ export function ContactSection() {
           <form onSubmit={handleSubmit} className="flex flex-col gap-4 sm:gap-5">
             {/* Nom complet */}
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="contact-name" className="text-xs font-semibold text-slate-700">
+              <label htmlFor="contact-name" className="text-xs font-semibold text-slate-700 dark:text-[#F5F7FA]">
                 Nom complet <span className="text-[#e0521c]" aria-hidden="true">*</span>
               </label>
               <input
@@ -98,14 +98,14 @@ export function ContactSection() {
                 placeholder="Ex. Amadou Diallo"
                 value={formData.fullName}
                 onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                className="block w-full rounded-lg border border-slate-200/90 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-[#0f2744] focus:outline-none focus:ring-1 focus:ring-[#0f2744] transition-colors"
+                className="block w-full rounded-lg border border-slate-200/90 dark:border-[#263241] bg-white dark:bg-[#151D27] px-3.5 py-2.5 text-sm text-slate-900 dark:text-[#F5F7FA] placeholder-slate-400 dark:placeholder-[#687585] focus:border-[#0f2744] dark:focus:border-[#e0521c] focus:outline-none focus:ring-1 focus:ring-[#0f2744] dark:focus:ring-[#e0521c] transition-colors"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Email */}
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="contact-email" className="text-xs font-semibold text-slate-700">
+                <label htmlFor="contact-email" className="text-xs font-semibold text-slate-700 dark:text-[#F5F7FA]">
                   Adresse email <span className="text-[#e0521c]" aria-hidden="true">*</span>
                 </label>
                 <input
@@ -115,13 +115,13 @@ export function ContactSection() {
                   placeholder="amadou@exemple.com"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="block w-full rounded-lg border border-slate-200/90 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-[#0f2744] focus:outline-none focus:ring-1 focus:ring-[#0f2744] transition-colors"
+                  className="block w-full rounded-lg border border-slate-200/90 dark:border-[#263241] bg-white dark:bg-[#151D27] px-3.5 py-2.5 text-sm text-slate-900 dark:text-[#F5F7FA] placeholder-slate-400 dark:placeholder-[#687585] focus:border-[#0f2744] dark:focus:border-[#e0521c] focus:outline-none focus:ring-1 focus:ring-[#0f2744] dark:focus:ring-[#e0521c] transition-colors"
                 />
               </div>
 
               {/* Téléphone */}
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="contact-phone" className="text-xs font-semibold text-slate-700">
+                <label htmlFor="contact-phone" className="text-xs font-semibold text-slate-700 dark:text-[#F5F7FA]">
                   Numéro de téléphone
                 </label>
                 <input
@@ -130,14 +130,14 @@ export function ContactSection() {
                   placeholder="+221 ..."
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="block w-full rounded-lg border border-slate-200/90 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-[#0f2744] focus:outline-none focus:ring-1 focus:ring-[#0f2744] transition-colors"
+                  className="block w-full rounded-lg border border-slate-200/90 dark:border-[#263241] bg-white dark:bg-[#151D27] px-3.5 py-2.5 text-sm text-slate-900 dark:text-[#F5F7FA] placeholder-slate-400 dark:placeholder-[#687585] focus:border-[#0f2744] dark:focus:border-[#e0521c] focus:outline-none focus:ring-1 focus:ring-[#0f2744] dark:focus:ring-[#e0521c] transition-colors"
                 />
               </div>
             </div>
 
             {/* Objet */}
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="contact-subject" className="text-xs font-semibold text-slate-700">
+              <label htmlFor="contact-subject" className="text-xs font-semibold text-slate-700 dark:text-[#F5F7FA]">
                 Objet de votre demande <span className="text-[#e0521c]" aria-hidden="true">*</span>
               </label>
               <input
@@ -147,13 +147,13 @@ export function ContactSection() {
                 placeholder="Ex. Renseignements sur les cours de renforcement"
                 value={formData.subject}
                 onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                className="block w-full rounded-lg border border-slate-200/90 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-[#0f2744] focus:outline-none focus:ring-1 focus:ring-[#0f2744] transition-colors"
+                className="block w-full rounded-lg border border-slate-200/90 dark:border-[#263241] bg-white dark:bg-[#151D27] px-3.5 py-2.5 text-sm text-slate-900 dark:text-[#F5F7FA] placeholder-slate-400 dark:placeholder-[#687585] focus:border-[#0f2744] dark:focus:border-[#e0521c] focus:outline-none focus:ring-1 focus:ring-[#0f2744] dark:focus:ring-[#e0521c] transition-colors"
               />
             </div>
 
             {/* Message */}
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="contact-message" className="text-xs font-semibold text-slate-700">
+              <label htmlFor="contact-message" className="text-xs font-semibold text-slate-700 dark:text-[#F5F7FA]">
                 Votre message <span className="text-[#e0521c]" aria-hidden="true">*</span>
               </label>
               <textarea
@@ -163,7 +163,7 @@ export function ContactSection() {
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 placeholder="Précisez votre niveau universitaire, vos besoins ou toute question..."
-                className="block w-full rounded-lg border border-slate-200/90 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:border-[#0f2744] focus:outline-none focus:ring-1 focus:ring-[#0f2744] transition-colors resize-none"
+                className="block w-full rounded-lg border border-slate-200/90 dark:border-[#263241] bg-white dark:bg-[#151D27] px-3.5 py-2.5 text-sm text-slate-900 dark:text-[#F5F7FA] placeholder-slate-400 dark:placeholder-[#687585] focus:border-[#0f2744] dark:focus:border-[#e0521c] focus:outline-none focus:ring-1 focus:ring-[#0f2744] dark:focus:ring-[#e0521c] transition-colors resize-none"
               />
             </div>
 
@@ -179,7 +179,7 @@ export function ContactSection() {
               Envoyer le message
             </Button>
 
-            <p className="text-[11px] text-center text-slate-400 mt-1">
+            <p className="text-[11px] text-center text-slate-400 dark:text-[#687585] mt-1">
               Halil Académie Scientifique — Dakar, Sénégal
             </p>
           </form>

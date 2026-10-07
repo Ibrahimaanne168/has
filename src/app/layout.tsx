@@ -103,15 +103,36 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className={`${fraunces.variable} ${ibmPlexSans.variable}`}>
+    <html lang="fr" suppressHydrationWarning className={`${fraunces.variable} ${ibmPlexSans.variable}`}>
       <head>
+        {/* Anti-FOUC : activation immédiate du mode sombre selon le choix de l'utilisateur ou par défaut */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var t = localStorage.getItem('has_theme');
+                  var isDark = t === 'dark' || (!t && true);
+                  if (t === 'light') isDark = false;
+                  if (isDark) {
+                    document.documentElement.classList.add('dark');
+                  } else {
+                    document.documentElement.classList.remove('dark');
+                  }
+                } catch (e) {
+                  document.documentElement.classList.add('dark');
+                }
+              })();
+            `,
+          }}
+        />
         {/* Lien direct favicon 48x48 recommandé par Google pour l'indexation du logo dans les résultats de recherche */}
         <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
       </head>
-      <body className="min-h-screen bg-[#F8FAFC] text-slate-900 antialiased selection:bg-[#0f2744]/10 selection:text-[#0f2744]">
+      <body className="min-h-screen bg-[#F8FAFC] dark:bg-[#0B0F14] text-slate-900 dark:text-[#F5F7FA] antialiased selection:bg-[#e0521c]/25 selection:text-[#F5F7FA] transition-colors duration-200">
         {children}
       </body>
     </html>
