@@ -15,6 +15,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/Button";
 import { ContactSection } from "@/components/home/ContactSection";
+import { MatieresSection } from "@/components/home/MatieresSection";
 
 export default function HomePage() {
   return (
@@ -164,118 +165,9 @@ export default function HomePage() {
         </section>
 
         {/* ================================================================ */}
-        {/* 3. MATIÈRES EN LIGNE (Licence 1 & Licence 2)                     */}
+        {/* 3. MATIÈRES EN LIGNE (2 espaces : Matières L1 & Matières L2)    */}
         {/* ================================================================ */}
-        <section id="matieres" className="py-16 sm:py-24 bg-[#F8FAFC] border-b border-slate-200/80">
-          <div className="max-w-5xl mx-auto px-5 sm:px-8 lg:px-10">
-            <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-16 gap-4">
-              <div>
-                <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-[#0f2744]/8 text-[#0f2744] text-[11px] font-bold tracking-wider uppercase mb-3 border border-[#0f2744]/15">
-                  Licence 1 &amp; Licence 2 (pour l&apos;instant)
-                </div>
-                <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#0f2744] leading-snug">
-                  Nos Matières Enseignées
-                </h2>
-              </div>
-              <p className="text-slate-500 text-sm sm:text-base max-w-md">
-                Un cursus complet axé sur les fondamentaux universitaires pour consolider vos bases et garantir vos mentions.
-              </p>
-            </div>
-
-            {/* Matières en ligne (cartes géométriques aérées) */}
-            <div className="space-y-4">
-              {/* Ligne 1 : Mathématiques */}
-              <div className="bg-white border border-slate-200/90 rounded-xl p-5 sm:p-6 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] hover:shadow-md transition-all duration-200">
-                <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8">
-                  <div className="flex items-center gap-3 md:w-56 shrink-0">
-                    <div className="w-10 h-10 rounded-lg bg-[#0f2744]/5 text-[#0f2744] border border-[#0f2744]/15 flex items-center justify-center shrink-0">
-                      <Calculator className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <h3 className="font-serif text-lg font-bold text-[#0f2744] leading-tight">
-                        Mathématiques
-                      </h3>
-                      <span className="text-[11px] text-slate-400 font-semibold uppercase tracking-wider">L1 · L2</span>
-                    </div>
-                  </div>
-
-                  <div className="flex-1 flex flex-wrap gap-2">
-                    {["Analyse 1, 2, 3", "Algèbre 1, 2, 3", "Analyse Numérique Matricielle", "Statistiques Descriptives", "Probabilités", "Suites & Séries", "Calcul Intégral"].map(
-                      (item) => (
-                        <span
-                          key={item}
-                          className="inline-flex items-center px-2.5 py-1.5 rounded-lg bg-slate-100/80 text-slate-800 text-xs sm:text-sm font-medium border border-slate-200/80 hover:bg-slate-200/70 transition-colors"
-                        >
-                          {item}
-                        </span>
-                      )
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Ligne 2 : Physique */}
-              <div className="bg-white border border-slate-200/90 rounded-xl p-5 sm:p-6 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] hover:shadow-md transition-all duration-200">
-                <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8">
-                  <div className="flex items-center gap-3 md:w-56 shrink-0">
-                    <div className="w-10 h-10 rounded-lg bg-amber-500/10 text-amber-800 border border-amber-300/40 flex items-center justify-center shrink-0">
-                      <Atom className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <h3 className="font-serif text-lg font-bold text-[#0f2744] leading-tight">
-                        Physique
-                      </h3>
-                      <span className="text-[11px] text-slate-400 font-semibold uppercase tracking-wider">L1 · L2</span>
-                    </div>
-                  </div>
-
-                  <div className="flex-1 flex flex-wrap gap-2">
-                    {["Mécanique du Point", "Mécanique Générale", "Thermodynamique", "Électricité", "Magnétostatique et Régime Variable", "Optique Géométrique"].map(
-                      (item) => (
-                        <span
-                          key={item}
-                          className="inline-flex items-center px-2.5 py-1.5 rounded-lg bg-slate-100/80 text-slate-800 text-xs sm:text-sm font-medium border border-slate-200/80 hover:bg-slate-200/70 transition-colors"
-                        >
-                          {item}
-                        </span>
-                      )
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Ligne 3 : Informatique */}
-              <div className="bg-white border border-slate-200/90 rounded-xl p-5 sm:p-6 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] hover:shadow-md transition-all duration-200">
-                <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8">
-                  <div className="flex items-center gap-3 md:w-56 shrink-0">
-                    <div className="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-300/40 flex items-center justify-center shrink-0">
-                      <Code2 className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <h3 className="font-serif text-lg font-bold text-[#0f2744] leading-tight">
-                        Informatique
-                      </h3>
-                      <span className="text-[11px] text-slate-400 font-semibold uppercase tracking-wider">L1 · L2</span>
-                    </div>
-                  </div>
-
-                  <div className="flex-1 flex flex-wrap gap-2">
-                    {["Programmation Python", "POO Python", "Base de données", "Langage C", "Algorithmique & Structures de Données", "Architecture Ordinateurs"].map(
-                      (item) => (
-                        <span
-                          key={item}
-                          className="inline-flex items-center px-2.5 py-1.5 rounded-lg bg-slate-100/80 text-slate-800 text-xs sm:text-sm font-medium border border-slate-200/80 hover:bg-slate-200/70 transition-colors"
-                        >
-                          {item}
-                        </span>
-                      )
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        <MatieresSection />
 
         {/* ================================================================ */}
         {/* 4. MOT DU DIRECTEUR (Photo 1:1, texte soigné et sobre)           */}

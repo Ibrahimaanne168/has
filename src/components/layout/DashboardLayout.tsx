@@ -41,6 +41,7 @@ interface DashboardLayoutProps {
   userName: string;
   userEmail: string;
   matriculeOrTitle?: string;
+  userAvatar?: string | null;
 }
 
 export function DashboardLayout({
@@ -49,10 +50,40 @@ export function DashboardLayout({
   userName,
   userEmail,
   matriculeOrTitle,
+  userAvatar,
 }: DashboardLayoutProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [detectedAvatar, setDetectedAvatar] = useState<string | null>(userAvatar || null);
+
+  React.useEffect(() => {
+    if (userAvatar) {
+      setDetectedAvatar(userAvatar);
+      return;
+    }
+    const checkAvatar = () => {
+      try {
+        if (role === "etudiant") {
+          const raw = localStorage.getItem("has_current_student_profile_v2");
+          if (raw) {
+            const p = JSON.parse(raw);
+            if (p.avatar_url) setDetectedAvatar(p.avatar_url);
+          }
+        } else if (role === "professeur") {
+          const raw = localStorage.getItem("has_current_professeur_profile_v2");
+          if (raw) {
+            const p = JSON.parse(raw);
+            if (p.photo || p.avatar_url) setDetectedAvatar(p.photo || p.avatar_url);
+          }
+        }
+      } catch {}
+    };
+
+    checkAvatar();
+    window.addEventListener("has_academic_storage_updated", checkAvatar);
+    return () => window.removeEventListener("has_academic_storage_updated", checkAvatar);
+  }, [userAvatar, role]);
 
   // Navigation par rôle
   const etudiantNav: NavItem[] = [
@@ -156,7 +187,18 @@ export function DashboardLayout({
             </div>
 
             {/* Profil & Actions header */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 sm:gap-4">
+              {detectedAvatar && (
+                <div className="w-8 h-8 rounded-full overflow-hidden bg-slate-100 ring-2 ring-[#0f2744]/10 shrink-0">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={detectedAvatar}
+                    alt={userName}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+
               <div className="hidden sm:flex flex-col text-right">
                 <span className="text-xs font-semibold text-slate-800">{userName}</span>
                 <span className="text-[11px] text-slate-400">{matriculeOrTitle || userEmail}</span>

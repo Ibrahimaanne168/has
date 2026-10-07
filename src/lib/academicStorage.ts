@@ -11,6 +11,7 @@ import {
   Matiere,
   SeanceEDT,
   Profile,
+  MatiereAssignee,
 } from "./types";
 import { MOCK_PROFESSEURS, MOCK_FILIERES, MOCK_CLASSES, MOCK_MATIERES, MOCK_STUDENT } from "./data/mock-data";
 import { sendLocalNotification } from "./useNotifications";
@@ -429,22 +430,34 @@ export function deleteClasse(id: string): void {
   setStorageItem(STORAGE_KEYS.CLASSES, list);
 }
 
-// === GESTION DES MATIÈRES (PERSISTÉ EN LOCALSTORAGE AVEC CLASSES CONCERNÉES) ===
+// === GESTION DES MATIÈRES (PERSISTÉ EN LOCALSTORAGE AVEC CLASSES CONCERNÉES ET PROFESSEUR) ===
 export function getStoredMatieres(): Matiere[] {
   const list = getStorageItem<Matiere[]>(STORAGE_KEYS.MATIERES, MOCK_MATIERES);
-  // Garantir que chaque matière a son code MAT001..MAT020 et ses classes assignées
+  const profs = getStoredProfesseurs();
+
   return list.map((m, idx) => {
     const defaultM = MOCK_MATIERES.find((dm) => dm.id === m.id || dm.name.toLowerCase() === m.name.toLowerCase());
     const code = m.code?.startsWith("MAT") ? m.code : (defaultM?.code || `MAT${String(idx + 1).padStart(3, "0")}`);
     const classes = m.classes && m.classes.length > 0 ? m.classes : (defaultM?.classes || ["L1-MPI"]);
     const niveau = defaultM?.niveau || m.niveau || (classes.some((c) => c.startsWith("L2")) ? "L2" : "L1");
-    const semestre = m.semestre || defaultM?.semestre || (niveau === "L1" ? "S1" : "S3");
+
+    // Trouver le professeur assigné
+    let assignedProf = profs.find((p) => p.id === m.professeur_id);
+    if (!assignedProf) {
+      assignedProf = profs.find((p) =>
+        p.matieres?.some(
+          (pm) => pm.code === code || pm.nom.toLowerCase() === m.name.toLowerCase()
+        )
+      );
+    }
+
     return {
       ...m,
       code,
       classes,
       niveau,
-      semestre,
+      professeur_id: assignedProf?.id || m.professeur_id || null,
+      professeur: assignedProf || null,
     };
   });
 }
@@ -458,6 +471,52 @@ export function saveMatiere(mat: Matiere): void {
     list.unshift(mat);
   }
   setStorageItem(STORAGE_KEYS.MATIERES, list);
+
+  // Synchroniser automatiquement l'enseignant assigné
+  if (mat.professeur_id) {
+    const profs = getStoredProfesseurs();
+    const updatedProfs = profs.map((p) => {
+      const isTarget = p.id === mat.professeur_id;
+      const currentMatieres = p.matieres || [];
+      const alreadyHas = currentMatieres.some(
+        (pm) => pm.code === mat.code || pm.nom.toLowerCase() === mat.name.toLowerCase()
+      );
+
+      if (isTarget) {
+        const newMatiereItem: MatiereAssignee = {
+          id: mat.id,
+          nom: mat.name,
+          code: mat.code,
+          niveau: mat.niveau || "L1",
+          classes: mat.classes || [],
+        };
+        const nextMatieres = alreadyHas
+          ? currentMatieres.map((pm) => (pm.code === mat.code ? newMatiereItem : pm))
+          : [...currentMatieres, newMatiereItem];
+
+        const combinedClasses = Array.from(new Set([...p.classes, ...(mat.classes || [])]));
+        const combinedNiveaux = Array.from(new Set([...p.niveaux, mat.niveau || "L1"]));
+
+        return {
+          ...p,
+          matieres: nextMatieres,
+          classes: combinedClasses,
+          niveaux: combinedNiveaux,
+          specialite: deduceSpecialiteFromMatieres(nextMatieres, p.specialite),
+        };
+      } else {
+        const filtered = currentMatieres.filter(
+          (pm) => pm.code !== mat.code && pm.nom.toLowerCase() !== mat.name.toLowerCase()
+        );
+        return {
+          ...p,
+          matieres: filtered,
+          specialite: deduceSpecialiteFromMatieres(filtered, p.specialite),
+        };
+      }
+    });
+    setStorageItem(STORAGE_KEYS.PROFESSEURS, updatedProfs);
+  }
 }
 
 export function deleteMatiere(id: string): void {

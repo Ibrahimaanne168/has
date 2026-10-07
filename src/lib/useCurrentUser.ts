@@ -96,6 +96,7 @@ export function useCurrentUser() {
     phone?: string;
     specialite?: string;
     bio?: string;
+    avatar_url?: string | null;
   }) => {
     try {
       const supabase = createClient();
@@ -104,6 +105,7 @@ export function useCurrentUser() {
       const nextFiliere = updates.filiere || currentMeta.filiere || "MPI";
       const nextNiveau = updates.niveau || currentMeta.niveau || "L1";
       const nextPhone = updates.phone !== undefined ? updates.phone : (user.phone || "");
+      const nextAvatar = updates.avatar_url !== undefined ? updates.avatar_url : (user.avatar_url || currentMeta.avatar_url || null);
       const nextClasseCode = `${nextNiveau}-${nextFiliere}`;
 
       const foundClasse = MOCK_CLASSES.find((c) => c.code === nextClasseCode) || MOCK_CLASSES[0];
@@ -117,6 +119,7 @@ export function useCurrentUser() {
           niveau: nextNiveau,
           phone: nextPhone,
           classe: nextClasseCode,
+          avatar_url: nextAvatar,
           ...(updates.specialite !== undefined ? { specialite: updates.specialite } : {}),
           ...(updates.bio !== undefined ? { bio: updates.bio } : {}),
         },
@@ -129,12 +132,16 @@ export function useCurrentUser() {
         classe_id: foundClasse.id,
         filiere: foundFiliere,
         classe: foundClasse,
+        avatar_url: nextAvatar,
         specialite: updates.specialite !== undefined ? updates.specialite : (user.specialite || foundFiliere.name),
         bio: updates.bio !== undefined ? updates.bio : user.bio,
       };
 
       setUser(updatedUser);
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedUser));
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("has_academic_storage_updated"));
+      }
       return { success: true };
     } catch (err) {
       console.error("Erreur mise à jour profil:", err);

@@ -74,36 +74,23 @@ export default function ProfesseurDashboard() {
       matriculeOrTitle={prof.matricule || "PROF001"}
     >
       <div className="space-y-8">
-        {/* Bannière de bienvenue Professeur */}
-        <div className="bg-[#0f2744] text-white rounded-2xl p-6 sm:p-8 relative overflow-hidden shadow-sm">
-          <div className="absolute inset-0 opacity-5 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px]" />
-          
-          <div className="relative z-10 flex flex-col md:flex-row md:items-start justify-between gap-6">
-            <div className="max-w-2xl space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-xs font-medium text-slate-200">
-                <Sparkles className="w-3.5 h-3.5 text-[#e0521c]" />
-                <span>Espace Enseignant-Chercheur • Année 2024-2025</span>
-              </div>
-              <h1 className="font-serif text-2xl sm:text-3xl font-bold text-white">
-                Bienvenue, {prof.full_name}
-              </h1>
-              <p className="text-sm text-slate-300 leading-relaxed">
-                Gérez vos cours, déposez vos supports pédagogiques et répondez aux questions de vos étudiants depuis votre espace dédié Halil Académie Scientifique.
-              </p>
-              <div className="flex flex-wrap items-center gap-3 text-xs text-slate-200 pt-2">
-                <span className="bg-white/15 px-3 py-1 rounded-md">
-                  Spécialité : {prof.specialite || "Informatique"}
-                </span>
-                <span className="bg-white/15 px-3 py-1 rounded-md font-mono">
-                  {prof.matricule || "PROF-HAS"}
-                </span>
-                {prof.email && (
-                  <span className="bg-white/10 px-3 py-1 rounded-md text-slate-300">
-                    {prof.email}
-                  </span>
-                )}
-              </div>
-            </div>
+        {/* En-tête Professeur */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744]">
+              Bienvenue, {prof.full_name}
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-500 mt-1">
+              Gérez vos cours, déposez vos supports pédagogiques et répondez à vos promotions.
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="px-3 py-1.5 rounded-lg bg-slate-100 text-xs font-semibold text-slate-700">
+              {prof.specialite || "Enseignant-Chercheur"}
+            </span>
+            <span className="px-3 py-1.5 rounded-lg bg-[#0f2744]/10 text-xs font-mono font-bold text-[#0f2744]">
+              {prof.matricule || "PROF-HAS"}
+            </span>
           </div>
         </div>
 

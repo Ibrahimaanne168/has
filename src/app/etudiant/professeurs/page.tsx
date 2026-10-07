@@ -143,14 +143,8 @@ export default function EtudiantProfesseursPage() {
                     </div>
                   )}
 
-                  {/* Coordonnées (email affiché seulement s'il existe) */}
+                  {/* Coordonnées (téléphone seulement, pas d'email) */}
                   <div className="space-y-1.5 text-xs text-slate-500 pt-2 border-t border-slate-100">
-                    {prof.email && (
-                      <div className="flex items-center gap-2">
-                        <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                        <span className="font-mono text-slate-700">{prof.email}</span>
-                      </div>
-                    )}
                     {prof.phone && (
                       <div className="flex items-center gap-2">
                         <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />

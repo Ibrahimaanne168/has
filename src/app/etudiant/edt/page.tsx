@@ -94,7 +94,7 @@ export default function EtudiantEDTPage() {
           {currentEDT && (
             <a
               href={currentEDT.file_url}
-              download
+              download={currentEDT.file_name || `${(currentEDT.title || "Emploi_du_temps").replace(/[/\\?%*:|"<>]/g, "_")}.pdf`}
               className="inline-flex items-center gap-2 px-3.5 py-2 bg-[#0f2744] hover:bg-[#183a62] text-white text-xs font-semibold rounded-lg shadow-xs transition-colors shrink-0"
             >
               <Download className="w-3.5 h-3.5 text-[#e0521c]" />

@@ -33,6 +33,8 @@ export default function EtudiantCoursPage() {
     return () => window.removeEventListener("has_academic_storage_updated", handleUpdate);
   }, []);
 
+  const [activeNiveauTab, setActiveNiveauTab] = useState<"all" | "L1" | "L2">("all");
+
   const toggleFavorite = (courseId: string) => {
     setCourses((prev) =>
       prev.map((c) => (c.id === courseId ? { ...c, is_favorite: !c.is_favorite } : c))
@@ -43,7 +45,6 @@ export default function EtudiantCoursPage() {
   const userNiveau = user.classe?.niveau || "";
 
   const filteredCourses = courses.filter((c) => {
-    // Filtrer par classe de l'étudiant
     const courseClasses: string[] = (c.classes && c.classes.length > 0)
       ? c.classes
       : (c.matiere?.classes && c.matiere.classes.length > 0)
@@ -54,19 +55,28 @@ export default function EtudiantCoursPage() {
       courseClasses.some((cls) => {
         const clsUpper = cls.toUpperCase();
         const userUpper = userClasseCode.toUpperCase();
-        // Correspond exactement à la classe (L1-MPI == L1-MPI)
         if (clsUpper === userUpper) return true;
-        // Ou correspond au niveau (si la matière est pour tout le niveau)
         if (userNiveau && clsUpper === userNiveau.toUpperCase()) return true;
         return false;
       });
+
+    // Filtre par onglet Matières L1 ou L2
+    const matchesNiveauTab =
+      activeNiveauTab === "all" ||
+      (c.matiere?.niveau === activeNiveauTab) ||
+      courseClasses.some((cls) => cls.toUpperCase().startsWith(activeNiveauTab));
 
     const matchesSearch =
       c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (c.description && c.description.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesMatiere = selectedMatiere === "all" || c.matiere_id === selectedMatiere;
     const matchesFavorites = !onlyFavorites || c.is_favorite;
-    return matchesClasse && matchesSearch && matchesMatiere && matchesFavorites;
+    return matchesClasse && matchesNiveauTab && matchesSearch && matchesMatiere && matchesFavorites;
+  });
+
+  const availableMatieres = MOCK_MATIERES.filter((m) => {
+    if (activeNiveauTab === "all") return true;
+    return m.niveau === activeNiveauTab || (m.classes || []).some((cls) => cls.startsWith(activeNiveauTab));
   });
 
   return (
@@ -87,8 +97,42 @@ export default function EtudiantCoursPage() {
               Cours &amp; Fiches Académiques
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              Supports officiels, syllabus et TD pour votre promotion ({user.classe?.code || "L1-MPI"})
+              Supports officiels, syllabus et fiches de TD classés par niveau
             </p>
+          </div>
+
+          {/* Onglets 2 Espaces : Matières L1 / Matières L2 */}
+          <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-xl border border-slate-200/80 w-fit shrink-0">
+            <button
+              onClick={() => { setActiveNiveauTab("all"); setSelectedMatiere("all"); }}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                activeNiveauTab === "all"
+                  ? "bg-[#0f2744] text-white shadow-xs"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              Tous
+            </button>
+            <button
+              onClick={() => { setActiveNiveauTab("L1"); setSelectedMatiere("all"); }}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                activeNiveauTab === "L1"
+                  ? "bg-[#0f2744] text-white shadow-xs"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              <span>Matières L1</span>
+            </button>
+            <button
+              onClick={() => { setActiveNiveauTab("L2"); setSelectedMatiere("all"); }}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                activeNiveauTab === "L2"
+                  ? "bg-[#0f2744] text-white shadow-xs"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              <span>Matières L2</span>
+            </button>
           </div>
         </div>
 
@@ -111,8 +155,10 @@ export default function EtudiantCoursPage() {
               onChange={(e) => setSelectedMatiere(e.target.value)}
               className="text-xs border border-slate-200/90 rounded-lg px-3 py-2 bg-white text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#0f2744]"
             >
-              <option value="all">Toutes les matières ({MOCK_MATIERES.length})</option>
-              {MOCK_MATIERES.map((m) => (
+              <option value="all">
+                {activeNiveauTab === "all" ? "Toutes les matières" : `Matières ${activeNiveauTab}`} ({availableMatieres.length})
+              </option>
+              {availableMatieres.map((m) => (
                 <option key={m.id} value={m.id}>
                   {m.code} — {m.name}
                 </option>
@@ -223,7 +269,7 @@ export default function EtudiantCoursPage() {
                   {c.file_url ? (
                     <a
                       href={c.file_url || "#"}
-                      download
+                      download={c.file_name || `${(c.title || "cours").replace(/[/\\?%*:|"<>]/g, "_")}.pdf`}
                       className="inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-1.5 bg-[#0f2744] text-white hover:bg-[#183a62] rounded-lg transition-colors flex-1"
                     >
                       <Download className="w-3.5 h-3.5" />

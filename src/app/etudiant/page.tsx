@@ -61,15 +61,10 @@ export default function EtudiantDashboard() {
     >
       <div className="space-y-7">
         {/* ============================================================================== */}
-        {/* BANNIÈRE DE BIENVENUE AVEC COORDONNÉES ACADÉMIQUES */}
+        {/* BANNIÈRE DE BIENVENUE ÉTUDIANT */}
         {/* ============================================================================== */}
         <div className="bg-[#0f2744] text-white rounded-xl p-6 sm:p-7 relative overflow-hidden shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] border border-[#0f2744]">
           <div className="relative z-10 max-w-2xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-white/10 text-[11px] font-bold uppercase tracking-wider text-slate-200 border border-white/10">
-              <Sparkles className="w-3.5 h-3.5 text-[#e0521c]" />
-              <span>Année Académique 2024-2025 · Semestre 1</span>
-            </div>
-
             <h1 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-white leading-snug">
               Ravi de vous revoir, {user.full_name}
             </h1>
@@ -79,15 +74,9 @@ export default function EtudiantDashboard() {
               Consultez les supports officiels déposés par l&apos;administration et restez à jour sur les plannings.
             </p>
 
-            <div className="pt-2 flex flex-wrap items-center gap-2.5 text-xs text-slate-200">
+            <div className="pt-1 flex flex-wrap items-center gap-2.5 text-xs text-slate-200">
               <span className="bg-white/10 border border-white/10 px-2.5 py-1 rounded-lg font-mono text-[11px]">
                 Matricule : {user.matricule}
-              </span>
-              <span className="bg-white/10 border border-white/10 px-2.5 py-1 rounded-lg text-[11px] font-medium">
-                Classe : {user.classe?.name || "Licence 1 — MPI"}
-              </span>
-              <span className="bg-white/10 border border-white/10 px-2.5 py-1 rounded-lg text-[11px] font-medium">
-                Niveau : {user.classe?.niveau || "L1"}
               </span>
             </div>
           </div>
@@ -209,7 +198,7 @@ export default function EtudiantDashboard() {
                   {c.file_url ? (
                     <a
                       href={c.file_url || "#"}
-                      download
+                      download={c.file_name || `${(c.title || "cours").replace(/[/\\?%*:|"<>]/g, "_")}.pdf`}
                       className="inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-1.5 bg-[#0f2744] text-white hover:bg-[#183a62] rounded-lg transition-colors flex-1"
                     >
                       <Download className="w-3.5 h-3.5" />

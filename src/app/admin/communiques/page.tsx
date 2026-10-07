@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Bell, Plus, Trash2, AlertCircle, CheckCircle2, X, FileText, Upload, Download } from "lucide-react";
+import { Bell, Plus, Trash2, AlertCircle, CheckCircle2, X, FileText, Image, Upload, Download } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -42,7 +42,7 @@ export default function AdminCommuniquesPage() {
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formPdfUrl) {
-      alert("Veuillez joindre un document PDF au communiqué.");
+      alert("Veuillez joindre un fichier (PDF ou image) au communiqué.");
       return;
     }
     const exactDate = new Date(formDate + "T12:00:00.000Z").toISOString();
@@ -119,9 +119,19 @@ export default function AdminCommuniquesPage() {
                   com.is_important ? "border-amber-300 border-l-4 border-l-[#e0521c]" : "border-slate-200/90"
                 }`}
               >
-                <div className="w-12 h-12 rounded-xl bg-red-50 border border-red-200/70 flex items-center justify-center shrink-0">
-                  <FileText className="w-6 h-6 text-red-600" />
-                </div>
+                {/* Aperçu : image ou icône PDF */}
+                {com.file_url && com.file_url.startsWith("data:image") ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={com.file_url}
+                    alt={com.title}
+                    className="w-14 h-14 rounded-xl object-cover border border-slate-200 shrink-0"
+                  />
+                ) : (
+                  <div className="w-12 h-12 rounded-xl bg-red-50 border border-red-200/70 flex items-center justify-center shrink-0">
+                    <FileText className="w-6 h-6 text-red-600" />
+                  </div>
+                )}
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2 mb-1.5">
                     {com.is_important && <Badge variant="accent" size="sm">Important</Badge>}
@@ -142,13 +152,23 @@ export default function AdminCommuniquesPage() {
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   {com.file_url && (
-                    <a
-                      href={com.file_url}
-                      download={com.file_name || `${com.title}.pdf`}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-[#0f2744] text-white rounded-lg hover:bg-[#0f2744]/90 transition-colors"
-                    >
-                      <Download className="w-3.5 h-3.5" /> PDF
-                    </a>
+                    com.file_url.startsWith("data:image") ? (
+                      <a
+                        href={com.file_url}
+                        download={com.file_name || `${com.title}.jpg`}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-[#0f2744] text-white rounded-lg hover:bg-[#0f2744]/90 transition-colors"
+                      >
+                        <Image className="w-3.5 h-3.5" /> Image
+                      </a>
+                    ) : (
+                      <a
+                        href={com.file_url}
+                        download={com.file_name || `${com.title}.pdf`}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-[#0f2744] text-white rounded-lg hover:bg-[#0f2744]/90 transition-colors"
+                      >
+                        <Download className="w-3.5 h-3.5" /> PDF
+                      </a>
+                    )
                   )}
                   <button
                     onClick={() => setDeleteConfirm(com.id)}
@@ -177,52 +197,56 @@ export default function AdminCommuniquesPage() {
               </div>
 
               <form onSubmit={handleCreate} className="space-y-5">
-                {/* Zone PDF */}
+                {/* Zone fichier PDF ou Image */}
                 <div className="p-5 rounded-lg border-2 border-dashed border-slate-300 bg-[#F8FAFC] flex flex-col items-center gap-2 text-center">
                   <Upload className="w-8 h-8 text-[#0f2744]" />
                   <p className="text-xs font-semibold text-slate-800">
-                    Document PDF du communiqué <span className="text-[#e0521c]">*</span>
+                    Document PDF ou Image <span className="text-[#e0521c]">*</span>
                   </p>
-                  <p className="text-[11px] text-slate-500">Le communiqué est un PDF officiel conservé de manière permanente</p>
+                  <p className="text-[11px] text-slate-500">PDF officiel ou image (JPG, PNG, WEBP...)</p>
                   {isUploading ? (
-                    <div className="text-xs text-slate-500 py-1 font-medium animate-pulse">Chargement du PDF...</div>
+                    <div className="text-xs text-slate-500 py-1 font-medium animate-pulse">Chargement du fichier...</div>
                   ) : formPdfName ? (
                     <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-800 mt-1 w-full max-w-xs">
-                      <FileText className="w-4 h-4 text-emerald-600 shrink-0" />
-                      <span className="truncate">{formPdfName}</span>
+                      {formPdfUrl.startsWith("data:image") ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={formPdfUrl} alt="" className="w-8 h-8 object-cover rounded" />
+                      ) : (
+                        <FileText className="w-4 h-4 text-emerald-600 shrink-0" />
+                      )}
+                      <span className="truncate flex-1">{formPdfName}</span>
                       <button type="button" onClick={() => { setFormPdfName(""); setFormPdfUrl(""); }} className="ml-auto text-slate-400 hover:text-red-500">
                         <X className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   ) : (
-                    <label htmlFor="communique-pdf-upload" className="cursor-pointer">
+                    <label htmlFor="communique-file-upload" className="cursor-pointer">
                       <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0f2744] text-white text-xs font-semibold hover:bg-[#0f2744]/90 transition-colors mt-1">
-                        <FileText className="w-3.5 h-3.5" /> Choisir le document PDF
+                        <FileText className="w-3.5 h-3.5" /> Choisir PDF ou image
                       </span>
                       <input
-                        id="communique-pdf-upload"
+                        id="communique-file-upload"
                         type="file"
-                        accept=".pdf,application/pdf"
+                        accept=".pdf,application/pdf,image/*"
                         className="hidden"
                         onChange={async (e) => {
                           const file = e.target.files?.[0];
                           if (file) {
-                            if (!file.name.toLowerCase().endsWith(".pdf")) {
-                              alert("Veuillez sélectionner un fichier PDF uniquement.");
-                              return;
-                            }
                             setIsUploading(true);
                             try {
                               const dataUrl = await fileToDataUrl(file);
                               setFormPdfName(file.name);
                               setFormPdfUrl(dataUrl);
                               if (!formTitle) {
-                                const cleanTitle = file.name.replace(/\.pdf$/i, "").replace(/[-_]/g, " ").trim();
+                                const cleanTitle = file.name
+                                  .replace(/\.(pdf|jpg|jpeg|png|webp|gif)$/i, "")
+                                  .replace(/[-_]/g, " ")
+                                  .trim();
                                 setFormTitle(cleanTitle);
                               }
                             } catch (err) {
                               console.error(err);
-                              alert("Erreur lors de la lecture du fichier PDF.");
+                              alert("Erreur lors de la lecture du fichier.");
                             } finally {
                               setIsUploading(false);
                             }

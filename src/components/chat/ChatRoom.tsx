@@ -553,12 +553,8 @@ export function ChatRoom({
           </span>
         );
       default:
-        return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-50 text-[#e0521c] border border-orange-200">
-            <UserCheck className="w-3 h-3 text-[#e0521c]" />
-            Étudiant
-          </span>
-        );
+        // Pas de badge pour les étudiants (uniquement admin et enseignant)
+        return null;
     }
   };
 
@@ -830,9 +826,18 @@ export function ChatRoom({
                 >
                   {/* Avatar */}
                   <div
-                    className={`w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-black shrink-0 shadow-sm ${styles.avatar}`}
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-black shrink-0 shadow-sm overflow-hidden ${styles.avatar}`}
                   >
-                    {avatarInitials}
+                    {(msg.user as { avatar_url?: string | null })?.avatar_url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={(msg.user as { avatar_url?: string | null }).avatar_url!}
+                        alt=""
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      avatarInitials
+                    )}
                   </div>
 
                   <div className={`flex flex-col ${isMe ? "items-end" : "items-start"} max-w-[85%] sm:max-w-[75%] relative`}>

@@ -9,7 +9,7 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Badge } from "@/components/ui/Badge";
-import { Filiere, Classe, Matiere } from "@/lib/types";
+import { Filiere, Classe, Matiere, Professeur } from "@/lib/types";
 import {
   getStoredFilieres,
   saveFiliere,
@@ -21,6 +21,7 @@ import {
   saveMatiere,
   deleteMatiere,
   getNextMatiereCode,
+  getStoredProfesseurs,
 } from "@/lib/academicStorage";
 
 const FILIERE_ICONS: Record<string, React.ReactNode> = {
@@ -30,10 +31,11 @@ const FILIERE_ICONS: Record<string, React.ReactNode> = {
 };
 
 export default function AdminAcademiquePage() {
-  const [tab, setTab] = useState<"filieres" | "classes" | "matieres">("filieres");
+  const [tab, setTab] = useState<"filieres" | "classes" | "matieres_l1" | "matieres_l2">("filieres");
   const [filieres, setFilieres] = useState<Filiere[]>([]);
   const [classes, setClasses] = useState<Classe[]>([]);
   const [matieres, setMatieres] = useState<Matiere[]>([]);
+  const [profs, setProfs] = useState<Professeur[]>([]);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<{ id: string; type: string; name: string } | null>(null);
 
@@ -52,11 +54,12 @@ export default function AdminAcademiquePage() {
   const [classeNiveau, setClasseNiveau] = useState<"L1" | "L2">("L1");
   const [classeFiliereId, setClasseFiliereId] = useState("");
 
-  // Matière : simple nom, niveau (L1 ou L2), semestre (S1/S2 pour L1, S3/S4 pour L2) et classes concernées (code MAT001 automatique)
+  // Matière : nom, niveau (L1 ou L2), semestre, professeur assigné et classes concernées
   const [autoMatiereCode, setAutoMatiereCode] = useState("MAT001");
   const [matiereName, setMatiereName] = useState("");
   const [matiereNiveau, setMatiereNiveau] = useState<"L1" | "L2">("L1");
   const [matiereSemestre, setMatiereSemestre] = useState<"S1" | "S2" | "S3" | "S4">("S1");
+  const [matiereProfId, setMatiereProfId] = useState<string>("");
   const [matiereClasses, setMatiereClasses] = useState<string[]>(["L1-MPI", "L1-SML", "L1-MIASS"]);
 
   // Edit matière
@@ -69,6 +72,7 @@ export default function AdminAcademiquePage() {
     setMatiereName("");
     setMatiereNiveau("L1");
     setMatiereSemestre("S1");
+    setMatiereProfId(profs[0]?.id || "");
     const l1Cls = classes.filter((c) => c.niveau === "L1").map((c) => c.code);
     setMatiereClasses(l1Cls.length > 0 ? l1Cls : ["L1-MPI", "L1-SML", "L1-MIASS"]);
     setMatiereModal(true);
@@ -76,12 +80,7 @@ export default function AdminAcademiquePage() {
 
   const handleNiveauChange = (newNiv: "L1" | "L2") => {
     setMatiereNiveau(newNiv);
-    // Ajuster le semestre selon le niveau : S1/S2 pour L1, S3/S4 pour L2
-    if (newNiv === "L1") {
-      setMatiereSemestre((prev) => (prev === "S1" || prev === "S2" ? prev : "S1"));
-    } else {
-      setMatiereSemestre((prev) => (prev === "S3" || prev === "S4" ? prev : "S3"));
-    }
+    setMatiereSemestre(newNiv === "L1" ? "S1" : "S3");
     const targetCls = classes.filter((c) => c.niveau === newNiv).map((c) => c.code);
     const fallback = newNiv === "L1" ? ["L1-MPI", "L1-SML", "L1-MIASS"] : ["L2-MPI", "L2-SML", "L2-MIASS"];
     setMatiereClasses(targetCls.length > 0 ? targetCls : fallback);
@@ -94,11 +93,11 @@ export default function AdminAcademiquePage() {
     const isL2 = m.niveau === "L2" || (m.classes || []).some((c) => c.startsWith("L2"));
     const niv: "L1" | "L2" = isL2 ? "L2" : "L1";
     setMatiereNiveau(niv);
-    if (niv === "L1") {
-      setMatiereSemestre(m.semestre === "S2" ? "S2" : "S1");
-    } else {
-      setMatiereSemestre(m.semestre === "S4" ? "S4" : "S3");
-    }
+    const validSem = (m.semestre === "S1" || m.semestre === "S2" || m.semestre === "S3" || m.semestre === "S4")
+      ? m.semestre
+      : (niv === "L1" ? "S1" : "S3");
+    setMatiereSemestre(validSem);
+    setMatiereProfId(m.professeur_id || m.professeur?.id || profs[0]?.id || "");
     setMatiereClasses(m.classes || (niv === "L1" ? ["L1-MPI", "L1-SML", "L1-MIASS"] : ["L2-MPI", "L2-SML", "L2-MIASS"]));
     setEditMatiereModal(true);
   };
@@ -119,12 +118,15 @@ export default function AdminAcademiquePage() {
     }
 
     const existing = matieres.find((m) => m.id === editMatiereId);
+    const assignedProf = profs.find((p) => p.id === matiereProfId);
     const updated: Matiere = {
       ...(existing as Matiere),
       name: matiereName.trim(),
       classes: matiereClasses,
       niveau: matiereNiveau,
       semestre: matiereSemestre,
+      professeur_id: matiereProfId || null,
+      professeur: assignedProf || null,
     };
     saveMatiere(updated);
     reloadData();
@@ -137,9 +139,11 @@ export default function AdminAcademiquePage() {
     const fList = getStoredFilieres();
     const cList = getStoredClasses();
     const mList = getStoredMatieres();
+    const pList = getStoredProfesseurs();
     setFilieres(fList);
     setClasses(cList);
     setMatieres(mList);
+    setProfs(pList);
     if (!classeFiliereId && fList.length > 0) setClasseFiliereId(fList[0].id);
   };
 
@@ -205,6 +209,7 @@ export default function AdminAcademiquePage() {
     }
 
     const assignedCode = autoMatiereCode || getNextMatiereCode();
+    const assignedProf = profs.find((p) => p.id === matiereProfId);
 
     const newM: Matiere = {
       id: `mat-${Date.now()}`,
@@ -216,7 +221,9 @@ export default function AdminAcademiquePage() {
       classes: matiereClasses,
       niveau: matiereNiveau,
       semestre: matiereSemestre,
-      description: `Matière ${matiereName.trim()} (${matiereSemestre}) pour le niveau ${matiereNiveau}.`,
+      professeur_id: matiereProfId || null,
+      professeur: assignedProf || null,
+      description: `Matière ${matiereName.trim()} pour le niveau ${matiereNiveau}.`,
     };
     saveMatiere(newM);
     reloadData();
@@ -263,10 +270,17 @@ export default function AdminAcademiquePage() {
         )}
 
         {/* Onglets */}
-        <div className="flex gap-1 border-b border-slate-200">
-          {([["filieres", `Filières (${filieres.length})`], ["classes", `Classes (${classes.length})`], ["matieres", `Matières (${matieres.length})`]] as const).map(([key, label]) => (
+        <div className="flex gap-1 border-b border-slate-200 overflow-x-auto">
+          {([
+            ["filieres", `Filières (${filieres.length})`],
+            ["classes", `Classes (${classes.length})`],
+            ["matieres_l1", `Matières L1 (${matieres.filter(m => !(m.niveau === "L2" || (m.classes||[]).some(c=>c.startsWith("L2")))).length})`],
+            ["matieres_l2", `Matières L2 (${matieres.filter(m => m.niveau === "L2" || (m.classes||[]).some(c=>c.startsWith("L2"))).length})`],
+          ] as const).map(([key, label]) => (
             <button key={key} onClick={() => setTab(key as any)}
-              className={`px-5 py-2.5 text-xs font-bold border-b-2 transition-colors ${tab === key ? "border-[#0f2744] text-[#0f2744]" : "border-transparent text-slate-500 hover:text-slate-800"}`}>
+              className={`px-5 py-2.5 text-xs font-bold border-b-2 transition-colors whitespace-nowrap ${
+                tab === key ? "border-[#0f2744] text-[#0f2744]" : "border-transparent text-slate-500 hover:text-slate-800"
+              }`}>
               {label}
             </button>
           ))}
@@ -291,7 +305,6 @@ export default function AdminAcademiquePage() {
                       <div>
                         <div className="flex items-center gap-2">
                           <span className="font-mono text-xs font-bold text-[#e0521c]">{f.code}</span>
-                          <Badge variant="neutral" size="sm">{f.duration_years} ans</Badge>
                         </div>
                         <h3 className="font-serif text-base font-bold text-slate-900 mt-0.5">{f.name}</h3>
                       </div>
@@ -347,88 +360,134 @@ export default function AdminAcademiquePage() {
           </div>
         )}
 
-        {/* === MATIÈRES === */}
-        {tab === "matieres" && (
+        {/* === MATIÈRES L1 === */}
+        {tab === "matieres_l1" && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
+                <p className="text-xs font-bold text-[#0f2744] uppercase tracking-wider mb-0.5">Licence 1</p>
                 <p className="text-xs text-slate-500">
-                  Définissez les matières et associez-les à leurs classes (Licence 1 ou Licence 2, sans mélange de niveau).
+                  Matières associées aux classes de niveau Licence 1.
                 </p>
               </div>
-              <Button variant="accent" size="sm" onClick={openAddMatiereModal} leftIcon={<Plus className="w-4 h-4" />}>
-                Ajouter une matière
+              <Button variant="accent" size="sm" onClick={() => { handleNiveauChange("L1"); openAddMatiereModal(); }} leftIcon={<Plus className="w-4 h-4" />}>
+                Ajouter une matière L1
               </Button>
             </div>
             <div className="bg-white rounded-xl border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200">
-                    {["Code", "Intitulé de la matière", "Niveau", "Semestre", "Classes Concernées", "Actions"].map((h) => (
+                  <tr className="bg-blue-50 border-b border-slate-200">
+                    {["Code", "Intitulé de la matière", "Enseignant", "Classes concernées", "Actions"].map((h) => (
                       <th key={h} className="text-left text-xs font-bold text-slate-500 uppercase tracking-wider px-4 py-3">{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {matieres.map((m) => {
-                    const displayClasses = m.classes && m.classes.length > 0 ? m.classes : ["L1-MPI"];
-                    const isL2 = m.niveau === "L2" || displayClasses.some((c) => c.startsWith("L2"));
-                    const niveauLabel = isL2 ? "L2" : "L1";
-                    const semLabel = m.semestre || (niveauLabel === "L1" ? "S1" : "S3");
+                  {matieres
+                    .filter(m => !(m.niveau === "L2" || (m.classes||[]).some(c=>c.startsWith("L2"))))
+                    .map((m) => {
+                      const displayClasses = m.classes && m.classes.length > 0 ? m.classes : ["L1-MPI"];
+                      const profItem = m.professeur || profs.find((p) => p.id === m.professeur_id);
+                      return (
+                        <tr key={m.id} className="hover:bg-slate-50/50">
+                          <td className="px-4 py-3 font-mono text-xs font-bold text-[#e0521c]">{m.code}</td>
+                          <td className="px-4 py-3 text-sm font-medium text-slate-900 max-w-xs">{m.name}</td>
+                          <td className="px-4 py-3">
+                            {profItem ? (
+                              <div className="flex flex-col">
+                                <span className="text-xs font-bold text-slate-900">{profItem.full_name}</span>
+                                <span className="text-[10px] text-[#e0521c] font-semibold">{profItem.specialite}</span>
+                              </div>
+                            ) : (
+                              <span className="text-xs text-slate-400 italic">Non assigné</span>
+                            )}
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex flex-wrap gap-1 max-w-xs">
+                              {displayClasses.map((cCode) => (
+                                <span key={cCode} className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold text-white bg-[#0f2744]">
+                                  {cCode}
+                                </span>
+                              ))}
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-1">
+                              <button onClick={() => openEditMatiere(m)} className="p-1.5 text-slate-400 hover:text-[#0f2744] hover:bg-blue-50 rounded-lg" title="Modifier"><Edit2 className="w-4 h-4" /></button>
+                              <button onClick={() => setDeleteConfirm({ id: m.id, type: "matiere", name: m.name })} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Supprimer"><Trash2 className="w-4 h-4" /></button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
 
-                    return (
-                      <tr key={m.id} className="hover:bg-slate-50/50">
-                        <td className="px-4 py-3 font-mono text-xs font-bold text-[#e0521c]">{m.code}</td>
-                        <td className="px-4 py-3 text-sm font-medium text-slate-900 max-w-xs">{m.name}</td>
-                        <td className="px-4 py-3">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                            niveauLabel === "L1"
-                              ? "bg-blue-50 text-[#0f2744] border border-blue-200"
-                              : "bg-orange-50 text-[#e0521c] border border-orange-200"
-                          }`}>
-                            {niveauLabel === "L1" ? "Licence 1 (L1)" : "Licence 2 (L2)"}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3">
-                          <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-extrabold border ${
-                            semLabel === "S1"
-                              ? "bg-sky-50 text-sky-800 border-sky-200"
-                              : semLabel === "S2"
-                              ? "bg-blue-50 text-blue-800 border-blue-200"
-                              : semLabel === "S3"
-                              ? "bg-amber-50 text-amber-800 border-amber-200"
-                              : "bg-orange-50 text-orange-800 border-orange-200"
-                          }`}>
-                            {semLabel}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="flex flex-wrap gap-1 max-w-xs">
-                            {displayClasses.map((cCode) => (
-                              <span
-                                key={cCode}
-                                className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold text-white shadow-2xs ${
-                                  cCode.startsWith("L2") ? "bg-[#e0521c]" : "bg-[#0f2744]"
-                                }`}
-                              >
-                                {cCode}
-                              </span>
-                            ))}
-                          </div>
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-1">
-                            <button onClick={() => openEditMatiere(m)} className="p-1.5 text-slate-400 hover:text-[#0f2744] hover:bg-blue-50 rounded-lg" title="Modifier">
-                              <Edit2 className="w-4 h-4" />
-                            </button>
-                            <button onClick={() => setDeleteConfirm({ id: m.id, type: "matiere", name: m.name })} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Supprimer">
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
+        {/* === MATIÈRES L2 === */}
+        {tab === "matieres_l2" && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-bold text-[#e0521c] uppercase tracking-wider mb-0.5">Licence 2</p>
+                <p className="text-xs text-slate-500">
+                  Matières associées aux classes de niveau Licence 2.
+                </p>
+              </div>
+              <Button variant="accent" size="sm" onClick={() => { handleNiveauChange("L2"); openAddMatiereModal(); }} leftIcon={<Plus className="w-4 h-4" />}>
+                Ajouter une matière L2
+              </Button>
+            </div>
+            <div className="bg-white rounded-xl border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] overflow-hidden">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-orange-50 border-b border-slate-200">
+                    {["Code", "Intitulé de la matière", "Enseignant", "Classes concernées", "Actions"].map((h) => (
+                      <th key={h} className="text-left text-xs font-bold text-slate-500 uppercase tracking-wider px-4 py-3">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {matieres
+                    .filter(m => m.niveau === "L2" || (m.classes||[]).some(c=>c.startsWith("L2")))
+                    .map((m) => {
+                      const displayClasses = m.classes && m.classes.length > 0 ? m.classes : ["L2-MPI"];
+                      const profItem = m.professeur || profs.find((p) => p.id === m.professeur_id);
+                      return (
+                        <tr key={m.id} className="hover:bg-slate-50/50">
+                          <td className="px-4 py-3 font-mono text-xs font-bold text-[#e0521c]">{m.code}</td>
+                          <td className="px-4 py-3 text-sm font-medium text-slate-900 max-w-xs">{m.name}</td>
+                          <td className="px-4 py-3">
+                            {profItem ? (
+                              <div className="flex flex-col">
+                                <span className="text-xs font-bold text-slate-900">{profItem.full_name}</span>
+                                <span className="text-[10px] text-[#e0521c] font-semibold">{profItem.specialite}</span>
+                              </div>
+                            ) : (
+                              <span className="text-xs text-slate-400 italic">Non assigné</span>
+                            )}
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex flex-wrap gap-1 max-w-xs">
+                              {displayClasses.map((cCode) => (
+                                <span key={cCode} className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold text-white bg-[#e0521c]">
+                                  {cCode}
+                                </span>
+                              ))}
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-1">
+                              <button onClick={() => openEditMatiere(m)} className="p-1.5 text-slate-400 hover:text-[#0f2744] hover:bg-blue-50 rounded-lg" title="Modifier"><Edit2 className="w-4 h-4" /></button>
+                              <button onClick={() => setDeleteConfirm({ id: m.id, type: "matiere", name: m.name })} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Supprimer"><Trash2 className="w-4 h-4" /></button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
                 </tbody>
               </table>
             </div>

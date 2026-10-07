@@ -55,21 +55,14 @@ export default function AdminDashboard() {
       matriculeOrTitle="ADM001"
     >
       <div className="space-y-8">
-        {/* Bannière Admin */}
-        <div className="bg-[#0f2744] text-white rounded-2xl p-6 sm:p-8 relative overflow-hidden shadow-sm">
-          <div className="absolute inset-0 opacity-5 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px]" />
-          <div className="relative z-10 max-w-3xl space-y-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-xs font-medium text-slate-200">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#e0521c]" />
-              <span>Tableau de Supervision — Accès Administrateur Général</span>
-            </div>
-            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-white">
-              Supervision Globale — Halil Académie Scientifique
-            </h1>
-            <p className="text-sm text-slate-300">
-              Gérez les comptes, les cours, les filières, les emplois du temps, les communiqués et les échanges en un seul espace.
-            </p>
-          </div>
+        {/* En-tête Supervision */}
+        <div>
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744]">
+            Supervision Globale
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-500 mt-1">
+            Gérez les comptes, les cours, les filières, les emplois du temps, les communiqués et les échanges en un seul espace.
+          </p>
         </div>
 
         {/* Grille des statistiques */}

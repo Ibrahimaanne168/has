@@ -14,6 +14,8 @@ import {
   Eye,
   EyeOff,
   BookOpen,
+  Camera,
+  Trash2,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/Button";
@@ -21,6 +23,7 @@ import { Input } from "@/components/ui/Input";
 import { useCurrentProfesseur } from "@/lib/useCurrentProfesseur";
 import { passwordRegex, passwordRequirementsMessage } from "@/lib/validators";
 import { createClient } from "@/lib/supabase/client";
+import { compressImage } from "@/lib/imageCompression";
 
 export default function ProfesseurProfilPage() {
   const { prof, updateProfProfile } = useCurrentProfesseur();
@@ -79,6 +82,50 @@ export default function ProfesseurProfilPage() {
     }
   };
 
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [photoSuccess, setPhotoSuccess] = useState<string | null>(null);
+  const [photoError, setPhotoError] = useState<string | null>(null);
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setPhotoError("Veuillez sélectionner un fichier image valide (JPG, PNG, WEBP).");
+      setTimeout(() => setPhotoError(null), 3500);
+      return;
+    }
+
+    try {
+      setUploadingPhoto(true);
+      setPhotoError(null);
+      const compressedDataUrl = await compressImage(file, 512, 512, 0.82);
+      await updateProfProfile({ photo: compressedDataUrl, avatar_url: compressedDataUrl });
+      setPhotoSuccess("Photo de profil mise à jour et compressée avec succès !");
+      setTimeout(() => setPhotoSuccess(null), 3500);
+    } catch (err) {
+      console.error(err);
+      setPhotoError("Erreur lors de la compression de la photo.");
+      setTimeout(() => setPhotoError(null), 3500);
+    } finally {
+      setUploadingPhoto(false);
+      e.target.value = "";
+    }
+  };
+
+  const handleRemovePhoto = async () => {
+    try {
+      setUploadingPhoto(true);
+      await updateProfProfile({ photo: null, avatar_url: null });
+      setPhotoSuccess("Photo de profil retirée.");
+      setTimeout(() => setPhotoSuccess(null), 3500);
+    } catch {
+      setPhotoError("Erreur lors de la suppression de la photo.");
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
+
   return (
     <DashboardLayout
       role="professeur"
@@ -88,23 +135,63 @@ export default function ProfesseurProfilPage() {
     >
       <div className="space-y-6 max-w-4xl">
 
+        {photoSuccess && (
+          <div className="p-3.5 rounded-lg bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>{photoSuccess}</span>
+          </div>
+        )}
+        {photoError && (
+          <div className="p-3.5 rounded-lg bg-red-50 border border-red-200 text-xs text-red-800 flex items-center gap-2">
+            <span className="font-bold">Erreur :</span>
+            <span>{photoError}</span>
+          </div>
+        )}
+
         {/* === CARTE PROFIL PRINCIPALE === */}
         <div className="relative bg-gradient-to-br from-[#0f2744] via-[#1a3a5c] to-[#0f2744] rounded-2xl overflow-hidden shadow-xl">
           <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 20% 80%, #e0521c 0%, transparent 50%), radial-gradient(circle at 80% 20%, #ffffff 0%, transparent 40%)" }} />
 
           <div className="relative p-6 sm:p-8">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
-              {/* Avatar initiales */}
-              <div className="relative shrink-0">
-                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-[#e0521c] to-[#f07040] flex items-center justify-center text-white text-2xl sm:text-3xl font-black shadow-lg border-4 border-white/20">
-                  {initials}
+              {/* Avatar initiales ou photo compressée */}
+              <div className="relative shrink-0 group">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-[#e0521c] to-[#f07040] flex items-center justify-center text-white text-2xl sm:text-3xl font-black shadow-lg border-4 border-white/20 overflow-hidden relative">
+                  {(prof.photo || prof.avatar_url) ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={prof.photo || prof.avatar_url || ""}
+                      alt={prof.full_name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    initials
+                  )}
+                  {uploadingPhoto && (
+                    <div className="absolute inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center text-white text-[10px] font-bold">
+                      Traitement...
+                    </div>
+                  )}
                 </div>
-                <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-blue-400 border-2 border-white flex items-center justify-center">
-                  <GraduationCap className="w-3 h-3 text-white" />
-                </div>
+
+                <label
+                  htmlFor="prof-photo-upload"
+                  className="absolute -bottom-1 -right-1 p-2 rounded-full bg-[#0f2744] hover:bg-[#1a3a60] border-2 border-white text-white cursor-pointer shadow-md transition-all active:scale-95"
+                  title="Ajouter ou modifier votre photo (compressée automatiquement)"
+                >
+                  <Camera className="w-3.5 h-3.5 text-[#e0521c]" />
+                  <input
+                    id="prof-photo-upload"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handlePhotoUpload}
+                    disabled={uploadingPhoto}
+                  />
+                </label>
               </div>
 
-              {/* Infos principales */}
+              {/* Infos principales (sans email) */}
               <div className="flex-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2 mb-1">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-white/60">Enseignant HAS</span>
@@ -118,10 +205,15 @@ export default function ProfesseurProfilPage() {
                     <Hash className="w-3.5 h-3.5 text-[#e0521c]" />
                     {prof.matricule || "PROF001"}
                   </span>
-                  <span className="flex items-center gap-1.5 text-xs text-white/70">
-                    <Mail className="w-3.5 h-3.5 text-[#e0521c]" />
-                    {prof.email}
-                  </span>
+                  {(prof.photo || prof.avatar_url) && (
+                    <button
+                      type="button"
+                      onClick={handleRemovePhoto}
+                      className="inline-flex items-center gap-1 text-[11px] text-red-300 hover:text-red-200 transition-colors"
+                    >
+                      <Trash2 className="w-3 h-3" /> Retirer la photo
+                    </button>
+                  )}
                 </div>
               </div>
 
