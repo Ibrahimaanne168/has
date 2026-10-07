@@ -25,22 +25,19 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
-  // 1. Détection et purge immédiate des cookies surdimensionnés (> 2000 caractères)
-  // Empêche l'erreur HTTP 431 ("Request Header Fields Too Large") / "Page couldn't load"
+  // 1. Purge des anciens cookies corrompus contenant des images base64 (évite l'erreur HTTP 431)
   const allCookies = request.cookies.getAll();
-  const bloatedCookies = allCookies.filter(
-    (c) => c.value.length > 2000 || c.value.includes("data%3Aimage") || c.value.includes("data:image")
+  const corruptedCookies = allCookies.filter(
+    (c) =>
+      !c.name.startsWith("sb-") &&
+      !c.name.includes("auth-token") &&
+      (c.value.includes("data%3Aimage") || c.value.includes("data:image"))
   );
 
-  if (bloatedCookies.length > 0) {
-    const loginUrl = new URL("/connexion", request.url);
-    loginUrl.searchParams.set("redirect", pathname);
-    loginUrl.searchParams.set("reset", "1");
-    const redirectRes = NextResponse.redirect(loginUrl);
-    bloatedCookies.forEach((c) => {
-      redirectRes.cookies.delete(c.name);
+  if (corruptedCookies.length > 0) {
+    corruptedCookies.forEach((c) => {
+      response.cookies.delete(c.name);
     });
-    return redirectRes;
   }
 
   let user = null;

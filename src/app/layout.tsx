@@ -120,7 +120,8 @@ export default function RootLayout({
                       if (eqIdx !== -1) {
                         var cName = c.substring(0, eqIdx);
                         var cVal = c.substring(eqIdx + 1);
-                        if (cVal.length > 2000 || cVal.indexOf('data%3Aimage') !== -1 || cVal.indexOf('data:image') !== -1) {
+                        var isSupabase = cName.indexOf('sb-') !== -1 || cName.indexOf('auth-token') !== -1;
+                        if (!isSupabase && (cVal.indexOf('data%3Aimage') !== -1 || cVal.indexOf('data:image') !== -1)) {
                           document.cookie = cName + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
                           document.cookie = cName + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + window.location.hostname + ';';
                         }

@@ -146,25 +146,28 @@ function ConnexionForm() {
           }
         }
 
-        if (redirectTarget) {
-          router.push(redirectTarget);
-        } else if (role === "admin") {
-          router.push("/admin");
+        if (role === "admin") {
+          window.location.href = "/admin";
+          return;
         } else if (role === "professeur") {
-          router.push("/professeur");
+          window.location.href = "/professeur";
+          return;
+        } else if (redirectTarget && redirectTarget.startsWith("/etudiant")) {
+          window.location.href = redirectTarget;
+          return;
         } else {
-          router.push("/etudiant");
+          window.location.href = "/etudiant";
+          return;
         }
-        return;
       }
 
       // Mode démo / local si Supabase non encore connecté
       if (emailOrUsername.toLowerCase().includes("admin")) {
-        router.push("/admin");
+        window.location.href = "/admin";
       } else if (matchedProf || emailOrUsername.toLowerCase().includes("prof")) {
-        router.push("/professeur");
+        window.location.href = "/professeur";
       } else {
-        router.push("/etudiant");
+        window.location.href = "/etudiant";
       }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Erreur de connexion";
