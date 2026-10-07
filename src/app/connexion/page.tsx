@@ -9,6 +9,7 @@ import {
   User,
   ArrowRight,
   AlertCircle,
+  Clock,
   Eye,
   EyeOff,
 } from "lucide-react";
@@ -94,32 +95,31 @@ function ConnexionForm() {
         // Détection du rôle de l'utilisateur
         let role = detectedRole || data.user?.user_metadata?.role;
 
-        if (!role) {
-          try {
-            const { data: profile } = await supabase
-              .from("profiles")
-              .select("role, is_active, statut_inscription")
-              .eq("id", data.user.id)
-              .maybeSingle();
+        // VÉRIFICATION SYSTÉMATIQUE DU STATUT ÉTUDIANT (Validation administrative obligatoire)
+        try {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("role, is_active, statut_inscription, full_name")
+            .eq("id", data.user.id)
+            .maybeSingle();
 
-            if (profile) {
-              if (profile.role) role = profile.role;
+          if (profile) {
+            if (profile.role) role = profile.role;
 
-              // Si le compte étudiant est encore en attente de validation par l'admin
-              if (profile.role === "etudiant" && profile.is_active === false) {
-                await supabase.auth.signOut();
-                setErrorMsg(
-                  profile.statut_inscription === "refuse"
-                    ? "Votre inscription a été refusée par l'administration de HAS."
-                    : "Votre demande d'inscription est actuellement en attente de validation par l'administration. Dès validation de votre dossier, vous pourrez vous connecter."
-                );
-                setIsLoading(false);
-                return;
-              }
+            // Si c'est un compte étudiant : vérification stricte de l'autorisation d'entrée
+            if (profile.role === "etudiant" && (profile.is_active === false || profile.statut_inscription !== "valide")) {
+              await supabase.auth.signOut();
+              setErrorMsg(
+                profile.statut_inscription === "refuse"
+                  ? "Votre demande d'inscription a été refusée par l'administration de HAS. L'accès aux espaces académiques vous est refusé."
+                  : "Votre inscription est actuellement en attente de validation par l'administration de HAS. Vous recevrez un email dès que votre accès sera approuvé par la direction."
+              );
+              setIsLoading(false);
+              return;
             }
-          } catch {
-            // Ignorer si la table profiles n'est pas encore créée
           }
+        } catch (profileErr) {
+          console.warn("[LOGIN-PROFILE-CHECK]", profileErr);
         }
 
         if (typeof window !== "undefined") {
@@ -241,10 +241,29 @@ function ConnexionForm() {
           </div>
 
           {errorMsg && (
-            <div className="mb-5 p-3.5 rounded-lg bg-red-50 dark:bg-rose-950/30 border border-red-200/80 dark:border-rose-900/50 flex items-start gap-2.5">
-              <AlertCircle className="w-4 h-4 text-red-600 dark:text-rose-400 shrink-0 mt-0.5" />
-              <p className="text-xs font-medium text-red-800 dark:text-rose-200">{errorMsg}</p>
-            </div>
+            errorMsg.includes("attente") ? (
+              <div className="mb-5 p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-800/60 flex items-start gap-3 shadow-xs">
+                <div className="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300 flex items-center justify-center shrink-0">
+                  <Clock className="w-4 h-4 text-amber-600 dark:text-amber-400 animate-pulse" />
+                </div>
+                <div className="space-y-1">
+                  <span className="inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300">
+                    Dossier en cours d&apos;examen
+                  </span>
+                  <p className="text-xs font-semibold text-amber-900 dark:text-amber-200 leading-snug">
+                    {errorMsg}
+                  </p>
+                  <p className="text-[11px] text-amber-700 dark:text-amber-400/90 leading-relaxed">
+                    Un email officiel de confirmation vous sera envoyé dès que l&apos;administration aura validé votre entrée.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="mb-5 p-3.5 rounded-lg bg-red-50 dark:bg-rose-950/30 border border-red-200/80 dark:border-rose-900/50 flex items-start gap-2.5">
+                <AlertCircle className="w-4 h-4 text-red-600 dark:text-rose-400 shrink-0 mt-0.5" />
+                <p className="text-xs font-medium text-red-800 dark:text-rose-200">{errorMsg}</p>
+              </div>
+            )
           )}
 
           <form onSubmit={handleLogin} className="space-y-4">

@@ -102,7 +102,7 @@ export async function middleware(request: NextRequest) {
   try {
     const { data: profile } = await supabase
       .from("profiles")
-      .select("role, is_active")
+      .select("role, is_active, statut_inscription")
       .eq("id", user.id)
       .maybeSingle();
 
@@ -111,15 +111,21 @@ export async function middleware(request: NextRequest) {
       if (profile.is_active !== undefined && profile.is_active !== null) {
         isActive = profile.is_active;
       }
+      if (profile.role === "etudiant" && profile.statut_inscription !== "valide") {
+        isActive = false;
+      }
     }
   } catch {
     // Si la table profiles n'est pas encore initialisée en base
   }
 
-  // Si le compte est explicitement désactivé
+  // Si le compte est en attente de validation ou inactif
   if (!isActive) {
     const loginUrl = new URL("/connexion", request.url);
-    loginUrl.searchParams.set("error", "Compte désactivé");
+    loginUrl.searchParams.set(
+      "error",
+      "Votre inscription est actuellement en attente de validation par l'administration de HAS."
+    );
     const redirectRes = NextResponse.redirect(loginUrl);
     response.cookies.getAll().forEach((c) => redirectRes.cookies.set(c.name, c.value));
     return redirectRes;

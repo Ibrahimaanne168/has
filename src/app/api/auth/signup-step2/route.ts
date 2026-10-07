@@ -138,15 +138,15 @@ export async function POST(request: NextRequest) {
       console.error("[PROFILE-INSERT-ERROR]", profileError);
     }
 
-    // 5. Notification Telegram immédiate à l'administrateur HAS
+    // 5. Notification Telegram immédiate à l'administrateur HAS (avec boutons d'action directs)
     try {
       await sendTelegramAdminNotification({
+        studentId: userId,
         fullName,
-        email,
         filiere: filiereChoice,
         niveau: niveauChoice,
-        matricule,
         username,
+        phone: null,
       });
     } catch (teleErr) {
       console.warn("[TELEGRAM-NOTIF-FAILED]", teleErr);
