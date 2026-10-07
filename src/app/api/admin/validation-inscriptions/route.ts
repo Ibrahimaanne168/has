@@ -10,19 +10,63 @@ export async function GET(request: NextRequest) {
     const supabaseAdmin = createAdminClient();
     const statusParam = request.nextUrl.searchParams.get("status") || "pending";
 
-    // Récupérer tous les profils étudiants pour les compteurs
-    const { data: allStudents, error: allErr } = await supabaseAdmin
-      .from("profiles")
-      .select("*")
-      .eq("role", "etudiant")
-      .order("created_at", { ascending: false });
+    const studentsMap = new Map<string, any>();
 
-    if (allErr) {
-      console.error("[GET-STUDENTS-ERROR]", allErr);
-      return NextResponse.json({ error: allErr.message }, { status: 500 });
+    // 1. Récupération directe depuis Supabase Auth (source de vérité fiable)
+    try {
+      const { data: authList, error: authErr } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
+      if (!authErr && authList?.users) {
+        for (const u of authList.users) {
+          const meta = u.user_metadata || {};
+          if (meta.role === "etudiant") {
+            const isActive = meta.is_active === true;
+            let statut = meta.statut_inscription;
+            if (!statut) {
+              statut = isActive ? "valide" : "en_attente";
+            }
+            studentsMap.set(u.id, {
+              id: u.id,
+              email: u.email,
+              full_name: meta.full_name || meta.fullName || u.email?.split("@")[0] || "Étudiant",
+              username: meta.username || null,
+              telephone: meta.phone || null,
+              matricule: meta.matricule || null,
+              filiere: meta.filiere || "MPI",
+              niveau: meta.niveau || "L1",
+              is_active: isActive,
+              statut_inscription: statut,
+              created_at: u.created_at,
+            });
+          }
+        }
+      }
+    } catch (authErr) {
+      console.warn("[AUTH-LIST-USERS-WARN]", authErr);
     }
 
-    const studentsList = allStudents || [];
+    // 2. Si la table profiles existe, fusionner ou enrichir avec les données de profiles
+    try {
+      const { data: profileList } = await supabaseAdmin
+        .from("profiles")
+        .select("*")
+        .eq("role", "etudiant");
+
+      if (profileList) {
+        for (const p of profileList) {
+          const existing = studentsMap.get(p.id) || {};
+          studentsMap.set(p.id, {
+            ...existing,
+            ...p,
+            statut_inscription: p.statut_inscription || (p.is_active ? "valide" : "en_attente"),
+          });
+        }
+      }
+    } catch {}
+
+    const studentsList = Array.from(studentsMap.values()).sort(
+      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+
     const pendingList = studentsList.filter(
       (s) => s.is_active === false || s.statut_inscription === "en_attente" || !s.statut_inscription
     );
@@ -74,101 +118,90 @@ export async function POST(request: NextRequest) {
     const siteUrl = origin;
 
     const supabaseAdmin = createAdminClient();
+    const isAccepting = action === "accept";
+    const newStatus = isAccepting ? "valide" : "refuse";
 
-    if (action === "accept") {
-      // Activer l'étudiant
-      const { data: updated, error } = await supabaseAdmin
+    let targetEmail: string | null = null;
+    let targetFullName: string = "Étudiant";
+    let targetMatricule: string | null = null;
+
+    // 1. Mettre à jour les métadonnées dans Supabase Auth (garanti de persister)
+    try {
+      const { data: updatedAuthUser, error: authUpErr } = await supabaseAdmin.auth.admin.updateUserById(studentId, {
+        user_metadata: {
+          is_active: isAccepting,
+          statut_inscription: newStatus,
+        },
+      });
+
+      if (updatedAuthUser?.user) {
+        targetEmail = updatedAuthUser.user.email || null;
+        const meta = updatedAuthUser.user.user_metadata || {};
+        targetFullName = meta.full_name || meta.fullName || "Étudiant";
+        targetMatricule = meta.matricule || null;
+      }
+    } catch (authErr) {
+      console.warn("[AUTH-UPDATE-ERR]", authErr);
+    }
+
+    // 2. Mettre à jour dans la table profiles si elle existe
+    try {
+      const { data: upProfile } = await supabaseAdmin
         .from("profiles")
         .update({
-          is_active: true,
-          statut_inscription: "valide",
+          is_active: isAccepting,
+          statut_inscription: newStatus,
           updated_at: new Date().toISOString(),
         })
         .eq("id", studentId)
         .select()
         .maybeSingle();
 
-      if (error) {
-        console.error("[ACCEPT-STUDENT-ERROR]", error);
-        return NextResponse.json({ error: "Impossible de valider l'étudiant" }, { status: 500 });
+      if (upProfile) {
+        if (upProfile.email) targetEmail = upProfile.email;
+        if (upProfile.full_name) targetFullName = upProfile.full_name;
+        if (upProfile.matricule) targetMatricule = upProfile.matricule;
       }
+    } catch {}
 
-      // Log d'audit
+    // 3. Log d'audit
+    try {
+      await supabaseAdmin.from("audit_logs").insert({
+        action: isAccepting ? "VALIDATION_INSCRIPTION_ACCEPTEE" : "VALIDATION_INSCRIPTION_REFUSEE",
+        details: { student_id: studentId, email: targetEmail, matricule: targetMatricule },
+        ip_address: request.headers.get("x-forwarded-for") || "admin",
+      });
+    } catch {}
+
+    // 4. Envoi de l'email via Resend avec lien direct de retour au site
+    if (targetEmail) {
       try {
-        await supabaseAdmin.from("audit_logs").insert({
-          action: "VALIDATION_INSCRIPTION_ACCEPTEE",
-          details: { student_id: studentId, email: updated?.email, matricule: updated?.matricule },
-          ip_address: request.headers.get("x-forwarded-for") || "admin",
-        });
-      } catch {}
-
-      // Envoi de l'email de confirmation via Resend avec lien direct de retour au site
-      if (updated?.email) {
-        try {
+        if (isAccepting) {
           await sendRegistrationAcceptedEmail({
-            email: updated.email,
-            fullName: updated.full_name || "Étudiant",
-            matricule: updated.matricule,
+            email: targetEmail,
+            fullName: targetFullName,
+            matricule: targetMatricule,
             loginUrl,
           });
-        } catch (emailErr) {
-          console.warn("[RESEND-ACCEPT-EMAIL-ERROR]", emailErr);
-        }
-      }
-
-      return NextResponse.json({
-        success: true,
-        action: "accepted",
-        message: `L'inscription de ${updated?.full_name || "l'étudiant"} a été validée avec succès. Un email de confirmation avec lien direct lui a été envoyé.`,
-        student: updated,
-      });
-    } else {
-      // Refuser l'inscription
-      const { data: updated, error } = await supabaseAdmin
-        .from("profiles")
-        .update({
-          is_active: false,
-          statut_inscription: "refuse",
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", studentId)
-        .select()
-        .maybeSingle();
-
-      if (error) {
-        console.error("[REJECT-STUDENT-ERROR]", error);
-        return NextResponse.json({ error: "Impossible de refuser l'étudiant" }, { status: 500 });
-      }
-
-      // Log d'audit
-      try {
-        await supabaseAdmin.from("audit_logs").insert({
-          action: "VALIDATION_INSCRIPTION_REFUSEE",
-          details: { student_id: studentId, email: updated?.email, matricule: updated?.matricule },
-          ip_address: request.headers.get("x-forwarded-for") || "admin",
-        });
-      } catch {}
-
-      // Envoi de l'email de non-confirmation via Resend avec lien direct de retour au site
-      if (updated?.email) {
-        try {
+        } else {
           await sendRegistrationRejectedEmail({
-            email: updated.email,
-            fullName: updated.full_name || "Candidat",
+            email: targetEmail,
+            fullName: targetFullName,
             siteUrl,
           });
-        } catch (emailErr) {
-          console.warn("[RESEND-REJECT-EMAIL-ERROR]", emailErr);
         }
+      } catch (emailErr) {
+        console.warn("[RESEND-EMAIL-ERROR]", emailErr);
       }
-
-      return NextResponse.json({
-        success: true,
-        action: "rejected",
-        message: `L'inscription de ${updated?.full_name || "l'étudiant"} a été refusée. Un email d'information avec lien direct lui a été envoyé.`,
-        student: updated,
-      });
     }
+
+    return NextResponse.json({
+      success: true,
+      action: isAccepting ? "accepted" : "rejected",
+      message: isAccepting
+        ? `L'inscription de ${targetFullName} a été validée avec succès. Un email de confirmation lui a été envoyé.`
+        : `L'inscription de ${targetFullName} a été refusée. Un email explicatif lui a été envoyé.`,
+    });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : "Erreur";
     return NextResponse.json({ error: msg }, { status: 500 });

@@ -44,125 +44,164 @@ export async function GET(request: NextRequest) {
     const loginUrl = `${origin}/connexion`;
     const siteUrl = origin;
 
-    if (action === "accept") {
-      const { data: updated, error } = await supabaseAdmin
+    // 1. Récupération et synchronisation de l'étudiant (Source primaire : auth.users)
+    let targetEmail: string | null = null;
+    let targetFullName: string = "Étudiant";
+    let targetMatricule: string | null = null;
+
+    try {
+      const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(studentId);
+      if (authUser?.user) {
+        targetEmail = authUser.user.email || null;
+        const meta = authUser.user.user_metadata || {};
+        targetFullName = meta.full_name || meta.fullName || targetEmail?.split("@")[0] || "Étudiant";
+        targetMatricule = meta.matricule || null;
+      }
+    } catch (authErr) {
+      console.warn("[AUTH-LOOKUP-WARN]", authErr);
+    }
+
+    // Vérifier également si le profil existe dans profiles pour compléter
+    try {
+      const { data: existingProfile } = await supabaseAdmin
+        .from("profiles")
+        .select("*")
+        .eq("id", studentId)
+        .maybeSingle();
+
+      if (existingProfile) {
+        if (existingProfile.email) targetEmail = existingProfile.email;
+        if (existingProfile.full_name) targetFullName = existingProfile.full_name;
+        if (existingProfile.matricule) targetMatricule = existingProfile.matricule;
+      }
+    } catch {}
+
+    // 2. Mise à jour résiliente dans profiles
+    const isAccepting = action === "accept";
+    let updateSuccess = false;
+
+    // Tentative 1 : avec statut_inscription et is_active
+    const { data: up1, error: err1 } = await supabaseAdmin
+      .from("profiles")
+      .update({
+        is_active: isAccepting,
+        statut_inscription: isAccepting ? "valide" : "refuse",
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", studentId)
+      .select()
+      .maybeSingle();
+
+    if (up1) {
+      updateSuccess = true;
+      if (up1.email) targetEmail = up1.email;
+      if (up1.full_name) targetFullName = up1.full_name;
+      if (up1.matricule) targetMatricule = up1.matricule;
+    } else if (err1) {
+      console.warn("[RETRY-UPDATE-CORE-ONLY]", err1.message);
+      // Tentative 2 : avec is_active uniquement (si statut_inscription n'existe pas dans le schéma)
+      const { data: up2, error: err2 } = await supabaseAdmin
         .from("profiles")
         .update({
-          is_active: true,
-          statut_inscription: "valide",
+          is_active: isAccepting,
           updated_at: new Date().toISOString(),
         })
         .eq("id", studentId)
         .select()
         .maybeSingle();
 
-      if (error || !updated) {
-        return new NextResponse(
-          renderHtmlResponse({
-            success: false,
-            title: "Erreur de validation",
-            message: "Impossible de mettre à jour le profil de l'étudiant en base de données.",
-          }),
-          { status: 500, headers: { "Content-Type": "text/html; charset=utf-8" } }
-        );
+      if (up2) {
+        updateSuccess = true;
+        if (up2.email) targetEmail = up2.email;
+        if (up2.full_name) targetFullName = up2.full_name;
       }
+    }
 
-      // Log d'audit
+    // 3. Synchronisation obligatoire dans les métadonnées auth.users
+    try {
+      await supabaseAdmin.auth.admin.updateUserById(studentId, {
+        user_metadata: {
+          is_active: isAccepting,
+          statut_inscription: isAccepting ? "valide" : "refuse",
+        },
+      });
+      updateSuccess = true;
+    } catch (authUpdateErr) {
+      console.warn("[AUTH-UPDATE-WARN]", authUpdateErr);
+    }
+
+    if (!updateSuccess && !targetEmail) {
+      return new NextResponse(
+        renderHtmlResponse({
+          success: false,
+          title: "Étudiant introuvable",
+          message: "Le compte de l'étudiant n'a pas pu être identifié dans la base de données HAS.",
+        }),
+        { status: 404, headers: { "Content-Type": "text/html; charset=utf-8" } }
+      );
+    }
+
+    // 4. Log d'audit administrateur
+    try {
+      await supabaseAdmin.from("audit_logs").insert({
+        action: isAccepting ? "VALIDATION_INSCRIPTION_TELEGRAM_ACCEPTEE" : "VALIDATION_INSCRIPTION_TELEGRAM_REFUSEE",
+        details: { student_id: studentId, email: targetEmail, matricule: targetMatricule },
+        ip_address: "telegram-bot",
+      });
+    } catch {}
+
+    // 5. Envoi des emails Resend avec lien direct vers le site
+    if (targetEmail) {
       try {
-        await supabaseAdmin.from("audit_logs").insert({
-          action: "VALIDATION_INSCRIPTION_TELEGRAM_ACCEPTEE",
-          details: { student_id: studentId, email: updated.email, matricule: updated.matricule },
-          ip_address: "telegram-bot",
-        });
-      } catch {}
-
-      // Envoi email Resend de confirmation
-      if (updated.email) {
-        try {
+        if (isAccepting) {
           await sendRegistrationAcceptedEmail({
-            email: updated.email,
-            fullName: updated.full_name || "Étudiant",
-            matricule: updated.matricule,
+            email: targetEmail,
+            fullName: targetFullName,
+            matricule: targetMatricule,
             loginUrl,
           });
-        } catch (emailErr) {
-          console.warn("[TELEGRAM-ACCEPT-RESEND-ERROR]", emailErr);
+        } else {
+          await sendRegistrationRejectedEmail({
+            email: targetEmail,
+            fullName: targetFullName,
+            siteUrl,
+          });
         }
+      } catch (emailErr) {
+        console.warn("[TELEGRAM-RESEND-ERROR]", emailErr);
       }
+    }
 
+    if (isAccepting) {
       return new NextResponse(
         renderHtmlResponse({
           success: true,
           badgeText: "Inscription Validée",
-          title: `Compte activé pour ${updated.full_name || "l'étudiant"}`,
-          message: `L'inscription a été confirmée avec succès. L'étudiant peut dès à présent se connecter à son espace personnel. Un email de confirmation avec le lien direct lui a été expédié via Resend.`,
-          adminDashboardUrl: `${origin}/admin/comptes`,
+          title: `Compte activé pour ${targetFullName}`,
+          message: `L'inscription a été confirmée avec succès. L'étudiant peut dès à présent se connecter à son espace personnel. Un email de confirmation officiel contenant le lien direct vers le site lui a été expédié via Resend.`,
+          adminDashboardUrl: `${origin}/admin/inscriptions`,
         }),
         { status: 200, headers: { "Content-Type": "text/html; charset=utf-8" } }
       );
     } else {
-      const { data: updated, error } = await supabaseAdmin
-        .from("profiles")
-        .update({
-          is_active: false,
-          statut_inscription: "refuse",
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", studentId)
-        .select()
-        .maybeSingle();
-
-      if (error || !updated) {
-        return new NextResponse(
-          renderHtmlResponse({
-            success: false,
-            title: "Erreur de refus",
-            message: "Impossible de modifier le statut de l'étudiant.",
-          }),
-          { status: 500, headers: { "Content-Type": "text/html; charset=utf-8" } }
-        );
-      }
-
-      // Log d'audit
-      try {
-        await supabaseAdmin.from("audit_logs").insert({
-          action: "VALIDATION_INSCRIPTION_TELEGRAM_REFUSEE",
-          details: { student_id: studentId, email: updated.email, matricule: updated.matricule },
-          ip_address: "telegram-bot",
-        });
-      } catch {}
-
-      // Envoi email Resend d'information
-      if (updated.email) {
-        try {
-          await sendRegistrationRejectedEmail({
-            email: updated.email,
-            fullName: updated.full_name || "Candidat",
-            siteUrl,
-          });
-        } catch (emailErr) {
-          console.warn("[TELEGRAM-REJECT-RESEND-ERROR]", emailErr);
-        }
-      }
-
       return new NextResponse(
         renderHtmlResponse({
           success: false,
           isRejection: true,
           badgeText: "Inscription Refusée",
-          title: `Dossier refusé pour ${updated.full_name || "le candidat"}`,
+          title: `Dossier refusé pour ${targetFullName}`,
           message: `La demande d'inscription a été marquée comme refusée. Un email explicatif a été transmis au candidat via Resend.`,
-          adminDashboardUrl: `${origin}/admin/comptes`,
+          adminDashboardUrl: `${origin}/admin/inscriptions`,
         }),
         { status: 200, headers: { "Content-Type": "text/html; charset=utf-8" } }
       );
     }
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : "Erreur serveur";
+    const msg = err instanceof Error ? err.message : "Erreur serveur inattendue";
     return new NextResponse(
       renderHtmlResponse({
         success: false,
-        title: "Erreur inattendue",
+        title: "Erreur serveur",
         message: msg,
       }),
       { status: 500, headers: { "Content-Type": "text/html; charset=utf-8" } }
@@ -180,7 +219,6 @@ function renderHtmlResponse(opts: {
 }) {
   const isOk = opts.success;
   const isRejection = opts.isRejection;
-  const themeColor = isOk ? "#059669" : isRejection ? "#d97706" : "#dc2626";
   const badgeBg = isOk ? "#ecfdf5" : isRejection ? "#fffbeb" : "#fef2f2";
   const badgeColor = isOk ? "#047857" : isRejection ? "#b45309" : "#b91c1c";
 
@@ -209,7 +247,7 @@ function renderHtmlResponse(opts: {
       border: 1px solid #263241;
       border-radius: 20px;
       padding: 36px 28px;
-      max-width: 460px;
+      max-width: 480px;
       width: 100%;
       text-align: center;
       box-shadow: 0 12px 40px rgba(0,0,0,0.5);

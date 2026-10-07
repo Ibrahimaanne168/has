@@ -92,6 +92,8 @@ export async function POST(request: NextRequest) {
     const niveauChoice = parseResult.data.niveau || "L1";
     const classeChoice = `${niveauChoice}-${filiereChoice}`;
 
+    const phone = typeof body?.phone === "string" ? body.phone.trim() : null;
+
     // 3. Création du compte dans Supabase Auth
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
       email,
@@ -105,6 +107,9 @@ export async function POST(request: NextRequest) {
         niveau: niveauChoice,
         classe: classeChoice,
         matricule,
+        phone,
+        is_active: false,
+        statut_inscription: "en_attente",
       },
     });
 
@@ -119,23 +124,32 @@ export async function POST(request: NextRequest) {
     const userId = authData.user.id;
 
     // 4. Insertion dans la table profiles (is_active: false car en attente de validation admin)
-    const { error: profileError } = await supabaseAdmin.from("profiles").upsert({
+    const baseProfileData = {
       id: userId,
       email,
-      username,
+      username: username || null,
       full_name: fullName,
       role: "etudiant",
       matricule,
-      is_active: false, // En attente de validation par l'administrateur
-      has_paid: false,
-      payment_status: "en_attente",
-      statut_inscription: "en_attente",
+      telephone: phone || null,
+      is_active: false,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
+    };
+
+    // Tenter avec statut_inscription en premier
+    const { error: profileError } = await supabaseAdmin.from("profiles").upsert({
+      ...baseProfileData,
+      statut_inscription: "en_attente",
     });
 
     if (profileError) {
-      console.error("[PROFILE-INSERT-ERROR]", profileError);
+      console.warn("[PROFILE-INSERT-OPTIONAL-FAILED, RETRYING CORE]", profileError.message);
+      // Fallback avec uniquement les colonnes du schéma officiel profiles.sql
+      const { error: coreError } = await supabaseAdmin.from("profiles").upsert(baseProfileData);
+      if (coreError) {
+        console.error("[PROFILE-INSERT-CORE-ERROR]", coreError.message);
+      }
     }
 
     // 5. Notification Telegram immédiate à l'administrateur HAS (avec boutons d'action directs)

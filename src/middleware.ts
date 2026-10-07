@@ -94,7 +94,12 @@ export async function middleware(request: NextRequest) {
 
   // Récupération du rôle : vérification profiles si possible, avec fallback robuste sur user_metadata et email
   let userRole = (user.user_metadata?.role as string) || null;
+  const meta = user.user_metadata || {};
   let isActive = true;
+
+  if (userRole === "etudiant") {
+    isActive = meta.is_active === true && meta.statut_inscription === "valide";
+  }
 
   try {
     const { data: profile } = await supabase
@@ -105,11 +110,10 @@ export async function middleware(request: NextRequest) {
 
     if (profile) {
       if (profile.role) userRole = profile.role;
-      if (profile.is_active !== undefined && profile.is_active !== null) {
+      if (profile.role === "etudiant") {
+        isActive = profile.is_active === true && profile.statut_inscription === "valide";
+      } else if (profile.is_active !== undefined && profile.is_active !== null) {
         isActive = profile.is_active;
-      }
-      if (profile.role === "etudiant" && profile.statut_inscription !== "valide") {
-        isActive = false;
       }
     }
   } catch {

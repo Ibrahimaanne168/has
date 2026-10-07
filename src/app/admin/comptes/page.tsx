@@ -52,35 +52,82 @@ export default function AdminComptesPage() {
     const storedProfs = getStoredProfesseurs();
     const storedStudents = getStoredStudents();
     setProfs(storedProfs);
-    const combined: Profile[] = [
-      ...storedStudents,
-      ...storedProfs.map((p) => ({
-        id: p.id,
-        email: p.email,
-        username: p.username || null,
-        full_name: p.full_name,
-        role: "professeur" as UserRole,
-        phone: p.phone,
-        matricule: p.matricule,
-        filiere_id: p.filiere_id || null,
-        classe_id: null,
-        bio: p.bio,
-        specialite: p.specialite,
-        avatar_url: p.photo || p.avatar_url || null,
-        is_active: p.is_active,
-        created_at: p.created_at || new Date().toISOString(),
-        updated_at: p.updated_at || new Date().toISOString(),
-      })),
-    ];
-    setUsers(combined);
 
-    // Charger les inscriptions en attente de validation administrative
-    fetch("/api/admin/validation-inscriptions")
+    // Charger les inscriptions en attente de validation administrative et tous les comptes du serveur
+    fetch("/api/admin/validation-inscriptions?status=all")
       .then((res) => res.json())
       .then((data) => {
         if (data.pendingStudents) setPendingStudents(data.pendingStudents);
+
+        const serverStudents: Profile[] = (data.students || []).map((s: any) => ({
+          id: s.id,
+          email: s.email,
+          username: s.username || null,
+          full_name: s.full_name,
+          role: "etudiant" as UserRole,
+          phone: s.telephone || null,
+          matricule: s.matricule || null,
+          filiere_id: s.filiere || null,
+          classe_id: s.niveau ? `${s.niveau} ${s.filiere || "MPI"}` : null,
+          is_active: s.is_active,
+          created_at: s.created_at || new Date().toISOString(),
+          updated_at: s.updated_at || new Date().toISOString(),
+        }));
+
+        // Fusionner avec les étudiants locaux sans doublons (clé: email ou id)
+        const studentMap = new Map<string, Profile>();
+        for (const st of storedStudents) {
+          studentMap.set(st.email?.toLowerCase() || st.id, st);
+        }
+        for (const st of serverStudents) {
+          studentMap.set(st.email?.toLowerCase() || st.id, st);
+        }
+
+        const combined: Profile[] = [
+          ...Array.from(studentMap.values()),
+          ...storedProfs.map((p) => ({
+            id: p.id,
+            email: p.email,
+            username: p.username || null,
+            full_name: p.full_name,
+            role: "professeur" as UserRole,
+            phone: p.phone,
+            matricule: p.matricule,
+            filiere_id: p.filiere_id || null,
+            classe_id: null,
+            bio: p.bio,
+            specialite: p.specialite,
+            avatar_url: p.photo || p.avatar_url || null,
+            is_active: p.is_active,
+            created_at: p.created_at || new Date().toISOString(),
+            updated_at: p.updated_at || new Date().toISOString(),
+          })),
+        ];
+        setUsers(combined);
       })
-      .catch(() => {});
+      .catch(() => {
+        const combined: Profile[] = [
+          ...storedStudents,
+          ...storedProfs.map((p) => ({
+            id: p.id,
+            email: p.email,
+            username: p.username || null,
+            full_name: p.full_name,
+            role: "professeur" as UserRole,
+            phone: p.phone,
+            matricule: p.matricule,
+            filiere_id: p.filiere_id || null,
+            classe_id: null,
+            bio: p.bio,
+            specialite: p.specialite,
+            avatar_url: p.photo || p.avatar_url || null,
+            is_active: p.is_active,
+            created_at: p.created_at || new Date().toISOString(),
+            updated_at: p.updated_at || new Date().toISOString(),
+          })),
+        ];
+        setUsers(combined);
+      });
   };
 
   const handleValidateStudent = async (studentId: string, action: "accept" | "reject") => {

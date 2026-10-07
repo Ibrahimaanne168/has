@@ -94,8 +94,13 @@ function ConnexionForm() {
 
         // Détection du rôle de l'utilisateur
         let role = detectedRole || data.user?.user_metadata?.role;
+        const meta = data.user?.user_metadata || {};
 
         // VÉRIFICATION SYSTÉMATIQUE DU STATUT ÉTUDIANT (Validation administrative obligatoire)
+        let isEtudiant = role === "etudiant" || meta.role === "etudiant";
+        let isAccepted = meta.is_active === true && meta.statut_inscription === "valide";
+        let isRejected = meta.statut_inscription === "refuse";
+
         try {
           const { data: profile } = await supabase
             .from("profiles")
@@ -104,22 +109,31 @@ function ConnexionForm() {
             .maybeSingle();
 
           if (profile) {
-            if (profile.role) role = profile.role;
-
-            // Si c'est un compte étudiant : vérification stricte de l'autorisation d'entrée
-            if (profile.role === "etudiant" && (profile.is_active === false || profile.statut_inscription !== "valide")) {
-              await supabase.auth.signOut();
-              setErrorMsg(
-                profile.statut_inscription === "refuse"
-                  ? "Votre demande d'inscription a été refusée par l'administration de HAS. L'accès aux espaces académiques vous est refusé."
-                  : "Votre inscription est actuellement en attente de validation par l'administration de HAS. Vous recevrez un email dès que votre accès sera approuvé par la direction."
-              );
-              setIsLoading(false);
-              return;
+            if (profile.role) {
+              role = profile.role;
+              isEtudiant = profile.role === "etudiant";
+            }
+            if (profile.statut_inscription) {
+              isAccepted = profile.is_active === true && profile.statut_inscription === "valide";
+              isRejected = profile.statut_inscription === "refuse";
+            } else if (profile.is_active !== undefined && profile.is_active !== null) {
+              isAccepted = profile.is_active === true;
             }
           }
         } catch (profileErr) {
           console.warn("[LOGIN-PROFILE-CHECK]", profileErr);
+        }
+
+        // Si c'est un compte étudiant non encore validé : blocage et message clair
+        if (isEtudiant && !isAccepted) {
+          await supabase.auth.signOut();
+          setErrorMsg(
+            isRejected
+              ? "Votre demande d'inscription a été refusée par l'administration de HAS. L'accès aux espaces académiques vous est refusé."
+              : "Votre inscription est actuellement en attente de validation par l'administration de HAS. Vous recevrez un email dès que votre accès sera approuvé par la direction."
+          );
+          setIsLoading(false);
+          return;
         }
 
         if (typeof window !== "undefined") {
