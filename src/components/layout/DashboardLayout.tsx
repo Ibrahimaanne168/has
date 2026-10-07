@@ -23,6 +23,7 @@ import {
   BarChart3,
   Sliders,
   LifeBuoy,
+  UserCheck,
 } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { NotificationBanner } from "@/components/ui/NotificationBanner";
@@ -80,6 +81,7 @@ export function DashboardLayout({
 
   const adminNav: NavItem[] = [
     { label: "Supervision Globale", href: "/admin", icon: <BarChart3 className="w-5 h-5" /> },
+    { label: "Validation Inscriptions", href: "/admin/inscriptions", icon: <UserCheck className="w-5 h-5" /> },
     { label: "Gestion des Comptes", href: "/admin/comptes", icon: <Users className="w-5 h-5" /> },
     { label: "Cours & Chapitres", href: "/admin/cours", icon: <BookOpen className="w-5 h-5" /> },
     { label: "Emplois du Temps", href: "/admin/edt", icon: <Calendar className="w-5 h-5" /> },

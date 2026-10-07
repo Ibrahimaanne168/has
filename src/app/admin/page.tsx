@@ -84,12 +84,13 @@ export default function AdminDashboard() {
         {/* Actions rapides Admin */}
         <div className="bg-white dark:bg-[#111821] rounded-xl border border-slate-200/90 dark:border-[#263241] p-6 shadow-xs dark:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.4)] space-y-4">
           <h2 className="font-serif text-lg font-bold text-[#0f2744] dark:text-[#F5F7FA]">Actions Administratives Rapides</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
             {[
-              { label: "Gérer les comptes", href: "/admin/comptes", icon: <UserCheck className="w-5 h-5" /> },
+              { label: "Valider Inscriptions", href: "/admin/inscriptions", icon: <UserCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> },
+              { label: "Gérer les comptes", href: "/admin/comptes", icon: <Users className="w-5 h-5" /> },
               { label: "Cours & Chapitres", href: "/admin/cours", icon: <BookOpen className="w-5 h-5" /> },
               { label: "Publier EDT", href: "/admin/edt", icon: <Calendar className="w-5 h-5" /> },
-              { label: "Nouveau communiqué", href: "/admin/communiques", icon: <Bell className="w-5 h-5" /> },
+              { label: "Communiqués", href: "/admin/communiques", icon: <Bell className="w-5 h-5" /> },
             ].map((action) => (
               <Link key={action.href} href={action.href}>
                 <div className="p-4 rounded-lg border border-slate-200 dark:border-[#263241] hover:border-[#0f2744]/40 dark:hover:border-[#e0521c]/50 hover:bg-slate-50/80 dark:hover:bg-[#151D27] transition-all text-center space-y-2 cursor-pointer group">

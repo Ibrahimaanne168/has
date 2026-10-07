@@ -5,26 +5,49 @@ import {
   sendRegistrationRejectedEmail,
 } from "@/lib/resend";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const supabaseAdmin = createAdminClient();
+    const statusParam = request.nextUrl.searchParams.get("status") || "pending";
 
-    // Récupérer les étudiants en attente de validation ou inactifs
-    const { data: pendingStudents, error } = await supabaseAdmin
+    // Récupérer tous les profils étudiants pour les compteurs
+    const { data: allStudents, error: allErr } = await supabaseAdmin
       .from("profiles")
       .select("*")
       .eq("role", "etudiant")
-      .eq("is_active", false)
       .order("created_at", { ascending: false });
 
-    if (error) {
-      console.error("[GET-PENDING-STUDENTS-ERROR]", error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+    if (allErr) {
+      console.error("[GET-STUDENTS-ERROR]", allErr);
+      return NextResponse.json({ error: allErr.message }, { status: 500 });
     }
+
+    const studentsList = allStudents || [];
+    const pendingList = studentsList.filter(
+      (s) => s.is_active === false || s.statut_inscription === "en_attente" || !s.statut_inscription
+    );
+    const validatedList = studentsList.filter(
+      (s) => s.is_active === true && s.statut_inscription === "valide"
+    );
+    const rejectedList = studentsList.filter(
+      (s) => s.statut_inscription === "refuse"
+    );
+
+    let filtered = pendingList;
+    if (statusParam === "all") filtered = studentsList;
+    else if (statusParam === "valide" || statusParam === "validated") filtered = validatedList;
+    else if (statusParam === "refuse" || statusParam === "rejected") filtered = rejectedList;
 
     return NextResponse.json({
       success: true,
-      pendingStudents: pendingStudents || [],
+      pendingStudents: pendingList,
+      students: filtered,
+      counts: {
+        pending: pendingList.length,
+        validated: validatedList.length,
+        rejected: rejectedList.length,
+        total: studentsList.length,
+      },
     });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : "Erreur";
