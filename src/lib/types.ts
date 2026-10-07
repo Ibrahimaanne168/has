@@ -20,6 +20,8 @@ export interface Profile {
   specialite: string | null;
   avatar_url: string | null;
   is_active: boolean;
+  has_paid?: boolean;
+  payment_status?: string;
   created_at: string;
   updated_at: string;
   // Relations jointes optionnelles

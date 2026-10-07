@@ -23,6 +23,7 @@ import {
 import { useCurrentUser } from "@/lib/useCurrentUser";
 import { getStoredCourses, getStoredEDTs } from "@/lib/academicStorage";
 import { Cours, EmploiDuTemps } from "@/lib/types";
+import { downloadOrOpenDocument } from "@/lib/fileDownload";
 
 export default function EtudiantDashboard() {
   const { user } = useCurrentUser();
@@ -81,6 +82,7 @@ export default function EtudiantDashboard() {
             </div>
           </div>
         </div>
+
 
         {/* ============================================================================== */}
         {/* ALERTE OFFICIELLE EMPLOI DU TEMPS */}
@@ -196,14 +198,20 @@ export default function EtudiantDashboard() {
                 {/* 5. Pied de carte */}
                 <CardFooter className="flex items-center justify-between gap-2 p-3 bg-slate-50/70 dark:bg-[#151D27] border-t border-slate-100/90 dark:border-[#263241]">
                   {c.file_url ? (
-                    <a
-                      href={c.file_url || "#"}
-                      download={c.file_name || `${(c.title || "cours").replace(/[/\\?%*:|"<>]/g, "_")}.pdf`}
-                      className="inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-1.5 bg-[#0f2744] dark:bg-[#1a385c] text-white hover:bg-[#183a62] dark:hover:bg-[#234b7a] dark:border dark:border-[#2b4c73] rounded-lg transition-colors flex-1"
+                    <button
+                      type="button"
+                      onClick={(e) =>
+                        downloadOrOpenDocument(
+                          c.file_url!,
+                          c.file_name || `${(c.title || "cours").replace(/[/\\?%*:|"<>]/g, "_")}.pdf`,
+                          e
+                        )
+                      }
+                      className="inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-1.5 bg-[#0f2744] dark:bg-[#1a385c] text-white hover:bg-[#183a62] dark:hover:bg-[#234b7a] dark:border dark:border-[#2b4c73] rounded-lg transition-colors flex-1 cursor-pointer active:scale-95"
                     >
                       <Download className="w-3.5 h-3.5" />
                       Télécharger le PDF
-                    </a>
+                    </button>
                   ) : null}
                 </CardFooter>
               </Card>

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import {
   Search, Plus, Edit2, Trash2, User, GraduationCap, Shield,
   CheckCircle2, AlertCircle, X, Save, UserCheck, BookOpen,
+  Clock, Check, UserPlus,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/Button";
@@ -30,6 +31,7 @@ export default function AdminComptesPage() {
   const [editUser, setEditUser] = useState<Profile | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [pendingStudents, setPendingStudents] = useState<any[]>([]);
 
   // Form state
   const [formName, setFormName] = useState("");
@@ -71,6 +73,34 @@ export default function AdminComptesPage() {
       })),
     ];
     setUsers(combined);
+
+    // Charger les inscriptions en attente de validation administrative
+    fetch("/api/admin/validation-inscriptions")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.pendingStudents) setPendingStudents(data.pendingStudents);
+      })
+      .catch(() => {});
+  };
+
+  const handleValidateStudent = async (studentId: string, action: "accept" | "reject") => {
+    try {
+      const res = await fetch("/api/admin/validation-inscriptions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ studentId, action }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSuccessMsg(data.message);
+        setTimeout(() => setSuccessMsg(null), 4000);
+        loadData();
+      } else {
+        alert(data.error || "Erreur lors de la validation");
+      }
+    } catch {
+      alert("Erreur de communication avec le serveur");
+    }
   };
 
   useEffect(() => {
@@ -275,6 +305,74 @@ export default function AdminComptesPage() {
           <div className="p-4 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200/90 dark:border-emerald-800 flex items-center gap-3 shadow-xs">
             <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
             <p className="text-sm font-medium text-emerald-800 dark:text-emerald-200">{successMsg}</p>
+          </div>
+        )}
+
+        {/* SECTION : INSCRIPTIONS EN ATTENTE DE VALIDATION */}
+        {pendingStudents.length > 0 && (
+          <div className="bg-amber-50/70 dark:bg-amber-950/20 border-2 border-amber-300 dark:border-amber-800 rounded-2xl p-5 shadow-sm space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-700 dark:text-amber-300 flex items-center justify-center font-bold">
+                  <Clock className="w-4 h-4" />
+                </div>
+                <div>
+                  <h2 className="font-serif text-base font-bold text-slate-900 dark:text-[#F5F7FA]">
+                    Demandes d&apos;inscription en attente de validation ({pendingStudents.length})
+                  </h2>
+                  <p className="text-xs text-slate-600 dark:text-[#AAB4C0]">
+                    Ces étudiants ont soumis leur inscription et attendent votre autorisation pour accéder à la plateforme.
+                  </p>
+                </div>
+              </div>
+              <span className="text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-200 border border-amber-300/80 dark:border-amber-700/80 self-start sm:self-auto">
+                Action requise
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+              {pendingStudents.map((st) => (
+                <div
+                  key={st.id}
+                  className="bg-white dark:bg-[#111821] border border-amber-200 dark:border-[#263241] rounded-xl p-4 flex flex-col justify-between gap-3 shadow-xs"
+                >
+                  <div className="space-y-1">
+                    <div className="flex items-start justify-between gap-2">
+                      <span className="font-bold text-sm text-slate-900 dark:text-[#F5F7FA]">
+                        {st.full_name || "Candidat sans nom"}
+                      </span>
+                      <span className="font-mono text-[11px] font-bold text-[#e0521c] bg-orange-50 dark:bg-[#151D27] px-2 py-0.5 rounded border border-orange-200 dark:border-[#263241]">
+                        {st.matricule || "Nouveau"}
+                      </span>
+                    </div>
+                    <div className="text-xs text-slate-500 dark:text-[#AAB4C0] space-y-0.5">
+                      <p>📧 {st.email}</p>
+                      {st.phone && <p>📞 {st.phone}</p>}
+                      <p>🎓 {st.filiere_id || st.classe || "MPI"}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 pt-2 border-t border-slate-100 dark:border-[#263241]">
+                    <button
+                      type="button"
+                      onClick={() => handleValidateStudent(st.id, "accept")}
+                      className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-xs active:scale-95 cursor-pointer"
+                    >
+                      <Check className="w-3.5 h-3.5" />
+                      Accepter
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleValidateStudent(st.id, "reject")}
+                      className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg bg-slate-100 dark:bg-[#151D27] hover:bg-rose-50 dark:hover:bg-rose-950/40 text-slate-600 hover:text-rose-600 dark:text-[#AAB4C0] dark:hover:text-rose-300 border border-slate-200 dark:border-[#263241] text-xs font-semibold transition-all cursor-pointer"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                      Refuser
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 

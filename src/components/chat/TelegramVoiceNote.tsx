@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useMemo } from "react";
-import { Play, Pause, Mic, Check, CheckCheck } from "lucide-react";
+import { Play, Pause, Mic, AlertCircle } from "lucide-react";
 
 interface TelegramVoiceNoteProps {
   src: string;
@@ -38,7 +38,6 @@ function generateWaveformBars(seedStr: string, count = 36): number[] {
 export function TelegramVoiceNote({
   src,
   isMe = false,
-  roleAccent = "#0f2744",
   timestamp,
   messageId,
 }: TelegramVoiceNoteProps) {
@@ -47,77 +46,54 @@ export function TelegramVoiceNote({
   const [duration, setDuration] = useState(0);
   const [playbackRate, setPlaybackRate] = useState<1 | 1.5 | 2>(1);
   const [isHovered, setIsHovered] = useState(false);
+  const [hasError, setHasError] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const waveformRef = useRef<HTMLDivElement>(null);
 
   // Barre d'ondes déterministe
   const bars = useMemo(() => generateWaveformBars(src.slice(0, 120) || "telegram-voice", 36), [src]);
 
-  // Initialisation de l'élément Audio
+  // Écoute de l'événement global pour couper le son quand un autre lecteur démarre
   useEffect(() => {
-    const audio = new Audio(src);
-    audioRef.current = audio;
-
-    const handleLoadedMetadata = () => {
-      if (audio.duration && !isNaN(audio.duration) && isFinite(audio.duration)) {
-        setDuration(audio.duration);
-      }
-    };
-
-    const handleTimeUpdate = () => {
-      setCurrentTime(audio.currentTime);
-      if (audio.duration && (!duration || isNaN(duration) || !isFinite(duration))) {
-        setDuration(audio.duration);
-      }
-    };
-
-    const handleEnded = () => {
-      setIsPlaying(false);
-      setCurrentTime(0);
-    };
-
-    const handleError = () => {
-      setIsPlaying(false);
-    };
-
-    audio.addEventListener("loadedmetadata", handleLoadedMetadata);
-    audio.addEventListener("timeupdate", handleTimeUpdate);
-    audio.addEventListener("ended", handleEnded);
-    audio.addEventListener("error", handleError);
-
-    // Écoute des autres lecteurs pour couper le son quand un autre démarre
-    const handleGlobalPlay = (e: CustomEvent) => {
+    const handleGlobalPlay = (e: any) => {
       if (e.detail?.id !== messageId && audioRef.current) {
         audioRef.current.pause();
         setIsPlaying(false);
       }
     };
-    window.addEventListener("has_audio_play" as any, handleGlobalPlay);
-
+    window.addEventListener("has_audio_play", handleGlobalPlay);
     return () => {
-      audio.pause();
-      audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
-      audio.removeEventListener("timeupdate", handleTimeUpdate);
-      audio.removeEventListener("ended", handleEnded);
-      audio.removeEventListener("error", handleError);
-      window.removeEventListener("has_audio_play" as any, handleGlobalPlay);
+      window.removeEventListener("has_audio_play", handleGlobalPlay);
+      if (audioRef.current) {
+        try {
+          audioRef.current.pause();
+        } catch {}
+      }
     };
-  }, [src, messageId]);
+  }, [messageId]);
 
-  const togglePlay = () => {
-    if (!audioRef.current) return;
+  const togglePlay = async () => {
+    const audio = audioRef.current;
+    if (!audio) return;
 
     if (isPlaying) {
-      audioRef.current.pause();
+      audio.pause();
       setIsPlaying(false);
     } else {
+      setHasError(false);
       // Notifier les autres lecteurs
       window.dispatchEvent(new CustomEvent("has_audio_play", { detail: { id: messageId } }));
-      audioRef.current.playbackRate = playbackRate;
-      audioRef.current
-        .play()
-        .then(() => setIsPlaying(true))
-        .catch(() => setIsPlaying(false));
+      try {
+        await audio.play();
+        setIsPlaying(true);
+        try {
+          audio.playbackRate = playbackRate;
+        } catch {}
+      } catch (err) {
+        console.warn("[AUDIO PLAY FAILED ON IOS/BROWSER]", err);
+        setIsPlaying(false);
+        setHasError(true);
+      }
     }
   };
 
@@ -125,7 +101,9 @@ export function TelegramVoiceNote({
     const nextRate: 1 | 1.5 | 2 = playbackRate === 1 ? 1.5 : playbackRate === 1.5 ? 2 : 1;
     setPlaybackRate(nextRate);
     if (audioRef.current) {
-      audioRef.current.playbackRate = nextRate;
+      try {
+        audioRef.current.playbackRate = nextRate;
+      } catch {}
     }
   };
 
@@ -135,8 +113,10 @@ export function TelegramVoiceNote({
     const clickX = e.clientX - rect.left;
     const ratio = Math.max(0, Math.min(1, clickX / rect.width));
     const targetTime = ratio * (duration || 5);
-    audioRef.current.currentTime = targetTime;
-    setCurrentTime(targetTime);
+    try {
+      audioRef.current.currentTime = targetTime;
+      setCurrentTime(targetTime);
+    } catch {}
   };
 
   const formatTime = (secs: number) => {
@@ -161,40 +141,48 @@ export function TelegramVoiceNote({
 
   return (
     <div
-      className={`group/voice select-none flex items-center gap-3 py-1 px-1 min-w-[240px] sm:min-w-[280px] max-w-[340px]`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      className="flex items-center gap-3 py-1 px-1 min-w-[240px] max-w-[320px] select-none"
     >
-      {/* Bouton Play/Pause circulaire avec anneau de progression SVG */}
-      <div className="relative shrink-0 flex items-center justify-center">
-        <svg className="w-11 h-11 -rotate-90 pointer-events-none" viewBox="0 0 44 44">
-          <circle
-            cx="22"
-            cy="22"
-            r="19"
-            fill="none"
-            stroke={isMe ? "rgba(255,255,255,0.25)" : "rgba(15,39,68,0.12)"}
-            strokeWidth="2.5"
-          />
-          <circle
-            cx="22"
-            cy="22"
-            r="19"
-            fill="none"
-            stroke={isMe ? "#ffffff" : "#e0521c"}
-            strokeWidth="2.5"
-            strokeDasharray={2 * Math.PI * 19}
-            strokeDashoffset={2 * Math.PI * 19 * (1 - progress)}
-            strokeLinecap="round"
-            className="transition-all duration-100"
-          />
-        </svg>
+      {/* Élément audio attaché au DOM pour compatibilité iOS Safari / iPadOS */}
+      <audio
+        ref={audioRef}
+        src={src}
+        preload="metadata"
+        playsInline
+        webkit-playsinline="true"
+        onLoadedMetadata={(e) => {
+          const a = e.currentTarget;
+          if (a.duration && isFinite(a.duration) && !isNaN(a.duration)) {
+            setDuration(a.duration);
+          }
+        }}
+        onTimeUpdate={(e) => {
+          const a = e.currentTarget;
+          setCurrentTime(a.currentTime);
+          if (a.duration && isFinite(a.duration) && (!duration || !isFinite(duration))) {
+            setDuration(a.duration);
+          }
+        }}
+        onEnded={() => {
+          setIsPlaying(false);
+          setCurrentTime(0);
+        }}
+        onError={() => {
+          setIsPlaying(false);
+          setHasError(true);
+        }}
+        className="hidden"
+      />
 
+      {/* Bouton Play/Pause circulaire façon Telegram */}
+      <div className="shrink-0">
         <button
           type="button"
           onClick={togglePlay}
           title={isPlaying ? "Mettre en pause" : "Écouter le message vocal"}
-          className={`absolute w-8 h-8 rounded-full flex items-center justify-center shadow-sm transition-transform active:scale-95 ${playButtonBg}`}
+          className={`w-10 h-10 rounded-full flex items-center justify-center shadow-sm transition-transform active:scale-95 cursor-pointer ${playButtonBg}`}
         >
           {isPlaying ? (
             <Pause className="w-4 h-4 fill-current" />
@@ -229,12 +217,21 @@ export function TelegramVoiceNote({
         {/* Pied : temps écoulé, vitesse 1X/1.5X/2X & statut */}
         <div className="flex items-center justify-between text-[11px] font-medium mt-0.5">
           <div className="flex items-center gap-1.5 opacity-90">
-            <Mic className="w-3 h-3 opacity-60" />
-            <span className="font-mono text-[10.5px]">
-              {isPlaying || currentTime > 0
-                ? `${formatTime(currentTime)} / ${formatTime(duration || 0)}`
-                : formatTime(duration || 0)}
-            </span>
+            {hasError ? (
+              <span className="flex items-center gap-1 text-[10px] text-amber-500 font-medium">
+                <AlertCircle className="w-3 h-3 shrink-0" />
+                Format audio
+              </span>
+            ) : (
+              <>
+                <Mic className="w-3 h-3 opacity-60" />
+                <span className="font-mono text-[10.5px]">
+                  {isPlaying || currentTime > 0
+                    ? `${formatTime(currentTime)} / ${formatTime(duration || 0)}`
+                    : formatTime(duration || 0)}
+                </span>
+              </>
+            )}
           </div>
 
           <div className="flex items-center gap-1.5">

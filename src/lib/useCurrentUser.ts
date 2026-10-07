@@ -111,6 +111,8 @@ export function useCurrentUser() {
             specialite: foundFiliere.name,
             avatar_url: dbProfile?.avatar_url || meta.avatar_url || null,
             is_active: true,
+            has_paid: dbProfile?.has_paid !== undefined ? dbProfile.has_paid : true,
+            payment_status: dbProfile?.payment_status || "paid",
             created_at: authUser.created_at,
             updated_at: new Date().toISOString(),
             classe: foundClasse,

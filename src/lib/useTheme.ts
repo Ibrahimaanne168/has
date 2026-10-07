@@ -5,7 +5,7 @@ import { useEffect, useState, useCallback } from "react";
 export type Theme = "light" | "dark";
 
 export function useTheme() {
-  const [theme, setTheme] = useState<Theme>("dark");
+  const [theme, setTheme] = useState<Theme>("light");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -20,12 +20,12 @@ export function useTheme() {
           document.documentElement.classList.remove("dark");
         }
       } else {
-        // Mode sombre par défaut
-        setTheme("dark");
-        document.documentElement.classList.add("dark");
+        // Mode blanc par défaut
+        setTheme("light");
+        document.documentElement.classList.remove("dark");
       }
     } catch {
-      document.documentElement.classList.add("dark");
+      document.documentElement.classList.remove("dark");
     }
 
     const handleStorage = (e: StorageEvent) => {

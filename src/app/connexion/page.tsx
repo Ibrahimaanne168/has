@@ -98,12 +98,24 @@ function ConnexionForm() {
           try {
             const { data: profile } = await supabase
               .from("profiles")
-              .select("role")
+              .select("role, is_active, statut_inscription")
               .eq("id", data.user.id)
               .maybeSingle();
 
-            if (profile?.role) {
-              role = profile.role;
+            if (profile) {
+              if (profile.role) role = profile.role;
+
+              // Si le compte étudiant est encore en attente de validation par l'admin
+              if (profile.role === "etudiant" && profile.is_active === false) {
+                await supabase.auth.signOut();
+                setErrorMsg(
+                  profile.statut_inscription === "refuse"
+                    ? "Votre inscription a été refusée par l'administration de HAS."
+                    : "Votre demande d'inscription est actuellement en attente de validation par l'administration. Dès validation de votre dossier, vous pourrez vous connecter."
+                );
+                setIsLoading(false);
+                return;
+              }
             }
           } catch {
             // Ignorer si la table profiles n'est pas encore créée

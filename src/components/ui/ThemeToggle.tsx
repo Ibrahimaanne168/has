@@ -13,7 +13,7 @@ export function ThemeToggle({
 }) {
   const { theme, toggleTheme, mounted } = useTheme();
 
-  const isDark = mounted ? theme === "dark" : true; // Default dark during SSR
+  const isDark = mounted ? theme === "dark" : false; // Mode blanc par défaut durant SSR
 
   return (
     <button

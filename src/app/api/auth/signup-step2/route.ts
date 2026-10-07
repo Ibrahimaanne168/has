@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { signupStep2Schema } from "@/lib/validators";
 import { createAdminClient } from "@/lib/supabase/service-role";
+import { sendTelegramAdminNotification } from "@/lib/telegram";
 
 export async function POST(request: NextRequest) {
   try {
@@ -117,15 +118,18 @@ export async function POST(request: NextRequest) {
 
     const userId = authData.user.id;
 
-    // 4. Insertion dans la table profiles
+    // 4. Insertion dans la table profiles (is_active: false car en attente de validation admin)
     const { error: profileError } = await supabaseAdmin.from("profiles").upsert({
       id: userId,
       email,
       username,
       full_name: fullName,
-      role: "etudiant", // Rôle par défaut imposé (seul l'admin peut promouvoir)
+      role: "etudiant",
       matricule,
-      is_active: true,
+      is_active: false, // En attente de validation par l'administrateur
+      has_paid: false,
+      payment_status: "en_attente",
+      statut_inscription: "en_attente",
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     });
@@ -134,13 +138,27 @@ export async function POST(request: NextRequest) {
       console.error("[PROFILE-INSERT-ERROR]", profileError);
     }
 
-    // 5. Journalisation d'audit
+    // 5. Notification Telegram immédiate à l'administrateur HAS
+    try {
+      await sendTelegramAdminNotification({
+        fullName,
+        email,
+        filiere: filiereChoice,
+        niveau: niveauChoice,
+        matricule,
+        username,
+      });
+    } catch (teleErr) {
+      console.warn("[TELEGRAM-NOTIF-FAILED]", teleErr);
+    }
+
+    // 6. Journalisation d'audit
     try {
       const ip = request.headers.get("x-forwarded-for") || "local";
       await supabaseAdmin.from("audit_logs").insert({
         user_id: userId,
-        action: "INSCRIPTION_ETUDIANT_2FA",
-        details: { email, matricule, username },
+        action: "DEMANDE_INSCRIPTION_ETUDIANT",
+        details: { email, matricule, username, filiere: filiereChoice, niveau: niveauChoice },
         ip_address: ip,
       });
     } catch (auditErr) {
@@ -149,14 +167,19 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: "Votre compte Halil Académie Scientifique a été créé avec succès.",
+      pendingApproval: true,
+      message: "Votre demande d'inscription a été transmise à l'administration de HAS. L'administrateur va valider votre dossier.",
       user: {
         id: userId,
         email,
         fullName,
         username,
         matricule,
+        filiere: filiereChoice,
+        niveau: niveauChoice,
         role: "etudiant",
+        is_active: false,
+        statut_inscription: "en_attente",
       },
     });
   } catch (err: unknown) {

@@ -18,6 +18,9 @@ import {
   EyeOff,
   Loader2,
   XCircle,
+  Clock,
+  ShieldCheck,
+  Bell,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -52,7 +55,12 @@ export default function InscriptionPage() {
   const [infoMsg, setInfoMsg] = useState<string | null>(null);
   const [devCode, setDevCode] = useState<string | null>(null);
   const [resendCooldown, setResendCooldown] = useState(0);
-  const [createdUser, setCreatedUser] = useState<{ matricule: string; fullName: string } | null>(null);
+  const [createdUser, setCreatedUser] = useState<{
+    id?: string;
+    email?: string;
+    matricule: string;
+    fullName: string;
+  } | null>(null);
 
   // Timer cooldown pour le renvoi de code
   useEffect(() => {
@@ -250,6 +258,8 @@ export default function InscriptionPage() {
       }
 
       setCreatedUser({
+        id: data.user?.id,
+        email: data.user?.email || email,
         matricule: data.user?.matricule || "ETU001",
         fullName,
       });
@@ -310,6 +320,7 @@ export default function InscriptionPage() {
                 { num: 1, label: "Identité" },
                 { num: 2, label: "Confirmation Email" },
                 { num: 3, label: "Compte" },
+                { num: 4, label: "Validation Admin" },
               ].map((s) => (
                 <div key={s.num} className="relative z-10 flex flex-col items-center">
                   <div
@@ -645,37 +656,66 @@ export default function InscriptionPage() {
           )}
 
           {/* ============================================================================== */}
-          {/* ÉTAPE 4 : SUCCÈS & ATTRIBUTION MATRICULE */}
+          {/* ÉTAPE 4 : CONFIRMATION & EN ATTENTE DE VALIDATION ADMIN */}
           {/* ============================================================================== */}
           {step === 4 && (
-            <div className="text-center space-y-6 py-4">
-              <div className="w-16 h-16 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400 rounded-xl flex items-center justify-center mx-auto">
-                <CheckCircle2 className="w-10 h-10" />
+            <div className="text-center space-y-6 py-2">
+              <div className="w-16 h-16 bg-amber-50 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-800 text-amber-600 dark:text-amber-400 rounded-2xl flex items-center justify-center mx-auto shadow-inner">
+                <Clock className="w-9 h-9" />
               </div>
 
               <div className="space-y-2">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 text-xs font-bold border border-amber-200 dark:border-amber-800">
+                  <ShieldCheck className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                  <span>Dossier transmis • En attente de validation</span>
+                </div>
                 <h3 className="font-serif text-2xl font-bold text-[#0f2744] dark:text-[#F5F7FA]">
-                  Bienvenue à Halil Académie Scientifique !
+                  Demande d&apos;inscription transmise !
                 </h3>
-                <p className="text-sm text-slate-600 dark:text-[#AAB4C0]">
-                  Félicitations <strong>{createdUser?.fullName}</strong>, votre compte étudiant a été créé
-                  et votre identité a été certifiée par double facteur.
+                <p className="text-sm text-slate-600 dark:text-[#AAB4C0] max-w-md mx-auto">
+                  Félicitations <strong>{createdUser?.fullName}</strong> ! Votre dossier a été transmis à l&apos;administration de Halil Académie Scientifique.
                 </p>
               </div>
 
-              <div className="p-4 bg-slate-50 dark:bg-[#151D27] rounded-xl border border-slate-200/90 dark:border-[#263241] inline-block text-left w-full max-w-sm">
-                <span className="text-xs text-slate-500 dark:text-[#AAB4C0] uppercase tracking-wider block">
-                  Matricule officiel attribué :
-                </span>
-                <span className="font-mono text-lg font-bold text-[#0f2744] dark:text-[#e0521c] block mt-1">
-                  {createdUser?.matricule}
-                </span>
-                <span className="text-xs text-slate-400 dark:text-[#687585] block mt-2">
-                  Conservez ce matricule pour vos examens et relevés de notes.
-                </span>
+              {/* Récapitulatif du dossier */}
+              <div className="bg-slate-50 dark:bg-[#151D27] rounded-2xl border border-slate-200/90 dark:border-[#263241] p-4 text-left space-y-2 text-xs w-full">
+                <div className="flex justify-between py-1.5 border-b border-slate-200/60 dark:border-[#263241]">
+                  <span className="text-slate-500 dark:text-[#AAB4C0]">Candidat :</span>
+                  <span className="font-bold text-slate-900 dark:text-[#F5F7FA]">{createdUser?.fullName}</span>
+                </div>
+                <div className="flex justify-between py-1.5 border-b border-slate-200/60 dark:border-[#263241]">
+                  <span className="text-slate-500 dark:text-[#AAB4C0]">Matricule officiel :</span>
+                  <span className="font-mono font-bold text-[#0f2744] dark:text-[#e0521c]">
+                    {createdUser?.matricule}
+                  </span>
+                </div>
+                <div className="flex justify-between py-1.5 border-b border-slate-200/60 dark:border-[#263241]">
+                  <span className="text-slate-500 dark:text-[#AAB4C0]">Filière & Niveau :</span>
+                  <span className="font-semibold text-slate-800 dark:text-[#F5F7FA]">
+                    {filiere} — {niveau}
+                  </span>
+                </div>
+                <div className="flex justify-between py-1.5 items-center">
+                  <span className="text-slate-500 dark:text-[#AAB4C0]">Statut du compte :</span>
+                  <span className="inline-flex items-center gap-1 font-bold text-amber-700 dark:text-amber-400 bg-amber-100/70 dark:bg-amber-950/60 px-2.5 py-0.5 rounded-full text-[11px]">
+                    <Clock className="w-3 h-3" />
+                    En attente de validation admin
+                  </span>
+                </div>
               </div>
 
-              <div className="pt-2">
+              {/* Message explicatif Telegram / Administration */}
+              <div className="p-4 bg-blue-50/70 dark:bg-[#1E4976]/20 border border-blue-200 dark:border-[#2b5ca5]/40 rounded-xl text-left space-y-1.5 text-xs">
+                <div className="flex items-center gap-1.5 font-bold text-[#0f2744] dark:text-sky-300">
+                  <Bell className="w-4 h-4 text-[#e0521c]" />
+                  <span>Notification transmise à l&apos;administration</span>
+                </div>
+                <p className="text-slate-600 dark:text-[#AAB4C0] leading-relaxed">
+                  L&apos;administration a été alertée de votre demande d&apos;inscription. Dès que les administrateurs auront validé votre dossier, votre compte sera activé et vous pourrez vous connecter à votre espace à n&apos;importe quel moment.
+                </p>
+              </div>
+
+              <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center">
                 <Button
                   variant="primary"
                   size="lg"
@@ -683,8 +723,13 @@ export default function InscriptionPage() {
                   rightIcon={<ArrowRight className="w-4 h-4" />}
                   className="w-full sm:w-auto"
                 >
-                  Accéder à la page de Connexion
+                  Aller à la page de connexion
                 </Button>
+                <Link href="/">
+                  <Button variant="outline" size="lg" className="w-full sm:w-auto">
+                    Retour à l&apos;accueil
+                  </Button>
+                </Link>
               </div>
             </div>
           )}

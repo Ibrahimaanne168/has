@@ -14,6 +14,7 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { useCurrentUser } from "@/lib/useCurrentUser";
 import { getStoredSeancesEDT, getStoredEDTs } from "@/lib/academicStorage";
 import { SeanceEDT, JourSemaine, EmploiDuTemps } from "@/lib/types";
+import { downloadOrOpenDocument } from "@/lib/fileDownload";
 
 const JOURS: JourSemaine[] = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
 
@@ -92,14 +93,20 @@ export default function EtudiantEDTPage() {
             </p>
           </div>
           {currentEDT && (
-            <a
-              href={currentEDT.file_url}
-              download={currentEDT.file_name || `${(currentEDT.title || "Emploi_du_temps").replace(/[/\\?%*:|"<>]/g, "_")}.pdf`}
-              className="inline-flex items-center gap-2 px-3.5 py-2 bg-[#0f2744] dark:bg-[#e0521c] hover:bg-[#183a62] dark:hover:bg-[#c84418] text-white text-xs font-semibold rounded-lg shadow-xs transition-colors shrink-0"
+            <button
+              type="button"
+              onClick={(e) =>
+                downloadOrOpenDocument(
+                  currentEDT.file_url,
+                  currentEDT.file_name || `${(currentEDT.title || "Emploi_du_temps").replace(/[/\\?%*:|"<>]/g, "_")}.pdf`,
+                  e
+                )
+              }
+              className="inline-flex items-center gap-2 px-3.5 py-2 bg-[#0f2744] dark:bg-[#e0521c] hover:bg-[#183a62] dark:hover:bg-[#c84418] text-white text-xs font-semibold rounded-lg shadow-xs transition-colors shrink-0 cursor-pointer active:scale-95"
             >
               <Download className="w-3.5 h-3.5 text-[#e0521c] dark:text-white" />
               EDT officiel (PDF)
-            </a>
+            </button>
           )}
         </div>
 

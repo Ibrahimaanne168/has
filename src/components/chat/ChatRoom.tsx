@@ -453,7 +453,7 @@ export function ChatRoom({
 
     try {
       const supabase = createClient();
-      let dbUserId = currentUser.role === "admin" ? 1 : 10;
+      let dbUserId = 1;
       if (currentUser.email) {
         const { data: u } = await supabase.from("users").select("id").eq("email", currentUser.email).maybeSingle();
         if (u?.id) dbUserId = u.id;
@@ -508,11 +508,31 @@ export function ChatRoom({
     }
   };
 
-  // ─── Enregistrement vocal façon Telegram ──────────────────────────────────────
+  // ─── Enregistrement vocal façon Telegram (iOS & desktop compatible) ─────────
+  const getSupportedAudioMimeType = () => {
+    if (typeof window === "undefined" || typeof MediaRecorder === "undefined") return "";
+    const candidateMimeTypes = [
+      "audio/mp4",
+      "audio/aac",
+      "audio/webm;codecs=opus",
+      "audio/webm",
+      "audio/ogg;codecs=opus",
+    ];
+    for (const mime of candidateMimeTypes) {
+      try {
+        if (MediaRecorder.isTypeSupported(mime)) return mime;
+      } catch {}
+    }
+    return "";
+  };
+
   const handleStartRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream);
+      const preferredMime = getSupportedAudioMimeType();
+      const recorder = preferredMime
+        ? new MediaRecorder(stream, { mimeType: preferredMime })
+        : new MediaRecorder(stream);
       audioChunksRef.current = [];
       recorder.ondataavailable = (e) => {
         if (e.data.size > 0) audioChunksRef.current.push(e.data);
@@ -530,7 +550,7 @@ export function ChatRoom({
   const handleCancelRecording = () => {
     const recorder = mediaRecorderRef.current;
     if (recorder) {
-      recorder.stop();
+      try { recorder.stop(); } catch {}
       recorder.stream.getTracks().forEach((t) => t.stop());
     }
     if (recordingTimerRef.current) clearInterval(recordingTimerRef.current);
@@ -542,13 +562,14 @@ export function ChatRoom({
   const handleStopAndSendRecording = () => {
     const recorder = mediaRecorderRef.current;
     if (!recorder) return;
-    recorder.stop();
+    try { recorder.stop(); } catch {}
     recorder.stream.getTracks().forEach((t) => t.stop());
     if (recordingTimerRef.current) clearInterval(recordingTimerRef.current);
     setIsRecording(false);
 
     recorder.onstop = () => {
-      const blob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+      const actualMime = recorder.mimeType || getSupportedAudioMimeType() || "audio/mp4";
+      const blob = new Blob(audioChunksRef.current, { type: actualMime });
       const reader = new FileReader();
       reader.onloadend = async () => {
         const base64 = reader.result as string;
@@ -589,7 +610,7 @@ export function ChatRoom({
 
         try {
           const supabase = createClient();
-          let dbUserId = currentUser.role === "admin" ? 1 : 10;
+          let dbUserId = 1;
           if (currentUser.email) {
             const { data: u } = await supabase.from("users").select("id").eq("email", currentUser.email).maybeSingle();
             if (u?.id) dbUserId = u.id;
@@ -1072,6 +1093,8 @@ export function ChatRoom({
                 placeholder={`Écrivez votre message dans ${roomTitle}...`}
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
+                enterKeyHint="send"
+                autoComplete="off"
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
@@ -1096,6 +1119,13 @@ export function ChatRoom({
             <button
               type="submit"
               disabled={!newMessage.trim() || isSending}
+              onPointerDown={(e) => {
+                // Sur iOS Safari, pointerdown s'exécute immédiatement avant la fermeture du clavier virtuel
+                if (newMessage.trim() && !isSending) {
+                  e.preventDefault();
+                  handleSendMessage();
+                }
+              }}
               title="Envoyer le message"
               className="flex items-center justify-center w-11 h-11 rounded-2xl bg-[#0f2744] dark:bg-[#e0521c] text-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#163860] dark:hover:bg-[#f06129] active:scale-95 shadow-md transition-all shrink-0 cursor-pointer"
             >

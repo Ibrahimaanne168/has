@@ -129,15 +129,14 @@ export default function RootLayout({
                   }
 
                   var t = localStorage.getItem('has_theme');
-                  var isDark = t === 'dark' || (!t && true);
-                  if (t === 'light') isDark = false;
+                  var isDark = t === 'dark'; // Mode blanc de base par défaut
                   if (isDark) {
                     document.documentElement.classList.add('dark');
                   } else {
                     document.documentElement.classList.remove('dark');
                   }
                 } catch (e) {
-                  document.documentElement.classList.add('dark');
+                  document.documentElement.classList.remove('dark');
                 }
               })();
             `,
