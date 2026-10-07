@@ -168,6 +168,7 @@ export default function ProfesseurChatPage() {
               fullName: prof.full_name,
               role: "professeur",
               email: prof.email,
+              avatarUrl: prof.photo || prof.avatar_url || null,
             }}
             isAdmin={false}
             isPopup={true}

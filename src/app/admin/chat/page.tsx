@@ -367,6 +367,7 @@ export default function AdminChatPage() {
               fullName: "Administration HAS",
               role: "admin",
               email: "admin@has.sn",
+              avatarUrl: "/images/logo-has.jpg",
             }}
             isAdmin={true}
             isPopup={true}

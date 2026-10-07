@@ -22,8 +22,9 @@ import {
   Volume2,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { ChatMessage, ChatSalon, UserRole } from "@/lib/types";
+import { ChatMessage, ChatSalon, UserRole, Professeur } from "@/lib/types";
 import { createClient } from "@/lib/supabase/client";
+import { getStoredProfesseurs } from "@/lib/academicStorage";
 import { WaterRippleBackground } from "./WaterRippleBackground";
 import { TelegramVoiceNote } from "./TelegramVoiceNote";
 
@@ -33,6 +34,7 @@ interface ChatRoomProps {
     fullName: string;
     role: UserRole;
     email?: string;
+    avatarUrl?: string | null;
   };
   isAdmin?: boolean;
   roomId?: string;
@@ -66,7 +68,7 @@ function getWelcomeMessage(salonId: string): ChatMessage {
       classe_id: null,
       bio: null,
       specialite: null,
-      avatar_url: null,
+      avatar_url: "/images/logo-has.jpg",
       is_active: true,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
@@ -94,6 +96,46 @@ export function ChatRoom({
         ? "Ibrahima Anne"
         : currentUser.fullName,
   };
+
+  // Détection de l'avatar utilisateur (depuis props ou localStorage)
+  const [detectedStoredAvatar, setDetectedStoredAvatar] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchStoredAvatar = () => {
+      if (typeof window === "undefined") return;
+      try {
+        if (effectiveCurrentUser.role === "etudiant") {
+          const raw = localStorage.getItem("has_current_student_profile_v2");
+          if (raw) {
+            const p = JSON.parse(raw);
+            if (p.avatar_url) setDetectedStoredAvatar(p.avatar_url);
+          }
+        } else if (effectiveCurrentUser.role === "professeur") {
+          const raw = localStorage.getItem("has_current_professeur_profile_v2");
+          if (raw) {
+            const p = JSON.parse(raw);
+            if (p.photo || p.avatar_url) setDetectedStoredAvatar(p.photo || p.avatar_url);
+          }
+        }
+      } catch {}
+    };
+
+    fetchStoredAvatar();
+    window.addEventListener("has_academic_storage_updated", fetchStoredAvatar);
+    return () => window.removeEventListener("has_academic_storage_updated", fetchStoredAvatar);
+  }, [effectiveCurrentUser.role]);
+
+  const myDetectedAvatar =
+    currentUser.avatarUrl ||
+    detectedStoredAvatar ||
+    (effectiveCurrentUser.role === "admin" ? "/images/logo-has.jpg" : null);
+
+  const [profsCache, setProfsCache] = useState<Professeur[]>([]);
+  useEffect(() => {
+    try {
+      setProfsCache(getStoredProfesseurs());
+    } catch {}
+  }, []);
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState("");
@@ -141,8 +183,28 @@ export function ChatRoom({
     name: string | null;
     role: UserRole | null;
     email: string | null;
+    avatarUrl: string | null;
     cleanContent: string;
   } => {
+    const match5 = text.match(/^\[\[sender:([^\|]+)\|\|([^\|]+)\|\|([^\|]+)\|\|([^\|]*)\|\|([^\]]*)\]\]\s*([\s\S]*)$/);
+    if (match5) {
+      let decodedAvatar: string | null = null;
+      if (match5[5].trim()) {
+        try {
+          decodedAvatar = decodeURIComponent(match5[5].trim());
+        } catch {
+          decodedAvatar = match5[5].trim();
+        }
+      }
+      return {
+        id: match5[1].trim() || null,
+        name: match5[2].trim() || null,
+        role: (match5[3].trim() as UserRole) || null,
+        email: match5[4].trim() || null,
+        avatarUrl: decodedAvatar,
+        cleanContent: match5[6].trim(),
+      };
+    }
     const match4 = text.match(/^\[\[sender:([^\|]+)\|\|([^\|]+)\|\|([^\|]+)\|\|([^\]]*)\]\]\s*([\s\S]*)$/);
     if (match4) {
       return {
@@ -150,6 +212,7 @@ export function ChatRoom({
         name: match4[2].trim() || null,
         role: (match4[3].trim() as UserRole) || null,
         email: match4[4].trim() || null,
+        avatarUrl: null,
         cleanContent: match4[5].trim(),
       };
     }
@@ -160,10 +223,11 @@ export function ChatRoom({
         name: match2[1].trim() || null,
         role: (match2[2].trim() as UserRole) || null,
         email: null,
+        avatarUrl: null,
         cleanContent: match2[3].trim(),
       };
     }
-    return { id: null, name: null, role: null, email: null, cleanContent: text };
+    return { id: null, name: null, role: null, email: null, avatarUrl: null, cleanContent: text };
   }, []);
 
   // Charger les messages réels depuis la base Supabase
@@ -216,6 +280,7 @@ export function ChatRoom({
               name: embeddedName,
               role: embeddedRole,
               email: embeddedEmail,
+              avatarUrl: embeddedAvatar,
               cleanContent,
             } = parseSenderMeta(rawAfterSalon);
 
@@ -234,6 +299,7 @@ export function ChatRoom({
             const fullName = embeddedName || dbFullName || "Membre HAS";
             const roleName = embeddedRole || dbRole;
             const finalEmail = embeddedEmail || userObj?.email || "";
+            const finalAvatar = embeddedAvatar || userObj?.photo || null;
 
             roomMessages.push({
               id: String(item.id),
@@ -254,7 +320,7 @@ export function ChatRoom({
                 classe_id: null,
                 bio: null,
                 specialite: null,
-                avatar_url: userObj?.photo || null,
+                avatar_url: finalAvatar,
                 is_active: true,
                 created_at: item.created_at,
                 updated_at: item.created_at,
@@ -349,7 +415,8 @@ export function ChatRoom({
     const messageText = newMessage.trim();
     const tempId = `temp-${Date.now()}`;
 
-    const senderMeta = `[[sender:${effectiveCurrentUser.id}||${effectiveCurrentUser.fullName}||${effectiveCurrentUser.role}||${effectiveCurrentUser.email || ""}]]`;
+    const avatarMeta = myDetectedAvatar && myDetectedAvatar.length < 1500 ? encodeURIComponent(myDetectedAvatar) : "";
+    const senderMeta = `[[sender:${effectiveCurrentUser.id}||${effectiveCurrentUser.fullName}||${effectiveCurrentUser.role}||${effectiveCurrentUser.email || ""}||${avatarMeta}]]`;
     const formattedPayload =
       roomId === "general"
         ? `${senderMeta} ${messageText}`
@@ -374,7 +441,7 @@ export function ChatRoom({
         classe_id: null,
         bio: null,
         specialite: null,
-        avatar_url: null,
+        avatar_url: myDetectedAvatar,
         is_active: true,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
@@ -486,7 +553,8 @@ export function ChatRoom({
       reader.onloadend = async () => {
         const base64 = reader.result as string;
         const tempId = `voice-${Date.now()}`;
-        const senderMeta = `[[sender:${currentUser.id}||${currentUser.fullName}||${currentUser.role}||${currentUser.email || ""}]]`;
+        const avatarMeta = myDetectedAvatar && myDetectedAvatar.length < 1500 ? encodeURIComponent(myDetectedAvatar) : "";
+        const senderMeta = `[[sender:${effectiveCurrentUser.id}||${effectiveCurrentUser.fullName}||${effectiveCurrentUser.role}||${effectiveCurrentUser.email || ""}||${avatarMeta}]]`;
         const voicePayload =
           roomId === "general"
             ? `${senderMeta} [[voice:${base64}]]`
@@ -494,16 +562,16 @@ export function ChatRoom({
 
         const optimistic: ChatMessage = {
           id: tempId,
-          user_id: currentUser.id,
+          user_id: effectiveCurrentUser.id,
           salon_id: roomId,
           content: `[[voice:${base64}]]`,
           is_deleted: false,
           created_at: new Date().toISOString(),
           user: {
-            id: currentUser.id,
-            full_name: currentUser.fullName,
-            role: currentUser.role,
-            email: currentUser.email || "",
+            id: effectiveCurrentUser.id,
+            full_name: effectiveCurrentUser.fullName,
+            role: effectiveCurrentUser.role,
+            email: effectiveCurrentUser.email || "",
             username: null,
             phone: null,
             matricule: null,
@@ -511,7 +579,7 @@ export function ChatRoom({
             classe_id: null,
             bio: null,
             specialite: null,
-            avatar_url: null,
+            avatar_url: myDetectedAvatar,
             is_active: true,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
@@ -828,20 +896,40 @@ export function ChatRoom({
                 minute: "2-digit",
               });
 
+              // Résolution de l'avatar réel :
+              let displayAvatar = (msg.user as { avatar_url?: string | null })?.avatar_url || null;
+              if (isMe && !displayAvatar && myDetectedAvatar) {
+                displayAvatar = myDetectedAvatar;
+              }
+              if (!displayAvatar && authorRole === "professeur") {
+                const matchedProf = profsCache.find(
+                  (p) =>
+                    p.id === msg.user_id ||
+                    (p.email && msg.user?.email && p.email.toLowerCase() === msg.user.email.toLowerCase()) ||
+                    (p.full_name && p.full_name.toLowerCase() === authorName.toLowerCase())
+                );
+                if (matchedProf?.photo) {
+                  displayAvatar = matchedProf.photo;
+                }
+              }
+              if (!displayAvatar && authorRole === "admin") {
+                displayAvatar = "/images/logo-has.jpg";
+              }
+
               return (
                 <div
                   key={msg.id}
                   className={`flex gap-2.5 ${isMe ? "flex-row-reverse" : "flex-row"} items-end group`}
                 >
-                  {/* Avatar */}
+                  {/* Avatar : photo de profil réelle si disponible, sinon initiales de secours */}
                   <div
                     className={`w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-black shrink-0 shadow-sm overflow-hidden ${styles.avatar}`}
                   >
-                    {(msg.user as { avatar_url?: string | null })?.avatar_url ? (
+                    {displayAvatar ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
-                        src={(msg.user as { avatar_url?: string | null }).avatar_url!}
-                        alt=""
+                        src={displayAvatar}
+                        alt={authorName}
                         className="w-full h-full object-cover"
                       />
                     ) : (

@@ -181,6 +181,7 @@ export default function EtudiantChatPage() {
               fullName: user.full_name,
               role: "etudiant",
               email: user.email,
+              avatarUrl: user.avatar_url || null,
             }}
             isAdmin={false}
             isPopup={true}
