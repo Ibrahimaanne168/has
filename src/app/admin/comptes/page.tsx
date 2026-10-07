@@ -483,7 +483,22 @@ export default function AdminComptesPage() {
                       <td className="px-4 py-3">
                         <span className="font-mono text-xs text-slate-700 dark:text-[#AAB4C0]">{u.matricule || "—"}</span>
                       </td>
-                      <td className="px-4 py-3">{roleInfo[u.role].badge}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex flex-col gap-1 items-start">
+                          {roleInfo[u.role].badge}
+                          {u.role === "etudiant" && (
+                            u.is_active ? (
+                              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                                Validé &amp; Actif
+                              </span>
+                            ) : (
+                              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                                En attente / Inactif
+                              </span>
+                            )
+                          )}
+                        </div>
+                      </td>
                       <td className="px-4 py-3">
                         {profDetails ? (
                           <div className="space-y-1">
@@ -496,8 +511,12 @@ export default function AdminComptesPage() {
                           </div>
                         ) : u.role === "etudiant" ? (
                           <div>
-                            <div className="text-xs text-slate-700 dark:text-[#AAB4C0] font-semibold">L1 MPI</div>
-                            <div className="text-[11px] text-slate-400 dark:text-[#687585]">Licence 1</div>
+                            <div className="text-xs text-slate-700 dark:text-[#AAB4C0] font-semibold">
+                              {u.classe_id || "L1 MPI"}
+                            </div>
+                            <div className="text-[11px] text-slate-400 dark:text-[#687585]">
+                              {u.filiere_id ? `Filière ${u.filiere_id}` : "Licence 1"}
+                            </div>
                           </div>
                         ) : (
                           <div className="text-xs text-slate-400 dark:text-[#687585]">—</div>
@@ -505,7 +524,18 @@ export default function AdminComptesPage() {
                       </td>
                       <td className="px-4 py-3 text-xs text-slate-600 dark:text-[#AAB4C0] font-mono">{u.phone || "—"}</td>
                       <td className="px-4 py-3">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1.5">
+                          {u.role === "etudiant" && !u.is_active && (
+                            <button
+                              type="button"
+                              onClick={() => handleValidateStudent(u.id, "accept")}
+                              title="Valider et activer ce compte étudiant"
+                              className="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1"
+                            >
+                              <Check className="w-3 h-3" />
+                              Activer
+                            </button>
+                          )}
                           <button onClick={() => openEdit(u)} title="Modifier" className="p-1.5 text-slate-500 dark:text-[#AAB4C0] hover:text-[#0f2744] dark:hover:text-[#F5F7FA] hover:bg-slate-100 dark:hover:bg-[#151D27] rounded-md cursor-pointer">
                             <Edit2 className="w-4 h-4" />
                           </button>

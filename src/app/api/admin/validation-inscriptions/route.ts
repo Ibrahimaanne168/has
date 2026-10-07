@@ -68,10 +68,13 @@ export async function GET(request: NextRequest) {
     );
 
     const pendingList = studentsList.filter(
-      (s) => s.is_active === false || s.statut_inscription === "en_attente" || !s.statut_inscription
+      (s) =>
+        (s.statut_inscription === "en_attente" || (!s.statut_inscription && !s.is_active)) &&
+        s.statut_inscription !== "refuse" &&
+        s.statut_inscription !== "valide"
     );
     const validatedList = studentsList.filter(
-      (s) => s.is_active === true && s.statut_inscription === "valide"
+      (s) => s.statut_inscription === "valide" || (s.is_active === true && s.statut_inscription !== "refuse")
     );
     const rejectedList = studentsList.filter(
       (s) => s.statut_inscription === "refuse"
@@ -104,9 +107,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json().catch(() => ({}));
     const { studentId, action } = body;
 
-    if (!studentId || (action !== "accept" && action !== "reject")) {
+    if (!studentId || (action !== "accept" && action !== "reject" && action !== "pending")) {
       return NextResponse.json(
-        { error: "Paramètres invalides (studentId et action 'accept' | 'reject' requis)." },
+        { error: "Paramètres invalides (studentId et action 'accept' | 'reject' | 'pending' requis)." },
         { status: 400 }
       );
     }
@@ -119,7 +122,9 @@ export async function POST(request: NextRequest) {
 
     const supabaseAdmin = createAdminClient();
     const isAccepting = action === "accept";
-    const newStatus = isAccepting ? "valide" : "refuse";
+    const isPending = action === "pending";
+    const newStatus = isAccepting ? "valide" : isPending ? "en_attente" : "refuse";
+    const newActive = isAccepting;
 
     let targetEmail: string | null = null;
     let targetFullName: string = "Étudiant";
@@ -129,7 +134,7 @@ export async function POST(request: NextRequest) {
     try {
       const { data: updatedAuthUser, error: authUpErr } = await supabaseAdmin.auth.admin.updateUserById(studentId, {
         user_metadata: {
-          is_active: isAccepting,
+          is_active: newActive,
           statut_inscription: newStatus,
         },
       });
@@ -174,7 +179,7 @@ export async function POST(request: NextRequest) {
     } catch {}
 
     // 4. Envoi de l'email via Resend avec lien direct de retour au site
-    if (targetEmail) {
+    if (targetEmail && (isAccepting || (!isPending && action === "reject"))) {
       try {
         if (isAccepting) {
           await sendRegistrationAcceptedEmail({
@@ -197,9 +202,11 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      action: isAccepting ? "accepted" : "rejected",
+      action: isAccepting ? "accepted" : isPending ? "pending" : "rejected",
       message: isAccepting
         ? `L'inscription de ${targetFullName} a été validée avec succès. Un email de confirmation lui a été envoyé.`
+        : isPending
+        ? `Le dossier de ${targetFullName} a été replacé en attente de décision.`
         : `L'inscription de ${targetFullName} a été refusée. Un email explicatif lui a été envoyé.`,
     });
   } catch (err: unknown) {

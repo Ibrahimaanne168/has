@@ -71,7 +71,7 @@ export default function AdminInscriptionsPage() {
     loadCandidates();
   }, [loadCandidates]);
 
-  const handleAction = async (studentId: string, action: "accept" | "reject") => {
+  const handleAction = async (studentId: string, action: "accept" | "reject" | "pending") => {
     setActionLoading(studentId);
     setNotification(null);
     try {
@@ -84,7 +84,7 @@ export default function AdminInscriptionsPage() {
       if (data.success) {
         setNotification({
           type: "success",
-          message: data.message || `Action effectuée avec succès. L'étudiant a été notifié par email.`,
+          message: data.message || `Action effectuée avec succès.`,
         });
         loadCandidates();
       } else {
@@ -325,24 +325,60 @@ export default function AdminInscriptionsPage() {
             </p>
           </div>
         ) : filteredCandidates.length === 0 ? (
-          <div className="p-16 text-center bg-white dark:bg-[#111821] rounded-2xl border border-slate-200 dark:border-[#263241] space-y-2">
-            <UserCheck className="w-12 h-12 text-slate-300 dark:text-[#687585] mx-auto mb-2" />
-            <h3 className="font-serif text-base font-bold text-slate-800 dark:text-[#F5F7FA]">
-              {statusFilter === "pending"
-                ? "Aucune demande d'inscription en attente"
-                : "Aucun dossier ne correspond à ces critères"}
-            </h3>
-            <p className="text-xs text-slate-500 dark:text-[#AAB4C0] max-w-md mx-auto">
-              {statusFilter === "pending"
-                ? "Tous les candidats ayant soumis leur inscription ont été traités. Les nouvelles demandes apparaîtront ici et sur Telegram dès leur soumission."
-                : "Modifiez votre recherche ou vos filtres pour visualiser les autres candidatures."}
-            </p>
+          <div className="p-12 text-center bg-white dark:bg-[#111821] rounded-2xl border border-slate-200 dark:border-[#263241] space-y-4">
+            <div className="w-14 h-14 rounded-2xl bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] flex items-center justify-center mx-auto text-[#0f2744] dark:text-[#F5F7FA]">
+              <UserCheck className="w-7 h-7" />
+            </div>
+            <div className="space-y-1">
+              <h3 className="font-serif text-lg font-bold text-slate-800 dark:text-[#F5F7FA]">
+                {statusFilter === "pending"
+                  ? "Toutes les demandes en attente ont été traitées"
+                  : statusFilter === "valide"
+                  ? "Aucun dossier validé pour l'instant"
+                  : statusFilter === "refuse"
+                  ? "Aucun dossier refusé pour l'instant"
+                  : "Aucun dossier ne correspond à votre recherche"}
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-[#AAB4C0] max-w-lg mx-auto">
+                {statusFilter === "pending"
+                  ? `Aucun nouveau candidat n'attend actuellement de validation. Vous pouvez consulter les dossiers déjà traités (${counts.validated} validé(s), ${counts.rejected} refusé(s)) ci-dessous :`
+                  : "Modifiez votre recherche ou utilisez les filtres d'onglets pour accéder aux autres dossiers."}
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => setStatusFilter("all")}
+                className="px-4 py-2 rounded-xl bg-[#0f2744] dark:bg-[#e0521c] text-white text-xs font-bold transition-all shadow-xs cursor-pointer hover:opacity-90"
+              >
+                Afficher tous les dossiers ({counts.total})
+              </button>
+              {counts.validated > 0 && statusFilter !== "valide" && (
+                <button
+                  type="button"
+                  onClick={() => setStatusFilter("valide")}
+                  className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
+                >
+                  Voir les validés ({counts.validated})
+                </button>
+              )}
+              {counts.rejected > 0 && statusFilter !== "refuse" && (
+                <button
+                  type="button"
+                  onClick={() => setStatusFilter("refuse")}
+                  className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
+                >
+                  Voir les refusés ({counts.rejected})
+                </button>
+              )}
+            </div>
           </div>
         ) : (
           <div className="space-y-3.5">
             {filteredCandidates.map((c) => {
-              const isPending = c.is_active === false || c.statut_inscription === "en_attente" || !c.statut_inscription;
-              const isValidated = c.is_active === true && c.statut_inscription === "valide";
+              const isPending = !c.statut_inscription || c.statut_inscription === "en_attente";
+              const isValidated = c.statut_inscription === "valide";
               const isRejected = c.statut_inscription === "refuse";
 
               return (
@@ -418,7 +454,7 @@ export default function AdminInscriptionsPage() {
                   </div>
 
                   {/* Boutons d'action administrative */}
-                  <div className="flex items-center gap-2 shrink-0 pt-2 lg:pt-0 border-t lg:border-t-0 border-slate-100 dark:border-[#263241]">
+                  <div className="flex flex-wrap items-center gap-2 shrink-0 pt-2 lg:pt-0 border-t lg:border-t-0 border-slate-100 dark:border-[#263241]">
                     {isPending ? (
                       <>
                         <button
@@ -442,27 +478,53 @@ export default function AdminInscriptionsPage() {
                         </button>
                       </>
                     ) : isValidated ? (
-                      <button
-                        type="button"
-                        disabled={actionLoading === c.id}
-                        onClick={() => handleAction(c.id, "reject")}
-                        className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 transition-colors cursor-pointer"
-                        title="Désactiver et révoquer l'accès"
-                      >
-                        <UserX className="w-3.5 h-3.5" />
-                        <span>Révoquer l&apos;accès</span>
-                      </button>
+                      <>
+                        <button
+                          type="button"
+                          disabled={actionLoading === c.id}
+                          onClick={() => handleAction(c.id, "reject")}
+                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 transition-colors cursor-pointer"
+                          title="Désactiver et révoquer l'accès"
+                        >
+                          <UserX className="w-3.5 h-3.5" />
+                          <span>Révoquer l&apos;accès</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          disabled={actionLoading === c.id}
+                          onClick={() => handleAction(c.id, "pending")}
+                          className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-[#AAB4C0] hover:bg-slate-100 dark:hover:bg-[#151D27] border border-slate-200 dark:border-[#263241] transition-colors cursor-pointer"
+                          title="Remettre le dossier en attente d'examen"
+                        >
+                          <Clock className="w-3.5 h-3.5" />
+                          <span>Remettre en attente</span>
+                        </button>
+                      </>
                     ) : (
-                      <button
-                        type="button"
-                        disabled={actionLoading === c.id}
-                        onClick={() => handleAction(c.id, "accept")}
-                        className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/60 transition-colors cursor-pointer"
-                        title="Réexaminer et activer le compte"
-                      >
-                        <UserCheck className="w-3.5 h-3.5" />
-                        <span>Réactiver le compte</span>
-                      </button>
+                      <>
+                        <button
+                          type="button"
+                          disabled={actionLoading === c.id}
+                          onClick={() => handleAction(c.id, "accept")}
+                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/60 transition-colors cursor-pointer"
+                          title="Réexaminer et activer le compte"
+                        >
+                          <UserCheck className="w-3.5 h-3.5" />
+                          <span>Réexaminer &amp; Accepter</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          disabled={actionLoading === c.id}
+                          onClick={() => handleAction(c.id, "pending")}
+                          className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 dark:text-[#AAB4C0] hover:bg-slate-100 dark:hover:bg-[#151D27] border border-slate-200 dark:border-[#263241] transition-colors cursor-pointer"
+                          title="Remettre le dossier en attente d'examen"
+                        >
+                          <Clock className="w-3.5 h-3.5" />
+                          <span>Remettre en attente</span>
+                        </button>
+                      </>
                     )}
                   </div>
                 </div>
