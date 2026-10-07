@@ -624,8 +624,8 @@ export function ChatRoom({
         );
       case "professeur":
         return (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-[#0f2744] border border-[#0f2744]/20">
-            <GraduationCap className="w-3 h-3 text-[#0f2744]" />
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 dark:bg-[#1E4976]/30 text-[#0f2744] dark:text-[#91b5db] border border-[#0f2744]/20 dark:border-[#2b5ca5]/50">
+            <GraduationCap className="w-3 h-3 text-[#0f2744] dark:text-[#91b5db]" />
             Enseignant
           </span>
         );
@@ -858,10 +858,10 @@ export function ChatRoom({
             </div>
           ) : filteredMessages.length === 0 ? (
             <div className="h-96 flex flex-col items-center justify-center text-center p-8 max-w-md mx-auto space-y-3">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#0f2744]/10 to-[#e0521c]/10 flex items-center justify-center text-[#0f2744] shadow-inner">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#0f2744]/10 to-[#e0521c]/10 dark:from-white/10 dark:to-[#e0521c]/20 flex items-center justify-center text-[#0f2744] dark:text-[#F5F7FA] shadow-inner">
                 <Sparkles className="w-7 h-7 text-[#e0521c]" />
               </div>
-              <h3 className="font-serif text-lg font-bold text-[#0f2744]">
+              <h3 className="font-serif text-lg font-bold text-[#0f2744] dark:text-[#F5F7FA]">
                 {searchQuery ? "Aucun message trouvé" : "Salon de discussion ouvert"}
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed">

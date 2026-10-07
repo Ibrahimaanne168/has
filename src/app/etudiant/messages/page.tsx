@@ -171,14 +171,14 @@ function EtudiantMessagesContent() {
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#0f2744]/5 text-[#0f2744] text-[11px] font-semibold mb-1 border border-slate-200">
+            <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#0f2744]/5 dark:bg-[#151D27] text-[#0f2744] dark:text-[#F5F7FA] text-[11px] font-semibold mb-1 border border-slate-200 dark:border-[#263241]">
               <Sparkles className="w-3.5 h-3.5 text-[#e0521c]" />
               <span>Messagerie interne • {classeCode}</span>
             </div>
-            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] leading-snug">
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] dark:text-[#F5F7FA] leading-snug">
               Messagerie Académique
             </h1>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1">
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-[#AAB4C0] mt-1">
               Échangez de manière confidentielle avec vos professeurs référents et l&apos;administration
             </p>
           </div>
@@ -194,7 +194,7 @@ function EtudiantMessagesContent() {
         </div>
 
         {/* Onglets Réception / Envoyés */}
-        <div className="flex gap-2 border-b border-slate-200">
+        <div className="flex gap-2 border-b border-slate-200 dark:border-[#263241]">
           <button
             onClick={() => {
               setTab("inbox");
@@ -202,8 +202,8 @@ function EtudiantMessagesContent() {
             }}
             className={`flex items-center gap-2 px-4 py-2.5 text-xs font-semibold border-b-2 transition-colors ${
               tab === "inbox"
-                ? "border-[#0f2744] text-[#0f2744]"
-                : "border-transparent text-slate-500 hover:text-slate-800"
+                ? "border-[#0f2744] dark:border-[#e0521c] text-[#0f2744] dark:text-[#F5F7FA]"
+                : "border-transparent text-slate-500 dark:text-[#AAB4C0] hover:text-slate-800 dark:hover:text-[#F5F7FA]"
             }`}
           >
             <Inbox className="w-4 h-4" />
@@ -217,8 +217,8 @@ function EtudiantMessagesContent() {
             }}
             className={`flex items-center gap-2 px-4 py-2.5 text-xs font-semibold border-b-2 transition-colors ${
               tab === "sent"
-                ? "border-[#0f2744] text-[#0f2744]"
-                : "border-transparent text-slate-500 hover:text-slate-800"
+                ? "border-[#0f2744] dark:border-[#e0521c] text-[#0f2744] dark:text-[#F5F7FA]"
+                : "border-transparent text-slate-500 dark:text-[#AAB4C0] hover:text-slate-800 dark:hover:text-[#F5F7FA]"
             }`}
           >
             <SendHorizontal className="w-4 h-4" />
@@ -231,12 +231,12 @@ function EtudiantMessagesContent() {
           {/* Colonne Liste */}
           <div className="lg:col-span-5 space-y-3">
             {displayedList.length === 0 ? (
-              <div className="bg-white rounded-xl border border-dashed border-slate-300 p-8 text-center space-y-2">
-                <MessageSquare className="w-8 h-8 text-slate-300 mx-auto" />
-                <p className="font-serif text-sm font-bold text-slate-800">
+              <div className="bg-white dark:bg-[#111821] rounded-xl border border-dashed border-slate-300 dark:border-[#263241] p-8 text-center space-y-2">
+                <MessageSquare className="w-8 h-8 text-slate-300 dark:text-[#687585] mx-auto" />
+                <p className="font-serif text-sm font-bold text-slate-800 dark:text-[#F5F7FA]">
                   {tab === "inbox" ? "Boîte de réception vide" : "Aucun message envoyé"}
                 </p>
-                <p className="text-xs text-slate-500 max-w-xs mx-auto">
+                <p className="text-xs text-slate-500 dark:text-[#AAB4C0] max-w-xs mx-auto">
                   {tab === "inbox"
                     ? "Vous n'avez pas encore reçu de message direct de vos enseignants."
                     : "Vous n'avez envoyé aucun message pour le moment. Cliquez sur Nouveau Message pour poser une question."}
@@ -256,15 +256,15 @@ function EtudiantMessagesContent() {
                     onClick={() => handleSelectMessage(msg)}
                     className={`p-4 rounded-xl border cursor-pointer transition-all ${
                       isSelected
-                        ? "border-[#0f2744] bg-[#0f2744]/5 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)]"
-                        : "border-slate-200/90 bg-white hover:border-slate-300"
-                    } ${!msg.is_read && tab === "inbox" ? "font-semibold bg-blue-50/30 border-l-4 border-l-[#e0521c]" : ""}`}
+                        ? "border-[#0f2744] dark:border-[#e0521c] bg-[#0f2744]/5 dark:bg-[#151D27] shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)]"
+                        : "border-slate-200/90 dark:border-[#263241] bg-white dark:bg-[#111821] hover:border-slate-300 dark:hover:border-[#38495d]"
+                    } ${!msg.is_read && tab === "inbox" ? "font-semibold bg-blue-50/30 dark:bg-cyan-950/20 border-l-4 border-l-[#e0521c]" : ""}`}
                   >
                     <div className="flex items-center justify-between gap-2 mb-1.5">
-                      <span className="text-xs font-bold text-slate-900 truncate">
+                      <span className="text-xs font-bold text-slate-900 dark:text-[#F5F7FA] truncate">
                         {correspondentName}
                       </span>
-                      <span className="text-[10px] text-slate-400 shrink-0">
+                      <span className="text-[10px] text-slate-400 dark:text-[#687585] shrink-0">
                         {new Date(msg.created_at).toLocaleDateString("fr-FR", {
                           day: "numeric",
                           month: "short",
@@ -272,11 +272,11 @@ function EtudiantMessagesContent() {
                       </span>
                     </div>
 
-                    <h4 className="text-sm font-serif font-bold text-slate-900 truncate">
+                    <h4 className="text-sm font-serif font-bold text-slate-900 dark:text-[#F5F7FA] truncate">
                       {msg.subject}
                     </h4>
 
-                    <p className="text-xs text-slate-500 line-clamp-2 mt-1">
+                    <p className="text-xs text-slate-500 dark:text-[#AAB4C0] line-clamp-2 mt-1">
                       {msg.content}
                     </p>
                   </div>
@@ -286,19 +286,19 @@ function EtudiantMessagesContent() {
           </div>
 
           {/* Colonne Détail Message */}
-          <div className="lg:col-span-7 bg-white rounded-xl border border-slate-200/90 p-6 min-h-[420px] shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] flex flex-col justify-between">
+          <div className="lg:col-span-7 bg-white dark:bg-[#111821] rounded-xl border border-slate-200/90 dark:border-[#263241] p-6 min-h-[420px] shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] dark:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.4)] flex flex-col justify-between">
             {selectedMessage ? (
               <div className="space-y-5">
-                <div className="border-b border-slate-100 pb-4">
+                <div className="border-b border-slate-100 dark:border-[#263241] pb-4">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <h2 className="font-serif text-lg font-bold text-[#0f2744]">
+                      <h2 className="font-serif text-lg font-bold text-[#0f2744] dark:text-[#F5F7FA]">
                         {selectedMessage.subject}
                       </h2>
-                      <div className="text-xs text-slate-500 mt-1 flex items-center gap-2">
+                      <div className="text-xs text-slate-500 dark:text-[#AAB4C0] mt-1 flex items-center gap-2">
                         <span>
                           {tab === "inbox" ? "De :" : "À :"}{" "}
-                          <strong>
+                          <strong className="text-slate-800 dark:text-[#F5F7FA]">
                             {tab === "inbox"
                               ? selectedMessage.sender?.full_name
                               : selectedMessage.receiver?.full_name}
@@ -318,12 +318,12 @@ function EtudiantMessagesContent() {
                   </div>
                 </div>
 
-                <div className="text-sm text-slate-700 leading-relaxed whitespace-pre-line py-2">
+                <div className="text-sm text-slate-700 dark:text-[#F5F7FA] leading-relaxed whitespace-pre-line py-2">
                   {selectedMessage.content}
                 </div>
 
                 {tab === "inbox" && (
-                  <div className="pt-4 border-t border-slate-100">
+                  <div className="pt-4 border-t border-slate-100 dark:border-[#263241]">
                     <Button
                       variant="outline"
                       size="sm"
@@ -340,10 +340,10 @@ function EtudiantMessagesContent() {
                 )}
               </div>
             ) : (
-              <div className="flex-1 flex flex-col items-center justify-center text-center text-slate-400 p-8">
-                <MessageSquare className="w-12 h-12 text-slate-200 mb-3" />
-                <p className="text-sm font-medium text-slate-600">Sélectionnez un message</p>
-                <p className="text-xs text-slate-400 mt-1">
+              <div className="flex-1 flex flex-col items-center justify-center text-center text-slate-400 dark:text-[#687585] p-8">
+                <MessageSquare className="w-12 h-12 text-slate-200 dark:text-[#263241] mb-3" />
+                <p className="text-sm font-medium text-slate-600 dark:text-[#AAB4C0]">Sélectionnez un message</p>
+                <p className="text-xs text-slate-400 dark:text-[#687585] mt-1">
                   Cliquez sur un élément de la liste pour en lire l&apos;intégralité
                 </p>
               </div>
@@ -353,27 +353,27 @@ function EtudiantMessagesContent() {
 
         {/* Modal Nouveau Message */}
         {modalOpen && (
-          <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-slate-200/90 space-y-4">
-              <h3 className="font-serif text-xl font-bold text-[#0f2744]">
+          <div className="fixed inset-0 z-50 bg-slate-900/50 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-white dark:bg-[#111821] rounded-xl max-w-lg w-full p-6 shadow-xl border border-slate-200/90 dark:border-[#263241] space-y-4">
+              <h3 className="font-serif text-xl font-bold text-[#0f2744] dark:text-[#F5F7FA]">
                 Nouveau Message Académique
               </h3>
 
               {sendSuccess ? (
-                <div className="p-4 rounded-lg bg-emerald-50 border border-emerald-200/80 text-emerald-800 flex items-center gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                <div className="p-4 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200/80 dark:border-emerald-800/40 text-emerald-800 dark:text-emerald-300 flex items-center gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
                   <span className="text-sm font-medium">Votre message a été transmis avec succès.</span>
                 </div>
               ) : (
                 <form onSubmit={handleSendMessage} className="space-y-4">
                   <div className="space-y-1.5">
-                    <label className="block text-sm font-medium text-slate-700">
+                    <label className="block text-sm font-medium text-slate-700 dark:text-[#F5F7FA]">
                       Destinataire (autorisé pour votre classe {classeCode})
                     </label>
                     <select
                       value={targetRecipient}
                       onChange={(e) => setTargetRecipient(e.target.value)}
-                      className="w-full text-sm border border-slate-200/90 rounded-lg p-2.5 bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#0f2744]"
+                      className="w-full text-sm border border-slate-200/90 dark:border-[#263241] rounded-lg p-2.5 bg-white dark:bg-[#151D27] text-slate-800 dark:text-[#F5F7FA] focus:outline-none focus:ring-1 focus:ring-[#0f2744] dark:focus:ring-[#e0521c]"
                     >
                       <optgroup label="Administration & Scolarité">
                         <option value="admin-id">Direction Générale & Scolarité HAS</option>
@@ -397,7 +397,7 @@ function EtudiantMessagesContent() {
                   />
 
                   <div className="space-y-1.5">
-                    <label className="block text-sm font-medium text-slate-700">
+                    <label className="block text-sm font-medium text-slate-700 dark:text-[#F5F7FA]">
                       Contenu du message
                     </label>
                     <textarea
@@ -406,11 +406,11 @@ function EtudiantMessagesContent() {
                       value={newContent}
                       onChange={(e) => setNewContent(e.target.value)}
                       placeholder="Rédigez votre demande ou question académique..."
-                      className="block w-full rounded-lg border border-slate-200/90 bg-white p-3 text-sm text-slate-900 placeholder-slate-400 focus:border-[#0f2744] focus:ring-1 focus:ring-[#0f2744]"
+                      className="block w-full rounded-lg border border-slate-200/90 dark:border-[#263241] bg-white dark:bg-[#151D27] p-3 text-sm text-slate-900 dark:text-[#F5F7FA] placeholder-slate-400 dark:placeholder-[#687585] focus:border-[#0f2744] dark:focus:border-[#e0521c] focus:ring-1 focus:ring-[#0f2744] dark:focus:ring-[#e0521c]"
                     />
                   </div>
 
-                  <div className="border-t border-slate-100 pt-3 flex justify-end gap-2">
+                  <div className="border-t border-slate-100 dark:border-[#263241] pt-3 flex justify-end gap-2">
                     <Button
                       type="button"
                       variant="ghost"

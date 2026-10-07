@@ -121,16 +121,15 @@ export default function AdminChatPage() {
     >
       <div className="space-y-6 max-w-7xl mx-auto">
         {/* Entête */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200/80">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200/80 dark:border-[#263241]">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0f2744]/5 text-[#0f2744] text-[11px] font-semibold mb-2 border border-slate-200/90">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0f2744]/5 dark:bg-[#151D27] text-[#0f2744] dark:text-[#F5F7FA] text-[11px] font-semibold mb-2 border border-slate-200/90 dark:border-[#263241]">
               <Sparkles className="w-3.5 h-3.5 text-[#e0521c]" />
               <span>Supervision Académique & Modération</span>
             </div>
-            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] leading-snug">
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] dark:text-[#F5F7FA] leading-snug">
               Gestion & Modération des Salons
             </h1>
-
           </div>
 
           <div className="flex items-center gap-2">
@@ -154,8 +153,8 @@ export default function AdminChatPage() {
         </div>
 
         {successMsg && (
-          <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm flex items-center gap-3">
-            <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+          <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/40 text-emerald-800 dark:text-emerald-300 text-sm flex items-center gap-3">
+            <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
             <span>{successMsg}</span>
           </div>
         )}
@@ -170,15 +169,15 @@ export default function AdminChatPage() {
               <div
                 key={s.id}
                 onClick={() => handleOpenRoom(s.id)}
-                className={`group cursor-pointer rounded-2xl p-5 transition-all duration-200 border bg-white relative overflow-hidden flex flex-col justify-between ${
+                className={`group cursor-pointer rounded-2xl p-5 transition-all duration-200 border bg-white dark:bg-[#111821] relative overflow-hidden flex flex-col justify-between ${
                   isSelected
-                    ? "border-[#0f2744] shadow-xl ring-2 ring-[#0f2744]/10"
-                    : "border-slate-200 hover:border-[#0f2744]/40 hover:shadow-lg"
+                    ? "border-[#0f2744] dark:border-[#e0521c] shadow-xl ring-2 ring-[#0f2744]/10 dark:ring-[#e0521c]/20"
+                    : "border-slate-200 dark:border-[#263241] hover:border-[#0f2744]/40 dark:hover:border-[#e0521c]/50 hover:shadow-lg"
                 }`}
               >
                 <div>
                   <div className="flex items-start justify-between gap-3 mb-3">
-                    <div className="w-12 h-12 rounded-xl bg-[#0f2744] text-white flex items-center justify-center shadow-sm">
+                    <div className="w-12 h-12 rounded-xl bg-[#0f2744] dark:bg-[#1a385c] text-white flex items-center justify-center shadow-sm">
                       {s.type === "general" ? (
                         <MessagesSquare className="w-6 h-6 text-[#e0521c]" />
                       ) : s.type === "niveau" ? (
@@ -189,7 +188,7 @@ export default function AdminChatPage() {
                     </div>
 
                     <div className="flex items-center gap-1.5">
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-[#151D27] text-slate-700 dark:text-[#AAB4C0]">
                         <Radio className="w-2.5 h-2.5 text-emerald-500 animate-pulse" />
                         Actif
                       </span>
@@ -201,7 +200,7 @@ export default function AdminChatPage() {
                             handleDeleteSalon(s.id, s.titre);
                           }}
                           title="Supprimer ce salon"
-                          className="p-1 text-slate-300 hover:text-red-600 rounded-md transition-colors"
+                          className="p-1 text-slate-300 dark:text-[#687585] hover:text-red-600 dark:hover:text-rose-400 rounded-md transition-colors"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -209,19 +208,19 @@ export default function AdminChatPage() {
                     </div>
                   </div>
 
-                  <h3 className="font-serif text-lg font-bold text-[#0f2744] group-hover:text-[#e0521c] transition-colors mb-1 truncate">
+                  <h3 className="font-serif text-lg font-bold text-[#0f2744] dark:text-[#F5F7FA] group-hover:text-[#e0521c] dark:group-hover:text-[#e0521c] transition-colors mb-1 truncate">
                     {s.titre}
                   </h3>
-                  <p className="text-xs text-slate-500 leading-relaxed line-clamp-2 mb-3">
+                  <p className="text-xs text-slate-500 dark:text-[#AAB4C0] leading-relaxed line-clamp-2 mb-3">
                     {s.description}
                   </p>
                 </div>
 
-                <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
-                  <span className="text-[11px] font-mono text-slate-400">
+                <div className="pt-3 border-t border-slate-100 dark:border-[#263241] flex items-center justify-between">
+                  <span className="text-[11px] font-mono text-slate-400 dark:text-[#687585]">
                     ID: {s.id}
                   </span>
-                  <div className="flex items-center gap-1 text-xs font-bold text-[#0f2744] group-hover:text-[#e0521c] transition-colors">
+                  <div className="flex items-center gap-1 text-xs font-bold text-[#0f2744] dark:text-[#F5F7FA] group-hover:text-[#e0521c] dark:group-hover:text-[#e0521c] transition-colors">
                     <span>Ouvrir chat</span>
                     <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                   </div>
@@ -233,25 +232,25 @@ export default function AdminChatPage() {
 
         {/* Modal création de nouveau salon */}
         {modalOpen && (
-          <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
-            <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div className="fixed inset-0 z-50 bg-slate-900/60 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+            <div className="bg-white dark:bg-[#111821] rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 dark:border-[#263241] space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#263241]">
                 <div className="flex items-center gap-2">
-                  <div className="w-9 h-9 rounded-xl bg-[#0f2744]/10 text-[#0f2744] flex items-center justify-center">
+                  <div className="w-9 h-9 rounded-xl bg-[#0f2744]/10 dark:bg-[#151D27] text-[#0f2744] dark:text-[#F5F7FA] flex items-center justify-center">
                     <Plus className="w-5 h-5 text-[#e0521c]" />
                   </div>
                   <div>
-                    <h3 className="font-serif text-lg font-bold text-[#0f2744]">
+                    <h3 className="font-serif text-lg font-bold text-[#0f2744] dark:text-[#F5F7FA]">
                       Créer un Salon de Discussion
                     </h3>
-                    <p className="text-[11px] text-slate-400">
+                    <p className="text-[11px] text-slate-400 dark:text-[#687585]">
                       Définissez la portée et les étudiants autorisés
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => setModalOpen(false)}
-                  className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100 transition-colors"
+                  className="p-1.5 text-slate-400 dark:text-[#687585] hover:text-slate-700 dark:hover:text-[#F5F7FA] rounded-lg hover:bg-slate-100 dark:hover:bg-[#151D27] transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -267,13 +266,13 @@ export default function AdminChatPage() {
                 />
 
                 <div className="space-y-1.5">
-                  <label className="block text-sm font-medium text-slate-700">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-[#F5F7FA]">
                     Portée et Accès
                   </label>
                   <select
                     value={formType}
                     onChange={(e) => setFormType(e.target.value as any)}
-                    className="w-full text-sm border border-slate-200 rounded-lg p-2.5 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0f2744]/20"
+                    className="w-full text-sm border border-slate-200 dark:border-[#263241] rounded-lg p-2.5 bg-white dark:bg-[#151D27] text-slate-800 dark:text-[#F5F7FA] focus:outline-none focus:ring-2 focus:ring-[#0f2744]/20 dark:focus:ring-[#e0521c]/30"
                   >
                     <option value="niveau">Par Niveau (Licence 1 ou 2)</option>
                     <option value="classe">Par Classe Spécifique (L1 MPI, L2 SML...)</option>
@@ -283,13 +282,13 @@ export default function AdminChatPage() {
 
                 {formType === "niveau" && (
                   <div className="space-y-1.5">
-                    <label className="block text-sm font-medium text-slate-700">
+                    <label className="block text-sm font-medium text-slate-700 dark:text-[#F5F7FA]">
                       Niveau Autorisé
                     </label>
                     <select
                       value={formNiveau}
                       onChange={(e) => setFormNiveau(e.target.value as any)}
-                      className="w-full text-sm border border-slate-200 rounded-lg p-2.5 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0f2744]/20"
+                      className="w-full text-sm border border-slate-200 dark:border-[#263241] rounded-lg p-2.5 bg-white dark:bg-[#151D27] text-slate-800 dark:text-[#F5F7FA] focus:outline-none focus:ring-2 focus:ring-[#0f2744]/20 dark:focus:ring-[#e0521c]/30"
                     >
                       <option value="L1">Licence 1 (L1) uniquement</option>
                       <option value="L2">Licence 2 (L2) uniquement</option>
@@ -299,13 +298,13 @@ export default function AdminChatPage() {
 
                 {formType === "classe" && (
                   <div className="space-y-1.5">
-                    <label className="block text-sm font-medium text-slate-700">
+                    <label className="block text-sm font-medium text-slate-700 dark:text-[#F5F7FA]">
                       Classe Autorisée
                     </label>
                     <select
                       value={formClasse}
                       onChange={(e) => setFormClasse(e.target.value)}
-                      className="w-full text-sm border border-slate-200 rounded-lg p-2.5 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0f2744]/20"
+                      className="w-full text-sm border border-slate-200 dark:border-[#263241] rounded-lg p-2.5 bg-white dark:bg-[#151D27] text-slate-800 dark:text-[#F5F7FA] focus:outline-none focus:ring-2 focus:ring-[#0f2744]/20 dark:focus:ring-[#e0521c]/30"
                     >
                       <option value="L1 MPI">L1 MPI (Maths, Physique, Info)</option>
                       <option value="L2 MPI">L2 MPI (Maths, Physique, Info)</option>
@@ -318,7 +317,7 @@ export default function AdminChatPage() {
                 )}
 
                 <div className="space-y-1.5">
-                  <label className="block text-sm font-medium text-slate-700">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-[#F5F7FA]">
                     Description ou objectif du salon
                   </label>
                   <textarea
@@ -326,11 +325,11 @@ export default function AdminChatPage() {
                     placeholder="Ex. Espace d'échange et partage de ressources pédagogiques..."
                     value={formDesc}
                     onChange={(e) => setFormDesc(e.target.value)}
-                    className="block w-full rounded-lg border border-slate-200 bg-white p-3 text-sm text-slate-900 focus:border-[#0f2744] focus:ring-2 focus:ring-[#0f2744]/20"
+                    className="block w-full rounded-lg border border-slate-200 dark:border-[#263241] bg-white dark:bg-[#151D27] p-3 text-sm text-slate-900 dark:text-[#F5F7FA] focus:border-[#0f2744] dark:focus:border-[#e0521c] focus:ring-2 focus:ring-[#0f2744]/20 dark:focus:ring-[#e0521c]/30"
                   />
                 </div>
 
-                <div className="border-t border-slate-100 pt-3 flex justify-end gap-2">
+                <div className="border-t border-slate-100 dark:border-[#263241] pt-3 flex justify-end gap-2">
                   <Button
                     type="button"
                     variant="ghost"

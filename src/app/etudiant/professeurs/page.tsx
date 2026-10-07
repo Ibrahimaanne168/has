@@ -52,10 +52,10 @@ export default function EtudiantProfesseursPage() {
         {/* En-tête */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] leading-snug">
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] dark:text-[#F5F7FA] leading-snug">
               Corps Professoral
             </h1>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1 flex items-center gap-1.5">
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-[#AAB4C0] mt-1 flex items-center gap-1.5">
               <Users className="w-3.5 h-3.5 text-[#e0521c]" />
               {profs.length} enseignant{profs.length !== 1 ? "s" : ""} — HAS Académie Scientifique
             </p>
@@ -63,21 +63,21 @@ export default function EtudiantProfesseursPage() {
 
           {/* Barre de recherche */}
           <div className="relative w-full sm:w-64 shrink-0">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-[#687585]" />
             <input
               type="text"
               placeholder="Rechercher un enseignant…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 rounded-lg border border-slate-200 bg-white text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0f2744]/30"
+              className="w-full pl-9 pr-3 py-2 rounded-lg border border-slate-200 dark:border-[#263241] bg-white dark:bg-[#151D27] text-sm text-slate-800 dark:text-[#F5F7FA] placeholder-slate-400 dark:placeholder-[#687585] focus:outline-none focus:ring-2 focus:ring-[#0f2744]/30 dark:focus:ring-[#e0521c]/40"
             />
           </div>
         </div>
 
         {/* Grille */}
         {displayed.length === 0 ? (
-          <div className="text-center py-16 text-slate-400">
-            <GraduationCap className="w-10 h-10 mx-auto mb-3 text-slate-200" />
+          <div className="text-center py-16 text-slate-400 dark:text-[#687585]">
+            <GraduationCap className="w-10 h-10 mx-auto mb-3 text-slate-200 dark:text-[#263241]" />
             <p className="text-sm font-semibold">Aucun enseignant trouvé</p>
           </div>
         ) : (
@@ -85,12 +85,12 @@ export default function EtudiantProfesseursPage() {
             {displayed.map((prof) => (
               <div
                 key={prof.id}
-                className="bg-white rounded-xl border border-slate-200/90 p-5 sm:p-6 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] flex flex-col justify-between hover:shadow-md transition-all duration-200"
+                className="bg-white dark:bg-[#111821] rounded-xl border border-slate-200/90 dark:border-[#263241] p-5 sm:p-6 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] dark:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.4)] flex flex-col justify-between hover:shadow-md transition-all duration-200"
               >
                 <div>
                   {/* Avatar + identité */}
                   <div className="flex items-start gap-4 mb-4">
-                    <div className="w-14 h-14 rounded-xl bg-[#0f2744] text-white flex items-center justify-center font-serif text-xl font-bold shrink-0 shadow-xs overflow-hidden">
+                    <div className="w-14 h-14 rounded-xl bg-[#0f2744] dark:bg-[#1a385c] text-white flex items-center justify-center font-serif text-xl font-bold shrink-0 shadow-xs overflow-hidden">
                       {prof.photo ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={prof.photo} alt={prof.full_name} className="w-full h-full object-cover" />
@@ -100,7 +100,7 @@ export default function EtudiantProfesseursPage() {
                     </div>
 
                     <div className="min-w-0 flex-1">
-                      <h3 className="font-serif text-base sm:text-lg font-bold text-slate-900 truncate">
+                      <h3 className="font-serif text-base sm:text-lg font-bold text-slate-900 dark:text-[#F5F7FA] truncate">
                         {prof.full_name}
                       </h3>
                       {prof.specialite && (
@@ -109,7 +109,7 @@ export default function EtudiantProfesseursPage() {
                           <span className="truncate">{prof.specialite}</span>
                         </div>
                       )}
-                      <div className="text-[10px] font-mono text-slate-400 mt-0.5">
+                      <div className="text-[10px] font-mono text-slate-400 dark:text-[#687585] mt-0.5">
                         {prof.matricule}
                       </div>
                     </div>
@@ -117,7 +117,7 @@ export default function EtudiantProfesseursPage() {
 
                   {/* Biographie */}
                   {prof.bio && (
-                    <p className="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3.5 rounded-lg border border-slate-100 mb-4">
+                    <p className="text-xs text-slate-600 dark:text-[#AAB4C0] leading-relaxed bg-slate-50 dark:bg-[#151D27] p-3.5 rounded-lg border border-slate-100 dark:border-[#263241] mb-4">
                       {prof.bio}
                     </p>
                   )}
@@ -125,7 +125,7 @@ export default function EtudiantProfesseursPage() {
                   {/* Matières enseignées (noms seulement, sans compteur) */}
                   {prof.matieres && prof.matieres.length > 0 && (
                     <div className="mb-4">
-                      <div className="flex items-center gap-1.5 text-xs font-bold text-[#0f2744] mb-2">
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-[#0f2744] dark:text-[#F5F7FA] mb-2">
                         <BookOpen className="w-3.5 h-3.5 text-[#e0521c]" />
                         <span>Matières enseignées</span>
                       </div>
@@ -133,7 +133,7 @@ export default function EtudiantProfesseursPage() {
                         {prof.matieres.map((m, idx) => (
                           <span
                             key={idx}
-                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#0f2744]/5 border border-[#0f2744]/10 text-[10px] font-semibold text-[#0f2744]"
+                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#0f2744]/5 dark:bg-[#151D27] border border-[#0f2744]/10 dark:border-[#263241] text-[10px] font-semibold text-[#0f2744] dark:text-[#F5F7FA]"
                           >
                             <span className="font-mono text-[#e0521c]">{m.niveau}</span>
                             {m.nom}
@@ -144,26 +144,26 @@ export default function EtudiantProfesseursPage() {
                   )}
 
                   {/* Coordonnées (téléphone seulement, pas d'email) */}
-                  <div className="space-y-1.5 text-xs text-slate-500 pt-2 border-t border-slate-100">
+                  <div className="space-y-1.5 text-xs text-slate-500 dark:text-[#AAB4C0] pt-2 border-t border-slate-100 dark:border-[#263241]">
                     {prof.phone && (
                       <div className="flex items-center gap-2">
-                        <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                        <span className="font-mono text-slate-700">{prof.phone}</span>
+                        <Phone className="w-3.5 h-3.5 text-slate-400 dark:text-[#687585] shrink-0" />
+                        <span className="font-mono text-slate-700 dark:text-[#F5F7FA]">{prof.phone}</span>
                       </div>
                     )}
                   </div>
                 </div>
 
                 {/* Footer action */}
-                <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-end">
+                <div className="mt-5 pt-4 border-t border-slate-100 dark:border-[#263241] flex items-center justify-end">
                   <Link
                     href={`/etudiant/messages?dest=${prof.id}&name=${encodeURIComponent(prof.full_name)}`}
                   >
                     <Button
                       variant="outline"
                       size="sm"
-                      className="border-slate-200/90 text-xs rounded-lg"
-                      leftIcon={<MessageSquare className="w-3.5 h-3.5 text-[#0f2744]" />}
+                      className="border-slate-200/90 dark:border-[#263241] text-xs rounded-lg"
+                      leftIcon={<MessageSquare className="w-3.5 h-3.5 text-[#0f2744] dark:text-[#e0521c]" />}
                     >
                       Envoyer un message
                     </Button>

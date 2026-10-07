@@ -85,19 +85,19 @@ export default function EtudiantDashboard() {
         {/* ============================================================================== */}
         {/* ALERTE OFFICIELLE EMPLOI DU TEMPS */}
         {/* ============================================================================== */}
-        <div className="bg-[#F8FAFC] border border-amber-300/60 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)]">
+        <div className="bg-[#F8FAFC] dark:bg-[#111821] border border-amber-300/60 dark:border-amber-500/30 rounded-xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] dark:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.4)]">
           <div className="flex items-start gap-3">
-            <div className="w-9 h-9 rounded-lg bg-amber-500/10 text-amber-800 border border-amber-300/40 flex items-center justify-center shrink-0">
+            <div className="w-9 h-9 rounded-lg bg-amber-500/10 text-amber-800 dark:text-amber-400 border border-amber-300/40 dark:border-amber-500/30 flex items-center justify-center shrink-0">
               <Calendar className="w-4 h-4 text-[#e0521c]" />
             </div>
             <div>
               <p className="text-[10px] font-bold uppercase tracking-wider text-[#e0521c] mb-0.5">
                 Emploi du temps officiel
               </p>
-              <h3 className="font-serif text-sm sm:text-base font-bold text-slate-900 leading-tight">
+              <h3 className="font-serif text-sm sm:text-base font-bold text-slate-900 dark:text-[#F5F7FA] leading-tight">
                 {hasEDT ? "Planning de la Semaine validé" : "Emploi du temps en cours de finalisation"}
               </h3>
-              <p className="text-xs text-slate-500 mt-0.5">
+              <p className="text-xs text-slate-500 dark:text-[#AAB4C0] mt-0.5">
                 {hasEDT
                   ? `Le planning officiel des cours est validé et disponible pour votre classe (${user.classe?.code || "L1-MPI"}).`
                   : `L'administration publiera prochainement le planning officiel des cours pour la classe ${user.classe?.name || "L1-MPI"}.`}
@@ -123,7 +123,7 @@ export default function EtudiantDashboard() {
               <p className="text-[10px] font-bold uppercase tracking-wider text-[#e0521c] mb-0.5">
                 Supports officiels
               </p>
-              <h2 className="font-serif text-xl font-bold text-[#0f2744]">
+              <h2 className="font-serif text-xl font-bold text-[#0f2744] dark:text-[#F5F7FA]">
                 Derniers Cours &amp; Travaux Dirigés
               </h2>
             </div>
@@ -135,12 +135,12 @@ export default function EtudiantDashboard() {
           </div>
 
           {courses.length === 0 ? (
-            <div className="bg-white rounded-xl border border-dashed border-slate-300 p-8 text-center space-y-2">
-              <BookOpen className="w-8 h-8 text-slate-300 mx-auto" />
-              <p className="font-serif text-sm font-bold text-slate-800">
+            <div className="bg-white dark:bg-[#111821] rounded-xl border border-dashed border-slate-300 dark:border-[#263241] p-8 text-center space-y-2">
+              <BookOpen className="w-8 h-8 text-slate-300 dark:text-[#687585] mx-auto" />
+              <p className="font-serif text-sm font-bold text-slate-800 dark:text-[#F5F7FA]">
                 Aucun cours publié pour le moment
               </p>
-              <p className="text-xs text-slate-500 max-w-sm mx-auto">
+              <p className="text-xs text-slate-500 dark:text-[#AAB4C0] max-w-sm mx-auto">
                 L&apos;administration et vos enseignants publieront ici les fiches de cours, TD et syllabus officiels.
               </p>
             </div>
@@ -157,7 +157,7 @@ export default function EtudiantDashboard() {
                     <button
                       onClick={() => toggleFavorite(c.id)}
                       title={c.is_favorite ? "Retirer des favoris" : "Ajouter aux favoris"}
-                      className="text-slate-300 hover:text-amber-500 transition-colors p-1"
+                      className="text-slate-300 dark:text-[#687585] hover:text-amber-500 dark:hover:text-amber-400 transition-colors p-1"
                     >
                       <Star
                         className={`w-4 h-4 ${
@@ -173,33 +173,33 @@ export default function EtudiantDashboard() {
                   </p>
 
                   {/* 3. Titre 2 lignes max */}
-                  <h3 className="font-serif text-base font-bold text-slate-900 leading-snug line-clamp-2 mb-1.5">
+                  <h3 className="font-serif text-base font-bold text-slate-900 dark:text-[#F5F7FA] leading-snug line-clamp-2 mb-1.5">
                     {c.title}
                   </h3>
 
-                  <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed mb-4 flex-1">
+                  <p className="text-xs text-slate-500 dark:text-[#AAB4C0] line-clamp-2 leading-relaxed mb-4 flex-1">
                     {c.description}
                   </p>
 
                   {/* 4. Métadonnées filaires */}
-                  <div className="pt-3 border-t border-slate-100/90 flex items-center justify-between text-xs text-slate-500">
+                  <div className="pt-3 border-t border-slate-100/90 dark:border-[#263241] flex items-center justify-between text-xs text-slate-500 dark:text-[#AAB4C0]">
                     <div className="flex items-center gap-1.5">
-                      <GraduationCap className="w-3.5 h-3.5 text-[#0f2744] shrink-0" />
-                      <span className="font-medium text-slate-700 truncate">{c.professeur?.full_name}</span>
+                      <GraduationCap className="w-3.5 h-3.5 text-[#0f2744] dark:text-[#e0521c] shrink-0" />
+                      <span className="font-medium text-slate-700 dark:text-[#F5F7FA] truncate">{c.professeur?.full_name}</span>
                     </div>
-                    <span className="text-[11px] text-slate-400">
+                    <span className="text-[11px] text-slate-400 dark:text-[#687585]">
                       {new Date(c.created_at).toLocaleDateString("fr-FR")}
                     </span>
                   </div>
                 </div>
 
                 {/* 5. Pied de carte */}
-                <CardFooter className="flex items-center justify-between gap-2 p-3 bg-slate-50/70 border-t border-slate-100/90">
+                <CardFooter className="flex items-center justify-between gap-2 p-3 bg-slate-50/70 dark:bg-[#151D27] border-t border-slate-100/90 dark:border-[#263241]">
                   {c.file_url ? (
                     <a
                       href={c.file_url || "#"}
                       download={c.file_name || `${(c.title || "cours").replace(/[/\\?%*:|"<>]/g, "_")}.pdf`}
-                      className="inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-1.5 bg-[#0f2744] text-white hover:bg-[#183a62] rounded-lg transition-colors flex-1"
+                      className="inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-1.5 bg-[#0f2744] dark:bg-[#1a385c] text-white hover:bg-[#183a62] dark:hover:bg-[#234b7a] dark:border dark:border-[#2b4c73] rounded-lg transition-colors flex-1"
                     >
                       <Download className="w-3.5 h-3.5" />
                       Télécharger le PDF
@@ -221,7 +221,7 @@ export default function EtudiantDashboard() {
               <p className="text-[10px] font-bold uppercase tracking-wider text-[#e0521c] mb-0.5">
                 Information officielle
               </p>
-              <h2 className="font-serif text-xl font-bold text-[#0f2744]">
+              <h2 className="font-serif text-xl font-bold text-[#0f2744] dark:text-[#F5F7FA]">
                 Communiqués de l&apos;Administration
               </h2>
             </div>
@@ -236,7 +236,7 @@ export default function EtudiantDashboard() {
             {MOCK_COMMUNIQUES.slice(0, 3).map((item) => (
               <div
                 key={item.id}
-                className="bg-white p-5 rounded-xl border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:shadow-md transition-all duration-200"
+                className="bg-white dark:bg-[#111821] p-5 rounded-xl border border-slate-200/90 dark:border-[#263241] shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] dark:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.4)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:shadow-md transition-all duration-200"
               >
                 <div className="space-y-1.5 flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
@@ -245,7 +245,7 @@ export default function EtudiantDashboard() {
                         Important
                       </Badge>
                     )}
-                    <span className="text-[11px] text-slate-400 font-medium">
+                    <span className="text-[11px] text-slate-400 dark:text-[#687585] font-medium">
                       {new Date(item.created_at).toLocaleDateString("fr-FR", {
                         day: "numeric",
                         month: "long",
@@ -253,16 +253,16 @@ export default function EtudiantDashboard() {
                       })}
                     </span>
                   </div>
-                  <h4 className="font-serif text-base font-bold text-slate-900 leading-snug">
+                  <h4 className="font-serif text-base font-bold text-slate-900 dark:text-[#F5F7FA] leading-snug">
                     {item.title}
                   </h4>
-                  <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                  <p className="text-xs text-slate-500 dark:text-[#AAB4C0] line-clamp-2 leading-relaxed">
                     {item.content}
                   </p>
                 </div>
 
                 <Link href="/etudiant/communiques" className="shrink-0">
-                  <Button variant="outline" size="sm" className="rounded-lg text-xs border-slate-200/90">
+                  <Button variant="outline" size="sm" className="rounded-lg text-xs border-slate-200/90 dark:border-[#263241]">
                     Lire le communiqué
                   </Button>
                 </Link>

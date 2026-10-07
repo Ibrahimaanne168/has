@@ -196,10 +196,10 @@ export default function AdminCoursPage() {
             <p className="text-[11px] font-bold tracking-wider uppercase text-[#e0521c] mb-1">
               Administration Académique
             </p>
-            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] leading-snug">
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] dark:text-[#F5F7FA] leading-snug">
               Gestion des Cours &amp; Chapitres
             </h1>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-xs text-slate-500 dark:text-[#AAB4C0] mt-1">
               Seule l&apos;administration gère et publie les supports de cours officiels par classe.
             </p>
           </div>
@@ -215,22 +215,22 @@ export default function AdminCoursPage() {
         </div>
 
         {successMsg && (
-          <div className="p-4 rounded-lg bg-emerald-50 border border-emerald-200/90 flex items-center gap-3 shadow-xs">
-            <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-            <p className="text-sm font-medium text-emerald-800">{successMsg}</p>
+          <div className="p-4 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/90 dark:border-emerald-800/50 flex items-center gap-3 shadow-xs">
+            <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            <p className="text-sm font-medium text-emerald-800 dark:text-emerald-300">{successMsg}</p>
           </div>
         )}
 
         {/* Barre de recherche et filtres */}
-        <div className="bg-white p-4 rounded-xl border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="bg-white dark:bg-[#111821] p-4 rounded-xl border border-slate-200/90 dark:border-[#263241] shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] dark:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.4)] flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="relative w-full sm:w-80">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-slate-400 dark:text-[#687585] absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Rechercher un cours..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-xs border border-slate-200/90 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#0f2744]"
+              className="w-full pl-9 pr-3 py-2 text-xs border border-slate-200/90 dark:border-[#263241] bg-white dark:bg-[#151D27] text-slate-900 dark:text-[#F5F7FA] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#0f2744] dark:focus:ring-[#e0521c]"
             />
           </div>
 
@@ -238,7 +238,7 @@ export default function AdminCoursPage() {
             <select
               value={selectedClasse}
               onChange={(e) => setSelectedClasse(e.target.value)}
-              className="text-xs border border-slate-200/90 rounded-lg px-3 py-2 bg-white text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#0f2744] w-full sm:w-auto"
+              className="text-xs border border-slate-200/90 dark:border-[#263241] rounded-lg px-3 py-2 bg-white dark:bg-[#151D27] text-slate-700 dark:text-[#F5F7FA] focus:outline-none focus:ring-1 focus:ring-[#0f2744] dark:focus:ring-[#e0521c] w-full sm:w-auto"
             >
               <option value="all">Toutes les classes</option>
               {classes.map((c) => (
@@ -252,14 +252,14 @@ export default function AdminCoursPage() {
 
         {/* Liste des cours ou état vide */}
         {filtered.length === 0 ? (
-          <div className="bg-white p-12 rounded-xl border border-dashed border-slate-300 text-center space-y-3">
-            <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-slate-400">
+          <div className="bg-white dark:bg-[#111821] p-12 rounded-xl border border-dashed border-slate-300 dark:border-[#263241] text-center space-y-3">
+            <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-[#151D27] flex items-center justify-center mx-auto text-slate-400 dark:text-[#687585]">
               <BookOpen className="w-6 h-6" />
             </div>
-            <h3 className="font-serif text-lg font-bold text-slate-800">
+            <h3 className="font-serif text-lg font-bold text-slate-800 dark:text-[#F5F7FA]">
               {courses.length === 0 ? "Aucun cours ou chapitre créé" : "Aucun cours trouvé"}
             </h3>
-            <p className="text-xs text-slate-500 max-w-md mx-auto">
+            <p className="text-xs text-slate-500 dark:text-[#AAB4C0] max-w-md mx-auto">
               {courses.length === 0
                 ? "Toutes les fausses données ont été supprimées. Utilisez le bouton ci-dessus pour ajouter et publier le premier cours officiel."
                 : "Modifiez vos filtres de recherche."}
@@ -280,7 +280,7 @@ export default function AdminCoursPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {filtered.map((c) => (
-              <Card key={c.id} className="flex flex-col justify-between overflow-hidden">
+              <Card key={c.id} className="flex flex-col justify-between overflow-hidden bg-white dark:bg-[#111821] border border-slate-200/90 dark:border-[#263241]">
                 <div className="p-5 flex-1 flex flex-col">
                   <div className="flex items-center justify-between gap-2 mb-2">
                     {(() => {
@@ -299,7 +299,7 @@ export default function AdminCoursPage() {
                         </div>
                       );
                     })()}
-                    <span className="text-[10px] text-slate-400 font-mono">
+                    <span className="text-[10px] text-slate-400 dark:text-[#687585] font-mono">
                       {new Date(c.created_at).toLocaleDateString("fr-FR")}
                     </span>
                   </div>
@@ -308,34 +308,34 @@ export default function AdminCoursPage() {
                     {c.matiere?.name || "Matière"}
                   </p>
 
-                  <h3 className="font-serif text-base font-bold text-slate-900 leading-snug line-clamp-2 mb-2">
+                  <h3 className="font-serif text-base font-bold text-slate-900 dark:text-[#F5F7FA] leading-snug line-clamp-2 mb-2">
                     {c.title}
                   </h3>
 
-                  <p className="text-xs text-slate-500 line-clamp-3 leading-relaxed mb-4 flex-1">
+                  <p className="text-xs text-slate-500 dark:text-[#AAB4C0] line-clamp-3 leading-relaxed mb-4 flex-1">
                     {c.description || "Aucune description renseignée."}
                   </p>
 
-                  <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                  <div className="pt-3 border-t border-slate-100 dark:border-[#263241] flex items-center justify-between text-xs text-slate-500 dark:text-[#AAB4C0]">
                     <div className="flex items-center gap-1 truncate mr-2">
-                      <GraduationCap className="w-3.5 h-3.5 text-[#0f2744] shrink-0" />
+                      <GraduationCap className="w-3.5 h-3.5 text-[#0f2744] dark:text-cyan-400 shrink-0" />
                       <span className="truncate">{c.professeur?.full_name || "Direction HAS"}</span>
                     </div>
                   </div>
                 </div>
 
-                <CardFooter className="flex items-center justify-between p-3 bg-slate-50/70 border-t border-slate-100">
+                <CardFooter className="flex items-center justify-between p-3 bg-slate-50/70 dark:bg-[#151D27] border-t border-slate-100 dark:border-[#263241]">
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => openEditModal(c)}
-                      className="p-1.5 text-slate-400 hover:text-[#0f2744] hover:bg-slate-200/60 rounded-md transition-colors"
+                      className="p-1.5 text-slate-400 dark:text-[#AAB4C0] hover:text-[#0f2744] dark:hover:text-[#F5F7FA] hover:bg-slate-200/60 dark:hover:bg-[#111821] rounded-md transition-colors cursor-pointer"
                       title="Modifier"
                     >
                       <Edit2 className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => setDeleteConfirm(c.id)}
-                      className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                      className="p-1.5 text-slate-400 dark:text-[#AAB4C0] hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-md transition-colors cursor-pointer"
                       title="Supprimer"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -346,7 +346,7 @@ export default function AdminCoursPage() {
                     <a
                       href={c.file_url}
                       download={c.file_name || `${c.title}.pdf`}
-                      className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 bg-white border border-slate-200 rounded-md text-slate-700 hover:bg-slate-50"
+                      className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 bg-white dark:bg-[#111821] border border-slate-200 dark:border-[#263241] rounded-md text-slate-700 dark:text-[#F5F7FA] hover:bg-slate-50 dark:hover:bg-[#151D27] cursor-pointer"
                     >
                       <Download className="w-3.5 h-3.5" /> PDF
                     </a>
@@ -360,19 +360,19 @@ export default function AdminCoursPage() {
         {/* Modal Création / Édition */}
         {modalOpen && (
           <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl max-w-xl w-full p-6 shadow-xl border border-slate-200/90 max-h-[90vh] overflow-y-auto">
+            <div className="bg-white dark:bg-[#111821] rounded-xl max-w-xl w-full p-6 shadow-xl border border-slate-200/90 dark:border-[#263241] max-h-[90vh] overflow-y-auto">
               <div className="flex items-center justify-between mb-5">
                 <div>
                   <p className="text-[11px] font-bold uppercase tracking-wider text-[#e0521c] mb-1">
                     Administration Pédagogique
                   </p>
-                  <h3 className="font-serif text-xl font-bold text-[#0f2744]">
+                  <h3 className="font-serif text-xl font-bold text-[#0f2744] dark:text-[#F5F7FA]">
                     {editingCourse ? "Modifier le cours" : "Publier un cours / chapitre"}
                   </h3>
                 </div>
                 <button
                   onClick={() => setModalOpen(false)}
-                  className="p-1.5 text-slate-400 hover:bg-slate-100 rounded-md"
+                  className="p-1.5 text-slate-400 dark:text-[#AAB4C0] hover:bg-slate-100 dark:hover:bg-[#151D27] rounded-md cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -380,26 +380,26 @@ export default function AdminCoursPage() {
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Zone dépôt fichier PDF */}
-                <div className="p-5 rounded-lg border-2 border-dashed border-slate-300 bg-[#F8FAFC] flex flex-col items-center gap-2 text-center">
-                  <Upload className="w-8 h-8 text-[#0f2744]" />
-                  <p className="text-xs sm:text-sm font-semibold text-slate-800">
+                <div className="p-5 rounded-lg border-2 border-dashed border-slate-300 dark:border-[#263241] bg-[#F8FAFC] dark:bg-[#151D27] flex flex-col items-center gap-2 text-center">
+                  <Upload className="w-8 h-8 text-[#0f2744] dark:text-[#e0521c]" />
+                  <p className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-[#F5F7FA]">
                     Déposer le document du cours (Format PDF uniquement)
                   </p>
-                  <p className="text-[11px] text-slate-500">
+                  <p className="text-[11px] text-slate-500 dark:text-[#AAB4C0]">
                     Le nom de votre fichier PDF est automatiquement assigné au titre du cours et sauvegardé de manière permanente
                   </p>
                   {isUploading ? (
-                    <div className="text-xs text-slate-500 py-1 font-medium animate-pulse">
+                    <div className="text-xs text-slate-500 dark:text-[#AAB4C0] py-1 font-medium animate-pulse">
                       Chargement et sauvegarde permanente du PDF...
                     </div>
                   ) : formPdfName ? (
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-800 mt-1">
-                      <FileText className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/50 text-xs font-semibold text-emerald-800 dark:text-emerald-300 mt-1">
+                      <FileText className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                       <span className="truncate max-w-xs">{formPdfName}</span>
                     </div>
                   ) : (
                     <label htmlFor="admin-pdf-upload" className="cursor-pointer">
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0f2744] text-white text-xs font-semibold hover:bg-[#0f2744]/90 transition-colors mt-1">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0f2744] dark:bg-[#e0521c] text-white text-xs font-semibold hover:bg-[#0f2744]/90 dark:hover:bg-[#c84418] transition-colors mt-1">
                         <FileText className="w-3.5 h-3.5" />
                         Choisir le fichier PDF
                       </span>
@@ -445,13 +445,13 @@ export default function AdminCoursPage() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-[#F5F7FA] mb-1">
                       Enseignant responsable <span className="text-[#e0521c]">*</span>
                     </label>
                     <select
                       value={formProfId}
                       onChange={(e) => setFormProfId(e.target.value)}
-                      className="w-full text-xs border border-slate-200 rounded-lg p-2.5 bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#0f2744]"
+                      className="w-full text-xs border border-slate-200 dark:border-[#263241] rounded-lg p-2.5 bg-white dark:bg-[#151D27] text-slate-800 dark:text-[#F5F7FA] focus:outline-none focus:ring-1 focus:ring-[#0f2744] dark:focus:ring-[#e0521c]"
                     >
                       {profs.map((p) => (
                         <option key={p.id} value={p.id}>
@@ -462,13 +462,13 @@ export default function AdminCoursPage() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-[#F5F7FA] mb-1">
                       Matière académique <span className="text-[#e0521c]">*</span>
                     </label>
                     <select
                       value={formMatiereId}
                       onChange={(e) => setFormMatiereId(e.target.value)}
-                      className="w-full text-xs border border-slate-200 rounded-lg p-2.5 bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#0f2744]"
+                      className="w-full text-xs border border-slate-200 dark:border-[#263241] rounded-lg p-2.5 bg-white dark:bg-[#151D27] text-slate-800 dark:text-[#F5F7FA] focus:outline-none focus:ring-1 focus:ring-[#0f2744] dark:focus:ring-[#e0521c]"
                     >
                       {matieres.map((m) => (
                         <option key={m.id} value={m.id}>
@@ -481,8 +481,8 @@ export default function AdminCoursPage() {
 
                 {/* Information automatique sur les classes concernées */}
                 {selectedMatiereObj && (
-                  <div className="p-3 bg-amber-50/70 border border-amber-200/80 rounded-lg">
-                    <p className="text-[11px] font-bold text-amber-900 mb-1.5 flex items-center gap-1.5">
+                  <div className="p-3 bg-amber-50/70 dark:bg-amber-950/20 border border-amber-200/80 dark:border-amber-800/40 rounded-lg">
+                    <p className="text-[11px] font-bold text-amber-900 dark:text-amber-300 mb-1.5 flex items-center gap-1.5">
                       <GraduationCap className="w-4 h-4 text-[#e0521c]" />
                       Classes automatiquement concernées par cette matière :
                     </p>
@@ -493,20 +493,20 @@ export default function AdminCoursPage() {
                       ).map((cls) => (
                         <span
                           key={cls}
-                          className="inline-flex items-center px-2.5 py-0.5 rounded text-[11px] font-bold bg-[#0f2744] text-white shadow-xs"
+                          className="inline-flex items-center px-2.5 py-0.5 rounded text-[11px] font-bold bg-[#0f2744] dark:bg-[#1E4976] text-white shadow-xs"
                         >
                           {cls}
                         </span>
                       ))}
                     </div>
-                    <p className="text-[10px] text-amber-800/80 mt-1.5">
+                    <p className="text-[10px] text-amber-800/80 dark:text-amber-400/80 mt-1.5">
                       Pas besoin de choisir la classe manuellement : les étudiants de ces classes auront immédiatement accès au cours.
                     </p>
                   </div>
                 )}
 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-[#F5F7FA] mb-1">
                     Description ou objectifs pédagogiques
                   </label>
                   <textarea
@@ -514,11 +514,11 @@ export default function AdminCoursPage() {
                     placeholder="Présentation des notions abordées, prérequis et consignes de travail..."
                     value={formDescription}
                     onChange={(e) => setFormDescription(e.target.value)}
-                    className="w-full text-xs border border-slate-200 rounded-lg p-2.5 bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#0f2744]"
+                    className="w-full text-xs border border-slate-200 dark:border-[#263241] rounded-lg p-2.5 bg-white dark:bg-[#151D27] text-slate-800 dark:text-[#F5F7FA] focus:outline-none focus:ring-1 focus:ring-[#0f2744] dark:focus:ring-[#e0521c]"
                   />
                 </div>
 
-                <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
+                <div className="flex justify-end gap-3 pt-3 border-t border-slate-100 dark:border-[#263241]">
                   <Button
                     type="button"
                     variant="outline"
@@ -539,14 +539,14 @@ export default function AdminCoursPage() {
         {/* Modal Confirmation Suppression */}
         {deleteConfirm && (
           <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl max-w-sm w-full p-6 shadow-xl border border-slate-200/90 text-center space-y-4">
-              <div className="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto">
+            <div className="bg-white dark:bg-[#111821] rounded-xl max-w-sm w-full p-6 shadow-xl border border-slate-200/90 dark:border-[#263241] text-center space-y-4">
+              <div className="w-12 h-12 rounded-full bg-red-100 dark:bg-red-950/40 text-red-600 dark:text-red-400 flex items-center justify-center mx-auto">
                 <Trash2 className="w-6 h-6" />
               </div>
-              <h3 className="font-serif text-lg font-bold text-slate-900">
+              <h3 className="font-serif text-lg font-bold text-slate-900 dark:text-[#F5F7FA]">
                 Supprimer ce cours ?
               </h3>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-500 dark:text-[#AAB4C0]">
                 Ce support sera immédiatement retiré de l&apos;espace étudiant. Cette action est irréversible.
               </p>
               <div className="flex justify-center gap-3 pt-2">

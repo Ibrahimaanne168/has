@@ -93,22 +93,22 @@ export default function EtudiantCoursPage() {
             <p className="text-[11px] font-bold tracking-wider uppercase text-[#e0521c] mb-1">
               Espace Pédagogique
             </p>
-            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] leading-snug">
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] dark:text-[#F5F7FA] leading-snug">
               Cours &amp; Fiches Académiques
             </h1>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1">
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-[#AAB4C0] mt-1">
               Supports officiels, syllabus et fiches de TD classés par niveau
             </p>
           </div>
 
           {/* Onglets 2 Espaces : Matières L1 / Matières L2 */}
-          <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-xl border border-slate-200/80 w-fit shrink-0">
+          <div className="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-[#151D27] rounded-xl border border-slate-200/80 dark:border-[#263241] w-fit shrink-0">
             <button
               onClick={() => { setActiveNiveauTab("all"); setSelectedMatiere("all"); }}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 activeNiveauTab === "all"
-                  ? "bg-[#0f2744] text-white shadow-xs"
-                  : "text-slate-600 hover:text-slate-900"
+                  ? "bg-[#0f2744] dark:bg-[#1a385c] text-white shadow-xs dark:border dark:border-[#2b4c73]"
+                  : "text-slate-600 dark:text-[#AAB4C0] hover:text-slate-900 dark:hover:text-[#F5F7FA]"
               }`}
             >
               Tous
@@ -117,8 +117,8 @@ export default function EtudiantCoursPage() {
               onClick={() => { setActiveNiveauTab("L1"); setSelectedMatiere("all"); }}
               className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
                 activeNiveauTab === "L1"
-                  ? "bg-[#0f2744] text-white shadow-xs"
-                  : "text-slate-600 hover:text-slate-900"
+                  ? "bg-[#0f2744] dark:bg-[#1a385c] text-white shadow-xs dark:border dark:border-[#2b4c73]"
+                  : "text-slate-600 dark:text-[#AAB4C0] hover:text-slate-900 dark:hover:text-[#F5F7FA]"
               }`}
             >
               <span>Matières L1</span>
@@ -127,8 +127,8 @@ export default function EtudiantCoursPage() {
               onClick={() => { setActiveNiveauTab("L2"); setSelectedMatiere("all"); }}
               className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
                 activeNiveauTab === "L2"
-                  ? "bg-[#0f2744] text-white shadow-xs"
-                  : "text-slate-600 hover:text-slate-900"
+                  ? "bg-[#0f2744] dark:bg-[#1a385c] text-white shadow-xs dark:border dark:border-[#2b4c73]"
+                  : "text-slate-600 dark:text-[#AAB4C0] hover:text-slate-900 dark:hover:text-[#F5F7FA]"
               }`}
             >
               <span>Matières L2</span>
@@ -137,15 +137,15 @@ export default function EtudiantCoursPage() {
         </div>
 
         {/* Barre de Recherche & Filtres géométrique */}
-        <div className="bg-white p-4 rounded-xl border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] flex flex-col md:flex-row gap-3 items-center justify-between">
+        <div className="bg-white dark:bg-[#111821] p-4 rounded-xl border border-slate-200/90 dark:border-[#263241] shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] dark:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.4)] flex flex-col md:flex-row gap-3 items-center justify-between">
           <div className="relative w-full md:w-80">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-slate-400 dark:text-[#687585] absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Rechercher un cours ou mot-clé..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm border border-slate-200/90 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#0f2744] focus:border-[#0f2744] transition-colors"
+              className="w-full pl-9 pr-3 py-2 text-xs sm:text-sm border border-slate-200/90 dark:border-[#263241] bg-white dark:bg-[#151D27] text-slate-900 dark:text-[#F5F7FA] placeholder-slate-400 dark:placeholder-[#687585] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#0f2744] dark:focus:ring-[#e0521c] focus:border-[#0f2744] dark:focus:border-[#e0521c] transition-colors"
             />
           </div>
 
@@ -153,7 +153,7 @@ export default function EtudiantCoursPage() {
             <select
               value={selectedMatiere}
               onChange={(e) => setSelectedMatiere(e.target.value)}
-              className="text-xs border border-slate-200/90 rounded-lg px-3 py-2 bg-white text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#0f2744]"
+              className="text-xs border border-slate-200/90 dark:border-[#263241] rounded-lg px-3 py-2 bg-white dark:bg-[#151D27] text-slate-700 dark:text-[#F5F7FA] focus:outline-none focus:ring-1 focus:ring-[#0f2744] dark:focus:ring-[#e0521c]"
             >
               <option value="all">
                 {activeNiveauTab === "all" ? "Toutes les matières" : `Matières ${activeNiveauTab}`} ({availableMatieres.length})
@@ -169,13 +169,13 @@ export default function EtudiantCoursPage() {
               onClick={() => setOnlyFavorites(!onlyFavorites)}
               className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold border transition-colors ${
                 onlyFavorites
-                  ? "bg-amber-50 border-amber-300 text-amber-900"
-                  : "bg-white border-slate-200/90 text-slate-700 hover:bg-slate-50"
+                  ? "bg-amber-50 dark:bg-amber-950/30 border-amber-300 dark:border-amber-800/60 text-amber-900 dark:text-amber-300"
+                  : "bg-white dark:bg-[#151D27] border-slate-200/90 dark:border-[#263241] text-slate-700 dark:text-[#AAB4C0] hover:bg-slate-50 dark:hover:bg-[#1C2633]"
               }`}
             >
               <Star
                 className={`w-3.5 h-3.5 ${
-                  onlyFavorites ? "fill-amber-400 text-amber-500" : "text-slate-400"
+                  onlyFavorites ? "fill-amber-400 text-amber-500" : "text-slate-400 dark:text-[#687585]"
                 }`}
               />
               <span>Favoris uniquement</span>
@@ -185,14 +185,14 @@ export default function EtudiantCoursPage() {
 
         {/* Grille modulaire des cours (architecture stricte de carte) */}
         {filteredCourses.length === 0 ? (
-          <div className="bg-white rounded-xl border border-slate-200/90 p-12 text-center text-slate-500 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] space-y-2">
-            <BookOpen className="w-10 h-10 text-slate-300 mx-auto mb-2" />
-            <p className="font-serif text-base font-bold text-slate-800">
+          <div className="bg-white dark:bg-[#111821] rounded-xl border border-slate-200/90 dark:border-[#263241] p-12 text-center text-slate-500 dark:text-[#AAB4C0] shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] dark:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.4)] space-y-2">
+            <BookOpen className="w-10 h-10 text-slate-300 dark:text-[#687585] mx-auto mb-2" />
+            <p className="font-serif text-base font-bold text-slate-800 dark:text-[#F5F7FA]">
               {courses.length === 0
                 ? "Aucun cours ou chapitre publié pour le moment"
                 : "Aucun cours ne correspond aux critères sélectionnés"}
             </p>
-            <p className="text-xs text-slate-500 max-w-md mx-auto">
+            <p className="text-xs text-slate-500 dark:text-[#AAB4C0] max-w-md mx-auto">
               {courses.length === 0
                 ? `L'administration et vos enseignants publieront ici les syllabus, cours magistraux et fiches de TD pour votre promotion (${user.classe?.name || "Licence 1 — MPI"}).`
                 : "Modifiez vos filtres ou réinitialisez la barre de recherche pour afficher les autres cours."}
@@ -221,7 +221,7 @@ export default function EtudiantCoursPage() {
                     <button
                       onClick={() => toggleFavorite(c.id)}
                       title={c.is_favorite ? "Retirer des favoris" : "Ajouter aux favoris"}
-                      className="text-slate-300 hover:text-amber-500 transition-colors p-1"
+                      className="text-slate-300 dark:text-[#687585] hover:text-amber-500 dark:hover:text-amber-400 transition-colors p-1"
                     >
                       <Star
                         className={`w-4 h-4 ${
@@ -237,24 +237,24 @@ export default function EtudiantCoursPage() {
                   </p>
 
                   {/* 3. Titre principal affirmé sur 2 lignes max */}
-                  <h3 className="font-serif text-base sm:text-lg font-bold text-slate-900 leading-snug line-clamp-2 mb-2">
+                  <h3 className="font-serif text-base sm:text-lg font-bold text-slate-900 dark:text-[#F5F7FA] leading-snug line-clamp-2 mb-2">
                     {c.title}
                   </h3>
 
                   {/* Description succincte */}
-                  <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed mb-4 flex-1">
+                  <p className="text-xs text-slate-500 dark:text-[#AAB4C0] line-clamp-2 leading-relaxed mb-4 flex-1">
                     {c.description}
                   </p>
 
                   {/* 4. Métadonnées alignées avec icônes filaires fines (14-16px) */}
-                  <div className="pt-3 border-t border-slate-100/90 flex flex-col gap-1.5 text-xs text-slate-500">
+                  <div className="pt-3 border-t border-slate-100/90 dark:border-[#263241] flex flex-col gap-1.5 text-xs text-slate-500 dark:text-[#AAB4C0]">
                     <div className="flex items-center gap-2">
-                      <GraduationCap className="w-3.5 h-3.5 text-[#0f2744] shrink-0" />
-                      <span className="font-medium text-slate-700 truncate">{c.professeur?.full_name}</span>
+                      <GraduationCap className="w-3.5 h-3.5 text-[#0f2744] dark:text-[#e0521c] shrink-0" />
+                      <span className="font-medium text-slate-700 dark:text-[#F5F7FA] truncate">{c.professeur?.full_name}</span>
                     </div>
-                    <div className="flex items-center justify-between text-[11px] text-slate-400">
+                    <div className="flex items-center justify-between text-[11px] text-slate-400 dark:text-[#687585]">
                       <span className="flex items-center gap-1.5">
-                        <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <Calendar className="w-3.5 h-3.5 text-slate-400 dark:text-[#687585] shrink-0" />
                         {new Date(c.created_at).toLocaleDateString("fr-FR")}
                       </span>
                       {c.file_size_bytes && (
@@ -265,12 +265,12 @@ export default function EtudiantCoursPage() {
                 </div>
 
                 {/* 5. Pied de carte séparé visuellement avec boutons d'actions nets */}
-                <CardFooter className="flex items-center justify-between gap-2 p-3 bg-slate-50/70 border-t border-slate-100/90">
+                <CardFooter className="flex items-center justify-between gap-2 p-3 bg-slate-50/70 dark:bg-[#151D27] border-t border-slate-100/90 dark:border-[#263241]">
                   {c.file_url ? (
                     <a
                       href={c.file_url || "#"}
                       download={c.file_name || `${(c.title || "cours").replace(/[/\\?%*:|"<>]/g, "_")}.pdf`}
-                      className="inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-1.5 bg-[#0f2744] text-white hover:bg-[#183a62] rounded-lg transition-colors flex-1"
+                      className="inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-1.5 bg-[#0f2744] dark:bg-[#1a385c] text-white hover:bg-[#183a62] dark:hover:bg-[#234b7a] dark:border dark:border-[#2b4c73] rounded-lg transition-colors flex-1"
                     >
                       <Download className="w-3.5 h-3.5" />
                       Télécharger le PDF

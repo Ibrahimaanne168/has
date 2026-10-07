@@ -258,19 +258,19 @@ export default function AdminAcademiquePage() {
       <div className="space-y-6">
         <div>
           <p className="text-[11px] font-bold tracking-wider uppercase text-[#e0521c] mb-1">Administration Académique</p>
-          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] leading-snug">Structure Académique &amp; Matières</h1>
-          <p className="text-xs text-slate-500 mt-1">Filières, classes et modules de formation L1 &amp; L2 — Halil Académie Scientifique</p>
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] dark:text-[#F5F7FA] leading-snug">Structure Académique &amp; Matières</h1>
+          <p className="text-xs text-slate-500 dark:text-[#AAB4C0] mt-1">Filières, classes et modules de formation L1 &amp; L2 — Halil Académie Scientifique</p>
         </div>
 
         {successMsg && (
-          <div className="p-4 rounded-lg bg-emerald-50 border border-emerald-200/80 flex items-center gap-3">
-            <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-            <p className="text-sm font-medium text-emerald-800">{successMsg}</p>
+          <div className="p-4 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/80 dark:border-emerald-800/50 flex items-center gap-3">
+            <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            <p className="text-sm font-medium text-emerald-800 dark:text-emerald-300">{successMsg}</p>
           </div>
         )}
 
         {/* Onglets */}
-        <div className="flex gap-1 border-b border-slate-200 overflow-x-auto">
+        <div className="flex gap-1 border-b border-slate-200 dark:border-[#263241] overflow-x-auto">
           {([
             ["filieres", `Filières (${filieres.length})`],
             ["classes", `Classes (${classes.length})`],
@@ -278,8 +278,8 @@ export default function AdminAcademiquePage() {
             ["matieres_l2", `Matières L2 (${matieres.filter(m => m.niveau === "L2" || (m.classes||[]).some(c=>c.startsWith("L2"))).length})`],
           ] as const).map(([key, label]) => (
             <button key={key} onClick={() => setTab(key as any)}
-              className={`px-5 py-2.5 text-xs font-bold border-b-2 transition-colors whitespace-nowrap ${
-                tab === key ? "border-[#0f2744] text-[#0f2744]" : "border-transparent text-slate-500 hover:text-slate-800"
+              className={`px-5 py-2.5 text-xs font-bold border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
+                tab === key ? "border-[#0f2744] dark:border-[#e0521c] text-[#0f2744] dark:text-[#F5F7FA]" : "border-transparent text-slate-500 dark:text-[#AAB4C0] hover:text-slate-800 dark:hover:text-[#F5F7FA]"
               }`}>
               {label}
             </button>
@@ -296,25 +296,25 @@ export default function AdminAcademiquePage() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {filieres.map((f) => (
-                <div key={f.id} className="bg-white p-6 rounded-xl border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] hover:border-slate-300 transition-colors">
+                <div key={f.id} className="bg-white dark:bg-[#111821] p-6 rounded-xl border border-slate-200/90 dark:border-[#263241] shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] dark:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.4)] hover:border-slate-300 dark:hover:border-[#38495d] transition-colors">
                   <div className="flex items-start justify-between gap-3 mb-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-11 h-11 rounded-lg bg-[#0f2744]/10 text-[#0f2744] flex items-center justify-center">
+                      <div className="w-11 h-11 rounded-lg bg-[#0f2744]/10 dark:bg-[#151D27] text-[#0f2744] dark:text-[#F5F7FA] flex items-center justify-center">
                         {FILIERE_ICONS[f.code] || <BookOpen className="w-5 h-5" />}
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
                           <span className="font-mono text-xs font-bold text-[#e0521c]">{f.code}</span>
                         </div>
-                        <h3 className="font-serif text-base font-bold text-slate-900 mt-0.5">{f.name}</h3>
+                        <h3 className="font-serif text-base font-bold text-slate-900 dark:text-[#F5F7FA] mt-0.5">{f.name}</h3>
                       </div>
                     </div>
                     <div className="flex items-center gap-1">
-                      <button onClick={() => setDeleteConfirm({ id: f.id, type: "filiere", name: f.name })} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md"><Trash2 className="w-4 h-4" /></button>
+                      <button onClick={() => setDeleteConfirm({ id: f.id, type: "filiere", name: f.name })} className="p-1.5 text-slate-400 dark:text-[#AAB4C0] hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-md cursor-pointer"><Trash2 className="w-4 h-4" /></button>
                     </div>
                   </div>
-                  <p className="text-xs text-slate-600 leading-relaxed">{f.description}</p>
-                  <div className="mt-3 pt-3 border-t border-slate-100 text-xs text-slate-400">{f.cycle}</div>
+                  <p className="text-xs text-slate-600 dark:text-[#AAB4C0] leading-relaxed">{f.description}</p>
+                  <div className="mt-3 pt-3 border-t border-slate-100 dark:border-[#263241] text-xs text-slate-400 dark:text-[#687585]">{f.cycle}</div>
                 </div>
               ))}
             </div>
@@ -329,27 +329,27 @@ export default function AdminAcademiquePage() {
                 Ajouter une classe
               </Button>
             </div>
-            <div className="bg-white rounded-xl border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] overflow-hidden">
+            <div className="bg-white dark:bg-[#111821] rounded-xl border border-slate-200/90 dark:border-[#263241] shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] dark:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.4)] overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200">
+                  <tr className="bg-slate-50 dark:bg-[#151D27] border-b border-slate-200 dark:border-[#263241]">
                     {["Code", "Nom de la classe", "Niveau", "Filière", "Année", "Actions"].map((h) => (
-                      <th key={h} className="text-left text-xs font-bold text-slate-500 uppercase tracking-wider px-4 py-3">{h}</th>
+                      <th key={h} className="text-left text-xs font-bold text-slate-500 dark:text-[#AAB4C0] uppercase tracking-wider px-4 py-3">{h}</th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-100 dark:divide-[#263241]">
                   {classes.map((cls) => {
                     const filiere = filieres.find((f) => f.id === cls.filiere_id);
                     return (
-                      <tr key={cls.id} className="hover:bg-slate-50/50">
-                        <td className="px-4 py-3 font-mono text-xs font-bold text-[#0f2744]">{cls.code}</td>
-                        <td className="px-4 py-3 text-sm font-medium text-slate-900">{cls.name}</td>
+                      <tr key={cls.id} className="hover:bg-slate-50/50 dark:hover:bg-[#151D27]/50">
+                        <td className="px-4 py-3 font-mono text-xs font-bold text-[#0f2744] dark:text-[#F5F7FA]">{cls.code}</td>
+                        <td className="px-4 py-3 text-sm font-medium text-slate-900 dark:text-[#F5F7FA]">{cls.name}</td>
                         <td className="px-4 py-3"><Badge variant="primary" size="sm">{cls.niveau}</Badge></td>
-                        <td className="px-4 py-3 text-xs text-slate-600">{filiere?.code || "MPI"}</td>
-                        <td className="px-4 py-3 text-xs text-slate-500">{cls.annee_scolaire}</td>
+                        <td className="px-4 py-3 text-xs text-slate-600 dark:text-[#AAB4C0]">{filiere?.code || "MPI"}</td>
+                        <td className="px-4 py-3 text-xs text-slate-500 dark:text-[#687585]">{cls.annee_scolaire}</td>
                         <td className="px-4 py-3">
-                          <button onClick={() => setDeleteConfirm({ id: cls.id, type: "classe", name: cls.name })} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg"><Trash2 className="w-4 h-4" /></button>
+                          <button onClick={() => setDeleteConfirm({ id: cls.id, type: "classe", name: cls.name })} className="p-1.5 text-slate-400 dark:text-[#AAB4C0] hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg cursor-pointer"><Trash2 className="w-4 h-4" /></button>
                         </td>
                       </tr>
                     );
@@ -365,8 +365,8 @@ export default function AdminAcademiquePage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-bold text-[#0f2744] uppercase tracking-wider mb-0.5">Licence 1</p>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs font-bold text-[#0f2744] dark:text-[#F5F7FA] uppercase tracking-wider mb-0.5">Licence 1</p>
+                <p className="text-xs text-slate-500 dark:text-[#AAB4C0]">
                   Matières associées aux classes de niveau Licence 1.
                 </p>
               </div>
@@ -374,39 +374,39 @@ export default function AdminAcademiquePage() {
                 Ajouter une matière L1
               </Button>
             </div>
-            <div className="bg-white rounded-xl border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] overflow-hidden">
+            <div className="bg-white dark:bg-[#111821] rounded-xl border border-slate-200/90 dark:border-[#263241] shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] dark:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.4)] overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="bg-blue-50 border-b border-slate-200">
+                  <tr className="bg-blue-50 dark:bg-[#151D27] border-b border-slate-200 dark:border-[#263241]">
                     {["Code", "Intitulé de la matière", "Enseignant", "Classes concernées", "Actions"].map((h) => (
-                      <th key={h} className="text-left text-xs font-bold text-slate-500 uppercase tracking-wider px-4 py-3">{h}</th>
+                      <th key={h} className="text-left text-xs font-bold text-slate-500 dark:text-[#AAB4C0] uppercase tracking-wider px-4 py-3">{h}</th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-100 dark:divide-[#263241]">
                   {matieres
                     .filter(m => !(m.niveau === "L2" || (m.classes||[]).some(c=>c.startsWith("L2"))))
                     .map((m) => {
                       const displayClasses = m.classes && m.classes.length > 0 ? m.classes : ["L1-MPI"];
                       const profItem = m.professeur || profs.find((p) => p.id === m.professeur_id);
                       return (
-                        <tr key={m.id} className="hover:bg-slate-50/50">
+                        <tr key={m.id} className="hover:bg-slate-50/50 dark:hover:bg-[#151D27]/50">
                           <td className="px-4 py-3 font-mono text-xs font-bold text-[#e0521c]">{m.code}</td>
-                          <td className="px-4 py-3 text-sm font-medium text-slate-900 max-w-xs">{m.name}</td>
+                          <td className="px-4 py-3 text-sm font-medium text-slate-900 dark:text-[#F5F7FA] max-w-xs">{m.name}</td>
                           <td className="px-4 py-3">
                             {profItem ? (
                               <div className="flex flex-col">
-                                <span className="text-xs font-bold text-slate-900">{profItem.full_name}</span>
+                                <span className="text-xs font-bold text-slate-900 dark:text-[#F5F7FA]">{profItem.full_name}</span>
                                 <span className="text-[10px] text-[#e0521c] font-semibold">{profItem.specialite}</span>
                               </div>
                             ) : (
-                              <span className="text-xs text-slate-400 italic">Non assigné</span>
+                              <span className="text-xs text-slate-400 dark:text-[#687585] italic">Non assigné</span>
                             )}
                           </td>
                           <td className="px-4 py-3">
                             <div className="flex flex-wrap gap-1 max-w-xs">
                               {displayClasses.map((cCode) => (
-                                <span key={cCode} className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold text-white bg-[#0f2744]">
+                                <span key={cCode} className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold text-white bg-[#0f2744] dark:bg-[#1E4976]">
                                   {cCode}
                                 </span>
                               ))}
@@ -414,8 +414,8 @@ export default function AdminAcademiquePage() {
                           </td>
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-1">
-                              <button onClick={() => openEditMatiere(m)} className="p-1.5 text-slate-400 hover:text-[#0f2744] hover:bg-blue-50 rounded-lg" title="Modifier"><Edit2 className="w-4 h-4" /></button>
-                              <button onClick={() => setDeleteConfirm({ id: m.id, type: "matiere", name: m.name })} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Supprimer"><Trash2 className="w-4 h-4" /></button>
+                              <button onClick={() => openEditMatiere(m)} className="p-1.5 text-slate-400 dark:text-[#AAB4C0] hover:text-[#0f2744] dark:hover:text-[#F5F7FA] hover:bg-blue-50 dark:hover:bg-[#151D27] rounded-lg cursor-pointer" title="Modifier"><Edit2 className="w-4 h-4" /></button>
+                              <button onClick={() => setDeleteConfirm({ id: m.id, type: "matiere", name: m.name })} className="p-1.5 text-slate-400 dark:text-[#AAB4C0] hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg cursor-pointer" title="Supprimer"><Trash2 className="w-4 h-4" /></button>
                             </div>
                           </td>
                         </tr>
@@ -433,7 +433,7 @@ export default function AdminAcademiquePage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs font-bold text-[#e0521c] uppercase tracking-wider mb-0.5">Licence 2</p>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 dark:text-[#AAB4C0]">
                   Matières associées aux classes de niveau Licence 2.
                 </p>
               </div>
@@ -441,33 +441,33 @@ export default function AdminAcademiquePage() {
                 Ajouter une matière L2
               </Button>
             </div>
-            <div className="bg-white rounded-xl border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] overflow-hidden">
+            <div className="bg-white dark:bg-[#111821] rounded-xl border border-slate-200/90 dark:border-[#263241] shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] dark:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.4)] overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="bg-orange-50 border-b border-slate-200">
+                  <tr className="bg-orange-50 dark:bg-[#151D27] border-b border-slate-200 dark:border-[#263241]">
                     {["Code", "Intitulé de la matière", "Enseignant", "Classes concernées", "Actions"].map((h) => (
-                      <th key={h} className="text-left text-xs font-bold text-slate-500 uppercase tracking-wider px-4 py-3">{h}</th>
+                      <th key={h} className="text-left text-xs font-bold text-slate-500 dark:text-[#AAB4C0] uppercase tracking-wider px-4 py-3">{h}</th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-100 dark:divide-[#263241]">
                   {matieres
                     .filter(m => m.niveau === "L2" || (m.classes||[]).some(c=>c.startsWith("L2")))
                     .map((m) => {
                       const displayClasses = m.classes && m.classes.length > 0 ? m.classes : ["L2-MPI"];
                       const profItem = m.professeur || profs.find((p) => p.id === m.professeur_id);
                       return (
-                        <tr key={m.id} className="hover:bg-slate-50/50">
+                        <tr key={m.id} className="hover:bg-slate-50/50 dark:hover:bg-[#151D27]/50">
                           <td className="px-4 py-3 font-mono text-xs font-bold text-[#e0521c]">{m.code}</td>
-                          <td className="px-4 py-3 text-sm font-medium text-slate-900 max-w-xs">{m.name}</td>
+                          <td className="px-4 py-3 text-sm font-medium text-slate-900 dark:text-[#F5F7FA] max-w-xs">{m.name}</td>
                           <td className="px-4 py-3">
                             {profItem ? (
                               <div className="flex flex-col">
-                                <span className="text-xs font-bold text-slate-900">{profItem.full_name}</span>
+                                <span className="text-xs font-bold text-slate-900 dark:text-[#F5F7FA]">{profItem.full_name}</span>
                                 <span className="text-[10px] text-[#e0521c] font-semibold">{profItem.specialite}</span>
                               </div>
                             ) : (
-                              <span className="text-xs text-slate-400 italic">Non assigné</span>
+                              <span className="text-xs text-slate-400 dark:text-[#687585] italic">Non assigné</span>
                             )}
                           </td>
                           <td className="px-4 py-3">
@@ -481,8 +481,8 @@ export default function AdminAcademiquePage() {
                           </td>
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-1">
-                              <button onClick={() => openEditMatiere(m)} className="p-1.5 text-slate-400 hover:text-[#0f2744] hover:bg-blue-50 rounded-lg" title="Modifier"><Edit2 className="w-4 h-4" /></button>
-                              <button onClick={() => setDeleteConfirm({ id: m.id, type: "matiere", name: m.name })} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg" title="Supprimer"><Trash2 className="w-4 h-4" /></button>
+                              <button onClick={() => openEditMatiere(m)} className="p-1.5 text-slate-400 dark:text-[#AAB4C0] hover:text-[#0f2744] dark:hover:text-[#F5F7FA] hover:bg-blue-50 dark:hover:bg-[#151D27] rounded-lg cursor-pointer" title="Modifier"><Edit2 className="w-4 h-4" /></button>
+                              <button onClick={() => setDeleteConfirm({ id: m.id, type: "matiere", name: m.name })} className="p-1.5 text-slate-400 dark:text-[#AAB4C0] hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg cursor-pointer" title="Supprimer"><Trash2 className="w-4 h-4" /></button>
                             </div>
                           </td>
                         </tr>
@@ -497,19 +497,19 @@ export default function AdminAcademiquePage() {
         {/* Modal Créer Filière */}
         {filiereModal && (
           <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-xl border border-slate-200/90 space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                <h3 className="font-serif text-lg font-bold text-[#0f2744]">Ajouter une Filière</h3>
-                <button onClick={() => setFiliereModal(false)} className="text-slate-400 hover:text-slate-700"><X className="w-5 h-5" /></button>
+            <div className="bg-white dark:bg-[#111821] rounded-xl max-w-md w-full p-6 shadow-xl border border-slate-200/90 dark:border-[#263241] space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#263241]">
+                <h3 className="font-serif text-lg font-bold text-[#0f2744] dark:text-[#F5F7FA]">Ajouter une Filière</h3>
+                <button onClick={() => setFiliereModal(false)} className="text-slate-400 dark:text-[#AAB4C0] hover:text-slate-700 dark:hover:text-[#F5F7FA] cursor-pointer"><X className="w-5 h-5" /></button>
               </div>
               <form onSubmit={handleCreateFiliere} className="space-y-4">
                 <Input label="Code de la filière" required placeholder="Ex. MPI, SML, MIASS..." value={filiereCode} onChange={(e) => setFiliereCode(e.target.value)} />
                 <Input label="Nom complet" required placeholder="Ex. Mathématiques, Physique et Informatique" value={filiereName} onChange={(e) => setFiliereName(e.target.value)} />
                 <div className="space-y-1.5">
-                  <label className="block text-sm font-medium text-slate-700">Description</label>
-                  <textarea rows={3} value={filiereDesc} onChange={(e) => setFiliereDesc(e.target.value)} placeholder="Objectifs et compétences..." className="w-full text-sm border border-slate-200 rounded-lg p-2.5" />
+                  <label className="block text-sm font-medium text-slate-700 dark:text-[#F5F7FA]">Description</label>
+                  <textarea rows={3} value={filiereDesc} onChange={(e) => setFiliereDesc(e.target.value)} placeholder="Objectifs et compétences..." className="w-full text-sm border border-slate-200 dark:border-[#263241] bg-white dark:bg-[#151D27] text-slate-800 dark:text-[#F5F7FA] rounded-lg p-2.5 focus:outline-none focus:ring-1 focus:ring-[#0f2744] dark:focus:ring-[#e0521c]" />
                 </div>
-                <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
+                <div className="flex justify-end gap-2 pt-2 border-t border-slate-100 dark:border-[#263241]">
                   <Button type="button" variant="ghost" size="sm" onClick={() => setFiliereModal(false)}>Annuler</Button>
                   <Button type="submit" variant="accent" size="sm">Créer la filière</Button>
                 </div>
@@ -521,30 +521,30 @@ export default function AdminAcademiquePage() {
         {/* Modal Créer Classe */}
         {classeModal && (
           <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-xl border border-slate-200/90 space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                <h3 className="font-serif text-lg font-bold text-[#0f2744]">Ajouter une Classe</h3>
-                <button onClick={() => setClasseModal(false)} className="text-slate-400 hover:text-slate-700"><X className="w-5 h-5" /></button>
+            <div className="bg-white dark:bg-[#111821] rounded-xl max-w-md w-full p-6 shadow-xl border border-slate-200/90 dark:border-[#263241] space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#263241]">
+                <h3 className="font-serif text-lg font-bold text-[#0f2744] dark:text-[#F5F7FA]">Ajouter une Classe</h3>
+                <button onClick={() => setClasseModal(false)} className="text-slate-400 dark:text-[#AAB4C0] hover:text-slate-700 dark:hover:text-[#F5F7FA] cursor-pointer"><X className="w-5 h-5" /></button>
               </div>
               <form onSubmit={handleCreateClasse} className="space-y-4">
                 <Input label="Code de la classe" required placeholder="Ex. L1-MPI, L2-SML..." value={classeCode} onChange={(e) => setClasseCode(e.target.value)} />
                 <Input label="Intitulé officiel" required placeholder="Ex. Licence 1 — MPI" value={classeName} onChange={(e) => setClasseName(e.target.value)} />
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <label className="block text-sm font-medium text-slate-700">Niveau</label>
-                    <select value={classeNiveau} onChange={(e) => setClasseNiveau(e.target.value as any)} className="w-full text-sm border border-slate-200 rounded-lg p-2.5">
+                    <label className="block text-sm font-medium text-slate-700 dark:text-[#F5F7FA]">Niveau</label>
+                    <select value={classeNiveau} onChange={(e) => setClasseNiveau(e.target.value as any)} className="w-full text-sm border border-slate-200 dark:border-[#263241] bg-white dark:bg-[#151D27] text-slate-800 dark:text-[#F5F7FA] rounded-lg p-2.5">
                       <option value="L1">Licence 1 (L1)</option>
                       <option value="L2">Licence 2 (L2)</option>
                     </select>
                   </div>
                   <div className="space-y-1.5">
-                    <label className="block text-sm font-medium text-slate-700">Filière</label>
-                    <select value={classeFiliereId} onChange={(e) => setClasseFiliereId(e.target.value)} className="w-full text-sm border border-slate-200 rounded-lg p-2.5">
+                    <label className="block text-sm font-medium text-slate-700 dark:text-[#F5F7FA]">Filière</label>
+                    <select value={classeFiliereId} onChange={(e) => setClasseFiliereId(e.target.value)} className="w-full text-sm border border-slate-200 dark:border-[#263241] bg-white dark:bg-[#151D27] text-slate-800 dark:text-[#F5F7FA] rounded-lg p-2.5">
                       {filieres.map((f) => <option key={f.id} value={f.id}>{f.code}</option>)}
                     </select>
                   </div>
                 </div>
-                <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
+                <div className="flex justify-end gap-2 pt-2 border-t border-slate-100 dark:border-[#263241]">
                   <Button type="button" variant="ghost" size="sm" onClick={() => setClasseModal(false)}>Annuler</Button>
                   <Button type="submit" variant="accent" size="sm">Créer la classe</Button>
                 </div>
@@ -553,28 +553,28 @@ export default function AdminAcademiquePage() {
           </div>
         )}
 
-        {/* Modal Créer Matière (Formulaire ultra-simplifié : nom + choix classes concernées L1 ou L2) */}
+        {/* Modal Créer Matière */}
         {matiereModal && (
           <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
-            <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div className="bg-white dark:bg-[#111821] rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 dark:border-[#263241] space-y-4 max-h-[90vh] overflow-y-auto">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#263241]">
                 <div>
-                  <h3 className="font-serif text-lg font-bold text-[#0f2744]">Ajouter une Matière</h3>
-                  <p className="text-xs text-slate-500">Intitulé et sélection des classes concernées</p>
+                  <h3 className="font-serif text-lg font-bold text-[#0f2744] dark:text-[#F5F7FA]">Ajouter une Matière</h3>
+                  <p className="text-xs text-slate-500 dark:text-[#AAB4C0]">Intitulé et sélection des classes concernées</p>
                 </div>
-                <button onClick={() => setMatiereModal(false)} className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100">
+                <button onClick={() => setMatiereModal(false)} className="p-1.5 text-slate-400 dark:text-[#AAB4C0] hover:text-slate-700 dark:hover:text-[#F5F7FA] rounded-lg hover:bg-slate-100 dark:hover:bg-[#151D27] cursor-pointer">
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               <form onSubmit={handleCreateMatiere} className="space-y-4">
                 {/* Code matière attribué automatiquement */}
-                <div className="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                <div className="flex items-center justify-between p-3.5 bg-slate-50 dark:bg-[#151D27] rounded-xl border border-slate-200 dark:border-[#263241]">
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">Code attribué</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-[#AAB4C0] block mb-0.5">Code attribué</span>
                     <span className="font-mono text-base font-extrabold text-[#e0521c]">{autoMatiereCode}</span>
                   </div>
-                  <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50">
                     Attribué automatiquement
                   </span>
                 </div>
@@ -588,19 +588,19 @@ export default function AdminAcademiquePage() {
                   onChange={(e) => setMatiereName(e.target.value)}
                 />
 
-                {/* Choix du niveau académique : impossible que L1 et L2 partagent la même matière */}
+                {/* Choix du niveau académique */}
                 <div className="space-y-2">
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-[#F5F7FA]">
                     Niveau d&apos;enseignement <span className="text-[#e0521c]">*</span>
                   </label>
                   <div className="grid grid-cols-2 gap-3">
                     <button
                       type="button"
                       onClick={() => handleNiveauChange("L1")}
-                      className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-xs font-bold transition-all ${
+                      className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                         matiereNiveau === "L1"
-                          ? "bg-[#0f2744] text-white border-[#0f2744] shadow-sm"
-                          : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                          ? "bg-[#0f2744] dark:bg-[#e0521c] text-white border-[#0f2744] dark:border-[#e0521c] shadow-sm"
+                          : "bg-slate-50 dark:bg-[#151D27] border-slate-200 dark:border-[#263241] text-slate-700 dark:text-[#AAB4C0] hover:bg-slate-100 dark:hover:bg-[#192535]"
                       }`}
                     >
                       <span>🎓 Licence 1 (L1)</span>
@@ -608,27 +608,27 @@ export default function AdminAcademiquePage() {
                     <button
                       type="button"
                       onClick={() => handleNiveauChange("L2")}
-                      className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-xs font-bold transition-all ${
+                      className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                         matiereNiveau === "L2"
-                          ? "bg-[#0f2744] text-white border-[#0f2744] shadow-sm"
-                          : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                          ? "bg-[#0f2744] dark:bg-[#e0521c] text-white border-[#0f2744] dark:border-[#e0521c] shadow-sm"
+                          : "bg-slate-50 dark:bg-[#151D27] border-slate-200 dark:border-[#263241] text-slate-700 dark:text-[#AAB4C0] hover:bg-slate-100 dark:hover:bg-[#192535]"
                       }`}
                     >
                       <span>🎓 Licence 2 (L2)</span>
                     </button>
                   </div>
-                  <p className="text-[11px] text-slate-400">
+                  <p className="text-[11px] text-slate-400 dark:text-[#687585]">
                     Une matière appartient exclusivement à la Licence 1 ou à la Licence 2 (jamais aux deux niveaux).
                   </p>
                 </div>
 
-                {/* Semestre d'enseignement : S1 ou S2 pour L1, S3 ou S4 pour L2 */}
+                {/* Semestre d'enseignement */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-[#F5F7FA]">
                       Semestre d&apos;enseignement <span className="text-[#e0521c]">*</span>
                     </label>
-                    <span className="text-[11px] font-semibold text-slate-500">
+                    <span className="text-[11px] font-semibold text-slate-500 dark:text-[#AAB4C0]">
                       {matiereNiveau === "L1" ? "L1 : Semestre 1 ou 2" : "L2 : Semestre 3 ou 4"}
                     </span>
                   </div>
@@ -638,10 +638,10 @@ export default function AdminAcademiquePage() {
                       <button
                         type="button"
                         onClick={() => setMatiereSemestre("S1")}
-                        className={`flex items-center justify-center gap-2 p-2.5 rounded-xl border text-xs font-bold transition-all ${
+                        className={`flex items-center justify-center gap-2 p-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                           matiereSemestre === "S1"
-                            ? "bg-[#0f2744] text-white border-[#0f2744] shadow-sm"
-                            : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                            ? "bg-[#0f2744] dark:bg-[#e0521c] text-white border-[#0f2744] dark:border-[#e0521c] shadow-sm"
+                            : "bg-slate-50 dark:bg-[#151D27] border-slate-200 dark:border-[#263241] text-slate-700 dark:text-[#AAB4C0] hover:bg-slate-100 dark:hover:bg-[#192535]"
                         }`}
                       >
                         <span>📘 Semestre 1 (S1)</span>
@@ -649,10 +649,10 @@ export default function AdminAcademiquePage() {
                       <button
                         type="button"
                         onClick={() => setMatiereSemestre("S2")}
-                        className={`flex items-center justify-center gap-2 p-2.5 rounded-xl border text-xs font-bold transition-all ${
+                        className={`flex items-center justify-center gap-2 p-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                           matiereSemestre === "S2"
-                            ? "bg-[#0f2744] text-white border-[#0f2744] shadow-sm"
-                            : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                            ? "bg-[#0f2744] dark:bg-[#e0521c] text-white border-[#0f2744] dark:border-[#e0521c] shadow-sm"
+                            : "bg-slate-50 dark:bg-[#151D27] border-slate-200 dark:border-[#263241] text-slate-700 dark:text-[#AAB4C0] hover:bg-slate-100 dark:hover:bg-[#192535]"
                         }`}
                       >
                         <span>📗 Semestre 2 (S2)</span>
@@ -663,10 +663,10 @@ export default function AdminAcademiquePage() {
                       <button
                         type="button"
                         onClick={() => setMatiereSemestre("S3")}
-                        className={`flex items-center justify-center gap-2 p-2.5 rounded-xl border text-xs font-bold transition-all ${
+                        className={`flex items-center justify-center gap-2 p-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                           matiereSemestre === "S3"
                             ? "bg-[#e0521c] text-white border-[#e0521c] shadow-sm"
-                            : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                            : "bg-slate-50 dark:bg-[#151D27] border-slate-200 dark:border-[#263241] text-slate-700 dark:text-[#AAB4C0] hover:bg-slate-100 dark:hover:bg-[#192535]"
                         }`}
                       >
                         <span>📙 Semestre 3 (S3)</span>
@@ -674,10 +674,10 @@ export default function AdminAcademiquePage() {
                       <button
                         type="button"
                         onClick={() => setMatiereSemestre("S4")}
-                        className={`flex items-center justify-center gap-2 p-2.5 rounded-xl border text-xs font-bold transition-all ${
+                        className={`flex items-center justify-center gap-2 p-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                           matiereSemestre === "S4"
                             ? "bg-[#e0521c] text-white border-[#e0521c] shadow-sm"
-                            : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                            : "bg-slate-50 dark:bg-[#151D27] border-slate-200 dark:border-[#263241] text-slate-700 dark:text-[#AAB4C0] hover:bg-slate-100 dark:hover:bg-[#192535]"
                         }`}
                       >
                         <span>📕 Semestre 4 (S4)</span>
@@ -687,9 +687,9 @@ export default function AdminAcademiquePage() {
                 </div>
 
                 {/* Classes concernées strictement filtrées selon le niveau */}
-                <div className="space-y-2 pt-2 border-t border-slate-100">
+                <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-[#263241]">
                   <div className="flex items-center justify-between">
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-[#F5F7FA]">
                       Classes concernées ({matiereNiveau}) <span className="text-[#e0521c]">*</span>
                     </label>
                     <button
@@ -698,13 +698,13 @@ export default function AdminAcademiquePage() {
                         const available = classes.filter((c) => c.niveau === matiereNiveau).map((c) => c.code);
                         setMatiereClasses(available.length > 0 ? available : (matiereNiveau === "L1" ? ["L1-MPI", "L1-SML", "L1-MIASS"] : ["L2-MPI", "L2-SML", "L2-MIASS"]));
                       }}
-                      className="text-[11px] font-bold text-[#e0521c] hover:underline"
+                      className="text-[11px] font-bold text-[#e0521c] hover:underline cursor-pointer"
                     >
                       Sélectionner tout {matiereNiveau}
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-3 bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] rounded-xl">
                     {classes
                       .filter((cls) => cls.niveau === matiereNiveau)
                       .map((cls) => {
@@ -714,8 +714,8 @@ export default function AdminAcademiquePage() {
                             key={cls.id}
                             className={`flex items-center gap-2 p-2.5 rounded-lg border text-xs font-medium cursor-pointer transition-colors ${
                               checked
-                                ? "bg-white border-[#0f2744] text-[#0f2744] shadow-xs font-bold"
-                                : "border-slate-200 text-slate-600 hover:bg-slate-100/60"
+                                ? "bg-white dark:bg-[#111821] border-[#0f2744] dark:border-[#e0521c] text-[#0f2744] dark:text-[#F5F7FA] shadow-xs font-bold"
+                                : "border-slate-200 dark:border-[#263241] text-slate-600 dark:text-[#AAB4C0] hover:bg-slate-100/60 dark:hover:bg-[#192535]"
                             }`}
                           >
                             <input
@@ -728,7 +728,7 @@ export default function AdminAcademiquePage() {
                                   setMatiereClasses(matiereClasses.filter((c) => c !== cls.code));
                                 }
                               }}
-                              className="rounded border-slate-300 text-[#0f2744] focus:ring-[#0f2744]"
+                              className="rounded border-slate-300 dark:border-[#263241] text-[#0f2744] dark:text-[#e0521c] focus:ring-[#0f2744]"
                             />
                             <span>{cls.code}</span>
                           </label>
@@ -737,7 +737,7 @@ export default function AdminAcademiquePage() {
                   </div>
                 </div>
 
-                <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
+                <div className="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-[#263241]">
                   <Button type="button" variant="ghost" size="sm" onClick={() => setMatiereModal(false)}>
                     Annuler
                   </Button>
@@ -753,17 +753,17 @@ export default function AdminAcademiquePage() {
         {/* Modal Suppression */}
         {deleteConfirm && (
           <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl max-w-sm w-full p-6 shadow-xl border border-slate-200/90 space-y-4">
+            <div className="bg-white dark:bg-[#111821] rounded-xl max-w-sm w-full p-6 shadow-xl border border-slate-200/90 dark:border-[#263241] space-y-4">
               <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-lg bg-red-50 border border-red-200/80 flex items-center justify-center shrink-0">
-                  <AlertCircle className="w-5 h-5 text-red-600" />
+                <div className="w-10 h-10 rounded-lg bg-red-50 dark:bg-red-950/40 border border-red-200/80 dark:border-red-800/50 flex items-center justify-center shrink-0">
+                  <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
                 </div>
                 <div>
-                  <h3 className="font-serif text-base font-bold text-slate-900">Supprimer « {deleteConfirm.name} »</h3>
-                  <p className="text-xs text-slate-600 mt-1">Cette action est irréversible et peut affecter les étudiants et cours associés.</p>
+                  <h3 className="font-serif text-base font-bold text-slate-900 dark:text-[#F5F7FA]">Supprimer « {deleteConfirm.name} »</h3>
+                  <p className="text-xs text-slate-600 dark:text-[#AAB4C0] mt-1">Cette action est irréversible et peut affecter les étudiants et cours associés.</p>
                 </div>
               </div>
-              <div className="border-t border-slate-100 pt-3 flex justify-end gap-2">
+              <div className="border-t border-slate-100 dark:border-[#263241] pt-3 flex justify-end gap-2">
                 <Button variant="ghost" size="sm" className="rounded-lg text-xs" onClick={() => setDeleteConfirm(null)}>Annuler</Button>
                 <Button variant="danger" size="sm" className="rounded-lg text-xs" onClick={() => {
                   if (deleteConfirm.type === "filiere") handleDeleteFiliere(deleteConfirm.id);
@@ -775,28 +775,28 @@ export default function AdminAcademiquePage() {
           </div>
         )}
 
-        {/* Modal Modifier Matière (Même simplicité : nom et classes L1 ou L2) */}
+        {/* Modal Modifier Matière */}
         {editMatiereModal && (
           <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
-            <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div className="bg-white dark:bg-[#111821] rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 dark:border-[#263241] space-y-4 max-h-[90vh] overflow-y-auto">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#263241]">
                 <div>
-                  <h3 className="font-serif text-lg font-bold text-[#0f2744]">Modifier la Matière</h3>
-                  <p className="text-xs text-slate-500">Intitulé et classes concernées</p>
+                  <h3 className="font-serif text-lg font-bold text-[#0f2744] dark:text-[#F5F7FA]">Modifier la Matière</h3>
+                  <p className="text-xs text-slate-500 dark:text-[#AAB4C0]">Intitulé et classes concernées</p>
                 </div>
-                <button onClick={() => setEditMatiereModal(false)} className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100">
+                <button onClick={() => setEditMatiereModal(false)} className="p-1.5 text-slate-400 dark:text-[#AAB4C0] hover:text-slate-700 dark:hover:text-[#F5F7FA] rounded-lg hover:bg-slate-100 dark:hover:bg-[#151D27] cursor-pointer">
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               <form onSubmit={handleSaveEditMatiere} className="space-y-4">
                 {/* Code matière */}
-                <div className="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                <div className="flex items-center justify-between p-3.5 bg-slate-50 dark:bg-[#151D27] rounded-xl border border-slate-200 dark:border-[#263241]">
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">Code matière</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-[#AAB4C0] block mb-0.5">Code matière</span>
                     <span className="font-mono text-base font-extrabold text-[#e0521c]">{autoMatiereCode}</span>
                   </div>
-                  <span className="text-xs text-slate-400 font-medium">Identifiant unique</span>
+                  <span className="text-xs text-slate-400 dark:text-[#687585] font-medium">Identifiant unique</span>
                 </div>
 
                 <Input
@@ -809,17 +809,17 @@ export default function AdminAcademiquePage() {
 
                 {/* Niveau académique */}
                 <div className="space-y-2">
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-[#F5F7FA]">
                     Niveau d&apos;enseignement <span className="text-[#e0521c]">*</span>
                   </label>
                   <div className="grid grid-cols-2 gap-3">
                     <button
                       type="button"
                       onClick={() => handleNiveauChange("L1")}
-                      className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-xs font-bold transition-all ${
+                      className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                         matiereNiveau === "L1"
-                          ? "bg-[#0f2744] text-white border-[#0f2744] shadow-sm"
-                          : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                          ? "bg-[#0f2744] dark:bg-[#e0521c] text-white border-[#0f2744] dark:border-[#e0521c] shadow-sm"
+                          : "bg-slate-50 dark:bg-[#151D27] border-slate-200 dark:border-[#263241] text-slate-700 dark:text-[#AAB4C0] hover:bg-slate-100 dark:hover:bg-[#192535]"
                       }`}
                     >
                       <span>🎓 Licence 1 (L1)</span>
@@ -827,10 +827,10 @@ export default function AdminAcademiquePage() {
                     <button
                       type="button"
                       onClick={() => handleNiveauChange("L2")}
-                      className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-xs font-bold transition-all ${
+                      className={`flex items-center justify-center gap-2 p-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                         matiereNiveau === "L2"
-                          ? "bg-[#0f2744] text-white border-[#0f2744] shadow-sm"
-                          : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                          ? "bg-[#0f2744] dark:bg-[#e0521c] text-white border-[#0f2744] dark:border-[#e0521c] shadow-sm"
+                          : "bg-slate-50 dark:bg-[#151D27] border-slate-200 dark:border-[#263241] text-slate-700 dark:text-[#AAB4C0] hover:bg-slate-100 dark:hover:bg-[#192535]"
                       }`}
                     >
                       <span>🎓 Licence 2 (L2)</span>
@@ -838,13 +838,13 @@ export default function AdminAcademiquePage() {
                   </div>
                 </div>
 
-                {/* Semestre d'enseignement : S1 ou S2 pour L1, S3 ou S4 pour L2 */}
+                {/* Semestre d'enseignement */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-[#F5F7FA]">
                       Semestre d&apos;enseignement <span className="text-[#e0521c]">*</span>
                     </label>
-                    <span className="text-[11px] font-semibold text-slate-500">
+                    <span className="text-[11px] font-semibold text-slate-500 dark:text-[#AAB4C0]">
                       {matiereNiveau === "L1" ? "L1 : Semestre 1 ou 2" : "L2 : Semestre 3 ou 4"}
                     </span>
                   </div>
@@ -854,10 +854,10 @@ export default function AdminAcademiquePage() {
                       <button
                         type="button"
                         onClick={() => setMatiereSemestre("S1")}
-                        className={`flex items-center justify-center gap-2 p-2.5 rounded-xl border text-xs font-bold transition-all ${
+                        className={`flex items-center justify-center gap-2 p-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                           matiereSemestre === "S1"
-                            ? "bg-[#0f2744] text-white border-[#0f2744] shadow-sm"
-                            : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                            ? "bg-[#0f2744] dark:bg-[#e0521c] text-white border-[#0f2744] dark:border-[#e0521c] shadow-sm"
+                            : "bg-slate-50 dark:bg-[#151D27] border-slate-200 dark:border-[#263241] text-slate-700 dark:text-[#AAB4C0] hover:bg-slate-100 dark:hover:bg-[#192535]"
                         }`}
                       >
                         <span>📘 Semestre 1 (S1)</span>
@@ -865,10 +865,10 @@ export default function AdminAcademiquePage() {
                       <button
                         type="button"
                         onClick={() => setMatiereSemestre("S2")}
-                        className={`flex items-center justify-center gap-2 p-2.5 rounded-xl border text-xs font-bold transition-all ${
+                        className={`flex items-center justify-center gap-2 p-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                           matiereSemestre === "S2"
-                            ? "bg-[#0f2744] text-white border-[#0f2744] shadow-sm"
-                            : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                            ? "bg-[#0f2744] dark:bg-[#e0521c] text-white border-[#0f2744] dark:border-[#e0521c] shadow-sm"
+                            : "bg-slate-50 dark:bg-[#151D27] border-slate-200 dark:border-[#263241] text-slate-700 dark:text-[#AAB4C0] hover:bg-slate-100 dark:hover:bg-[#192535]"
                         }`}
                       >
                         <span>📗 Semestre 2 (S2)</span>
@@ -879,10 +879,10 @@ export default function AdminAcademiquePage() {
                       <button
                         type="button"
                         onClick={() => setMatiereSemestre("S3")}
-                        className={`flex items-center justify-center gap-2 p-2.5 rounded-xl border text-xs font-bold transition-all ${
+                        className={`flex items-center justify-center gap-2 p-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                           matiereSemestre === "S3"
                             ? "bg-[#e0521c] text-white border-[#e0521c] shadow-sm"
-                            : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                            : "bg-slate-50 dark:bg-[#151D27] border-slate-200 dark:border-[#263241] text-slate-700 dark:text-[#AAB4C0] hover:bg-slate-100 dark:hover:bg-[#192535]"
                         }`}
                       >
                         <span>📙 Semestre 3 (S3)</span>
@@ -890,10 +890,10 @@ export default function AdminAcademiquePage() {
                       <button
                         type="button"
                         onClick={() => setMatiereSemestre("S4")}
-                        className={`flex items-center justify-center gap-2 p-2.5 rounded-xl border text-xs font-bold transition-all ${
+                        className={`flex items-center justify-center gap-2 p-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                           matiereSemestre === "S4"
                             ? "bg-[#e0521c] text-white border-[#e0521c] shadow-sm"
-                            : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                            : "bg-slate-50 dark:bg-[#151D27] border-slate-200 dark:border-[#263241] text-slate-700 dark:text-[#AAB4C0] hover:bg-slate-100 dark:hover:bg-[#192535]"
                         }`}
                       >
                         <span>📕 Semestre 4 (S4)</span>
@@ -902,10 +902,10 @@ export default function AdminAcademiquePage() {
                   )}
                 </div>
 
-                {/* Classes concernées strictement selon le niveau */}
-                <div className="space-y-2 pt-2 border-t border-slate-100">
+                {/* Classes concernées */}
+                <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-[#263241]">
                   <div className="flex items-center justify-between">
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-[#F5F7FA]">
                       Classes concernées ({matiereNiveau}) <span className="text-[#e0521c]">*</span>
                     </label>
                     <button
@@ -914,13 +914,13 @@ export default function AdminAcademiquePage() {
                         const available = classes.filter((c) => c.niveau === matiereNiveau).map((c) => c.code);
                         setMatiereClasses(available.length > 0 ? available : (matiereNiveau === "L1" ? ["L1-MPI", "L1-SML", "L1-MIASS"] : ["L2-MPI", "L2-SML", "L2-MIASS"]));
                       }}
-                      className="text-[11px] font-bold text-[#e0521c] hover:underline"
+                      className="text-[11px] font-bold text-[#e0521c] hover:underline cursor-pointer"
                     >
                       Sélectionner tout {matiereNiveau}
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-3 bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] rounded-xl">
                     {classes
                       .filter((cls) => cls.niveau === matiereNiveau)
                       .map((cls) => {
@@ -930,8 +930,8 @@ export default function AdminAcademiquePage() {
                             key={cls.id}
                             className={`flex items-center gap-2 p-2.5 rounded-lg border text-xs font-medium cursor-pointer transition-colors ${
                               checked
-                                ? "bg-white border-[#0f2744] text-[#0f2744] shadow-xs font-bold"
-                                : "border-slate-200 text-slate-600 hover:bg-slate-100/60"
+                                ? "bg-white dark:bg-[#111821] border-[#0f2744] dark:border-[#e0521c] text-[#0f2744] dark:text-[#F5F7FA] shadow-xs font-bold"
+                                : "border-slate-200 dark:border-[#263241] text-slate-600 dark:text-[#AAB4C0] hover:bg-slate-100/60 dark:hover:bg-[#192535]"
                             }`}
                           >
                             <input
@@ -944,7 +944,7 @@ export default function AdminAcademiquePage() {
                                   setMatiereClasses(matiereClasses.filter((c) => c !== cls.code));
                                 }
                               }}
-                              className="rounded border-slate-300 text-[#0f2744] focus:ring-[#0f2744]"
+                              className="rounded border-slate-300 dark:border-[#263241] text-[#0f2744] dark:text-[#e0521c] focus:ring-[#0f2744]"
                             />
                             <span>{cls.code}</span>
                           </label>
@@ -953,7 +953,7 @@ export default function AdminAcademiquePage() {
                   </div>
                 </div>
 
-                <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
+                <div className="flex justify-end gap-2 pt-3 border-t border-slate-100 dark:border-[#263241]">
                   <Button type="button" variant="ghost" size="sm" onClick={() => setEditMatiereModal(false)}>
                     Annuler
                   </Button>

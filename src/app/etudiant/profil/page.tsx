@@ -274,39 +274,39 @@ export default function EtudiantProfilPage() {
         </div>
 
         {/* === MODIFICATION DE LA CLASSE === */}
-        <div className="bg-white rounded-xl border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] overflow-hidden">
+        <div className="bg-white dark:bg-[#111821] rounded-xl border border-slate-200/90 dark:border-[#263241] shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] dark:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.4)] overflow-hidden transition-colors">
           <div
-            className="flex items-center justify-between p-5 cursor-pointer hover:bg-slate-50 transition-colors"
+            className="flex items-center justify-between p-5 cursor-pointer hover:bg-slate-50 dark:hover:bg-[#151D27] transition-colors"
             onClick={() => setEditingClasse(!editingClasse)}
           >
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-[#0f2744]/10 flex items-center justify-center">
-                <GraduationCap className="w-4.5 h-4.5 text-[#0f2744]" />
+              <div className="w-9 h-9 rounded-lg bg-[#0f2744]/10 dark:bg-[#151D27] border border-transparent dark:border-[#263241] flex items-center justify-center">
+                <GraduationCap className="w-4.5 h-4.5 text-[#0f2744] dark:text-cyan-400" />
               </div>
               <div>
-                <p className="text-sm font-bold text-slate-900">Filière & Niveau</p>
-                <p className="text-xs text-slate-500">{user.classe?.name || `${niveau} ${filiere}`}</p>
+                <p className="text-sm font-bold text-slate-900 dark:text-[#F5F7FA]">Filière & Niveau</p>
+                <p className="text-xs text-slate-500 dark:text-[#AAB4C0]">{user.classe?.name || `${niveau} ${filiere}`}</p>
               </div>
             </div>
-            <Edit3 className={`w-4 h-4 transition-colors ${editingClasse ? "text-[#e0521c]" : "text-slate-400"}`} />
+            <Edit3 className={`w-4 h-4 transition-colors ${editingClasse ? "text-[#e0521c]" : "text-slate-400 dark:text-[#687585]"}`} />
           </div>
 
           {editingClasse && (
-            <div className="px-5 pb-5 border-t border-slate-100">
+            <div className="px-5 pb-5 border-t border-slate-100 dark:border-[#263241]">
               {academiqueSuccess && (
-                <div className="mt-4 p-3.5 rounded-lg bg-emerald-50 border border-emerald-200/80 text-xs text-emerald-800 flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <div className="mt-4 p-3.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200/80 dark:border-emerald-800/40 text-xs text-emerald-800 dark:text-emerald-300 flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                   <span>{academiqueSuccess}</span>
                 </div>
               )}
               <form onSubmit={handleUpdateAcademique} className="mt-4 space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-700 mb-1.5">Filière</label>
+                    <label className="block text-xs font-semibold text-slate-700 dark:text-[#F5F7FA] mb-1.5">Filière</label>
                     <select
                       value={filiere}
                       onChange={(e) => setFiliere(e.target.value as "MPI" | "SML" | "MIASS")}
-                      className="w-full h-10 px-3 rounded-lg border border-slate-200 bg-white text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0f2744]"
+                      className="w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-[#263241] bg-white dark:bg-[#151D27] text-xs font-medium text-slate-900 dark:text-[#F5F7FA] focus:outline-none focus:ring-2 focus:ring-[#0f2744] dark:focus:ring-[#e0521c]"
                     >
                       <option value="MPI">MPI — Mathématiques, Physique et Informatique</option>
                       <option value="SML">SML — Sciences de la mer et du Littoral</option>
@@ -314,11 +314,11 @@ export default function EtudiantProfilPage() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-slate-700 mb-1.5">Niveau</label>
+                    <label className="block text-xs font-semibold text-slate-700 dark:text-[#F5F7FA] mb-1.5">Niveau</label>
                     <select
                       value={niveau}
                       onChange={(e) => setNiveau(e.target.value as "L1" | "L2")}
-                      className="w-full h-10 px-3 rounded-lg border border-slate-200 bg-white text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0f2744]"
+                      className="w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-[#263241] bg-white dark:bg-[#151D27] text-xs font-medium text-slate-900 dark:text-[#F5F7FA] focus:outline-none focus:ring-2 focus:ring-[#0f2744] dark:focus:ring-[#e0521c]"
                     >
                       <option value="L1">Licence 1 (L1)</option>
                       <option value="L2">Licence 2 (L2)</option>
@@ -334,28 +334,28 @@ export default function EtudiantProfilPage() {
         </div>
 
         {/* === CONTACT === */}
-        <div className="bg-white rounded-xl border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] overflow-hidden">
+        <div className="bg-white dark:bg-[#111821] rounded-xl border border-slate-200/90 dark:border-[#263241] shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] dark:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.4)] overflow-hidden transition-colors">
           <div
-            className="flex items-center justify-between p-5 cursor-pointer hover:bg-slate-50 transition-colors"
+            className="flex items-center justify-between p-5 cursor-pointer hover:bg-slate-50 dark:hover:bg-[#151D27] transition-colors"
             onClick={() => setEditingContact(!editingContact)}
           >
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-emerald-50 flex items-center justify-center">
-                <Phone className="w-4.5 h-4.5 text-emerald-600" />
+              <div className="w-9 h-9 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-transparent dark:border-[#263241] flex items-center justify-center">
+                <Phone className="w-4.5 h-4.5 text-emerald-600 dark:text-emerald-400" />
               </div>
               <div>
-                <p className="text-sm font-bold text-slate-900">Numéro de contact</p>
-                <p className="text-xs text-slate-500">{user.phone || "Non renseigné"}</p>
+                <p className="text-sm font-bold text-slate-900 dark:text-[#F5F7FA]">Numéro de contact</p>
+                <p className="text-xs text-slate-500 dark:text-[#AAB4C0]">{user.phone || "Non renseigné"}</p>
               </div>
             </div>
-            <Edit3 className={`w-4 h-4 transition-colors ${editingContact ? "text-[#e0521c]" : "text-slate-400"}`} />
+            <Edit3 className={`w-4 h-4 transition-colors ${editingContact ? "text-[#e0521c]" : "text-slate-400 dark:text-[#687585]"}`} />
           </div>
 
           {editingContact && (
-            <div className="px-5 pb-5 border-t border-slate-100">
+            <div className="px-5 pb-5 border-t border-slate-100 dark:border-[#263241]">
               {infoSuccess && (
-                <div className="mt-4 p-3.5 rounded-lg bg-emerald-50 border border-emerald-200/80 text-xs text-emerald-800 flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <div className="mt-4 p-3.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200/80 dark:border-emerald-800/40 text-xs text-emerald-800 dark:text-emerald-300 flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                   <span>{infoSuccess}</span>
                 </div>
               )}
@@ -376,33 +376,33 @@ export default function EtudiantProfilPage() {
         </div>
 
         {/* === SÉCURITÉ — Mot de passe === */}
-        <div className="bg-white rounded-xl border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] overflow-hidden">
+        <div className="bg-white dark:bg-[#111821] rounded-xl border border-slate-200/90 dark:border-[#263241] shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] dark:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.4)] overflow-hidden transition-colors">
           <div
-            className="flex items-center justify-between p-5 cursor-pointer hover:bg-slate-50 transition-colors"
+            className="flex items-center justify-between p-5 cursor-pointer hover:bg-slate-50 dark:hover:bg-[#151D27] transition-colors"
             onClick={() => setEditingPassword(!editingPassword)}
           >
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-amber-50 flex items-center justify-center">
-                <Lock className="w-4.5 h-4.5 text-amber-600" />
+              <div className="w-9 h-9 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-transparent dark:border-[#263241] flex items-center justify-center">
+                <Lock className="w-4.5 h-4.5 text-amber-600 dark:text-amber-400" />
               </div>
               <div>
-                <p className="text-sm font-bold text-slate-900">Mot de passe</p>
-                <p className="text-xs text-slate-500">Modifier mon mot de passe de connexion</p>
+                <p className="text-sm font-bold text-slate-900 dark:text-[#F5F7FA]">Mot de passe</p>
+                <p className="text-xs text-slate-500 dark:text-[#AAB4C0]">Modifier mon mot de passe de connexion</p>
               </div>
             </div>
-            <Edit3 className={`w-4 h-4 transition-colors ${editingPassword ? "text-[#e0521c]" : "text-slate-400"}`} />
+            <Edit3 className={`w-4 h-4 transition-colors ${editingPassword ? "text-[#e0521c]" : "text-slate-400 dark:text-[#687585]"}`} />
           </div>
 
           {editingPassword && (
-            <div className="px-5 pb-5 border-t border-slate-100">
+            <div className="px-5 pb-5 border-t border-slate-100 dark:border-[#263241]">
               {passwordSuccess && (
-                <div className="mt-4 p-3.5 rounded-lg bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <div className="mt-4 p-3.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 text-xs text-emerald-800 dark:text-emerald-300 flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                   <span>{passwordSuccess}</span>
                 </div>
               )}
               {passwordError && (
-                <div className="mt-4 p-3.5 rounded-lg bg-red-50 border border-red-200 text-xs text-red-800">{passwordError}</div>
+                <div className="mt-4 p-3.5 rounded-lg bg-red-50 dark:bg-rose-950/30 border border-red-200 dark:border-rose-800/40 text-xs text-red-800 dark:text-rose-300">{passwordError}</div>
               )}
               <form onSubmit={handleUpdatePassword} className="mt-4 space-y-4 max-w-md">
                 <div className="relative">
@@ -417,7 +417,7 @@ export default function EtudiantProfilPage() {
                   <button
                     type="button"
                     onClick={() => setShowNewPwd(!showNewPwd)}
-                    className="absolute right-3 top-8 text-slate-400 hover:text-slate-700"
+                    className="absolute right-3 top-8 text-slate-400 dark:text-[#687585] hover:text-slate-700 dark:hover:text-[#F5F7FA]"
                   >
                     {showNewPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -433,7 +433,7 @@ export default function EtudiantProfilPage() {
                   <button
                     type="button"
                     onClick={() => setShowConfirmPwd(!showConfirmPwd)}
-                    className="absolute right-3 top-8 text-slate-400 hover:text-slate-700"
+                    className="absolute right-3 top-8 text-slate-400 dark:text-[#687585] hover:text-slate-700 dark:hover:text-[#F5F7FA]"
                   >
                     {showConfirmPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>

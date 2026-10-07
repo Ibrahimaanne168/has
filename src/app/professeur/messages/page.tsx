@@ -125,15 +125,15 @@ export default function ProfesseurMessagesPage() {
           <p className="text-[11px] font-bold tracking-wider uppercase text-[#e0521c] mb-1">
             Messagerie Interne
           </p>
-          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] leading-snug">
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] dark:text-[#F5F7FA] leading-snug">
             Messagerie Académique Étudiants
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1">
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-[#AAB4C0] mt-1">
             Questions, demandes d&apos;éclaircissements et permanences des étudiants de vos classes
           </p>
         </div>
 
-        <div className="flex gap-2 border-b border-slate-200">
+        <div className="flex gap-2 border-b border-slate-200 dark:border-[#263241]">
           <button
             onClick={() => {
               setTab("inbox");
@@ -141,8 +141,8 @@ export default function ProfesseurMessagesPage() {
             }}
             className={`flex items-center gap-2 px-4 py-2.5 text-xs font-semibold border-b-2 transition-colors ${
               tab === "inbox"
-                ? "border-[#0f2744] text-[#0f2744]"
-                : "border-transparent text-slate-500 hover:text-slate-800"
+                ? "border-[#0f2744] dark:border-[#e0521c] text-[#0f2744] dark:text-[#F5F7FA]"
+                : "border-transparent text-slate-500 dark:text-[#AAB4C0] hover:text-slate-800 dark:hover:text-[#F5F7FA]"
             }`}
           >
             <Inbox className="w-4 h-4" />
@@ -160,8 +160,8 @@ export default function ProfesseurMessagesPage() {
             }}
             className={`flex items-center gap-2 px-4 py-2.5 text-xs font-semibold border-b-2 transition-colors ${
               tab === "sent"
-                ? "border-[#0f2744] text-[#0f2744]"
-                : "border-transparent text-slate-500 hover:text-slate-800"
+                ? "border-[#0f2744] dark:border-[#e0521c] text-[#0f2744] dark:text-[#F5F7FA]"
+                : "border-transparent text-slate-500 dark:text-[#AAB4C0] hover:text-slate-800 dark:hover:text-[#F5F7FA]"
             }`}
           >
             <SendHorizontal className="w-4 h-4" />
@@ -173,12 +173,12 @@ export default function ProfesseurMessagesPage() {
           {/* Liste des messages */}
           <div className="lg:col-span-5 space-y-2.5">
             {displayedList.length === 0 ? (
-              <div className="bg-white rounded-xl border border-dashed border-slate-300 p-8 text-center space-y-2">
-                <MessageSquare className="w-8 h-8 text-slate-300 mx-auto" />
-                <p className="font-serif text-sm font-bold text-slate-800">
+              <div className="bg-white dark:bg-[#111821] rounded-xl border border-dashed border-slate-300 dark:border-[#263241] p-8 text-center space-y-2">
+                <MessageSquare className="w-8 h-8 text-slate-300 dark:text-[#687585] mx-auto" />
+                <p className="font-serif text-sm font-bold text-slate-800 dark:text-[#F5F7FA]">
                   {tab === "inbox" ? "Aucun message reçu" : "Aucun message envoyé"}
                 </p>
-                <p className="text-xs text-slate-500 max-w-xs mx-auto">
+                <p className="text-xs text-slate-500 dark:text-[#AAB4C0] max-w-xs mx-auto">
                   {tab === "inbox"
                     ? "Vous n'avez aucune question étudiante en attente pour le moment."
                     : "Vous n'avez envoyé aucune réponse pour l'instant."}
@@ -198,25 +198,25 @@ export default function ProfesseurMessagesPage() {
                     onClick={() => handleSelectMessage(msg)}
                     className={`p-4 rounded-xl border cursor-pointer transition-all ${
                       isSelected
-                        ? "border-[#0f2744] bg-[#0f2744]/5"
-                        : "border-slate-200/90 bg-white hover:border-slate-300"
+                        ? "border-[#0f2744] dark:border-[#e0521c] bg-[#0f2744]/5 dark:bg-[#151D27]"
+                        : "border-slate-200/90 dark:border-[#263241] bg-white dark:bg-[#111821] hover:border-slate-300 dark:hover:border-[#38495d]"
                     } ${!msg.is_read && tab === "inbox" ? "border-l-4 border-l-[#e0521c] font-semibold" : ""}`}
                   >
                     <div className="flex items-center justify-between gap-2 mb-1">
-                      <span className="text-xs font-bold text-slate-900 truncate">
+                      <span className="text-xs font-bold text-slate-900 dark:text-[#F5F7FA] truncate">
                         {name}
                       </span>
-                      <span className="text-[10px] text-slate-400 shrink-0">
+                      <span className="text-[10px] text-slate-400 dark:text-[#687585] shrink-0">
                         {new Date(msg.created_at).toLocaleDateString("fr-FR", {
                           day: "numeric",
                           month: "short",
                         })}
                       </span>
                     </div>
-                    <h4 className="text-sm font-serif font-bold text-slate-900 truncate">
+                    <h4 className="text-sm font-serif font-bold text-slate-900 dark:text-[#F5F7FA] truncate">
                       {msg.subject}
                     </h4>
-                    <p className="text-xs text-slate-500 line-clamp-1 mt-0.5">
+                    <p className="text-xs text-slate-500 dark:text-[#AAB4C0] line-clamp-1 mt-0.5">
                       {msg.content}
                     </p>
                   </div>
@@ -226,16 +226,16 @@ export default function ProfesseurMessagesPage() {
           </div>
 
           {/* Détail du message sélectionné */}
-          <div className="lg:col-span-7 bg-white rounded-xl border border-slate-200/90 p-6 min-h-[400px] shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)]">
+          <div className="lg:col-span-7 bg-white dark:bg-[#111821] rounded-xl border border-slate-200/90 dark:border-[#263241] p-6 min-h-[400px] shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] dark:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.4)]">
             {selectedMessage ? (
               <div className="space-y-5">
-                <div className="border-b border-slate-100 pb-4">
-                  <h2 className="font-serif text-lg font-bold text-[#0f2744]">
+                <div className="border-b border-slate-100 dark:border-[#263241] pb-4">
+                  <h2 className="font-serif text-lg font-bold text-[#0f2744] dark:text-[#F5F7FA]">
                     {selectedMessage.subject}
                   </h2>
-                  <div className="text-xs text-slate-500 mt-1">
+                  <div className="text-xs text-slate-500 dark:text-[#AAB4C0] mt-1">
                     {tab === "inbox" ? "De" : "À"} :{" "}
-                    <strong>
+                    <strong className="text-slate-800 dark:text-[#F5F7FA]">
                       {tab === "inbox"
                         ? selectedMessage.sender?.full_name
                         : selectedMessage.receiver?.full_name}
@@ -250,7 +250,7 @@ export default function ProfesseurMessagesPage() {
                   </div>
                 </div>
 
-                <div className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">
+                <div className="text-sm text-slate-700 dark:text-[#F5F7FA] leading-relaxed whitespace-pre-line">
                   {selectedMessage.content}
                 </div>
 
@@ -266,19 +266,19 @@ export default function ProfesseurMessagesPage() {
                 )}
 
                 {replyOpen && (
-                  <div className="border border-slate-200/90 rounded-xl p-4 space-y-3 bg-slate-50/50">
+                  <div className="border border-slate-200/90 dark:border-[#263241] rounded-xl p-4 space-y-3 bg-slate-50/50 dark:bg-[#151D27]">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-slate-700">Votre réponse académique</span>
+                      <span className="text-xs font-bold text-slate-700 dark:text-[#F5F7FA]">Votre réponse académique</span>
                       <button
                         onClick={() => setReplyOpen(false)}
-                        className="text-slate-400 hover:text-slate-700"
+                        className="text-slate-400 dark:text-[#687585] hover:text-slate-700 dark:hover:text-[#F5F7FA]"
                       >
                         <X className="w-4 h-4" />
                       </button>
                     </div>
 
                     {replySent ? (
-                      <div className="flex items-center gap-2 text-emerald-700 text-sm py-2">
+                      <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-400 text-sm py-2">
                         <CheckCircle2 className="w-4 h-4" /> Réponse transmise avec succès !
                       </div>
                     ) : (
@@ -289,7 +289,7 @@ export default function ProfesseurMessagesPage() {
                           value={replyContent}
                           onChange={(e) => setReplyContent(e.target.value)}
                           placeholder="Rédigez vos explications ou consignes pour l'étudiant..."
-                          className="block w-full rounded-lg border border-slate-200/90 bg-white p-3 text-sm text-slate-900 focus:border-[#0f2744] focus:ring-1 focus:ring-[#0f2744]"
+                          className="block w-full rounded-lg border border-slate-200/90 dark:border-[#263241] bg-white dark:bg-[#111821] p-3 text-sm text-slate-900 dark:text-[#F5F7FA] focus:border-[#0f2744] dark:focus:border-[#e0521c] focus:ring-1 focus:ring-[#0f2744] dark:focus:ring-[#e0521c]"
                         />
                         <Button
                           type="submit"
@@ -305,10 +305,10 @@ export default function ProfesseurMessagesPage() {
                 )}
               </div>
             ) : (
-              <div className="h-full flex flex-col items-center justify-center text-slate-400 p-8 text-center min-h-[300px]">
-                <MessageSquare className="w-12 h-12 text-slate-200 mb-3" />
-                <p className="text-sm font-medium text-slate-600">Sélectionnez un message</p>
-                <p className="text-xs text-slate-400 mt-1">
+              <div className="h-full flex flex-col items-center justify-center text-slate-400 dark:text-[#687585] p-8 text-center min-h-[300px]">
+                <MessageSquare className="w-12 h-12 text-slate-200 dark:text-[#263241] mb-3" />
+                <p className="text-sm font-medium text-slate-600 dark:text-[#AAB4C0]">Sélectionnez un message</p>
+                <p className="text-xs text-slate-400 dark:text-[#687585] mt-1">
                   Les messages envoyés par vos étudiants apparaîtront ici
                 </p>
               </div>

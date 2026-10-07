@@ -246,40 +246,40 @@ export default function ProfesseurProfilPage() {
         </div>
 
         {/* === PROFIL PUBLIC (Bio, spécialité, téléphone) === */}
-        <div className="bg-white rounded-xl border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] overflow-hidden">
+        <div className="bg-white dark:bg-[#111821] rounded-xl border border-slate-200/90 dark:border-[#263241] shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] dark:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.4)] overflow-hidden transition-colors">
           <div
-            className="flex items-center justify-between p-5 cursor-pointer hover:bg-slate-50 transition-colors"
+            className="flex items-center justify-between p-5 cursor-pointer hover:bg-slate-50 dark:hover:bg-[#151D27] transition-colors"
             onClick={() => setEditingProfile(!editingProfile)}
           >
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-[#0f2744]/10 flex items-center justify-center">
-                <BookOpen className="w-4 h-4 text-[#0f2744]" />
+              <div className="w-9 h-9 rounded-lg bg-[#0f2744]/10 dark:bg-[#151D27] border border-transparent dark:border-[#263241] flex items-center justify-center">
+                <BookOpen className="w-4 h-4 text-[#0f2744] dark:text-cyan-400" />
               </div>
               <div>
-                <p className="text-sm font-bold text-slate-900">Profil Public & Coordonnées</p>
-                <p className="text-xs text-slate-500">{prof.specialite || "Spécialité non renseignée"}</p>
+                <p className="text-sm font-bold text-slate-900 dark:text-[#F5F7FA]">Profil Public & Coordonnées</p>
+                <p className="text-xs text-slate-500 dark:text-[#AAB4C0]">{prof.specialite || "Spécialité non renseignée"}</p>
               </div>
             </div>
-            <Edit3 className={`w-4 h-4 transition-colors ${editingProfile ? "text-[#e0521c]" : "text-slate-400"}`} />
+            <Edit3 className={`w-4 h-4 transition-colors ${editingProfile ? "text-[#e0521c]" : "text-slate-400 dark:text-[#687585]"}`} />
           </div>
 
           {editingProfile && (
-            <div className="px-5 pb-5 border-t border-slate-100">
+            <div className="px-5 pb-5 border-t border-slate-100 dark:border-[#263241]">
               {profileSuccess && (
-                <div className="mt-4 p-3.5 rounded-lg bg-emerald-50 border border-emerald-200/80 text-xs text-emerald-800 flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <div className="mt-4 p-3.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200/80 dark:border-emerald-800/40 text-xs text-emerald-800 dark:text-emerald-300 flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                   <span>{profileSuccess}</span>
                 </div>
               )}
               <form onSubmit={handleUpdateProfile} className="mt-4 space-y-4">
                 <div className="space-y-1.5">
-                  <label className="block text-sm font-medium text-slate-700">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-[#F5F7FA]">
                     Spécialité officielle
                   </label>
                   <select
                     value={specialite}
                     onChange={(e) => setSpecialite(e.target.value)}
-                    className="w-full text-sm border border-slate-300 rounded-lg p-2.5 bg-white font-medium text-slate-800 focus:border-[#0f2744] focus:ring-1 focus:ring-[#0f2744]"
+                    className="w-full text-sm border border-slate-300 dark:border-[#263241] rounded-lg p-2.5 bg-white dark:bg-[#151D27] font-medium text-slate-800 dark:text-[#F5F7FA] focus:border-[#0f2744] dark:focus:border-[#e0521c] focus:ring-1 focus:ring-[#0f2744] dark:focus:ring-[#e0521c]"
                   >
                     <option value="Informatique">Informatique</option>
                     <option value="Math">Math</option>
@@ -295,15 +295,15 @@ export default function ProfesseurProfilPage() {
                   onChange={(e) => setPhone(e.target.value)}
                 />
                 <div className="space-y-1.5">
-                  <label className="block text-sm font-medium text-slate-700">Biographie académique</label>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-[#F5F7FA]">Biographie académique</label>
                   <textarea
                     rows={4}
                     value={bio}
                     onChange={(e) => setBio(e.target.value)}
                     placeholder="Parcours académique, domaines d'expertise et projets de recherche..."
-                    className="block w-full rounded-lg border border-slate-200/90 bg-white p-3 text-sm text-slate-900 focus:border-[#0f2744] focus:ring-1 focus:ring-[#0f2744]"
+                    className="block w-full rounded-lg border border-slate-200/90 dark:border-[#263241] bg-white dark:bg-[#151D27] p-3 text-sm text-slate-900 dark:text-[#F5F7FA] placeholder-slate-400 dark:placeholder-[#687585] focus:border-[#0f2744] dark:focus:border-[#e0521c] focus:ring-1 focus:ring-[#0f2744] dark:focus:ring-[#e0521c]"
                   />
-                  <p className="text-xs text-slate-400">Cette biographie sera affichée dans la page « Corps Professoral ».</p>
+                  <p className="text-xs text-slate-400 dark:text-[#687585]">Cette biographie sera affichée dans la page « Corps Professoral ».</p>
                 </div>
                 <Button type="submit" variant="outline" size="sm" isLoading={isSaving} leftIcon={<Save className="w-3.5 h-3.5" />}>
                   Enregistrer les modifications
@@ -314,33 +314,33 @@ export default function ProfesseurProfilPage() {
         </div>
 
         {/* === SÉCURITÉ === */}
-        <div className="bg-white rounded-xl border border-slate-200/90 shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] overflow-hidden">
+        <div className="bg-white dark:bg-[#111821] rounded-xl border border-slate-200/90 dark:border-[#263241] shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] dark:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.4)] overflow-hidden transition-colors">
           <div
-            className="flex items-center justify-between p-5 cursor-pointer hover:bg-slate-50 transition-colors"
+            className="flex items-center justify-between p-5 cursor-pointer hover:bg-slate-50 dark:hover:bg-[#151D27] transition-colors"
             onClick={() => setEditingPassword(!editingPassword)}
           >
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-amber-50 flex items-center justify-center">
-                <Lock className="w-4 h-4 text-amber-600" />
+              <div className="w-9 h-9 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-transparent dark:border-[#263241] flex items-center justify-center">
+                <Lock className="w-4 h-4 text-amber-600 dark:text-amber-400" />
               </div>
               <div>
-                <p className="text-sm font-bold text-slate-900">Mot de passe & Sécurité</p>
-                <p className="text-xs text-slate-500">Mettre à jour vos accès académiques</p>
+                <p className="text-sm font-bold text-slate-900 dark:text-[#F5F7FA]">Mot de passe & Sécurité</p>
+                <p className="text-xs text-slate-500 dark:text-[#AAB4C0]">Mettre à jour vos accès académiques</p>
               </div>
             </div>
-            <Edit3 className={`w-4 h-4 transition-colors ${editingPassword ? "text-[#e0521c]" : "text-slate-400"}`} />
+            <Edit3 className={`w-4 h-4 transition-colors ${editingPassword ? "text-[#e0521c]" : "text-slate-400 dark:text-[#687585]"}`} />
           </div>
 
           {editingPassword && (
-            <div className="px-5 pb-5 border-t border-slate-100">
+            <div className="px-5 pb-5 border-t border-slate-100 dark:border-[#263241]">
               {passwordSuccess && (
-                <div className="mt-4 p-3.5 rounded-lg bg-emerald-50 border border-emerald-200/80 text-xs text-emerald-800 flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <div className="mt-4 p-3.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200/80 dark:border-emerald-800/40 text-xs text-emerald-800 dark:text-emerald-300 flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                   <span>{passwordSuccess}</span>
                 </div>
               )}
               {passwordError && (
-                <div className="mt-4 p-3.5 rounded-lg bg-red-50 border border-red-200 text-xs text-red-700">
+                <div className="mt-4 p-3.5 rounded-lg bg-red-50 dark:bg-rose-950/30 border border-red-200 dark:border-rose-800/40 text-xs text-red-700 dark:text-rose-300">
                   {passwordError}
                 </div>
               )}
@@ -357,7 +357,7 @@ export default function ProfesseurProfilPage() {
                   <button
                     type="button"
                     onClick={() => setShowNewPwd(!showNewPwd)}
-                    className="absolute right-3 top-8 text-slate-400 hover:text-slate-600"
+                    className="absolute right-3 top-8 text-slate-400 dark:text-[#687585] hover:text-slate-600 dark:hover:text-[#F5F7FA]"
                   >
                     {showNewPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -374,12 +374,12 @@ export default function ProfesseurProfilPage() {
                   <button
                     type="button"
                     onClick={() => setShowConfirmPwd(!showConfirmPwd)}
-                    className="absolute right-3 top-8 text-slate-400 hover:text-slate-600"
+                    className="absolute right-3 top-8 text-slate-400 dark:text-[#687585] hover:text-slate-600 dark:hover:text-[#F5F7FA]"
                   >
                     {showConfirmPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
-                <p className="text-xs text-slate-400">{passwordRequirementsMessage}</p>
+                <p className="text-xs text-slate-400 dark:text-[#687585]">{passwordRequirementsMessage}</p>
                 <Button type="submit" variant="outline" size="sm" leftIcon={<Save className="w-3.5 h-3.5" />}>
                   Changer le mot de passe
                 </Button>

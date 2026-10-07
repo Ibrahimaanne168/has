@@ -18,9 +18,9 @@ const JOURS: JourSemaine[] = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi",
 const SLOTS_KEY = "has_edt_custom_slots_v1";
 
 const TYPE_COLORS: Record<string, { bg: string; text: string; border: string }> = {
-  CM: { bg: "bg-blue-50",    text: "text-blue-700",    border: "border-blue-200" },
-  TD: { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200" },
-  TP: { bg: "bg-amber-50",   text: "text-amber-700",   border: "border-amber-200" },
+  CM: { bg: "bg-blue-50 dark:bg-blue-950/40",    text: "text-blue-700 dark:text-blue-300",    border: "border-blue-200 dark:border-blue-800/50" },
+  TD: { bg: "bg-emerald-50 dark:bg-emerald-950/40", text: "text-emerald-700 dark:text-emerald-300", border: "border-emerald-200 dark:border-emerald-800/50" },
+  TP: { bg: "bg-amber-50 dark:bg-amber-950/40",   text: "text-amber-700 dark:text-amber-300",   border: "border-amber-200 dark:border-amber-800/50" },
 };
 
 function getFilieresFromMatiere(mat: Matiere): string[] {
@@ -193,18 +193,18 @@ export default function AdminEDTPage() {
 
       {/* ── MODAL COURS ─────────────────────────────────────────── */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-5 border-b border-slate-100">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white dark:bg-[#111821] border border-slate-200/90 dark:border-[#263241] rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-5 border-b border-slate-100 dark:border-[#263241]">
               <div>
-                <h2 className="font-serif text-base font-bold text-[#0f2744]">
+                <h2 className="font-serif text-base font-bold text-[#0f2744] dark:text-[#F5F7FA]">
                   {editingSeance ? "Modifier le cours" : `Ajouter — ${form.niveau} · ${form.jour}`}
                 </h2>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-xs text-slate-400 dark:text-[#AAB4C0] mt-0.5">
                   {form.heureDebut} → {form.heureFin} · Filières déduites de la matière
                 </p>
               </div>
-              <button onClick={() => setModalOpen(false)} className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500">
+              <button onClick={() => setModalOpen(false)} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-[#151D27] text-slate-500 dark:text-[#AAB4C0]">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -212,21 +212,21 @@ export default function AdminEDTPage() {
               {/* Horaire */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Heure début *</label>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-[#F5F7FA] mb-1">Heure début *</label>
                   <input type="time" value={form.heureDebut}
                     onChange={(e) => setForm((f) => ({ ...f, heureDebut: e.target.value }))}
-                    className="w-full h-10 px-3 rounded-lg border border-slate-200 text-xs focus:ring-1 focus:ring-[#0f2744]" />
+                    className="w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-[#263241] bg-white dark:bg-[#151D27] text-slate-900 dark:text-[#F5F7FA] text-xs focus:ring-1 focus:ring-[#0f2744] dark:focus:ring-[#e0521c]" />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Heure fin *</label>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-[#F5F7FA] mb-1">Heure fin *</label>
                   <input type="time" value={form.heureFin}
                     onChange={(e) => setForm((f) => ({ ...f, heureFin: e.target.value }))}
-                    className="w-full h-10 px-3 rounded-lg border border-slate-200 text-xs focus:ring-1 focus:ring-[#0f2744]" />
+                    className="w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-[#263241] bg-white dark:bg-[#151D27] text-slate-900 dark:text-[#F5F7FA] text-xs focus:ring-1 focus:ring-[#0f2744] dark:focus:ring-[#e0521c]" />
                 </div>
               </div>
               {/* Type */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Type *</label>
+                <label className="block text-xs font-bold text-slate-700 dark:text-[#F5F7FA] mb-1">Type *</label>
                 <div className="flex gap-2">
                   {(["CM", "TD", "TP"] as const).map((t) => {
                     const tc = TYPE_COLORS[t];
@@ -234,7 +234,7 @@ export default function AdminEDTPage() {
                       <button key={t} type="button"
                         onClick={() => setForm((f) => ({ ...f, type: t }))}
                         className={`flex-1 py-2.5 rounded-lg text-xs font-bold border transition-all ${
-                          form.type === t ? `${tc.bg} ${tc.text} ${tc.border}` : "border-slate-200 text-slate-500 hover:border-slate-300"
+                          form.type === t ? `${tc.bg} ${tc.text} ${tc.border}` : "border-slate-200 dark:border-[#263241] text-slate-500 dark:text-[#AAB4C0] hover:border-slate-300 dark:hover:border-[#38495d]"
                         }`}>{t}</button>
                     );
                   })}
@@ -242,12 +242,12 @@ export default function AdminEDTPage() {
               </div>
               {/* Matière */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Matière * <span className="font-normal text-slate-400">({form.niveau})</span>
+                <label className="block text-xs font-bold text-slate-700 dark:text-[#F5F7FA] mb-1">
+                  Matière * <span className="font-normal text-slate-400 dark:text-[#687585]">({form.niveau})</span>
                 </label>
                 <select value={form.matiereId}
                   onChange={(e) => setForm((f) => ({ ...f, matiereId: e.target.value }))}
-                  className="w-full h-10 px-3 rounded-lg border border-slate-200 bg-white text-xs focus:ring-1 focus:ring-[#0f2744]">
+                  className="w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-[#263241] bg-white dark:bg-[#151D27] text-slate-900 dark:text-[#F5F7FA] text-xs focus:ring-1 focus:ring-[#0f2744] dark:focus:ring-[#e0521c]">
                   <option value="">— Choisir une matière —</option>
                   {matieresNiveau.map((m) => (
                     <option key={m.id} value={m.id}>{m.name} ({m.code})</option>
@@ -255,34 +255,34 @@ export default function AdminEDTPage() {
                 </select>
                 {form.matiereId && (
                   <div className="mt-2 flex items-center gap-2 flex-wrap">
-                    <BookOpen className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                    <span className="text-[11px] text-slate-500">Filières :</span>
+                    <BookOpen className="w-3.5 h-3.5 text-slate-400 dark:text-[#687585] shrink-0" />
+                    <span className="text-[11px] text-slate-500 dark:text-[#AAB4C0]">Filières :</span>
                     {autoFilieres.length === 0 ? (
-                      <span className="text-[11px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                      <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/50 px-2 py-0.5 rounded-full">
                         Toutes filières {form.niveau}
                       </span>
                     ) : autoFilieres.map((f) => (
-                      <span key={f} className="text-[11px] font-bold text-[#e0521c] bg-orange-50 border border-orange-200 px-2 py-0.5 rounded-full">{f}</span>
+                      <span key={f} className="text-[11px] font-bold text-[#e0521c] bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-800/50 px-2 py-0.5 rounded-full">{f}</span>
                     ))}
                   </div>
                 )}
               </div>
               {/* Meet */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">Lien Google Meet</label>
+                <label className="block text-xs font-bold text-slate-700 dark:text-[#F5F7FA] mb-1">Lien Google Meet</label>
                 <div className="flex gap-2">
                   <Input placeholder="https://meet.google.com/abc-defg-hij" leftIcon={<Video className="w-4 h-4" />}
                     value={form.meetUrl} onChange={(e) => setForm((f) => ({ ...f, meetUrl: e.target.value }))} />
                   <a href="https://meet.new" target="_blank" rel="noopener noreferrer"
-                    className="shrink-0 flex items-center gap-1 px-3 py-2 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 text-xs font-bold whitespace-nowrap">
+                    className="shrink-0 flex items-center gap-1 px-3 py-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-800/50 text-emerald-700 dark:text-emerald-300 text-xs font-bold whitespace-nowrap">
                     <Sparkles className="w-3.5 h-3.5" /> Créer un Meet
                   </a>
                 </div>
-                <p className="text-[10px] text-slate-400 mt-1">
+                <p className="text-[10px] text-slate-400 dark:text-[#687585] mt-1">
                   Cliquez « Créer un Meet », copiez le lien depuis Google, puis collez-le ici.
                 </p>
               </div>
-              <div className="flex justify-end gap-3 pt-2 border-t border-slate-100">
+              <div className="flex justify-end gap-3 pt-2 border-t border-slate-100 dark:border-[#263241]">
                 <Button type="button" variant="outline" size="sm" onClick={() => setModalOpen(false)}>Annuler</Button>
                 <Button type="submit" variant="accent" size="sm" leftIcon={<Save className="w-3.5 h-3.5" />}>
                   {editingSeance ? "Enregistrer" : "Ajouter le cours"}
@@ -295,28 +295,28 @@ export default function AdminEDTPage() {
 
       {/* ── PANNEAU CRÉNEAUX ────────────────────────────────────── */}
       {slotPanelOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm">
-            <div className="flex items-center justify-between p-5 border-b border-slate-100">
-              <h2 className="font-serif text-base font-bold text-[#0f2744]">Gérer les créneaux</h2>
-              <button onClick={() => setSlotPanelOpen(false)} className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white dark:bg-[#111821] border border-slate-200/90 dark:border-[#263241] rounded-2xl shadow-2xl w-full max-w-sm">
+            <div className="flex items-center justify-between p-5 border-b border-slate-100 dark:border-[#263241]">
+              <h2 className="font-serif text-base font-bold text-[#0f2744] dark:text-[#F5F7FA]">Gérer les créneaux</h2>
+              <button onClick={() => setSlotPanelOpen(false)} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-[#151D27] text-slate-500 dark:text-[#AAB4C0]">
                 <X className="w-4 h-4" />
               </button>
             </div>
             <div className="p-5 space-y-4">
               {/* Ajouter un créneau */}
               <div>
-                <p className="text-xs font-bold text-slate-700 mb-2">Ajouter un créneau horaire</p>
+                <p className="text-xs font-bold text-slate-700 dark:text-[#F5F7FA] mb-2">Ajouter un créneau horaire</p>
                 <div className="flex items-center gap-2">
                   <input type="time" value={newSlotDebut}
                     onChange={(e) => setNewSlotDebut(e.target.value)}
-                    className="flex-1 h-10 px-3 rounded-lg border border-slate-200 text-xs focus:ring-1 focus:ring-[#0f2744]" />
+                    className="flex-1 h-10 px-3 rounded-lg border border-slate-200 dark:border-[#263241] bg-white dark:bg-[#151D27] text-slate-900 dark:text-[#F5F7FA] text-xs focus:ring-1 focus:ring-[#0f2744] dark:focus:ring-[#e0521c]" />
                   <span className="text-slate-400 text-xs font-bold">→</span>
                   <input type="time" value={newSlotFin}
                     onChange={(e) => setNewSlotFin(e.target.value)}
-                    className="flex-1 h-10 px-3 rounded-lg border border-slate-200 text-xs focus:ring-1 focus:ring-[#0f2744]" />
+                    className="flex-1 h-10 px-3 rounded-lg border border-slate-200 dark:border-[#263241] bg-white dark:bg-[#151D27] text-slate-900 dark:text-[#F5F7FA] text-xs focus:ring-1 focus:ring-[#0f2744] dark:focus:ring-[#e0521c]" />
                   <button onClick={addSlot}
-                    className="h-10 px-3 bg-[#0f2744] hover:bg-[#183a62] text-white rounded-lg text-xs font-bold shrink-0">
+                    className="h-10 px-3 bg-[#0f2744] dark:bg-[#e0521c] hover:bg-[#183a62] dark:hover:bg-[#c84418] text-white rounded-lg text-xs font-bold shrink-0 cursor-pointer">
                     <Plus className="w-4 h-4" />
                   </button>
                 </div>
@@ -327,21 +327,21 @@ export default function AdminEDTPage() {
 
               {/* Liste des créneaux */}
               <div>
-                <p className="text-xs font-bold text-slate-700 mb-2">
+                <p className="text-xs font-bold text-slate-700 dark:text-[#F5F7FA] mb-2">
                   Créneaux actuels ({slots.length})
                 </p>
                 {slots.length === 0 ? (
-                  <p className="text-xs text-slate-400 italic">Aucun créneau — ajoutez-en ci-dessus</p>
+                  <p className="text-xs text-slate-400 dark:text-[#687585] italic">Aucun créneau — ajoutez-en ci-dessus</p>
                 ) : (
                   <div className="space-y-1.5 max-h-60 overflow-y-auto pr-1">
                     {slots.map((slot) => (
-                      <div key={slot} className="flex items-center justify-between px-3 py-2 bg-slate-50 rounded-lg border border-slate-200">
+                      <div key={slot} className="flex items-center justify-between px-3 py-2 bg-slate-50 dark:bg-[#151D27] rounded-lg border border-slate-200 dark:border-[#263241]">
                         <div className="flex items-center gap-2">
                           <Clock className="w-3.5 h-3.5 text-[#e0521c]" />
-                          <span className="text-xs font-bold text-slate-700">{slot}</span>
+                          <span className="text-xs font-bold text-slate-700 dark:text-[#F5F7FA]">{slot}</span>
                         </div>
                         <button onClick={() => removeSlot(slot)}
-                          className="p-1 rounded hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors">
+                          className="p-1 rounded hover:bg-red-50 dark:hover:bg-red-950/40 text-slate-400 hover:text-red-600 transition-colors cursor-pointer">
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
@@ -359,10 +359,10 @@ export default function AdminEDTPage() {
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
           <div>
             <p className="text-[11px] font-bold tracking-wider uppercase text-[#e0521c] mb-1">
-              Emploi du Temps — <span className="text-slate-500 font-semibold normal-case">{weekLabel}</span>
+              Emploi du Temps — <span className="text-slate-500 dark:text-[#AAB4C0] font-semibold normal-case">{weekLabel}</span>
             </p>
-            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744]">Gestion des Emplois du Temps</h1>
-            <p className="text-xs text-slate-500 mt-1">
+            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] dark:text-[#F5F7FA]">Gestion des Emplois du Temps</h1>
+            <p className="text-xs text-slate-500 dark:text-[#AAB4C0] mt-1">
               {slots.length === 0
                 ? "Commencez par ajouter vos créneaux horaires avec le bouton ⚙ puis cliquez une case pour ajouter un cours"
                 : "Cliquez sur une case pour ajouter un cours"}
@@ -425,41 +425,41 @@ interface EdtTableProps {
 
 function EdtTable({ niveau, seances, slots, onAdd, onEdit, onDelete, deleteConfirm, confirmDelete, cancelDelete, copiedLink, onCopyMeet, onOpenSlots }: EdtTableProps) {
   const niveauLabel = niveau === "L1" ? "Licence 1" : "Licence 2";
-  const bg = niveau === "L1" ? "bg-[#0f2744]" : "bg-[#1a3a5c]";
+  const bg = niveau === "L1" ? "bg-[#0f2744] dark:bg-[#151D27]" : "bg-[#1a3a5c] dark:bg-[#192535]";
 
   return (
     <div>
-      <div className={`flex items-center justify-between px-5 py-3 rounded-t-xl ${bg}`}>
+      <div className={`flex items-center justify-between px-5 py-3 rounded-t-xl ${bg} border-b border-white/10 dark:border-[#263241]`}>
         <div className="flex items-center gap-3">
-          <span className="font-serif text-sm font-bold text-white">{niveauLabel}</span>
-          <span className="text-[11px] text-white/50">{seances.length} séance{seances.length !== 1 ? "s" : ""}</span>
+          <span className="font-serif text-sm font-bold text-white dark:text-[#F5F7FA]">{niveauLabel}</span>
+          <span className="text-[11px] text-white/50 dark:text-[#AAB4C0]">{seances.length} séance{seances.length !== 1 ? "s" : ""}</span>
         </div>
         <button onClick={() => onAdd(niveau, "Lundi", slots[0] || "")}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-[11px] font-bold border border-white/20">
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 dark:bg-white/5 dark:hover:bg-white/10 text-white text-[11px] font-bold border border-white/20 dark:border-white/10 cursor-pointer">
           <Plus className="w-3 h-3" /> Ajouter
         </button>
       </div>
 
       {slots.length === 0 ? (
-        <div className="bg-white border border-t-0 border-slate-200/90 rounded-b-xl py-12 text-center">
-          <Clock className="w-8 h-8 text-slate-200 mx-auto mb-3" />
-          <p className="text-sm text-slate-400 font-semibold">Aucun créneau horaire défini</p>
-          <p className="text-xs text-slate-300 mt-1 mb-4">Ajoutez vos créneaux pour afficher le tableau</p>
+        <div className="bg-white dark:bg-[#111821] border border-t-0 border-slate-200/90 dark:border-[#263241] rounded-b-xl py-12 text-center">
+          <Clock className="w-8 h-8 text-slate-200 dark:text-[#263241] mx-auto mb-3" />
+          <p className="text-sm text-slate-400 dark:text-[#AAB4C0] font-semibold">Aucun créneau horaire défini</p>
+          <p className="text-xs text-slate-300 dark:text-[#687585] mt-1 mb-4">Ajoutez vos créneaux pour afficher le tableau</p>
           <button onClick={onOpenSlots}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-[#0f2744] text-white text-xs font-bold rounded-lg hover:bg-[#183a62]">
+            className="inline-flex items-center gap-2 px-4 py-2 bg-[#0f2744] dark:bg-[#e0521c] text-white text-xs font-bold rounded-lg hover:bg-[#183a62] dark:hover:bg-[#c84418] cursor-pointer">
             <Settings className="w-3.5 h-3.5" /> Gérer les créneaux
           </button>
         </div>
       ) : (
-        <div className="overflow-x-auto border border-t-0 border-slate-200/90 rounded-b-xl shadow-sm">
-          <table className="w-full min-w-[900px] bg-white text-sm border-collapse">
+        <div className="overflow-x-auto border border-t-0 border-slate-200/90 dark:border-[#263241] rounded-b-xl shadow-sm">
+          <table className="w-full min-w-[900px] bg-white dark:bg-[#111821] text-sm border-collapse">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-200">
-                <th className="px-4 py-2.5 text-left text-[11px] font-bold text-slate-500 uppercase tracking-wider w-32 border-r border-slate-200">
+              <tr className="bg-slate-50 dark:bg-[#151D27] border-b border-slate-200 dark:border-[#263241]">
+                <th className="px-4 py-2.5 text-left text-[11px] font-bold text-slate-500 dark:text-[#AAB4C0] uppercase tracking-wider w-32 border-r border-slate-200 dark:border-[#263241]">
                   Heure
                 </th>
                 {JOURS.map((jour) => (
-                  <th key={jour} className="px-3 py-2.5 text-center text-[11px] font-bold text-slate-500 uppercase tracking-wider border-r border-slate-200 last:border-r-0">
+                  <th key={jour} className="px-3 py-2.5 text-center text-[11px] font-bold text-slate-500 dark:text-[#AAB4C0] uppercase tracking-wider border-r border-slate-200 dark:border-[#263241] last:border-r-0">
                     {jour}
                   </th>
                 ))}
@@ -469,9 +469,9 @@ function EdtTable({ niveau, seances, slots, onAdd, onEdit, onDelete, deleteConfi
               {slots.map((slot, i) => {
                 const [debut, fin] = slot.split("–");
                 return (
-                  <tr key={slot} className={`border-b border-slate-100 ${i % 2 === 0 ? "bg-white" : "bg-slate-50/40"}`}>
-                    <td className="px-4 py-2 border-r border-slate-100 whitespace-nowrap">
-                      <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-700">
+                  <tr key={slot} className={`border-b border-slate-100 dark:border-[#263241] ${i % 2 === 0 ? "bg-white dark:bg-[#111821]" : "bg-slate-50/40 dark:bg-[#151D27]/50"}`}>
+                    <td className="px-4 py-2 border-r border-slate-100 dark:border-[#263241] whitespace-nowrap">
+                      <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-700 dark:text-[#F5F7FA]">
                         <Clock className="w-3 h-3 text-[#e0521c] shrink-0" />
                         {debut} – {fin}
                       </div>
@@ -482,7 +482,7 @@ function EdtTable({ niveau, seances, slots, onAdd, onEdit, onDelete, deleteConfi
                       );
                       return (
                         <td key={jour}
-                          className="px-1.5 py-1.5 border-r border-slate-100 last:border-r-0 align-top min-w-[130px] cursor-pointer hover:bg-[#e0521c]/5 transition-colors group/cell"
+                          className="px-1.5 py-1.5 border-r border-slate-100 dark:border-[#263241] last:border-r-0 align-top min-w-[130px] cursor-pointer hover:bg-[#e0521c]/5 dark:hover:bg-[#e0521c]/10 transition-colors group/cell"
                           onClick={(e) => {
                             if ((e.target as HTMLElement).closest("[data-seance]")) return;
                             onAdd(niveau, jour, slot);
@@ -499,41 +499,41 @@ function EdtTable({ niveau, seances, slots, onAdd, onEdit, onDelete, deleteConfi
                                 onClick={(e) => e.stopPropagation()}
                               >
                                 <div className="absolute top-1 right-1 opacity-0 group-hover/card:opacity-100 flex gap-0.5 z-10">
-                                  <button onClick={() => onEdit(s)} className="w-5 h-5 rounded bg-white/90 border border-slate-200 flex items-center justify-center hover:bg-white shadow-xs">
-                                    <Edit2 className="w-2.5 h-2.5 text-slate-600" />
+                                  <button onClick={() => onEdit(s)} className="w-5 h-5 rounded bg-white/90 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] flex items-center justify-center hover:bg-white dark:hover:bg-[#111821] shadow-xs cursor-pointer">
+                                    <Edit2 className="w-2.5 h-2.5 text-slate-600 dark:text-[#F5F7FA]" />
                                   </button>
-                                  <button onClick={() => onDelete(s.id)} className="w-5 h-5 rounded bg-white/90 border border-red-200 flex items-center justify-center hover:bg-red-50">
+                                  <button onClick={() => onDelete(s.id)} className="w-5 h-5 rounded bg-white/90 dark:bg-[#151D27] border border-red-200 dark:border-red-900/50 flex items-center justify-center hover:bg-red-50 dark:hover:bg-red-950/40 cursor-pointer">
                                     <Trash2 className="w-2.5 h-2.5 text-red-500" />
                                   </button>
                                 </div>
                                 <div className="flex items-center gap-1 mb-1 pr-10">
-                                  <span className={`text-[9px] font-black uppercase px-1 py-0.5 rounded bg-white/60 border ${tc.border} ${tc.text}`}>{s.type_seance || "CM"}</span>
-                                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${fLabel === "Toutes" ? "text-emerald-700 bg-emerald-50 border border-emerald-200" : "text-[#e0521c] bg-orange-50 border border-orange-200"}`}>{fLabel}</span>
+                                  <span className={`text-[9px] font-black uppercase px-1 py-0.5 rounded bg-white/60 dark:bg-black/30 border ${tc.border} ${tc.text}`}>{s.type_seance || "CM"}</span>
+                                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${fLabel === "Toutes" ? "text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/50" : "text-[#e0521c] bg-orange-50 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-800/50"}`}>{fLabel}</span>
                                 </div>
-                                <p className="text-[11px] font-bold text-slate-900 leading-tight line-clamp-2">{s.matiere_nom}</p>
-                                <p className="text-[9px] font-mono text-slate-400">{s.matiere_code}</p>
-                                <span className="inline-flex items-center text-[9px] font-semibold text-emerald-700 bg-white/60 border border-emerald-200 px-1.5 py-0.5 rounded mt-1">🌐 En ligne</span>
+                                <p className="text-[11px] font-bold text-slate-900 dark:text-[#F5F7FA] leading-tight line-clamp-2">{s.matiere_nom}</p>
+                                <p className="text-[9px] font-mono text-slate-400 dark:text-[#AAB4C0]">{s.matiere_code}</p>
+                                <span className="inline-flex items-center text-[9px] font-semibold text-emerald-700 dark:text-emerald-300 bg-white/60 dark:bg-black/30 border border-emerald-200 dark:border-emerald-800/50 px-1.5 py-0.5 rounded mt-1">🌐 En ligne</span>
                                 {s.meet_url ? (
-                                  <div className="flex gap-1 mt-1.5 pt-1 border-t border-slate-200/40">
+                                  <div className="flex gap-1 mt-1.5 pt-1 border-t border-slate-200/40 dark:border-white/10">
                                     <a href={s.meet_url} target="_blank" rel="noopener noreferrer"
                                       className="flex-1 flex items-center justify-center gap-0.5 py-1 rounded text-[9px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white">
                                       <Video className="w-2.5 h-2.5" /> Meet <ExternalLink className="w-2 h-2" />
                                     </a>
-                                    <button onClick={() => onCopyMeet(s.meet_url!)} className="p-1 border border-slate-200 rounded hover:bg-white text-slate-400">
+                                    <button onClick={() => onCopyMeet(s.meet_url!)} className="p-1 border border-slate-200 dark:border-[#263241] rounded hover:bg-white dark:hover:bg-[#151D27] text-slate-400 dark:text-[#AAB4C0] cursor-pointer">
                                       {copiedLink === s.meet_url ? <CheckCircle2 className="w-2.5 h-2.5 text-emerald-500" /> : <Copy className="w-2.5 h-2.5" />}
                                     </button>
                                   </div>
                                 ) : (
-                                  <button onClick={() => onEdit(s)} className="mt-1 w-full text-[9px] text-slate-300 hover:text-[#0f2744] border border-dashed border-slate-100 hover:border-slate-300 rounded py-0.5 flex items-center justify-center gap-1">
+                                  <button onClick={() => onEdit(s)} className="mt-1 w-full text-[9px] text-slate-400 dark:text-[#AAB4C0] hover:text-[#0f2744] dark:hover:text-[#F5F7FA] border border-dashed border-slate-200 dark:border-[#263241] hover:border-slate-300 rounded py-0.5 flex items-center justify-center gap-1 cursor-pointer">
                                     <Video className="w-2.5 h-2.5" /> Ajouter Meet
                                   </button>
                                 )}
                                 {deleteConfirm === s.id && (
-                                  <div className="mt-1.5 pt-1.5 border-t border-red-200 space-y-1">
-                                    <p className="text-[9px] text-red-700 font-semibold">Supprimer ?</p>
+                                  <div className="mt-1.5 pt-1.5 border-t border-red-200 dark:border-red-900/50 space-y-1">
+                                    <p className="text-[9px] text-red-700 dark:text-red-400 font-semibold">Supprimer ?</p>
                                     <div className="flex gap-1">
-                                      <button onClick={() => confirmDelete(s.id)} className="flex-1 py-0.5 rounded bg-red-600 text-white text-[9px] font-bold">Oui</button>
-                                      <button onClick={cancelDelete} className="flex-1 py-0.5 rounded border border-slate-200 text-[9px] text-slate-600">Non</button>
+                                      <button onClick={() => confirmDelete(s.id)} className="flex-1 py-0.5 rounded bg-red-600 text-white text-[9px] font-bold cursor-pointer">Oui</button>
+                                      <button onClick={cancelDelete} className="flex-1 py-0.5 rounded border border-slate-200 dark:border-[#263241] text-[9px] text-slate-600 dark:text-[#AAB4C0] cursor-pointer">Non</button>
                                     </div>
                                   </div>
                                 )}
