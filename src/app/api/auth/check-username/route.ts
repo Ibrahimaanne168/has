@@ -30,28 +30,32 @@ export async function GET(request: NextRequest) {
   try {
     const supabase = createAdminClient();
 
-    // 1. Vérifier dans la table profiles
-    const { data: existingProfile } = await supabase
-      .from("profiles")
-      .select("id")
-      .eq("username", username)
-      .maybeSingle();
+    // 1. Vérifier dans la table profiles (ignorer les comptes refusés)
+    try {
+      const { data: existingProfile } = await supabase
+        .from("profiles")
+        .select("id, statut_inscription")
+        .eq("username", username)
+        .maybeSingle();
 
-    if (existingProfile) {
-      return NextResponse.json({
-        available: false,
-        message: `L'identifiant « ${username} » est déjà utilisé.`,
-        suggestions: generateSuggestions(username),
-      });
-    }
+      if (existingProfile && existingProfile.statut_inscription !== "refuse") {
+        return NextResponse.json({
+          available: false,
+          message: `L'identifiant « ${username} » est déjà utilisé.`,
+          suggestions: generateSuggestions(username),
+        });
+      }
+    } catch {}
 
-    // 2. Vérifier dans Supabase Auth (user_metadata.username)
+    // 2. Vérifier dans Supabase Auth (user_metadata.username, ignorer les comptes refusés)
     const { data: usersData, error } = await supabase.auth.admin.listUsers({ perPage: 1000 });
 
     if (!error && usersData?.users) {
-      const taken = usersData.users.some(
-        (u) => (u.user_metadata?.username || "").toLowerCase() === username
-      );
+      const taken = usersData.users.some((u) => {
+        const meta = u.user_metadata || {};
+        if (meta.statut_inscription === "refuse") return false; // Libéré pour réutilisation
+        return (meta.username || "").toLowerCase() === username;
+      });
 
       if (taken) {
         return NextResponse.json({

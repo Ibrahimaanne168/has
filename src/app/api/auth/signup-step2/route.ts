@@ -45,17 +45,42 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 2.5 Vérification unicité du username (toutes sources confondues)
+    // 2.5 Vérification unicité du username (en ignorant les comptes refusés)
     const cleanUsername = username.toLowerCase().trim();
+    const cleanEmail = email.toLowerCase().trim();
 
     // Chercher dans la table profiles
-    const { data: existingProfile } = await supabaseAdmin
-      .from("profiles")
-      .select("id")
-      .eq("username", cleanUsername)
-      .maybeSingle();
+    try {
+      const { data: existingProfile } = await supabaseAdmin
+        .from("profiles")
+        .select("id, statut_inscription")
+        .eq("username", cleanUsername)
+        .maybeSingle();
 
-    if (existingProfile) {
+      if (existingProfile && existingProfile.statut_inscription !== "refuse") {
+        const base = cleanUsername.replace(/[^a-z0-9]/g, "");
+        const year = new Date().getFullYear().toString().slice(-2);
+        const r = () => Math.floor(10 + Math.random() * 90);
+        const suggestions = [...new Set([`${base}${year}`, `${base}${r()}`, `${base}_has`, `${base}${r()}`])].slice(0, 4);
+        return NextResponse.json(
+          { error: `L'identifiant « ${cleanUsername} » est déjà pris.`, suggestions },
+          { status: 409 }
+        );
+      }
+    } catch {}
+
+    // Chercher dans Supabase Auth metadata
+    const { data: allUsers } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
+    const usersList = allUsers?.users || [];
+
+    // Vérifier si le username est pris par un compte actif/en attente
+    const usernameTakenByActive = usersList.some((u) => {
+      const meta = u.user_metadata || {};
+      if (meta.statut_inscription === "refuse") return false; // Libéré !
+      return (meta.username || "").toLowerCase() === cleanUsername;
+    });
+
+    if (usernameTakenByActive) {
       const base = cleanUsername.replace(/[^a-z0-9]/g, "");
       const year = new Date().getFullYear().toString().slice(-2);
       const r = () => Math.floor(10 + Math.random() * 90);
@@ -66,21 +91,29 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Chercher dans Supabase Auth metadata
-    const { data: allUsers } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
-    const usernameTaken = allUsers?.users?.some(
-      (u) => (u.user_metadata?.username || "").toLowerCase() === cleanUsername
+    // 2.6 Vérification email : Si l'email appartenait à un compte refusé, on purge l'ancien compte pour libérer l'email
+    const existingSameEmailUser = usersList.find(
+      (u) => (u.email || "").toLowerCase() === cleanEmail
     );
 
-    if (usernameTaken) {
-      const base = cleanUsername.replace(/[^a-z0-9]/g, "");
-      const year = new Date().getFullYear().toString().slice(-2);
-      const r = () => Math.floor(10 + Math.random() * 90);
-      const suggestions = [...new Set([`${base}${year}`, `${base}${r()}`, `${base}_has`, `${base}${r()}`])].slice(0, 4);
-      return NextResponse.json(
-        { error: `L'identifiant « ${cleanUsername} » est déjà pris.`, suggestions },
-        { status: 409 }
-      );
+    if (existingSameEmailUser) {
+      const isRefused = existingSameEmailUser.user_metadata?.statut_inscription === "refuse";
+      if (isRefused) {
+        try {
+          // Supprimer l'ancien compte rejeté dans auth.users pour réactiver l'email
+          await supabaseAdmin.auth.admin.deleteUser(existingSameEmailUser.id);
+        } catch (delErr) {
+          console.warn("[DELETE-REFUSED-USER-WARN]", delErr);
+        }
+        try {
+          await supabaseAdmin.from("profiles").delete().eq("id", existingSameEmailUser.id);
+        } catch {}
+      } else {
+        return NextResponse.json(
+          { error: "Cette adresse email est déjà associée à un compte valide ou en cours d'examen." },
+          { status: 409 }
+        );
+      }
     }
 
     // 3. Création du compte dans Supabase Auth

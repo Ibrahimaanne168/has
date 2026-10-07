@@ -117,13 +117,30 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // 3. Synchronisation obligatoire dans les métadonnées auth.users
+    // 3. Synchronisation obligatoire dans les métadonnées auth.users (libération du username si refusé)
     try {
+      const { data: userCurrent } = await supabaseAdmin.auth.admin.getUserById(studentId);
+      const currentMeta = userCurrent?.user?.user_metadata || {};
+
+      const updatedMeta: Record<string, any> = {
+        ...currentMeta,
+        is_active: isAccepting,
+        statut_inscription: isAccepting ? "valide" : "refuse",
+      };
+
+      if (!isAccepting) {
+        if (currentMeta.username) {
+          updatedMeta.original_username = currentMeta.username;
+          updatedMeta.username = null;
+        }
+      } else {
+        if (currentMeta.original_username && !currentMeta.username) {
+          updatedMeta.username = currentMeta.original_username;
+        }
+      }
+
       await supabaseAdmin.auth.admin.updateUserById(studentId, {
-        user_metadata: {
-          is_active: isAccepting,
-          statut_inscription: isAccepting ? "valide" : "refuse",
-        },
+        user_metadata: updatedMeta,
       });
       updateSuccess = true;
     } catch (authUpdateErr) {

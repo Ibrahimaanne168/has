@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
               id: u.id,
               email: u.email,
               full_name: meta.full_name || meta.fullName || u.email?.split("@")[0] || "Étudiant",
-              username: meta.username || null,
+              username: meta.username || meta.original_username || null,
               telephone: meta.phone || null,
               matricule: meta.matricule || null,
               filiere: meta.filiere || "MPI",
@@ -57,6 +57,7 @@ export async function GET(request: NextRequest) {
           studentsMap.set(p.id, {
             ...existing,
             ...p,
+            username: p.username || existing.username || null,
             statut_inscription: p.statut_inscription || (p.is_active ? "valide" : "en_attente"),
           });
         }
@@ -132,11 +133,29 @@ export async function POST(request: NextRequest) {
 
     // 1. Mettre à jour les métadonnées dans Supabase Auth (garanti de persister)
     try {
+      const { data: userCurrent } = await supabaseAdmin.auth.admin.getUserById(studentId);
+      const currentMeta = userCurrent?.user?.user_metadata || {};
+
+      const updatedMeta: Record<string, any> = {
+        ...currentMeta,
+        is_active: newActive,
+        statut_inscription: newStatus,
+      };
+
+      if (action === "reject") {
+        // Libérer le login (username) pour qu'il puisse être immédiatement réutilisé
+        if (currentMeta.username) {
+          updatedMeta.original_username = currentMeta.username;
+          updatedMeta.username = null;
+        }
+      } else if (action === "accept") {
+        if (currentMeta.original_username && !currentMeta.username) {
+          updatedMeta.username = currentMeta.original_username;
+        }
+      }
+
       const { data: updatedAuthUser, error: authUpErr } = await supabaseAdmin.auth.admin.updateUserById(studentId, {
-        user_metadata: {
-          is_active: newActive,
-          statut_inscription: newStatus,
-        },
+        user_metadata: updatedMeta,
       });
 
       if (updatedAuthUser?.user) {
@@ -151,13 +170,18 @@ export async function POST(request: NextRequest) {
 
     // 2. Mettre à jour dans la table profiles si elle existe
     try {
+      const profileUpdates: Record<string, any> = {
+        is_active: isAccepting,
+        statut_inscription: newStatus,
+        updated_at: new Date().toISOString(),
+      };
+      if (action === "reject") {
+        profileUpdates.username = null;
+      }
+
       const { data: upProfile } = await supabaseAdmin
         .from("profiles")
-        .update({
-          is_active: isAccepting,
-          statut_inscription: newStatus,
-          updated_at: new Date().toISOString(),
-        })
+        .update(profileUpdates)
         .eq("id", studentId)
         .select()
         .maybeSingle();
