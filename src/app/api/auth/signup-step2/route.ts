@@ -116,10 +116,21 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 3. Création du compte dans Supabase Auth
-    const yearFull = new Date().getFullYear();
-    const randomDigits = Math.floor(1000 + Math.random() * 9000);
-    const matricule = `HAS-${yearFull}-ETU-${randomDigits}`;
+    // 3. Calcul séquentiel du matricule étudiant officiel (format : ETU001, ETU002, ...)
+    let maxEtudiantNum = 0;
+    for (const u of usersList) {
+      if (u.user_metadata?.role === "etudiant") {
+        const m = (u.user_metadata?.matricule || "").trim();
+        const match = m.match(/^ETU(\d+)$/i);
+        if (match) {
+          const num = parseInt(match[1], 10);
+          if (!isNaN(num) && num > maxEtudiantNum) {
+            maxEtudiantNum = num;
+          }
+        }
+      }
+    }
+    const matricule = `ETU${String(maxEtudiantNum + 1).padStart(3, "0")}`;
 
     const filiereChoice = parseResult.data.filiere || "MPI";
     const niveauChoice = parseResult.data.niveau || "L1";

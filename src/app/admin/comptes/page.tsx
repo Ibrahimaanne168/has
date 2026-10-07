@@ -282,7 +282,20 @@ export default function AdminComptesPage() {
           role: formRole,
           username: formEmail.split("@")[0].toLowerCase(),
           phone: formPhone || null,
-          matricule: `HAS-${year}-${formRole.toUpperCase().slice(0, 3)}-${Math.floor(1000 + Math.random() * 9000)}`,
+          matricule:
+            formRole === "etudiant"
+              ? `ETU${String(
+                  Math.max(
+                    0,
+                    ...users
+                      .filter((u) => u.role === "etudiant")
+                      .map((u) => {
+                        const m = (u.matricule || "").match(/^ETU(\d+)$/i);
+                        return m ? parseInt(m[1], 10) : 0;
+                      })
+                  ) + 1
+                ).padStart(3, "0")}`
+              : `HAS-${year}-${formRole.toUpperCase().slice(0, 3)}-${Math.floor(1000 + Math.random() * 9000)}`,
           filiere_id: formFiliereId || null,
           classe_id: formClasseId || null,
           bio: formBio || null,
