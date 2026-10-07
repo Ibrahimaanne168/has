@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/service-role";
+import {
+  sendRegistrationAcceptedEmail,
+  sendRegistrationRejectedEmail,
+} from "@/lib/resend";
 
 export async function GET() {
   try {
@@ -40,6 +44,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const host = request.headers.get("x-forwarded-host") || request.headers.get("host");
+    const proto = request.headers.get("x-forwarded-proto") || "https";
+    const origin = host ? `${proto}://${host}` : (request.nextUrl.origin || "https://has-academie.online");
+    const loginUrl = `${origin}/connexion`;
+    const siteUrl = origin;
+
     const supabaseAdmin = createAdminClient();
 
     if (action === "accept") {
@@ -69,10 +79,24 @@ export async function POST(request: NextRequest) {
         });
       } catch {}
 
+      // Envoi de l'email de confirmation via Resend avec lien direct de retour au site
+      if (updated?.email) {
+        try {
+          await sendRegistrationAcceptedEmail({
+            email: updated.email,
+            fullName: updated.full_name || "Étudiant",
+            matricule: updated.matricule,
+            loginUrl,
+          });
+        } catch (emailErr) {
+          console.warn("[RESEND-ACCEPT-EMAIL-ERROR]", emailErr);
+        }
+      }
+
       return NextResponse.json({
         success: true,
         action: "accepted",
-        message: `L'inscription de ${updated?.full_name || "l'étudiant"} a été validée avec succès. L'étudiant peut désormais se connecter.`,
+        message: `L'inscription de ${updated?.full_name || "l'étudiant"} a été validée avec succès. Un email de confirmation avec lien direct lui a été envoyé.`,
         student: updated,
       });
     } else {
@@ -102,10 +126,23 @@ export async function POST(request: NextRequest) {
         });
       } catch {}
 
+      // Envoi de l'email de non-confirmation via Resend avec lien direct de retour au site
+      if (updated?.email) {
+        try {
+          await sendRegistrationRejectedEmail({
+            email: updated.email,
+            fullName: updated.full_name || "Candidat",
+            siteUrl,
+          });
+        } catch (emailErr) {
+          console.warn("[RESEND-REJECT-EMAIL-ERROR]", emailErr);
+        }
+      }
+
       return NextResponse.json({
         success: true,
         action: "rejected",
-        message: `L'inscription de ${updated?.full_name || "l'étudiant"} a été refusée.`,
+        message: `L'inscription de ${updated?.full_name || "l'étudiant"} a été refusée. Un email d'information avec lien direct lui a été envoyé.`,
         student: updated,
       });
     }
