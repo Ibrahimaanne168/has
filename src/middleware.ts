@@ -25,34 +25,74 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
-  const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
-    cookies: {
-      getAll() {
-        return request.cookies.getAll();
-      },
-      setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value }) =>
-          request.cookies.set(name, value)
-        );
-        response = NextResponse.next({
-          request,
-        });
-        cookiesToSet.forEach(({ name, value, options }) =>
-          response.cookies.set(name, value, options)
-        );
-      },
-    },
-  });
+  // 1. Détection et purge immédiate des cookies surdimensionnés (> 2000 caractères)
+  // Empêche l'erreur HTTP 431 ("Request Header Fields Too Large") / "Page couldn't load"
+  const allCookies = request.cookies.getAll();
+  const bloatedCookies = allCookies.filter(
+    (c) => c.value.length > 2000 || c.value.includes("data%3Aimage") || c.value.includes("data:image")
+  );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  if (bloatedCookies.length > 0) {
+    const loginUrl = new URL("/connexion", request.url);
+    loginUrl.searchParams.set("redirect", pathname);
+    loginUrl.searchParams.set("reset", "1");
+    const redirectRes = NextResponse.redirect(loginUrl);
+    bloatedCookies.forEach((c) => {
+      redirectRes.cookies.delete(c.name);
+    });
+    return redirectRes;
+  }
+
+  let user = null;
+  let supabase;
+
+  try {
+    supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) =>
+            request.cookies.set(name, value)
+          );
+          response = NextResponse.next({
+            request,
+          });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options)
+          );
+        },
+      },
+    });
+
+    const { data, error } = await supabase.auth.getUser();
+    if (!error && data?.user) {
+      user = data.user;
+    }
+  } catch (authError) {
+    console.warn("[Middleware] Erreur auth ou cookie corrompu:", authError);
+    // En cas d'erreur de parsing JWT ou cookie corrompu, redirection propre vers /connexion avec suppression des cookies auth
+    const loginUrl = new URL("/connexion", request.url);
+    loginUrl.searchParams.set("redirect", pathname);
+    const redirectRes = NextResponse.redirect(loginUrl);
+    allCookies.forEach((c) => {
+      if (c.name.includes("auth-token") || c.name.includes("sb-")) {
+        redirectRes.cookies.delete(c.name);
+      }
+    });
+    return redirectRes;
+  }
 
   // Non authentifié -> redirection vers /connexion
   if (!user) {
     const loginUrl = new URL("/connexion", request.url);
     loginUrl.searchParams.set("redirect", pathname);
-    return NextResponse.redirect(loginUrl);
+    const redirectRes = NextResponse.redirect(loginUrl);
+    response.cookies.getAll().forEach((c) => {
+      redirectRes.cookies.set(c.name, c.value);
+    });
+    return redirectRes;
   }
 
   // Récupération du rôle : vérification profiles si possible, avec fallback robuste sur user_metadata et email
@@ -80,7 +120,9 @@ export async function middleware(request: NextRequest) {
   if (!isActive) {
     const loginUrl = new URL("/connexion", request.url);
     loginUrl.searchParams.set("error", "Compte désactivé");
-    return NextResponse.redirect(loginUrl);
+    const redirectRes = NextResponse.redirect(loginUrl);
+    response.cookies.getAll().forEach((c) => redirectRes.cookies.set(c.name, c.value));
+    return redirectRes;
   }
 
   // Déduction automatique du rôle si non encore renseigné
@@ -97,18 +139,22 @@ export async function middleware(request: NextRequest) {
 
   // Contrôle d'accès par rôle
   if (isProtectedAdmin && userRole !== "admin") {
-    if (userRole === "professeur") {
-      return NextResponse.redirect(new URL("/professeur", request.url));
-    }
-    return NextResponse.redirect(new URL("/etudiant", request.url));
+    const targetUrl = new URL(userRole === "professeur" ? "/professeur" : "/etudiant", request.url);
+    const redirectRes = NextResponse.redirect(targetUrl);
+    response.cookies.getAll().forEach((c) => redirectRes.cookies.set(c.name, c.value));
+    return redirectRes;
   }
 
   if (isProtectedProfesseur && userRole !== "professeur" && userRole !== "admin") {
-    return NextResponse.redirect(new URL("/etudiant", request.url));
+    const redirectRes = NextResponse.redirect(new URL("/etudiant", request.url));
+    response.cookies.getAll().forEach((c) => redirectRes.cookies.set(c.name, c.value));
+    return redirectRes;
   }
 
   if (isProtectedEtudiant && userRole !== "etudiant" && userRole !== "admin") {
-    return NextResponse.redirect(new URL("/professeur", request.url));
+    const redirectRes = NextResponse.redirect(new URL("/professeur", request.url));
+    response.cookies.getAll().forEach((c) => redirectRes.cookies.set(c.name, c.value));
+    return redirectRes;
   }
 
   return response;

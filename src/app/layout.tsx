@@ -105,12 +105,29 @@ export default function RootLayout({
   return (
     <html lang="fr" suppressHydrationWarning className={`${fraunces.variable} ${ibmPlexSans.variable}`}>
       <head>
-        {/* Anti-FOUC : activation immédiate du mode sombre selon le choix de l'utilisateur ou par défaut */}
+        {/* Anti-FOUC et purge automatique des cookies surdimensionnés pour mobile */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
                 try {
+                  // Nettoyage immédiat des anciens cookies auth surdimensionnés pour éviter l'erreur HTTP 431
+                  if (typeof document !== 'undefined' && document.cookie) {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                      var c = cookies[i].trim();
+                      var eqIdx = c.indexOf('=');
+                      if (eqIdx !== -1) {
+                        var cName = c.substring(0, eqIdx);
+                        var cVal = c.substring(eqIdx + 1);
+                        if (cVal.length > 2000 || cVal.indexOf('data%3Aimage') !== -1 || cVal.indexOf('data:image') !== -1) {
+                          document.cookie = cName + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                          document.cookie = cName + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + window.location.hostname + ';';
+                        }
+                      }
+                    }
+                  }
+
                   var t = localStorage.getItem('has_theme');
                   var isDark = t === 'dark' || (!t && true);
                   if (t === 'light') isDark = false;
