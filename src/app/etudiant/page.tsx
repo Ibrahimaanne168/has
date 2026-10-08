@@ -11,6 +11,7 @@ import {
   ExternalLink,
   Star,
   Sparkles,
+  Eye,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/Button";
@@ -24,10 +25,12 @@ import { useCurrentUser } from "@/lib/useCurrentUser";
 import { getStoredCourses, getStoredEDTs } from "@/lib/academicStorage";
 import { Cours, EmploiDuTemps } from "@/lib/types";
 import { downloadOrOpenDocument } from "@/lib/fileDownload";
+import { PdfViewerModal } from "@/components/ui/PdfViewerModal";
 
 export default function EtudiantDashboard() {
   const { user } = useCurrentUser();
   const [courses, setCourses] = useState<Cours[]>([]);
+  const [viewingCourse, setViewingCourse] = useState<Cours | null>(null);
   const [hasEDT, setHasEDT] = useState(false);
 
   useEffect(() => {
@@ -198,20 +201,31 @@ export default function EtudiantDashboard() {
                 {/* 5. Pied de carte */}
                 <CardFooter className="flex items-center justify-between gap-2 p-3 bg-slate-50/70 dark:bg-[#151D27] border-t border-slate-100/90 dark:border-[#263241]">
                   {c.file_url ? (
-                    <button
-                      type="button"
-                      onClick={(e) =>
-                        downloadOrOpenDocument(
-                          c.file_url!,
-                          c.file_name || `${(c.title || "cours").replace(/[/\\?%*:|"<>]/g, "_")}.pdf`,
-                          e
-                        )
-                      }
-                      className="inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-1.5 bg-[#0f2744] dark:bg-[#1a385c] text-white hover:bg-[#183a62] dark:hover:bg-[#234b7a] dark:border dark:border-[#2b4c73] rounded-lg transition-colors flex-1 cursor-pointer active:scale-95"
-                    >
-                      <Download className="w-3.5 h-3.5" />
-                      Télécharger le PDF
-                    </button>
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => setViewingCourse(c)}
+                        className="inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-3 py-2 bg-[#0f2744] hover:bg-[#1a385c] text-white rounded-xl transition-all flex-1 cursor-pointer active:scale-95 shadow-xs"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                        <span>Consulter</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={(e) =>
+                          downloadOrOpenDocument(
+                            c.file_url!,
+                            c.file_name || `${(c.title || "cours").replace(/[/\\?%*:|"<>]/g, "_")}.pdf`,
+                            e
+                          )
+                        }
+                        title="Télécharger une copie PDF"
+                        className="inline-flex items-center justify-center p-2 bg-slate-100 dark:bg-[#1E293B] hover:bg-slate-200 dark:hover:bg-[#263241] text-slate-700 dark:text-[#AAB4C0] hover:text-[#0f2744] dark:hover:text-white rounded-xl transition-all cursor-pointer active:scale-95 border border-slate-200/80 dark:border-[#263241]"
+                      >
+                        <Download className="w-4 h-4" />
+                      </button>
+                    </>
                   ) : null}
                 </CardFooter>
               </Card>
@@ -278,6 +292,17 @@ export default function EtudiantDashboard() {
             ))}
           </div>
         </div>
+
+        {/* Visionneuse PDF intégrée sans téléchargement obligatoire */}
+        <PdfViewerModal
+          isOpen={!!viewingCourse}
+          onClose={() => setViewingCourse(null)}
+          fileUrl={viewingCourse?.file_url || null}
+          fileName={viewingCourse?.file_name}
+          title={viewingCourse?.title || "Support de cours"}
+          matiereName={viewingCourse?.matiere?.name}
+          professeurName={viewingCourse?.professeur?.full_name}
+        />
       </div>
     </DashboardLayout>
   );

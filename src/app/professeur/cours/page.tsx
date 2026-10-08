@@ -15,6 +15,7 @@ import {
   Calendar,
   GraduationCap,
   FileText,
+  Eye,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/Button";
@@ -31,10 +32,12 @@ import {
   getStoredMatieres,
   fileToDataUrl,
 } from "@/lib/academicStorage";
+import { PdfViewerModal } from "@/components/ui/PdfViewerModal";
 
 export default function ProfesseurCoursPage() {
   const { prof } = useCurrentProfesseur();
   const [courses, setCourses] = useState<Cours[]>([]);
+  const [viewingCourse, setViewingCourse] = useState<Cours | null>(null);
   const [classes, setClasses] = useState<Classe[]>([]);
   const [matieres, setMatieres] = useState<Matiere[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
@@ -275,10 +278,24 @@ export default function ProfesseurCoursPage() {
                           {new Date(c.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}
                         </span>
                         {c.file_url && (
-                          <a href={c.file_url} download={c.file_name || `${c.title}.pdf`} className="inline-flex items-center gap-1 text-[11px] text-slate-500 dark:text-[#AAB4C0] hover:text-[#0f2744] dark:hover:text-[#e0521c] font-medium transition-colors">
-                            <Download className="w-3.5 h-3.5" />
-                            PDF
-                          </a>
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              type="button"
+                              onClick={() => setViewingCourse(c)}
+                              className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 bg-[#0f2744] hover:bg-[#1a385c] text-white rounded-md cursor-pointer transition-colors shadow-xs"
+                            >
+                              <Eye className="w-3 h-3" />
+                              Consulter
+                            </button>
+                            <a
+                              href={c.file_url}
+                              download={c.file_name || `${c.title}.pdf`}
+                              title="Télécharger une copie PDF"
+                              className="inline-flex items-center gap-1 text-[11px] text-slate-500 dark:text-[#AAB4C0] hover:text-[#0f2744] dark:hover:text-[#e0521c] font-medium transition-colors"
+                            >
+                              <Download className="w-3.5 h-3.5" />
+                            </a>
+                          </div>
                         )}
                       </div>
                     </div>
@@ -478,6 +495,17 @@ export default function ProfesseurCoursPage() {
             </div>
           </div>
         )}
+
+        {/* Visionneuse PDF intégrée sans téléchargement obligatoire */}
+        <PdfViewerModal
+          isOpen={!!viewingCourse}
+          onClose={() => setViewingCourse(null)}
+          fileUrl={viewingCourse?.file_url || null}
+          fileName={viewingCourse?.file_name}
+          title={viewingCourse?.title || "Support de cours"}
+          matiereName={viewingCourse?.matiere?.name}
+          professeurName={viewingCourse?.professeur?.full_name || prof?.full_name}
+        />
       </div>
     </DashboardLayout>
   );

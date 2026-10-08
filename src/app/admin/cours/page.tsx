@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import {
   BookOpen, Plus, Trash2, Edit2, Download,
   CheckCircle2, X, GraduationCap, Calendar, Search, Filter,
-  Upload, FileText,
+  Upload, FileText, Eye,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/Button";
@@ -21,9 +21,11 @@ import {
   getStoredProfesseurs,
   fileToDataUrl,
 } from "@/lib/academicStorage";
+import { PdfViewerModal } from "@/components/ui/PdfViewerModal";
 
 export default function AdminCoursPage() {
   const [courses, setCourses] = useState<Cours[]>([]);
+  const [viewingCourse, setViewingCourse] = useState<Cours | null>(null);
   const [classes, setClasses] = useState<Classe[]>([]);
   const [matieres, setMatieres] = useState<Matiere[]>([]);
   const [profs, setProfs] = useState<Professeur[]>([]);
@@ -343,13 +345,23 @@ export default function AdminCoursPage() {
                   </div>
 
                   {c.file_url && (
-                    <a
-                      href={c.file_url}
-                      download={c.file_name || `${c.title}.pdf`}
-                      className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 bg-white dark:bg-[#111821] border border-slate-200 dark:border-[#263241] rounded-md text-slate-700 dark:text-[#F5F7FA] hover:bg-slate-50 dark:hover:bg-[#151D27] cursor-pointer"
-                    >
-                      <Download className="w-3.5 h-3.5" /> PDF
-                    </a>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => setViewingCourse(c)}
+                        className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1.5 bg-[#0f2744] hover:bg-[#1a385c] text-white rounded-lg cursor-pointer transition-colors shadow-xs"
+                      >
+                        <Eye className="w-3.5 h-3.5" /> Consulter
+                      </button>
+                      <a
+                        href={c.file_url}
+                        download={c.file_name || `${c.title}.pdf`}
+                        title="Télécharger une copie PDF"
+                        className="inline-flex items-center gap-1 text-xs font-semibold p-1.5 bg-white dark:bg-[#111821] border border-slate-200 dark:border-[#263241] rounded-lg text-slate-700 dark:text-[#F5F7FA] hover:bg-slate-50 dark:hover:bg-[#151D27] cursor-pointer"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                      </a>
+                    </div>
                   )}
                 </CardFooter>
               </Card>
@@ -565,6 +577,17 @@ export default function AdminCoursPage() {
             </div>
           </div>
         )}
+
+        {/* Visionneuse PDF intégrée sans téléchargement obligatoire */}
+        <PdfViewerModal
+          isOpen={!!viewingCourse}
+          onClose={() => setViewingCourse(null)}
+          fileUrl={viewingCourse?.file_url || null}
+          fileName={viewingCourse?.file_name}
+          title={viewingCourse?.title || "Support de cours"}
+          matiereName={viewingCourse?.matiere?.name}
+          professeurName={viewingCourse?.professeur?.full_name}
+        />
       </div>
     </DashboardLayout>
   );
