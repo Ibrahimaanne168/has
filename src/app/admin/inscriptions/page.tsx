@@ -19,10 +19,12 @@ import {
   Check,
   X,
   ExternalLink,
+  Trash2,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import { markAccountAsDeleted, isAccountDeleted } from "@/lib/academicStorage";
 import { Card } from "@/components/ui/Card";
 
 interface StudentCandidate {
@@ -57,7 +59,8 @@ export default function AdminInscriptionsPage() {
       const res = await fetch(`/api/admin/validation-inscriptions?status=${statusFilter}`);
       const data = await res.json();
       if (data.success) {
-        setCandidates(data.students || []);
+        const activeList = (data.students || []).filter((s: StudentCandidate) => !isAccountDeleted(s.id, s.email));
+        setCandidates(activeList);
         if (data.counts) setCounts(data.counts);
       }
     } catch (err) {
@@ -71,14 +74,24 @@ export default function AdminInscriptionsPage() {
     loadCandidates();
   }, [loadCandidates]);
 
-  const handleAction = async (studentId: string, action: "accept" | "reject" | "pending") => {
+  const handleAction = async (
+    studentId: string,
+    action: "accept" | "reject" | "pending" | "delete",
+    email?: string | null
+  ) => {
     setActionLoading(studentId);
     setNotification(null);
+
+    if (action === "delete") {
+      markAccountAsDeleted(studentId, email);
+      setCandidates((prev) => prev.filter((c) => c.id !== studentId && (!email || c.email?.toLowerCase() !== email.toLowerCase())));
+    }
+
     try {
       const res = await fetch("/api/admin/validation-inscriptions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ studentId, action }),
+        body: JSON.stringify({ studentId, email, action }),
       });
       const data = await res.json();
       if (data.success) {
@@ -526,6 +539,20 @@ export default function AdminInscriptionsPage() {
                         </button>
                       </>
                     )}
+
+                    <button
+                      type="button"
+                      disabled={actionLoading === c.id}
+                      onClick={() => {
+                        if (window.confirm(`Supprimer définitivement le compte et dossier de ${c.full_name} ?`)) {
+                          handleAction(c.id, "delete", c.email);
+                        }
+                      }}
+                      className="flex items-center gap-1 p-2 rounded-lg text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-transparent hover:border-rose-200 dark:hover:border-rose-900/60 transition-colors cursor-pointer"
+                      title="Supprimer définitivement ce compte"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 </div>
               );

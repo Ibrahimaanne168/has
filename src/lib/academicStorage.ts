@@ -28,6 +28,7 @@ const STORAGE_KEYS = {
   MATIERES: "has_academic_matieres_v3",
   SEANCES_EDT: "has_academic_seances_edt_v1",
   STUDENTS: "has_academic_students_v1",
+  DELETED_ACCOUNTS: "has_academic_deleted_accounts_v1",
 };
 
 export const DEFAULT_SALONS: ChatSalon[] = [
@@ -185,16 +186,63 @@ export function deduceSpecialiteFromMatieres(
   return "Informatique";
 }
 
+// === SUIVI DES COMPTES SUPPRIMÉS (POUR ÉVITER LEUR RÉAPPARITION VIA LES DONNÉES PAR DÉFAUT/MOCK) ===
+export function getDeletedAccounts(): string[] {
+  return getStorageItem<string[]>(STORAGE_KEYS.DELETED_ACCOUNTS, []);
+}
+
+export function markAccountAsDeleted(id?: string | null, email?: string | null): void {
+  if (typeof window === "undefined") return;
+  const current = getDeletedAccounts();
+  const toAdd: string[] = [];
+  if (id && id.trim()) toAdd.push(id.toLowerCase().trim());
+  if (email && email.trim()) toAdd.push(email.toLowerCase().trim());
+  if (toAdd.length === 0) return;
+  const merged = Array.from(new Set([...current, ...toAdd]));
+  try {
+    localStorage.setItem(STORAGE_KEYS.DELETED_ACCOUNTS, JSON.stringify(merged));
+  } catch (err) {
+    console.error("Erreur markAccountAsDeleted:", err);
+  }
+}
+
+export function unmarkAccountAsDeleted(id?: string | null, email?: string | null): void {
+  if (typeof window === "undefined") return;
+  const current = getDeletedAccounts();
+  const toRemove = new Set<string>();
+  if (id && id.trim()) toRemove.add(id.toLowerCase().trim());
+  if (email && email.trim()) toRemove.add(email.toLowerCase().trim());
+  const updated = current.filter((x) => !toRemove.has(x.toLowerCase().trim()));
+  try {
+    localStorage.setItem(STORAGE_KEYS.DELETED_ACCOUNTS, JSON.stringify(updated));
+  } catch (err) {
+    console.error("Erreur unmarkAccountAsDeleted:", err);
+  }
+}
+
+export function isAccountDeleted(id?: string | null, email?: string | null): boolean {
+  if (!id && !email) return false;
+  const current = getDeletedAccounts();
+  if (!current || current.length === 0) return false;
+  const set = new Set(current.map((x) => x.toLowerCase().trim()));
+  if (id && set.has(id.toLowerCase().trim())) return true;
+  if (email && set.has(email.toLowerCase().trim())) return true;
+  return false;
+}
+
 // === GESTION DES PROFESSEURS (L'ADMIN PEUT TOUT AJOUTER / MODIFIER) ===
 export function getStoredProfesseurs(): Professeur[] {
   const list = getStorageItem<Professeur[]>(STORAGE_KEYS.PROFESSEURS, MOCK_PROFESSEURS);
-  return list.map((p) => ({
-    ...p,
-    specialite: deduceSpecialiteFromMatieres(p.matieres, p.specialite),
-  }));
+  return list
+    .filter((p) => !isAccountDeleted(p.id, p.email))
+    .map((p) => ({
+      ...p,
+      specialite: deduceSpecialiteFromMatieres(p.matieres, p.specialite),
+    }));
 }
 
 export function saveProfesseur(prof: Professeur): void {
+  unmarkAccountAsDeleted(prof.id, prof.email);
   const profs = getStoredProfesseurs();
   const normalizedProf = {
     ...prof,
@@ -209,8 +257,13 @@ export function saveProfesseur(prof: Professeur): void {
   setStorageItem(STORAGE_KEYS.PROFESSEURS, profs);
 }
 
-export function deleteProfesseur(id: string): void {
-  const profs = getStoredProfesseurs().filter((p) => p.id !== id);
+export function deleteProfesseur(id: string, email?: string | null): void {
+  const currentProfs = getStoredProfesseurs();
+  const target = currentProfs.find((p) => p.id === id || (email && p.email?.toLowerCase() === email.toLowerCase()));
+  markAccountAsDeleted(id, email || target?.email);
+  const profs = currentProfs.filter(
+    (p) => p.id !== id && (!email || p.email?.toLowerCase() !== email.toLowerCase())
+  );
   setStorageItem(STORAGE_KEYS.PROFESSEURS, profs);
 }
 
@@ -218,10 +271,12 @@ export function deleteProfesseur(id: string): void {
 export const DEFAULT_STUDENTS: Profile[] = [MOCK_STUDENT];
 
 export function getStoredStudents(): Profile[] {
-  return getStorageItem<Profile[]>(STORAGE_KEYS.STUDENTS, DEFAULT_STUDENTS);
+  const list = getStorageItem<Profile[]>(STORAGE_KEYS.STUDENTS, DEFAULT_STUDENTS);
+  return list.filter((s) => !isAccountDeleted(s.id, s.email));
 }
 
 export function saveStudent(student: Profile): void {
+  unmarkAccountAsDeleted(student.id, student.email);
   const list = getStoredStudents();
   const index = list.findIndex((s) => s.id === student.id || s.email === student.email);
   if (index >= 0) {
@@ -232,8 +287,13 @@ export function saveStudent(student: Profile): void {
   setStorageItem(STORAGE_KEYS.STUDENTS, list);
 }
 
-export function deleteStudent(id: string): void {
-  const list = getStoredStudents().filter((s) => s.id !== id);
+export function deleteStudent(id: string, email?: string | null): void {
+  const currentList = getStoredStudents();
+  const target = currentList.find((s) => s.id === id || (email && s.email?.toLowerCase() === email.toLowerCase()));
+  markAccountAsDeleted(id, email || target?.email);
+  const list = currentList.filter(
+    (s) => s.id !== id && (!email || s.email?.toLowerCase() !== email.toLowerCase())
+  );
   setStorageItem(STORAGE_KEYS.STUDENTS, list);
 }
 

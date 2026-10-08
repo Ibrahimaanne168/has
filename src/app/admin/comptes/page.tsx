@@ -19,6 +19,8 @@ import {
   saveStudent,
   deleteStudent,
   deduceSpecialiteFromMatieres,
+  markAccountAsDeleted,
+  isAccountDeleted,
 } from "@/lib/academicStorage";
 import { Profile, UserRole, Professeur, MatiereAssignee } from "@/lib/types";
 
@@ -30,6 +32,7 @@ export default function AdminComptesPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editUser, setEditUser] = useState<Profile | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [pendingStudents, setPendingStudents] = useState<any[]>([]);
 
@@ -49,38 +52,48 @@ export default function AdminComptesPage() {
   const [selectedClasses, setSelectedClasses] = useState<string[]>(["L1 MPI"]);
 
   const loadData = () => {
-    const storedProfs = getStoredProfesseurs();
-    const storedStudents = getStoredStudents();
+    const storedProfs = getStoredProfesseurs().filter((p) => !isAccountDeleted(p.id, p.email));
+    const storedStudents = getStoredStudents().filter((s) => !isAccountDeleted(s.id, s.email));
     setProfs(storedProfs);
 
     // Charger les inscriptions en attente de validation administrative et tous les comptes du serveur
     fetch("/api/admin/validation-inscriptions?status=all")
       .then((res) => res.json())
       .then((data) => {
-        if (data.pendingStudents) setPendingStudents(data.pendingStudents);
+        if (data.pendingStudents) {
+          setPendingStudents(
+            (data.pendingStudents || []).filter((s: any) => !isAccountDeleted(s.id, s.email))
+          );
+        }
 
-        const serverStudents: Profile[] = (data.students || []).map((s: any) => ({
-          id: s.id,
-          email: s.email,
-          username: s.username || null,
-          full_name: s.full_name,
-          role: "etudiant" as UserRole,
-          phone: s.telephone || null,
-          matricule: s.matricule || null,
-          filiere_id: s.filiere || null,
-          classe_id: s.niveau ? `${s.niveau} ${s.filiere || "MPI"}` : null,
-          is_active: s.is_active,
-          created_at: s.created_at || new Date().toISOString(),
-          updated_at: s.updated_at || new Date().toISOString(),
-        }));
+        const serverStudents: Profile[] = (data.students || [])
+          .filter((s: any) => !isAccountDeleted(s.id, s.email))
+          .map((s: any) => ({
+            id: s.id,
+            email: s.email,
+            username: s.username || null,
+            full_name: s.full_name,
+            role: "etudiant" as UserRole,
+            phone: s.telephone || null,
+            matricule: s.matricule || null,
+            filiere_id: s.filiere || null,
+            classe_id: s.niveau ? `${s.niveau} ${s.filiere || "MPI"}` : null,
+            is_active: s.is_active,
+            created_at: s.created_at || new Date().toISOString(),
+            updated_at: s.updated_at || new Date().toISOString(),
+          }));
 
         // Fusionner avec les étudiants locaux sans doublons (clé: email ou id)
         const studentMap = new Map<string, Profile>();
         for (const st of storedStudents) {
-          studentMap.set(st.email?.toLowerCase() || st.id, st);
+          if (!isAccountDeleted(st.id, st.email)) {
+            studentMap.set(st.email?.toLowerCase() || st.id, st);
+          }
         }
         for (const st of serverStudents) {
-          studentMap.set(st.email?.toLowerCase() || st.id, st);
+          if (!isAccountDeleted(st.id, st.email)) {
+            studentMap.set(st.email?.toLowerCase() || st.id, st);
+          }
         }
 
         const combined: Profile[] = [
@@ -102,7 +115,7 @@ export default function AdminComptesPage() {
             created_at: p.created_at || new Date().toISOString(),
             updated_at: p.updated_at || new Date().toISOString(),
           })),
-        ];
+        ].filter((u) => !isAccountDeleted(u.id, u.email));
         setUsers(combined);
       })
       .catch(() => {
@@ -125,7 +138,7 @@ export default function AdminComptesPage() {
             created_at: p.created_at || new Date().toISOString(),
             updated_at: p.updated_at || new Date().toISOString(),
           })),
-        ];
+        ].filter((u) => !isAccountDeleted(u.id, u.email));
         setUsers(combined);
       });
   };
@@ -317,17 +330,54 @@ export default function AdminComptesPage() {
     setTimeout(() => setSuccessMsg(null), 4000);
   };
 
-  const handleDelete = (userId: string) => {
+  const handleDelete = async (userId: string) => {
     const u = users.find((x) => x.id === userId);
-    if (u?.role === "professeur") {
-      deleteProfesseur(userId);
-    } else if (u?.role === "etudiant") {
-      deleteStudent(userId);
-    }
-    setUsers((prev) => prev.filter((x) => x.id !== userId));
+    const targetEmail = u?.email;
+    const targetFullName = u?.full_name || "l'utilisateur";
+
+    // 1. Mémorisation immédiate dans la liste des comptes supprimés (bloque toute résurrection)
+    markAccountAsDeleted(userId, targetEmail);
+
+    // 2. Mise à jour instantanée de l'état UI
+    setUsers((prev) =>
+      prev.filter(
+        (x) => x.id !== userId && (!targetEmail || x.email?.toLowerCase() !== targetEmail.toLowerCase())
+      )
+    );
+    setPendingStudents((prev) =>
+      prev.filter(
+        (x) => x.id !== userId && (!targetEmail || x.email?.toLowerCase() !== targetEmail.toLowerCase())
+      )
+    );
     setDeleteConfirm(null);
-    setSuccessMsg(`Le compte de ${u?.full_name || "l'utilisateur"} a été supprimé.`);
-    setTimeout(() => setSuccessMsg(null), 3500);
+    setIsDeleting(userId);
+
+    // 3. Suppression dans le stockage local
+    if (u?.role === "professeur") {
+      deleteProfesseur(userId, targetEmail);
+    } else {
+      deleteStudent(userId, targetEmail);
+    }
+
+    // 4. Suppression définitive dans Supabase (Auth + profiles)
+    try {
+      await fetch("/api/admin/validation-inscriptions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          studentId: userId,
+          email: targetEmail,
+          action: "delete",
+        }),
+      });
+    } catch (err) {
+      console.warn("[DELETE-SERVER-ERROR]", err);
+    } finally {
+      setIsDeleting(null);
+      setSuccessMsg(`Le compte de ${targetFullName} a été définitivement supprimé.`);
+      setTimeout(() => setSuccessMsg(null), 3500);
+      loadData();
+    }
   };
 
   const filtered = users.filter((u) => {
@@ -721,8 +771,10 @@ export default function AdminComptesPage() {
                 </div>
               </div>
               <div className="flex justify-end gap-2 pt-2 border-t border-slate-100 dark:border-[#263241]">
-                <Button variant="ghost" size="sm" className="rounded-lg text-xs" onClick={() => setDeleteConfirm(null)}>Annuler</Button>
-                <Button variant="danger" size="sm" className="rounded-lg text-xs" onClick={() => handleDelete(deleteConfirm)}>Supprimer</Button>
+                <Button variant="ghost" size="sm" className="rounded-lg text-xs" disabled={Boolean(isDeleting)} onClick={() => setDeleteConfirm(null)}>Annuler</Button>
+                <Button variant="danger" size="sm" className="rounded-lg text-xs" disabled={Boolean(isDeleting)} onClick={() => handleDelete(deleteConfirm)}>
+                  {isDeleting === deleteConfirm ? "Suppression en cours..." : "Supprimer définitivement"}
+                </Button>
               </div>
             </div>
           </div>
