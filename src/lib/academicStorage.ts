@@ -233,7 +233,25 @@ export function isAccountDeleted(id?: string | null, email?: string | null): boo
 // === GESTION DES PROFESSEURS (L'ADMIN PEUT TOUT AJOUTER / MODIFIER) ===
 export function getStoredProfesseurs(): Professeur[] {
   const list = getStorageItem<Professeur[]>(STORAGE_KEYS.PROFESSEURS, MOCK_PROFESSEURS);
-  return list
+  
+  // S'assurer que tous les professeurs officiels de référence (ex: M. Diop, El Hadji Ibrahima Diop Sow) sont présents
+  let merged = [...list];
+  let updated = false;
+  for (const mockProf of MOCK_PROFESSEURS) {
+    if (!merged.some((p) => p.id === mockProf.id || p.full_name?.toLowerCase() === mockProf.full_name?.toLowerCase())) {
+      if (!isAccountDeleted(mockProf.id, mockProf.email)) {
+        merged.push(mockProf);
+        updated = true;
+      }
+    }
+  }
+  if (updated && typeof window !== "undefined") {
+    try {
+      localStorage.setItem(STORAGE_KEYS.PROFESSEURS, JSON.stringify(merged));
+    } catch {}
+  }
+
+  return merged
     .filter((p) => !isAccountDeleted(p.id, p.email))
     .map((p) => ({
       ...p,
@@ -782,8 +800,8 @@ export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [
     heure_fin: "23:00",
     matiere_nom: "Finance des entreprises",
     matiere_code: "MAT026",
-    professeur_nom: "El Hadji Ibrahima Diop Sow",
-    professeur_id: "0ffa8cbd-6c98-409a-948d-0988754c1b32",
+    professeur_nom: "M. Diop",
+    professeur_id: "prof-m-diop",
     type_seance: "COURS",
     meet_url: null,
     niveau: "L1",

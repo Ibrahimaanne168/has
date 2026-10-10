@@ -44,6 +44,7 @@ const ENSEIGNANTS_PRESETS = [
   "Pape Ibrahima Samb",
   "Ibrahima Anne",
   "Ndiogou Ndiaye",
+  "M. Diop",
   "El Hadji Ibrahima Diop Sow",
   "Pape Thiam",
   "Kalidou Ba",
@@ -112,7 +113,7 @@ const CATALOGUE_MATIERES: Record<
   "Finance des entreprises": {
     niveau: "L1",
     filieres: ["MIASS"],
-    professeurDefaut: "El Hadji Ibrahima Diop Sow",
+    professeurDefaut: "M. Diop",
   },
   "Economie Générale": {
     niveau: "L1",
@@ -460,6 +461,9 @@ export default function AdminEDTPage() {
         } else if (lower.includes("mécanique") || lower.includes("thermo") || lower.includes("optique") || lower.includes("magnéto")) {
           setFormFilieres(["MPI", "SML"]);
           setFormEnseignant("Ndiogou Ndiaye");
+        } else if (lower.includes("finance")) {
+          setFormFilieres(["MIASS"]);
+          setFormEnseignant("M. Diop");
         } else if (lower.includes("écono")) {
           setFormFilieres(["MIASS"]);
           setFormEnseignant("Pape Ibrahima Samb");
