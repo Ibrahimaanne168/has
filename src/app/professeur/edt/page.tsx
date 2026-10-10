@@ -78,7 +78,11 @@ export default function ProfesseurEDTPage() {
         (prof.full_name && s.professeur_nom && s.professeur_nom.toLowerCase().includes(prof.full_name.toLowerCase())) ||
         (prof.nom && s.professeur_nom && s.professeur_nom.toLowerCase().includes(prof.nom.toLowerCase())) ||
         ((prof.username === "halilsamb" || (prof.nom && prof.nom.toLowerCase().includes("samb"))) &&
-          s.professeur_nom && s.professeur_nom.toLowerCase().includes("halil"));
+          s.professeur_nom && s.professeur_nom.toLowerCase().includes("halil")) ||
+        (prof.nom && prof.nom.toLowerCase().includes("thiam") && s.professeur_nom && s.professeur_nom.toLowerCase().includes("thiam")) ||
+        (((prof.nom && prof.nom.toLowerCase().includes("sow")) || (prof.prenom && prof.prenom.toLowerCase().includes("diop"))) &&
+          s.professeur_nom && (s.professeur_nom.toLowerCase().includes("diop") || s.professeur_nom.toLowerCase().includes("sow"))) ||
+        (prof.nom && prof.nom.toLowerCase().includes("ndiaye") && s.professeur_nom && s.professeur_nom.toLowerCase().includes("ndiogou"));
       return isMe && (s.niveau || "L1") === activeNiveau;
     }),
     [seances, prof, activeNiveau]

@@ -103,6 +103,16 @@ const CATALOGUE_MATIERES: Record<
     filieres: ["MPI"],
     professeurDefaut: "Pape Thiam",
   },
+  "Magnétostatique": {
+    niveau: "L1",
+    filieres: ["MPI", "SML"],
+    professeurDefaut: "Ndiogou Ndiaye",
+  },
+  "Finance des entreprises": {
+    niveau: "L1",
+    filieres: ["MIASS"],
+    professeurDefaut: "El Hadji Ibrahima Diop Sow",
+  },
   "Economie Générale": {
     niveau: "L1",
     filieres: ["MIASS"],

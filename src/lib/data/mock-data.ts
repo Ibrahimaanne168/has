@@ -109,6 +109,8 @@ export const MOCK_MATIERES: Matiere[] = [
   { id: "22", filiere_id: "11111111-1111-1111-1111-111111111111", code: "MAT022", name: "Électromagnétismes", coefficient: 3, credits_ects: 5, description: "Équations de Maxwell, ondes électromagnétiques dans le vide et dans les milieux diélectriques.", niveau: "L2", semestre: "S4", classes: ["L2-MPI"] },
   { id: "23", filiere_id: "22222222-2222-2222-2222-222222222222", code: "MAT023", name: "Chimie Organique", coefficient: 3, credits_ects: 5, description: "Stéréochimie, réactivité des fonctions organiques, mécanismes réactionnels et synthèses.", niveau: "L2", semestre: "S4", classes: ["L2-SML"] },
   { id: "24", filiere_id: "22222222-2222-2222-2222-222222222222", code: "MAT024", name: "Chimie Inorganique", coefficient: 3, credits_ects: 5, description: "Structure électronique des éléments, chimie de coordination, liaisons et solides cristallins.", niveau: "L2", semestre: "S4", classes: ["L2-SML"] },
+  { id: "25", filiere_id: "11111111-1111-1111-1111-111111111111", code: "MAT025", name: "Magnétostatique", coefficient: 3, credits_ects: 4, description: "Champs magnétiques stationnaires, loi de Biot-Savart, dipôles magnétiques et théorème d'Ampère.", niveau: "L1", semestre: "S2", classes: ["L1-MPI", "L1-SML"] },
+  { id: "26", filiere_id: "33333333-3333-3333-3333-333333333333", code: "MAT026", name: "Finance des entreprises", coefficient: 2, credits_ects: 4, description: "Analyse financière, rentabilité, structure du capital, investissements et flux de trésorerie.", niveau: "L1", semestre: "S2", classes: ["L1-MIASS"] },
 ];
 
 export type ProfesseurProfile = Profile & Professeur;
@@ -199,6 +201,7 @@ export const MOCK_PROFESSEURS: ProfesseurProfile[] = [
     classes: ["L1 MPI", "L2 MPI", "L1 SML", "L2 SML"],
     matieres: [
       { id: 12, nom: "Mécanique du point", code: "MAT012", niveau: "L1", classes: ["L1 MPI", "L1 SML"] },
+      { id: 25, nom: "Magnétostatique", code: "MAT025", niveau: "L1", classes: ["L1 MPI", "L1 SML"] },
       { id: 22, nom: "Électromagnétismes", code: "MAT022", niveau: "L2", classes: ["L2 MPI"] },
       { id: 23, nom: "Chimie Organique", code: "MAT023", niveau: "L2", classes: ["L2 SML"] },
       { id: 24, nom: "Chimie Inorganique", code: "MAT024", niveau: "L2", classes: ["L2 SML"] },
@@ -220,16 +223,17 @@ export const MOCK_PROFESSEURS: ProfesseurProfile[] = [
     matricule: "PROF004",
     filiere_id: "11111111-1111-1111-1111-111111111111",
     classe_id: null,
-    bio: "Enseignant-chercheur en Physique Appliquée et Mécanique Générale des solides.",
-    specialite: "Physique",
+    bio: "Enseignant-chercheur en Physique Appliquée, Mécanique et Finance des entreprises.",
+    specialite: "Physique & Finance",
     avatar_url: null,
     photo: null,
     is_active: true,
     created_at: "2024-01-15T08:00:00Z",
     updated_at: "2026-09-01T08:00:00Z",
-    niveaux: ["L2"],
-    classes: ["L2 MPI", "L2 SML"],
+    niveaux: ["L1", "L2"],
+    classes: ["L1 MIASS", "L2 MPI", "L2 SML"],
     matieres: [
+      { id: 26, nom: "Finance des entreprises", code: "MAT026", niveau: "L1", classes: ["L1 MIASS"] },
       { id: 3, nom: "Mécanique Générale", code: "MAT003", niveau: "L2", classes: ["L2 MPI", "L2 SML"] },
     ],
   },

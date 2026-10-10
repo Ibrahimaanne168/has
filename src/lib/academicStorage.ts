@@ -735,13 +735,67 @@ export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [
     created_at: new Date().toISOString(),
   },
 
-  // --- PROMOTION LICENCE 1 ---
+  // --- PROMOTION LICENCE 1 (Semestre 2 - Cours Officiels en Ligne) ---
+  {
+    id: "seance-has-l1-magneto",
+    classe_id: "promo-l1",
+    classe_nom: "Licence 1",
+    semestre: "Semestre 2",
+    jour: "Mardi",
+    heure_debut: "21:00",
+    heure_fin: "23:00",
+    matiere_nom: "Magnétostatique",
+    matiere_code: "MAT025",
+    professeur_nom: "Ndiogou Ndiaye",
+    professeur_id: "25013b47-9a78-4f97-8552-977450abdad2",
+    type_seance: "COURS",
+    meet_url: null,
+    niveau: "L1",
+    filieres: ["MPI", "SML"],
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: "seance-has-l1-langage-c",
+    classe_id: "promo-l1",
+    classe_nom: "Licence 1",
+    semestre: "Semestre 2",
+    jour: "Mercredi",
+    heure_debut: "21:00",
+    heure_fin: "23:00",
+    matiere_nom: "Langage C",
+    matiere_code: "MAT019",
+    professeur_nom: "Pape Thiam",
+    professeur_id: "5bfff82c-62a6-48d4-801f-9e9ac5421df5",
+    type_seance: "COURS",
+    meet_url: null,
+    niveau: "L1",
+    filieres: ["MPI"],
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: "seance-has-l1-finance",
+    classe_id: "promo-l1",
+    classe_nom: "Licence 1",
+    semestre: "Semestre 2",
+    jour: "Mercredi",
+    heure_debut: "21:00",
+    heure_fin: "23:00",
+    matiere_nom: "Finance des entreprises",
+    matiere_code: "MAT026",
+    professeur_nom: "El Hadji Ibrahima Diop Sow",
+    professeur_id: "0ffa8cbd-6c98-409a-948d-0988754c1b32",
+    type_seance: "COURS",
+    meet_url: null,
+    niveau: "L1",
+    filieres: ["MIASS"],
+    created_at: new Date().toISOString(),
+  },
   {
     id: "seance-has-l1-analyse2",
     classe_id: "promo-l1",
     classe_nom: "Licence 1",
     semestre: "Semestre 2",
-    jour: "Lundi",
+    jour: "Vendredi",
     heure_debut: "21:00",
     heure_fin: "23:00",
     matiere_nom: "Analyse 2",
@@ -751,43 +805,7 @@ export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [
     type_seance: "COURS",
     meet_url: null,
     niveau: "L1",
-    filieres: [], // Tronc Commun
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: "seance-has-l1-electricite",
-    classe_id: "promo-l1",
-    classe_nom: "Licence 1",
-    semestre: "Semestre 2",
-    jour: "Mardi",
-    heure_debut: "21:00",
-    heure_fin: "23:00",
-    matiere_nom: "Electricité",
-    matiere_code: "MAT013",
-    professeur_nom: "Kalidou Ba",
-    professeur_id: "b3624bdb-2544-4995-989d-fc38e478d256",
-    type_seance: "COURS",
-    meet_url: null,
-    niveau: "L1",
-    filieres: ["MPI", "SML"],
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: "seance-has-l1-economie",
-    classe_id: "promo-l1",
-    classe_nom: "Licence 1",
-    semestre: "Semestre 2",
-    jour: "Jeudi",
-    heure_debut: "21:00",
-    heure_fin: "23:00",
-    matiere_nom: "Economie Générale",
-    matiere_code: "MAT014",
-    professeur_nom: "Pape Ibrahima Samb",
-    professeur_id: "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
-    type_seance: "COURS",
-    meet_url: null,
-    niveau: "L1",
-    filieres: ["MIASS"],
+    filieres: ["MPI", "SML", "MIASS"],
     created_at: new Date().toISOString(),
   },
 ];
@@ -800,7 +818,12 @@ export function getStoredSeancesEDT(): SeanceEDT[] {
 
   let changed = false;
   // Nettoyer les anciens mocks obsolètes
-  const obsoleteIds = ["seance-has-l2-magneto", "seance-has-l2-analyse3"];
+  const obsoleteIds = [
+    "seance-has-l2-magneto",
+    "seance-has-l2-analyse3",
+    "seance-has-l1-electricite",
+    "seance-has-l1-economie",
+  ];
   const filtered = list.filter((s) => !obsoleteIds.includes(s.id));
   if (filtered.length !== list.length) changed = true;
 
@@ -812,7 +835,8 @@ export function getStoredSeancesEDT(): SeanceEDT[] {
       if (
         JSON.stringify(existing.filieres || []) !== JSON.stringify(def.filieres || []) ||
         existing.matiere_code !== def.matiere_code ||
-        existing.professeur_nom !== def.professeur_nom
+        existing.professeur_nom !== def.professeur_nom ||
+        existing.jour !== def.jour
       ) {
         filtered[existingIndex] = {
           ...existing,
