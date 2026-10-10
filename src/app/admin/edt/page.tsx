@@ -640,6 +640,7 @@ export default function AdminEDTPage() {
     };
 
     saveSeanceEDT(seanceData);
+    reloadData();
 
     recordAuditLog({
       action: editingSeance ? "MODIFICATION_EDT" : "PUBLICATION_EDT",
@@ -650,10 +651,11 @@ export default function AdminEDTPage() {
         enseignant: seanceData.professeur_nom,
         jour: seanceData.jour,
         horaires: `${formatHeureDisplay(seanceData.heure_debut)} - ${formatHeureDisplay(seanceData.heure_fin)}`,
+        meet_url: seanceData.meet_url,
       },
     });
 
-    flash(`✓ Cours enregistré : ${seanceData.matiere_nom} (${seanceData.jour})`);
+    flash(`✓ Cours enregistré : ${seanceData.matiere_nom} (${seanceData.jour})${seanceData.meet_url ? " · Lien Meet sauvegardé et synchronisé" : ""}`);
     setModalOpen(false);
   };
 
