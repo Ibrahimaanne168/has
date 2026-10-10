@@ -117,8 +117,28 @@ const CATALOGUE_MATIERES: Record<
   },
   "Analyse 4": {
     niveau: "L2",
-    filieres: ["MPI", "SML", "MIASS"],
+    filieres: ["MPI", "MIASS"],
     professeurDefaut: "Pape Ibrahima Samb",
+  },
+  "Probabilité": {
+    niveau: "L2",
+    filieres: ["MPI", "MIASS"],
+    professeurDefaut: "Pape Ibrahima Samb",
+  },
+  "Électromagnétismes": {
+    niveau: "L2",
+    filieres: ["MPI"],
+    professeurDefaut: "Ndiogou Ndiaye",
+  },
+  "Chimie Organique": {
+    niveau: "L2",
+    filieres: ["SML"],
+    professeurDefaut: "Ndiogou Ndiaye",
+  },
+  "Chimie Inorganique": {
+    niveau: "L2",
+    filieres: ["SML"],
+    professeurDefaut: "Ndiogou Ndiaye",
   },
   "Algèbre 3": {
     niveau: "L2",

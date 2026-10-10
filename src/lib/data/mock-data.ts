@@ -104,7 +104,11 @@ export const MOCK_MATIERES: Matiere[] = [
   { id: "17", filiere_id: "11111111-1111-1111-1111-111111111111", code: "MAT017", name: "Magnétostatique et Régime Variable", coefficient: 3, credits_ects: 4, description: "Champs magnétiques, force de Lorentz et induction électromagnétique.", niveau: "L2", semestre: "S4", classes: ["L2-MPI", "L2-SML"] },
   { id: "18", filiere_id: "11111111-1111-1111-1111-111111111111", code: "MAT018", name: "Optique Géométrique", coefficient: 2, credits_ects: 3, description: "Lois de Snell-Descartes, lentilles minces, miroirs et instruments d'optique.", niveau: "L1", semestre: "S1", classes: ["L1-MPI", "L1-SML"] },
   { id: "19", filiere_id: "11111111-1111-1111-1111-111111111111", code: "MAT019", name: "Langage C", coefficient: 3, credits_ects: 5, description: "Pointeurs, allocation dynamique, structures et gestion de la mémoire.", niveau: "L1", semestre: "S2", classes: ["L1-MPI"] },
-  { id: "20", filiere_id: "11111111-1111-1111-1111-111111111111", code: "MAT020", name: "Probabilités et Statistiques", coefficient: 3, credits_ects: 5, description: "Calcul des probabilités, variables aléatoires et statistique inférentielle.", niveau: "L2", semestre: "S4", classes: ["L2-MPI", "L2-SML", "L2-MIASS"] },
+  { id: "20", filiere_id: "11111111-1111-1111-1111-111111111111", code: "MAT020", name: "Probabilité", coefficient: 3, credits_ects: 5, description: "Calcul des probabilités, variables aléatoires et modélisation stochastique.", niveau: "L2", semestre: "S4", classes: ["L2-MPI", "L2-MIASS"] },
+  { id: "21", filiere_id: "11111111-1111-1111-1111-111111111111", code: "MAT021", name: "Analyse 4", coefficient: 4, credits_ects: 6, description: "Calcul différentiel à plusieurs variables, intégrales multiples et formes différentielles.", niveau: "L2", semestre: "S4", classes: ["L2-MPI", "L2-MIASS"] },
+  { id: "22", filiere_id: "11111111-1111-1111-1111-111111111111", code: "MAT022", name: "Électromagnétismes", coefficient: 3, credits_ects: 5, description: "Équations de Maxwell, ondes électromagnétiques dans le vide et dans les milieux diélectriques.", niveau: "L2", semestre: "S4", classes: ["L2-MPI"] },
+  { id: "23", filiere_id: "22222222-2222-2222-2222-222222222222", code: "MAT023", name: "Chimie Organique", coefficient: 3, credits_ects: 5, description: "Stéréochimie, réactivité des fonctions organiques, mécanismes réactionnels et synthèses.", niveau: "L2", semestre: "S4", classes: ["L2-SML"] },
+  { id: "24", filiere_id: "22222222-2222-2222-2222-222222222222", code: "MAT024", name: "Chimie Inorganique", coefficient: 3, credits_ects: 5, description: "Structure électronique des éléments, chimie de coordination, liaisons et solides cristallins.", niveau: "L2", semestre: "S4", classes: ["L2-SML"] },
 ];
 
 export type ProfesseurProfile = Profile & Professeur;
@@ -138,6 +142,8 @@ export const MOCK_PROFESSEURS: ProfesseurProfile[] = [
       { id: 15, nom: "Analyse 2", code: "MAT015", niveau: "L1", classes: ["L1 MPI", "L1 SML", "L1 MIASS"] },
       { id: 16, nom: "Algèbre 2", code: "MAT016", niveau: "L1", classes: ["L1 MPI", "L1 SML", "L1 MIASS"] },
       { id: 4, nom: "Analyse 3", code: "MAT004", niveau: "L2", classes: ["L2 MPI", "L2 SML", "L2 MIASS"] },
+      { id: 21, nom: "Analyse 4", code: "MAT021", niveau: "L2", classes: ["L2 MPI", "L2 MIASS"] },
+      { id: 20, nom: "Probabilité", code: "MAT020", niveau: "L2", classes: ["L2 MPI", "L2 MIASS"] },
       { id: 5, nom: "Algèbre 3", code: "MAT005", niveau: "L2", classes: ["L2 MPI", "L2 SML", "L2 MIASS"] },
       { id: 7, nom: "Analyse Numérique Matricielle", code: "MAT007", niveau: "L2", classes: ["L2 MPI", "L2 SML"] },
     ],
@@ -182,8 +188,8 @@ export const MOCK_PROFESSEURS: ProfesseurProfile[] = [
     matricule: "PROF003",
     filiere_id: "11111111-1111-1111-1111-111111111111",
     classe_id: null,
-    bio: "Physicien, spécialiste en Mécanique Analytique, thermodynamique et propagation électromagnétique.",
-    specialite: "Physique",
+    bio: "Physicien et chimiste, spécialiste en Mécanique Analytique, thermodynamique, électromagnétisme et chimie.",
+    specialite: "Physique & Chimie",
     avatar_url: null,
     photo: null,
     is_active: true,
@@ -193,6 +199,9 @@ export const MOCK_PROFESSEURS: ProfesseurProfile[] = [
     classes: ["L1 MPI", "L2 MPI", "L1 SML", "L2 SML"],
     matieres: [
       { id: 12, nom: "Mécanique du point", code: "MAT012", niveau: "L1", classes: ["L1 MPI", "L1 SML"] },
+      { id: 22, nom: "Électromagnétismes", code: "MAT022", niveau: "L2", classes: ["L2 MPI"] },
+      { id: 23, nom: "Chimie Organique", code: "MAT023", niveau: "L2", classes: ["L2 SML"] },
+      { id: 24, nom: "Chimie Inorganique", code: "MAT024", niveau: "L2", classes: ["L2 SML"] },
       { id: 17, nom: "Magnétostatique et Régime Variable", code: "MAT017", niveau: "L2", classes: ["L2 MPI", "L2 SML"] },
       { id: 18, nom: "Optique Géométrique", code: "MAT018", niveau: "L1", classes: ["L1 MPI", "L1 SML"] },
       { id: 6, nom: "Thermodynamique", code: "MAT006", niveau: "L2", classes: ["L2 MPI", "L2 SML"] },

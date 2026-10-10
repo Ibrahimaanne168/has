@@ -493,9 +493,14 @@ export function deleteClasse(id: string): void {
 // === GESTION DES MATIÈRES (PERSISTÉ EN LOCALSTORAGE AVEC CLASSES CONCERNÉES ET PROFESSEUR) ===
 export function getStoredMatieres(): Matiere[] {
   const list = getStorageItem<Matiere[]>(STORAGE_KEYS.MATIERES, MOCK_MATIERES);
+  // Synchroniser automatiquement avec les matières officielles de référence si manquantes
+  const missingDefaults = MOCK_MATIERES.filter(
+    (dm) => !list.some((m) => m.id === dm.id || m.name.toLowerCase() === dm.name.toLowerCase())
+  );
+  const fullList = missingDefaults.length > 0 ? [...list, ...missingDefaults] : list;
   const profs = getStoredProfesseurs();
 
-  return list.map((m, idx) => {
+  return fullList.map((m, idx) => {
     const defaultM = MOCK_MATIERES.find((dm) => dm.id === m.id || dm.name.toLowerCase() === m.name.toLowerCase());
     const code = m.code?.startsWith("MAT") ? m.code : (defaultM?.code || `MAT${String(idx + 1).padStart(3, "0")}`);
     const classes = m.classes && m.classes.length > 0 ? m.classes : (defaultM?.classes || ["L1-MPI"]);
@@ -638,7 +643,7 @@ export function isCourseConcernedForStudent(
 // Emploi du temps de référence HAS (Un seul EDT par promotion L1 et L2, filières différenciées)
 // Tous les cours officiels de HAS sont dispensés en soirée sur le créneau 21h00 - 23h00
 export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [
-  // --- PROMOTION LICENCE 2 ---
+  // --- PROMOTION LICENCE 2 (Semestre 4 - Cours Officiels en Ligne) ---
   {
     id: "seance-has-l2-analyse4",
     classe_id: "promo-l2",
@@ -648,13 +653,13 @@ export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [
     heure_debut: "21:00",
     heure_fin: "23:00",
     matiere_nom: "Analyse 4",
-    matiere_code: "MAT004",
+    matiere_code: "MAT021",
     professeur_nom: "Pape Ibrahima Samb",
     professeur_id: "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
     type_seance: "COURS",
     meet_url: null,
     niveau: "L2",
-    filieres: ["MIASS"],
+    filieres: ["MIASS", "MPI"],
     created_at: new Date().toISOString(),
   },
   {
@@ -672,43 +677,61 @@ export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [
     type_seance: "COURS",
     meet_url: null,
     niveau: "L2",
-    filieres: ["MIASS"],
+    filieres: ["MIASS", "MPI"],
     created_at: new Date().toISOString(),
   },
   {
-    id: "seance-has-l2-magneto",
+    id: "seance-has-l2-chimie-org",
     classe_id: "promo-l2",
     classe_nom: "Licence 2",
     semestre: "Semestre 4",
-    jour: "Mercredi",
+    jour: "Jeudi",
     heure_debut: "21:00",
     heure_fin: "23:00",
-    matiere_nom: "Magnétostatique et Régime Variable",
-    matiere_code: "MAT017",
+    matiere_nom: "Chimie Organique",
+    matiere_code: "MAT023",
     professeur_nom: "Ndiogou Ndiaye",
     professeur_id: "25013b47-9a78-4f97-8552-977450abdad2",
     type_seance: "COURS",
     meet_url: null,
     niveau: "L2",
-    filieres: ["MPI", "SML"],
+    filieres: ["SML"],
     created_at: new Date().toISOString(),
   },
   {
-    id: "seance-has-l2-analyse3",
+    id: "seance-has-l2-chimie-inorg",
     classe_id: "promo-l2",
     classe_nom: "Licence 2",
     semestre: "Semestre 4",
     jour: "Samedi",
     heure_debut: "21:00",
     heure_fin: "23:00",
-    matiere_nom: "Analyse 3",
-    matiere_code: "MAT004",
-    professeur_nom: "Pape Ibrahima Samb",
-    professeur_id: "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
+    matiere_nom: "Chimie Inorganique",
+    matiere_code: "MAT024",
+    professeur_nom: "Ndiogou Ndiaye",
+    professeur_id: "25013b47-9a78-4f97-8552-977450abdad2",
     type_seance: "COURS",
     meet_url: null,
     niveau: "L2",
-    filieres: [], // Tronc Commun (MPI, SML, MIASS)
+    filieres: ["SML"],
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: "seance-has-l2-electromag",
+    classe_id: "promo-l2",
+    classe_nom: "Licence 2",
+    semestre: "Semestre 4",
+    jour: "Dimanche",
+    heure_debut: "21:00",
+    heure_fin: "23:00",
+    matiere_nom: "Électromagnétismes",
+    matiere_code: "MAT022",
+    professeur_nom: "Ndiogou Ndiaye",
+    professeur_id: "25013b47-9a78-4f97-8552-977450abdad2",
+    type_seance: "COURS",
+    meet_url: null,
+    niveau: "L2",
+    filieres: ["MPI"],
     created_at: new Date().toISOString(),
   },
 
@@ -774,7 +797,43 @@ export function getStoredSeancesEDT(): SeanceEDT[] {
   if (!list || !Array.isArray(list) || list.length === 0) {
     return DEFAULT_SEANCES_EDT;
   }
-  return list;
+
+  let changed = false;
+  // Nettoyer les anciens mocks obsolètes
+  const obsoleteIds = ["seance-has-l2-magneto", "seance-has-l2-analyse3"];
+  const filtered = list.filter((s) => !obsoleteIds.includes(s.id));
+  if (filtered.length !== list.length) changed = true;
+
+  // Intégrer ou mettre à jour les séances officielles
+  for (const def of DEFAULT_SEANCES_EDT) {
+    const existingIndex = filtered.findIndex((s) => s.id === def.id);
+    if (existingIndex >= 0) {
+      const existing = filtered[existingIndex];
+      if (
+        JSON.stringify(existing.filieres || []) !== JSON.stringify(def.filieres || []) ||
+        existing.matiere_code !== def.matiere_code ||
+        existing.professeur_nom !== def.professeur_nom
+      ) {
+        filtered[existingIndex] = {
+          ...existing,
+          ...def,
+          meet_url: existing.meet_url || def.meet_url,
+        };
+        changed = true;
+      }
+    } else {
+      filtered.push(def);
+      changed = true;
+    }
+  }
+
+  if (changed && typeof window !== "undefined") {
+    try {
+      localStorage.setItem(STORAGE_KEYS.SEANCES_EDT, JSON.stringify(filtered));
+    } catch {}
+  }
+
+  return filtered;
 }
 
 export function resetDefaultSeancesEDT(): SeanceEDT[] {
