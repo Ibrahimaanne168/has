@@ -636,6 +636,7 @@ export function isCourseConcernedForStudent(
 }
 
 // Emploi du temps de référence HAS (Un seul EDT par promotion L1 et L2, filières différenciées)
+// Tous les cours officiels de HAS sont dispensés en soirée sur le créneau 21h00 - 23h00
 export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [
   // --- PROMOTION LICENCE 2 ---
   {
@@ -680,8 +681,8 @@ export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [
     classe_nom: "Licence 2",
     semestre: "Semestre 4",
     jour: "Mercredi",
-    heure_debut: "19:00",
-    heure_fin: "21:00",
+    heure_debut: "21:00",
+    heure_fin: "23:00",
     matiere_nom: "Magnétostatique et Régime Variable",
     matiere_code: "MAT017",
     professeur_nom: "Ndiogou Ndiaye",
@@ -698,8 +699,8 @@ export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [
     classe_nom: "Licence 2",
     semestre: "Semestre 4",
     jour: "Samedi",
-    heure_debut: "18:00",
-    heure_fin: "20:00",
+    heure_debut: "21:00",
+    heure_fin: "23:00",
     matiere_nom: "Analyse 3",
     matiere_code: "MAT004",
     professeur_nom: "Pape Ibrahima Samb",
@@ -718,8 +719,8 @@ export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [
     classe_nom: "Licence 1",
     semestre: "Semestre 2",
     jour: "Lundi",
-    heure_debut: "18:00",
-    heure_fin: "20:00",
+    heure_debut: "21:00",
+    heure_fin: "23:00",
     matiere_nom: "Analyse 2",
     matiere_code: "MAT015",
     professeur_nom: "Pape Ibrahima Samb",
@@ -736,8 +737,8 @@ export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [
     classe_nom: "Licence 1",
     semestre: "Semestre 2",
     jour: "Mardi",
-    heure_debut: "18:00",
-    heure_fin: "20:00",
+    heure_debut: "21:00",
+    heure_fin: "23:00",
     matiere_nom: "Electricité",
     matiere_code: "MAT013",
     professeur_nom: "Kalidou Ba",
@@ -754,8 +755,8 @@ export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [
     classe_nom: "Licence 1",
     semestre: "Semestre 2",
     jour: "Jeudi",
-    heure_debut: "18:00",
-    heure_fin: "20:00",
+    heure_debut: "21:00",
+    heure_fin: "23:00",
     matiere_nom: "Economie Générale",
     matiere_code: "MAT014",
     professeur_nom: "Pape Ibrahima Samb",

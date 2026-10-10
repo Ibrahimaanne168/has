@@ -18,23 +18,23 @@ import { recordAuditLog } from "@/lib/auditLogger";
 const JOURS: JourSemaine[] = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
 
 const DEFAULT_SLOTS = [
-  "08:00–10:00",
-  "10:15–12:15",
-  "14:00–16:00",
-  "16:15–18:15",
-  "18:00–20:00",
-  "19:00–21:00",
   "21:00–23:00",
+  "19:00–21:00",
+  "18:00–20:00",
+  "16:15–18:15",
+  "14:00–16:00",
+  "10:15–12:15",
+  "08:00–10:00",
 ];
 
 const PRESET_HORAIRES = [
-  { label: "08h00 - 10h00", debut: "08:00", fin: "10:00" },
-  { label: "10h15 - 12h15", debut: "10:15", fin: "12:15" },
-  { label: "14h00 - 16h00", debut: "14:00", fin: "16:00" },
-  { label: "16h15 - 18h15", debut: "16:15", fin: "18:15" },
-  { label: "18h00 - 20h00", debut: "18:00", fin: "20:00" },
+  { label: "★ 21h00 - 23h00 (Horaire officiel HAS)", debut: "21:00", fin: "23:00" },
   { label: "19h00 - 21h00", debut: "19:00", fin: "21:00" },
-  { label: "21h00 - 23h00", debut: "21:00", fin: "23:00" },
+  { label: "18h00 - 20h00", debut: "18:00", fin: "20:00" },
+  { label: "16h15 - 18h15", debut: "16:15", fin: "18:15" },
+  { label: "14h00 - 16h00", debut: "14:00", fin: "16:00" },
+  { label: "10h15 - 12h15", debut: "10:15", fin: "12:15" },
+  { label: "08h00 - 10h00", debut: "08:00", fin: "10:00" },
 ];
 
 const FILIERES_OPTIONS: Array<"MPI" | "SML" | "MIASS"> = ["MPI", "SML", "MIASS"];
@@ -178,9 +178,17 @@ function formatHeureDisplay(h: string) {
 function parseSlotString(slotStr: string): { debut: string; fin: string } {
   const parts = slotStr.includes("–") ? slotStr.split("–") : slotStr.split("-");
   return {
-    debut: (parts[0] || "08:00").trim(),
-    fin: (parts[1] || "10:00").trim(),
+    debut: (parts[0] || "21:00").trim(),
+    fin: (parts[1] || "23:00").trim(),
   };
+}
+
+function isSeanceInSlot(seance: SeanceEDT, slotStr: string): boolean {
+  const { debut, fin } = parseSlotString(slotStr);
+  return (
+    (seance.heure_debut || "").trim() === debut &&
+    (seance.heure_fin || "").trim() === fin
+  );
 }
 
 function getFiliereBadgeInfo(filieres?: ("MPI" | "SML" | "MIASS")[]) {
@@ -363,9 +371,12 @@ export default function AdminEDTPage() {
     const set = new Set<string>(configured);
     promoSeances.forEach((s) => set.add(`${s.heure_debut}–${s.heure_fin}`));
     return Array.from(set).sort((a, b) => {
+      // Le créneau officiel 21h00 - 23h00 est toujours affiché en premier
+      if (a.includes("21:00")) return -1;
+      if (b.includes("21:00")) return 1;
       const startA = a.split(/[–-]/)[0]?.trim() || "";
       const startB = b.split(/[–-]/)[0]?.trim() || "";
-      return startA.localeCompare(startB);
+      return startB.localeCompare(startA);
     });
   }, [slotsMap, activeNiveau, promoSeances]);
 
@@ -436,15 +447,15 @@ export default function AdminEDTPage() {
     setFormDebut(s.heure_debut || "21:00");
     setFormFin(s.heure_fin || "23:00");
     setFormMatiere(s.matiere_nom);
-    setFormEnseignant(s.professeur_nom || "Mister Halil");
+    setFormEnseignant(s.professeur_nom || "Pape Ibrahima Samb");
     setFormMeetUrl(s.meet_url || "");
     setModalOpen(true);
   };
 
-  // Ouvrir modal pour ajouter dans un créneau spécifique (niveau verrouillé à activeNiveau)
+  // Ouvrir modal pour ajouter dans un créneau spécifique (par défaut 21h00 - 23h00)
   const openAddModal = (
     jour: JourSemaine = "Lundi",
-    slotStr: string = "18:00–20:00"
+    slotStr: string = "21:00–23:00"
   ) => {
     setEditingSeance(null);
     setFormJour(jour);
@@ -796,14 +807,14 @@ export default function AdminEDTPage() {
                         </button>
                       </div>
                       <div className="text-[10px] text-slate-400 dark:text-[#687585] mt-1">
-                        {promoSeances.filter((s) => `${s.heure_debut}–${s.heure_fin}` === slot).length} cours placés
+                        {promoSeances.filter((s) => isSeanceInSlot(s, slot)).length} cours placés
                       </div>
                     </td>
 
                     {/* Colonnes Jours Lundi au Dimanche */}
                     {JOURS.map((j) => {
                       const cells = filteredSeances.filter(
-                        (s) => s.jour === j && `${s.heure_debut}–${s.heure_fin}` === slot
+                        (s) => s.jour === j && isSeanceInSlot(s, slot)
                       );
                       return (
                         <td
@@ -1403,29 +1414,65 @@ export default function AdminEDTPage() {
                   </div>
                 </div>
 
-                {/* 5. Horaires */}
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 dark:text-[#F5F7FA] mb-1">
-                      Heure début * :
+                {/* 5. Horaires (21h00 - 23h00 rapide en 1 clic) */}
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-bold text-slate-700 dark:text-[#F5F7FA]">
+                      Créneau horaire * :
                     </label>
-                    <input
-                      type="time"
-                      value={formDebut}
-                      onChange={(e) => setFormDebut(e.target.value)}
-                      className="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-[#263241] bg-white dark:bg-[#151D27] text-slate-900 dark:text-[#F5F7FA] text-xs font-bold"
-                    />
+                    <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">
+                      ★ Horaire standard HAS : 21h00 – 23h00
+                    </span>
                   </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 dark:text-[#F5F7FA] mb-1">
-                      Heure fin * :
-                    </label>
-                    <input
-                      type="time"
-                      value={formFin}
-                      onChange={(e) => setFormFin(e.target.value)}
-                      className="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-[#263241] bg-white dark:bg-[#151D27] text-slate-900 dark:text-[#F5F7FA] text-xs font-bold"
-                    />
+
+                  {/* Boutons d'accès rapide aux tranches horaires */}
+                  <div className="flex flex-wrap gap-1.5 mb-2.5">
+                    {PRESET_HORAIRES.slice(0, 4).map((p) => {
+                      const isSelected = formDebut === p.debut && formFin === p.fin;
+                      return (
+                        <button
+                          key={p.label}
+                          type="button"
+                          onClick={() => {
+                            setFormDebut(p.debut);
+                            setFormFin(p.fin);
+                          }}
+                          className={`py-1.5 px-2.5 rounded-lg text-xs font-bold border transition-all cursor-pointer ${
+                            isSelected
+                              ? "bg-[#0f2744] dark:bg-[#e0521c] text-white border-transparent shadow-xs scale-[1.01]"
+                              : "bg-slate-50 dark:bg-[#151D27] text-slate-600 dark:text-[#AAB4C0] border-slate-200 dark:border-[#263241] hover:bg-slate-100"
+                          }`}
+                        >
+                          {p.debut === "21:00" ? "★ 21h00 – 23h00 (Principal)" : p.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Saisie fine personnalisée des heures */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[11px] font-medium text-slate-500 mb-1">
+                        Heure début :
+                      </label>
+                      <input
+                        type="time"
+                        value={formDebut}
+                        onChange={(e) => setFormDebut(e.target.value)}
+                        className="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-[#263241] bg-white dark:bg-[#151D27] text-slate-900 dark:text-[#F5F7FA] text-xs font-bold"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-medium text-slate-500 mb-1">
+                        Heure fin :
+                      </label>
+                      <input
+                        type="time"
+                        value={formFin}
+                        onChange={(e) => setFormFin(e.target.value)}
+                        className="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-[#263241] bg-white dark:bg-[#151D27] text-slate-900 dark:text-[#F5F7FA] text-xs font-bold"
+                      />
+                    </div>
                   </div>
                 </div>
 
