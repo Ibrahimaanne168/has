@@ -120,7 +120,14 @@ export default function EtudiantEDTPage() {
   const timeSlots = useMemo(() => {
     return Array.from(
       new Set(displayedSeances.map((s) => `${s.heure_debut}–${s.heure_fin}`))
-    ).sort();
+    ).sort((a, b) => {
+      const startA = a.split(/[–-]/)[0]?.trim() || "";
+      const startB = b.split(/[–-]/)[0]?.trim() || "";
+      if (startA !== startB) return startA.localeCompare(startB);
+      const endA = a.split(/[–-]/)[1]?.trim() || "";
+      const endB = b.split(/[–-]/)[1]?.trim() || "";
+      return endA.localeCompare(endB);
+    });
   }, [displayedSeances]);
 
   const handleCopyMeet = (url: string) => {

@@ -753,8 +753,44 @@ export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [
     filieres: ["MPI"],
     created_at: new Date().toISOString(),
   },
+  {
+    id: "seance-has-l2-partage-info",
+    classe_id: "promo-l2",
+    classe_nom: "Licence 2",
+    semestre: "Semestre 4",
+    jour: "Lundi",
+    heure_debut: "22:00",
+    heure_fin: "23:00",
+    matiere_nom: "Séance de partage d'informations",
+    matiere_code: "HAS002",
+    professeur_nom: "Administration HAS",
+    professeur_id: "admin-has",
+    type_seance: "COURS",
+    meet_url: null,
+    niveau: "L2",
+    filieres: ["MPI", "SML", "MIASS"],
+    created_at: new Date().toISOString(),
+  },
 
   // --- PROMOTION LICENCE 1 (Semestre 2 - Cours Officiels en Ligne) ---
+  {
+    id: "seance-has-l1-partage-info",
+    classe_id: "promo-l1",
+    classe_nom: "Licence 1",
+    semestre: "Semestre 2",
+    jour: "Lundi",
+    heure_debut: "21:00",
+    heure_fin: "22:00",
+    matiere_nom: "Séance de partage d'informations",
+    matiere_code: "HAS001",
+    professeur_nom: "Administration HAS",
+    professeur_id: "admin-has",
+    type_seance: "COURS",
+    meet_url: null,
+    niveau: "L1",
+    filieres: ["MPI", "SML", "MIASS"],
+    created_at: new Date().toISOString(),
+  },
   {
     id: "seance-has-l1-magneto",
     classe_id: "promo-l1",
@@ -870,6 +906,14 @@ export function getStoredSeancesEDT(): SeanceEDT[] {
   ]);
 
   const filtered = list.filter((s) => !obsoleteIds.has(s.id) && !deletedSet.has(s.id));
+
+  // S'assurer que les séances officielles par défaut (notamment séances de partage d'informations L1 & L2)
+  // sont automatiquement présentes si elles ne figurent pas encore dans le cache et n'ont pas été supprimées
+  for (const def of DEFAULT_SEANCES_EDT) {
+    if (!filtered.some((s) => s.id === def.id) && !deletedSet.has(def.id)) {
+      filtered.push(def);
+    }
+  }
 
   return filtered;
 }

@@ -350,6 +350,7 @@ export async function sendCourseReminderEmail({
   meetUrl,
   filiere,
   niveau,
+  delai = "40 minutes",
 }: {
   email: string;
   fullName: string;
@@ -361,8 +362,9 @@ export async function sendCourseReminderEmail({
   meetUrl?: string | null;
   filiere?: string | null;
   niveau?: string | null;
+  delai?: string;
 }) {
-  const subject = `Rappel : Cours de ${matiereNom} aujourd'hui (${horaireDebut} - ${horaireFin}) — HAS`;
+  const subject = `Rappel : Cours de ${matiereNom} dans ${delai} (${horaireDebut} - ${horaireFin}) — HAS`;
   const htmlContent = `
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
       <div style="background-color: #0f2744; padding: 26px 24px; text-align: center;">
@@ -373,7 +375,7 @@ export async function sendCourseReminderEmail({
       <div style="padding: 32px 26px; background-color: #ffffff;">
         <div style="text-align: center; margin-bottom: 20px;">
           <span style="display: inline-block; background-color: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 6px 14px; border-radius: 9999px;">
-            🔔 Cours Programmé — ${jour}
+            🔔 Début dans ${delai} — ${jour}
           </span>
         </div>
 
@@ -386,7 +388,7 @@ export async function sendCourseReminderEmail({
         </p>
 
         <p style="color: #334155; font-size: 14px; line-height: 1.6; margin: 0 0 20px 0;">
-          Nous vous rappelons que votre séance en ligne de <strong>${matiereNom}</strong> aura lieu dans quelques heures :
+          Nous vous rappelons que votre séance en ligne de <strong>${matiereNom}</strong> commence dans <strong>${delai}</strong> (à <strong>${horaireDebut}</strong>) :
         </p>
 
         <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px 20px; margin: 0 0 24px 0;">

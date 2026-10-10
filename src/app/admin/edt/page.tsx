@@ -33,6 +33,7 @@ const PRESET_HORAIRES = [
 const FILIERES_OPTIONS: Array<"MPI" | "SML" | "MIASS"> = ["MPI", "SML", "MIASS"];
 
 const ENSEIGNANTS_PRESETS = [
+  "Administration HAS",
   "Pape Ibrahima Samb",
   "Ibrahima Anne",
   "Ndiogou Ndiaye",
@@ -46,11 +47,16 @@ const ENSEIGNANTS_PRESETS = [
 const CATALOGUE_MATIERES: Record<
   string,
   {
-    niveau: "L1" | "L2";
+    niveau: "L1" | "L2" | "TOUS";
     filieres: ("MPI" | "SML" | "MIASS")[];
     professeurDefaut: string;
   }
 > = {
+  "Séance de partage d'informations": {
+    niveau: "TOUS",
+    filieres: ["MPI", "SML", "MIASS"],
+    professeurDefaut: "Administration HAS",
+  },
   // --- LICENCE 1 ---
   "Analyse 1": {
     niveau: "L1",
@@ -363,7 +369,7 @@ export default function AdminEDTPage() {
   // Matières disponibles pour la promotion active (L1 ou L2)
   const matieresForCurrentLevel = useMemo(() => {
     const fromCatalogue = Object.entries(CATALOGUE_MATIERES)
-      .filter(([_, info]) => info.niveau === activeNiveau)
+      .filter(([_, info]) => info.niveau === activeNiveau || (info.niveau as string) === "TOUS")
       .map(([name]) => name);
 
     const fromStorage = matieresList
@@ -402,12 +408,12 @@ export default function AdminEDTPage() {
     const set = new Set<string>(configured);
     promoSeances.forEach((s) => set.add(`${s.heure_debut}–${s.heure_fin}`));
     return Array.from(set).sort((a, b) => {
-      // Le créneau officiel 21h00 - 23h00 est toujours affiché en premier
-      if (a.includes("21:00")) return -1;
-      if (b.includes("21:00")) return 1;
       const startA = a.split(/[–-]/)[0]?.trim() || "";
       const startB = b.split(/[–-]/)[0]?.trim() || "";
-      return startB.localeCompare(startA);
+      if (startA !== startB) return startA.localeCompare(startB);
+      const endA = a.split(/[–-]/)[1]?.trim() || "";
+      const endB = b.split(/[–-]/)[1]?.trim() || "";
+      return endA.localeCompare(endB);
     });
   }, [slotsMap, activeNiveau, promoSeances]);
 
@@ -718,9 +724,53 @@ export default function AdminEDTPage() {
     }
   };
 
+  // Test de l'automatisme 40 minutes (déclencheur identique au cron Vercel)
+  const handleTestAuto40min = async () => {
+    setIsSendingReminder(true);
+    try {
+      const currentSeances = getStoredSeancesEDT();
+      const res = await fetch("/api/notifications/course-reminders?mode=auto_40min", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          mode: "auto_40min",
+          seances: currentSeances,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Erreur");
+      alert(
+        `[Automatisme 40 min — HAS]\nHeure de référence : ${data.dakarTime || "GMT"}\nJour actuel : ${data.day || ""}\n\nRésultat : ${data.message}\nNombre d'emails envoyés : ${data.sentCount || 0}`
+      );
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Erreur inconnue";
+      alert(`Erreur test 40 min : ${msg}`);
+    } finally {
+      setIsSendingReminder(false);
+    }
+  };
+
   return (
     <DashboardLayout role="admin" userName="Administration HAS" userEmail="direction@halil-academie.com" matriculeOrTitle="ADM001">
       <div className="space-y-6">
+
+        {/* ── BANDEAU AUTOMATISATION 40MIN ─────────────────────────────── */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 bg-blue-50/90 dark:bg-blue-950/40 border border-blue-200/90 dark:border-blue-900/60 rounded-xl shadow-xs">
+          <div className="flex items-center gap-2.5">
+            <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
+            <p className="text-xs text-blue-950 dark:text-blue-200">
+              <strong className="font-bold text-[#0f2744] dark:text-blue-100">Automatisme 40 min actif :</strong> Des emails avec lien de connexion Google Meet sont envoyés automatiquement 40 minutes avant chaque cours de la semaine aux étudiants concernés (L1 et L2 selon leur filière).
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={handleTestAuto40min}
+            disabled={isSendingReminder}
+            className="text-[11px] font-bold text-blue-700 dark:text-blue-300 hover:text-blue-900 dark:hover:text-blue-100 underline whitespace-nowrap cursor-pointer transition-colors"
+          >
+            Tester l'automatisme 40 min &rarr;
+          </button>
+        </div>
 
         {/* ── EN-TÊTE PRINCIPAL ────────────────────────────────────── */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
