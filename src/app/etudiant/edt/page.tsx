@@ -275,104 +275,194 @@ export default function EtudiantEDTPage() {
                   </p>
                 </div>
               ) : (
-                <div className="overflow-x-auto rounded-xl border border-slate-200/90 dark:border-[#263241] shadow-xs">
-                  <table className="w-full text-left border-collapse text-xs">
-                    <thead>
-                      <tr className="bg-[#0f2744] text-white dark:bg-[#151D27] uppercase tracking-wider font-extrabold divide-x divide-white/10 dark:divide-[#263241]">
-                        <th className="py-3 px-4 text-center w-28">JOUR</th>
-                        <th className="py-3 px-4 text-center w-36">HORAIRES</th>
-                        <th className="py-3 px-5">MATIÈRE</th>
-                        <th className="py-3 px-4 text-center w-36">FILIÈRE</th>
-                        <th className="py-3 px-5">ENSEIGNANT</th>
-                        <th className="py-3 px-4 text-center w-36">ACCÈS EN LIGNE</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-[#263241]">
-                      {displayedSeances.map((s, idx) => {
-                        const isEven = idx % 2 === 0;
-                        const fBadge = getFiliereBadgeInfo(s.filieres);
-                        const isMyFiliere = s.filieres?.includes(userFiliere);
-                        return (
-                          <tr
-                            key={s.id}
-                            className={`transition-colors hover:bg-slate-50/80 dark:hover:bg-[#151D27]/80 ${
-                              isEven ? "bg-white dark:bg-[#111821]" : "bg-slate-50/40 dark:bg-[#151D27]/30"
-                            }`}
-                          >
-                            <td className="py-3.5 px-4 text-center font-bold text-xs text-[#0f2744] dark:text-[#F5F7FA]">
-                              <span className="inline-block px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/40 border border-blue-200/60 dark:border-blue-900/50 text-[#0f2744] dark:text-blue-300 font-extrabold">
-                                {s.jour}
-                              </span>
-                            </td>
+                <>
+                  {/* ── VERSION MOBILE : CARRÉS PLEINS BIEN LISIBLES ET PROFESSIONNELS ── */}
+                  <div className="md:hidden grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    {displayedSeances.map((s) => {
+                      const fBadge = getFiliereBadgeInfo(s.filieres);
+                      const isMyFiliere = s.filieres?.includes(userFiliere);
+                      return (
+                        <div
+                          key={`mobile-${s.id}`}
+                          className="bg-white dark:bg-[#151D27] rounded-2xl border-2 border-slate-200/90 dark:border-[#263241] p-4 shadow-sm flex flex-col justify-between transition-all"
+                        >
+                          {/* En-tête plein : Jour & Horaires */}
+                          <div className="flex items-center justify-between gap-2 pb-3 border-b border-slate-100 dark:border-[#263241]">
+                            <span className="px-3 py-1 rounded-xl bg-[#0f2744] text-white dark:bg-[#1e293b] font-black text-xs uppercase tracking-wider">
+                              {s.jour}
+                            </span>
+                            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-orange-50 dark:bg-orange-950/40 text-[#e0521c] dark:text-orange-300 font-extrabold text-xs border border-orange-200/60 dark:border-orange-800/40">
+                              <Clock className="w-3.5 h-3.5" />
+                              <span>{formatHeureDisplay(s.heure_debut)} – {formatHeureDisplay(s.heure_fin)}</span>
+                            </div>
+                          </div>
 
-                            <td className="py-3.5 px-4 text-center font-bold text-xs text-slate-700 dark:text-[#AAB4C0] whitespace-nowrap">
-                              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-[#151D27] border border-slate-200/60 dark:border-[#263241]">
-                                <Clock className="w-3.5 h-3.5 text-[#e0521c]" />
-                                <span>{formatHeureDisplay(s.heure_debut)} – {formatHeureDisplay(s.heure_fin)}</span>
-                              </div>
-                            </td>
+                          {/* Corps central du carré : Matière, Filière et Professeur */}
+                          <div className="py-3.5 space-y-2">
+                            <div className="flex items-start gap-2">
+                              <BookOpen className="w-4 h-4 text-[#0f2744] dark:text-[#e0521c] shrink-0 mt-0.5" />
+                              <h3 className="font-serif text-base font-extrabold text-slate-900 dark:text-[#F5F7FA] leading-tight">
+                                {s.matiere_nom}
+                              </h3>
+                            </div>
 
-                            <td className="py-3.5 px-5 font-bold text-sm text-slate-900 dark:text-[#F5F7FA]">
-                              <div className="flex items-center gap-2">
-                                <BookOpen className="w-4 h-4 text-[#0f2744] dark:text-[#e0521c] shrink-0" />
-                                <span>{s.matiere_nom}</span>
-                              </div>
-                            </td>
-
-                            {/* FILIÈRE DIFFÉRENCIÉE */}
-                            <td className="py-3.5 px-4 text-center whitespace-nowrap">
-                              <span className={`inline-block px-2.5 py-1 rounded-lg text-xs font-black border ${fBadge.color} ${
-                                isMyFiliere ? "ring-2 ring-[#e0521c]/40 font-black" : ""
-                              }`}>
+                            <div className="flex items-center gap-2 pt-0.5">
+                              <span className="text-[11px] font-bold text-slate-400 dark:text-[#687585]">Filière :</span>
+                              <span
+                                className={`inline-block px-2.5 py-0.5 rounded-lg text-xs font-black border ${fBadge.color} ${
+                                  isMyFiliere ? "ring-2 ring-[#e0521c]/40 font-black" : ""
+                                }`}
+                              >
                                 {fBadge.label}
                               </span>
-                            </td>
+                            </div>
 
-                            <td className="py-3.5 px-5 font-bold text-xs text-slate-800 dark:text-slate-200">
-                              <div className="flex items-center gap-2">
-                                <div className="w-6 h-6 rounded-full bg-orange-100 dark:bg-orange-950/50 text-[#e0521c] flex items-center justify-center font-black text-[10px] shrink-0">
-                                  {(s.professeur_nom || "H")[0]}
-                                </div>
-                                <span>{s.professeur_nom || "Mister Halil"}</span>
+                            <div className="flex items-center gap-2 pt-1 text-xs text-slate-700 dark:text-slate-300">
+                              <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-800 text-[#0f2744] dark:text-[#F5F7FA] flex items-center justify-center font-black text-[10px] shrink-0 border border-slate-200 dark:border-slate-700">
+                                {(s.professeur_nom || "H")[0]}
                               </div>
-                            </td>
+                              <span className="font-bold">{s.professeur_nom || "Mister Halil"}</span>
+                            </div>
+                          </div>
 
-                            <td className="py-3.5 px-4 text-center">
-                              {s.meet_url ? (
-                                <div className="flex items-center justify-center gap-1.5">
-                                  <a
-                                    href={s.meet_url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold shadow-xs transition-colors"
-                                  >
-                                    <Video className="w-3.5 h-3.5" />
-                                    Rejoindre
-                                    <ExternalLink className="w-2.5 h-2.5" />
-                                  </a>
-                                  <button
-                                    type="button"
-                                    onClick={() => handleCopyMeet(s.meet_url!)}
-                                    title="Copier le lien Meet"
-                                    className="p-1.5 rounded-lg border border-slate-200 dark:border-[#263241] hover:bg-slate-100 dark:hover:bg-[#151D27] text-slate-500 cursor-pointer"
-                                  >
-                                    {copiedLink === s.meet_url ? (
-                                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                                    ) : (
-                                      <Copy className="w-3.5 h-3.5" />
-                                    )}
-                                  </button>
+                          {/* Pied du carré : Accès en ligne (Google Meet) */}
+                          <div className="pt-3 border-t border-slate-100 dark:border-[#263241]">
+                            {s.meet_url ? (
+                              <div className="flex items-center gap-2">
+                                <a
+                                  href={s.meet_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition-colors"
+                                >
+                                  <Video className="w-3.5 h-3.5" />
+                                  <span>Rejoindre</span>
+                                  <ExternalLink className="w-3 h-3 ml-0.5" />
+                                </a>
+                                <button
+                                  type="button"
+                                  onClick={() => handleCopyMeet(s.meet_url!)}
+                                  title="Copier le lien Meet"
+                                  className="p-2 rounded-xl border border-slate-200 dark:border-[#263241] bg-slate-50 dark:bg-[#111821] hover:bg-slate-100 dark:hover:bg-[#151D27] text-slate-600 dark:text-slate-300 cursor-pointer"
+                                >
+                                  {copiedLink === s.meet_url ? (
+                                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                                  ) : (
+                                    <Copy className="w-4 h-4" />
+                                  )}
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="text-center py-1.5 px-3 rounded-xl bg-slate-50 dark:bg-[#111821] border border-slate-100 dark:border-[#263241]">
+                                <span className="text-xs text-slate-400 italic">Lien non défini</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* ── VERSION TABLEAU POUR ÉCRANS MOYENS ET GRANDS (TABLETTE / DESKTOP) ── */}
+                  <div className="hidden md:block overflow-x-auto rounded-xl border border-slate-200/90 dark:border-[#263241] shadow-xs">
+                    <table className="w-full text-left border-collapse text-xs">
+                      <thead>
+                        <tr className="bg-[#0f2744] text-white dark:bg-[#151D27] uppercase tracking-wider font-extrabold divide-x divide-white/10 dark:divide-[#263241]">
+                          <th className="py-3 px-4 text-center w-28">JOUR</th>
+                          <th className="py-3 px-4 text-center w-36">HORAIRES</th>
+                          <th className="py-3 px-5">MATIÈRE</th>
+                          <th className="py-3 px-4 text-center w-36">FILIÈRE</th>
+                          <th className="py-3 px-5">ENSEIGNANT</th>
+                          <th className="py-3 px-4 text-center w-36">ACCÈS EN LIGNE</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 dark:divide-[#263241]">
+                        {displayedSeances.map((s, idx) => {
+                          const isEven = idx % 2 === 0;
+                          const fBadge = getFiliereBadgeInfo(s.filieres);
+                          const isMyFiliere = s.filieres?.includes(userFiliere);
+                          return (
+                            <tr
+                              key={s.id}
+                              className={`transition-colors hover:bg-slate-50/80 dark:hover:bg-[#151D27]/80 ${
+                                isEven ? "bg-white dark:bg-[#111821]" : "bg-slate-50/40 dark:bg-[#151D27]/30"
+                              }`}
+                            >
+                              <td className="py-3.5 px-4 text-center font-bold text-xs text-[#0f2744] dark:text-[#F5F7FA]">
+                                <span className="inline-block px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/40 border border-blue-200/60 dark:border-blue-900/50 text-[#0f2744] dark:text-blue-300 font-extrabold">
+                                  {s.jour}
+                                </span>
+                              </td>
+
+                              <td className="py-3.5 px-4 text-center font-bold text-xs text-slate-700 dark:text-[#AAB4C0] whitespace-nowrap">
+                                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-[#151D27] border border-slate-200/60 dark:border-[#263241]">
+                                  <Clock className="w-3.5 h-3.5 text-[#e0521c]" />
+                                  <span>{formatHeureDisplay(s.heure_debut)} – {formatHeureDisplay(s.heure_fin)}</span>
                                 </div>
-                              ) : (
-                                <span className="text-[11px] text-slate-400 italic">Lien non défini</span>
-                              )}
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
+                              </td>
+
+                              <td className="py-3.5 px-5 font-bold text-sm text-slate-900 dark:text-[#F5F7FA]">
+                                <div className="flex items-center gap-2">
+                                  <BookOpen className="w-4 h-4 text-[#0f2744] dark:text-[#e0521c] shrink-0" />
+                                  <span>{s.matiere_nom}</span>
+                                </div>
+                              </td>
+
+                              {/* FILIÈRE DIFFÉRENCIÉE */}
+                              <td className="py-3.5 px-4 text-center whitespace-nowrap">
+                                <span className={`inline-block px-2.5 py-1 rounded-lg text-xs font-black border ${fBadge.color} ${
+                                  isMyFiliere ? "ring-2 ring-[#e0521c]/40 font-black" : ""
+                                }`}>
+                                  {fBadge.label}
+                                </span>
+                              </td>
+
+                              <td className="py-3.5 px-5 font-bold text-xs text-slate-800 dark:text-slate-200">
+                                <div className="flex items-center gap-2">
+                                  <div className="w-6 h-6 rounded-full bg-orange-100 dark:bg-orange-950/50 text-[#e0521c] flex items-center justify-center font-black text-[10px] shrink-0">
+                                    {(s.professeur_nom || "H")[0]}
+                                  </div>
+                                  <span>{s.professeur_nom || "Mister Halil"}</span>
+                                </div>
+                              </td>
+
+                              <td className="py-3.5 px-4 text-center">
+                                {s.meet_url ? (
+                                  <div className="flex items-center justify-center gap-1.5">
+                                    <a
+                                      href={s.meet_url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold shadow-xs transition-colors"
+                                    >
+                                      <Video className="w-3.5 h-3.5" />
+                                      Rejoindre
+                                      <ExternalLink className="w-2.5 h-2.5" />
+                                    </a>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleCopyMeet(s.meet_url!)}
+                                      title="Copier le lien Meet"
+                                      className="p-1.5 rounded-lg border border-slate-200 dark:border-[#263241] hover:bg-slate-100 dark:hover:bg-[#151D27] text-slate-500 cursor-pointer"
+                                    >
+                                      {copiedLink === s.meet_url ? (
+                                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                                      ) : (
+                                        <Copy className="w-3.5 h-3.5" />
+                                      )}
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <span className="text-[11px] text-slate-400 italic">Lien non défini</span>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
               )}
             </div>
           </div>

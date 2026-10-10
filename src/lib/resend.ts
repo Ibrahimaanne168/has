@@ -335,3 +335,119 @@ export async function sendRegistrationRejectedEmail({
     htmlContent,
   });
 }
+
+/**
+ * Envoi d'un email de rappel avant le début d'un cours en ligne
+ */
+export async function sendCourseReminderEmail({
+  email,
+  fullName,
+  matiereNom,
+  jour,
+  horaireDebut,
+  horaireFin,
+  enseignantNom,
+  meetUrl,
+  filiere,
+  niveau,
+}: {
+  email: string;
+  fullName: string;
+  matiereNom: string;
+  jour: string;
+  horaireDebut: string;
+  horaireFin: string;
+  enseignantNom?: string | null;
+  meetUrl?: string | null;
+  filiere?: string | null;
+  niveau?: string | null;
+}) {
+  const subject = `Rappel : Cours de ${matiereNom} aujourd'hui (${horaireDebut} - ${horaireFin}) — HAS`;
+  const htmlContent = `
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+      <div style="background-color: #0f2744; padding: 26px 24px; text-align: center;">
+        <h1 style="color: #ffffff; margin: 0; font-size: 20px; font-weight: 800; letter-spacing: 0.5px;">HALIL ACADÉMIE SCIENTIFIQUE</h1>
+        <p style="color: #cbd5e1; margin: 6px 0 0 0; font-size: 13px;">Rappel officiel de séance en ligne</p>
+      </div>
+
+      <div style="padding: 32px 26px; background-color: #ffffff;">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <span style="display: inline-block; background-color: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 6px 14px; border-radius: 9999px;">
+            🔔 Cours Programmé — ${jour}
+          </span>
+        </div>
+
+        <h2 style="color: #0f2744; margin: 0 0 14px 0; font-size: 21px; font-weight: 800; text-align: center;">
+          ${matiereNom}
+        </h2>
+
+        <p style="color: #334155; font-size: 15px; line-height: 1.6; margin: 0 0 16px 0;">
+          Bonjour <strong>${fullName}</strong>,
+        </p>
+
+        <p style="color: #334155; font-size: 14px; line-height: 1.6; margin: 0 0 20px 0;">
+          Nous vous rappelons que votre séance en ligne de <strong>${matiereNom}</strong> aura lieu dans quelques heures :
+        </p>
+
+        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px 20px; margin: 0 0 24px 0;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+            <tr>
+              <td style="color: #64748b; padding: 6px 0; font-weight: 600;">Jour :</td>
+              <td style="color: #0f2744; font-weight: 700; text-align: right; padding: 6px 0;">${jour}</td>
+            </tr>
+            <tr>
+              <td style="color: #64748b; padding: 6px 0; font-weight: 600;">Horaires :</td>
+              <td style="color: #e0521c; font-weight: 800; text-align: right; padding: 6px 0;">${horaireDebut} — ${horaireFin}</td>
+            </tr>
+            <tr>
+              <td style="color: #64748b; padding: 6px 0; font-weight: 600;">Enseignant :</td>
+              <td style="color: #0f2744; font-weight: 700; text-align: right; padding: 6px 0;">${enseignantNom || "Mister Halil"}</td>
+            </tr>
+            ${niveau || filiere ? `
+            <tr>
+              <td style="color: #64748b; padding: 6px 0; font-weight: 600;">Classe & Filière :</td>
+              <td style="color: #475569; font-weight: 600; text-align: right; padding: 6px 0;">${niveau || ""} ${filiere || ""}</td>
+            </tr>` : ""}
+          </table>
+        </div>
+
+        ${meetUrl ? `
+        <div style="text-align: center; margin: 28px 0;">
+          <a href="${meetUrl}" style="display: inline-block; background-color: #0f2744; color: #ffffff; font-size: 15px; font-weight: 700; text-decoration: none; padding: 14px 32px; border-radius: 8px; box-shadow: 0 2px 6px rgba(15,39,68,0.25);">
+            🎥 Rejoindre la salle de cours (Google Meet) &rarr;
+          </a>
+          <p style="color: #64748b; font-size: 12px; margin-top: 10px;">
+            Lien direct : <a href="${meetUrl}" style="color: #e0521c; text-decoration: underline; word-break: break-all;">${meetUrl}</a>
+          </p>
+        </div>
+        ` : `
+        <div style="text-align: center; margin: 24px 0;">
+          <a href="https://www.has-academie.online/etudiant/edt" style="display: inline-block; background-color: #0f2744; color: #ffffff; font-size: 14px; font-weight: 700; text-decoration: none; padding: 12px 28px; border-radius: 8px;">
+            Consulter l'emploi du temps sur mon espace &rarr;
+          </a>
+        </div>
+        `}
+
+        <p style="color: #64748b; font-size: 13px; line-height: 1.5; margin: 20px 0 0 0; padding-top: 16px; border-top: 1px solid #f1f5f9; text-align: center;">
+          Pensez à vous connecter quelques minutes avant le début de la séance avec vos cahiers et calculatrices prêts.
+        </p>
+      </div>
+
+      <div style="background-color: #f1f5f9; padding: 18px; text-align: center; border-top: 1px solid #e2e8f0;">
+        <p style="color: #64748b; font-size: 12px; margin: 0 0 4px 0;">
+          Halil Académie Scientifique • Excellence & Rigueur
+        </p>
+        <p style="color: #94a3b8; font-size: 11px; margin: 0;">
+          Cet email est un rappel automatique destiné aux étudiants inscrits.
+        </p>
+      </div>
+    </div>
+  `;
+
+  return sendTransactionalEmail({
+    toEmail: email,
+    toName: fullName,
+    subject,
+    htmlContent,
+  });
+}

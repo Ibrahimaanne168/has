@@ -5,6 +5,7 @@ import {
   Clock, Video, Plus, Trash2, Edit2, CheckCircle2, Copy,
   ExternalLink, X, Save, BookOpen, Settings,
   Calendar, Layers, Table as TableIcon, Filter, RotateCcw,
+  Mail, Loader2, Send,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/Button";
@@ -309,6 +310,7 @@ export default function AdminEDTPage() {
   // Modal d'ajout / modification de cours
   const [modalOpen, setModalOpen] = useState(false);
   const [editingSeance, setEditingSeance] = useState<SeanceEDT | null>(null);
+  const [isSendingReminder, setIsSendingReminder] = useState(false);
 
   // Formulaire modal cours (le niveau est verrouillé à activeNiveau !)
   const [formFilieres, setFormFilieres] = useState<("MPI" | "SML" | "MIASS")[]>(["MIASS"]);
@@ -645,6 +647,75 @@ export default function AdminEDTPage() {
     setModalOpen(false);
   };
 
+  // Envoi de rappel email pour les cours du jour
+  const handleSendDayReminders = async () => {
+    const JOURS_FR = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+    const todayFr = JOURS_FR[new Date().getDay()] as JourSemaine;
+    const defaultDay = JOURS.includes(todayFr) ? todayFr : "Lundi";
+
+    const choice = prompt(
+      `Pour quel jour souhaitez-vous envoyer le rappel email aux étudiants de Licence ${activeNiveau === "L2" ? "2" : "1"} ? (Lundi, Mardi, Mercredi, Jeudi, Vendredi, Samedi, Dimanche)`,
+      defaultDay
+    );
+    if (!choice) return;
+    const cleanDay = choice.trim();
+    if (!JOURS.includes(cleanDay as JourSemaine)) {
+      alert(`Jour non valide. Choisissez parmi : ${JOURS.join(", ")}`);
+      return;
+    }
+
+    setIsSendingReminder(true);
+    try {
+      const currentSeances = getStoredSeancesEDT();
+      const res = await fetch("/api/notifications/course-reminders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          jour: cleanDay,
+          niveau: activeNiveau,
+          seances: currentSeances,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Erreur lors de l'envoi");
+      flash(`✓ ${data.message || `Rappels envoyés (${data.sentCount || 0} emails).`}`);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Erreur inconnue";
+      alert(`Erreur d'envoi des rappels : ${msg}`);
+    } finally {
+      setIsSendingReminder(false);
+    }
+  };
+
+  // Envoi de rappel email pour un cours précis
+  const handleSendSingleCourseReminder = async (seance: SeanceEDT) => {
+    const ok = confirm(
+      `Envoyer un email de rappel à tous les étudiants inscrits au cours de « ${seance.matiere_nom} » (${seance.jour} ${formatHeureDisplay(seance.heure_debut)}–${formatHeureDisplay(seance.heure_fin)}) ?`
+    );
+    if (!ok) return;
+
+    setIsSendingReminder(true);
+    try {
+      const currentSeances = getStoredSeancesEDT();
+      const res = await fetch("/api/notifications/course-reminders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          seanceId: seance.id,
+          seances: currentSeances,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Erreur lors de l'envoi");
+      flash(`✓ ${data.message || `Rappel envoyé pour ${seance.matiere_nom} (${data.sentCount || 0} emails).`}`);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Erreur inconnue";
+      alert(`Erreur d'envoi du rappel : ${msg}`);
+    } finally {
+      setIsSendingReminder(false);
+    }
+  };
+
   return (
     <DashboardLayout role="admin" userName="Administration HAS" userEmail="direction@halil-academie.com" matriculeOrTitle="ADM001">
       <div className="space-y-6">
@@ -666,7 +737,23 @@ export default function AdminEDTPage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            <Button
+              onClick={handleSendDayReminders}
+              variant="outline"
+              size="sm"
+              disabled={isSendingReminder}
+              leftIcon={
+                isSendingReminder ? (
+                  <Loader2 className="w-4 h-4 animate-spin text-[#e0521c]" />
+                ) : (
+                  <Mail className="w-4 h-4 text-[#e0521c]" />
+                )
+              }
+              title="Envoyer un rappel par email aux étudiants pour les cours du jour"
+            >
+              {isSendingReminder ? "Envoi du rappel..." : "Rappel Email Cours"}
+            </Button>
             <Button
               onClick={() => setAddLineModalOpen(true)}
               variant="outline"
@@ -1557,16 +1644,28 @@ export default function AdminEDTPage() {
                   </p>
                 </div>
 
-                <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-[#263241]">
+                <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-[#263241] flex-wrap gap-2">
                   {editingSeance ? (
-                    <button
-                      type="button"
-                      onClick={() => handleDelete(editingSeance.id, editingSeance.matiere_nom)}
-                      className="px-3 py-2 rounded-xl text-xs font-bold text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 flex items-center gap-1 cursor-pointer"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                      Supprimer ce cours
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(editingSeance.id, editingSeance.matiere_nom)}
+                        className="px-3 py-2 rounded-xl text-xs font-bold text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 flex items-center gap-1 cursor-pointer"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        Supprimer
+                      </button>
+                      <button
+                        type="button"
+                        disabled={isSendingReminder}
+                        onClick={() => handleSendSingleCourseReminder(editingSeance)}
+                        className="px-3 py-2 rounded-xl text-xs font-bold text-sky-600 dark:text-sky-400 hover:bg-sky-50 dark:hover:bg-sky-950/40 flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                        title="Envoyer un rappel email aux étudiants inscrits"
+                      >
+                        <Mail className="w-3.5 h-3.5" />
+                        Envoyer rappel email
+                      </button>
+                    </div>
                   ) : <div />}
 
                   <div className="flex items-center gap-2">

@@ -333,7 +333,11 @@ export function ChatRoom({
 
         try {
           const localKey = `has_chat_${roomId}_v1`;
-          localStorage.setItem(localKey, JSON.stringify(roomMessages));
+          if (roomMessages.length === 0) {
+            localStorage.removeItem(localKey);
+          } else {
+            localStorage.setItem(localKey, JSON.stringify(roomMessages));
+          }
         } catch {
           // quota
         }
@@ -505,6 +509,25 @@ export function ChatRoom({
       }
     } catch (err) {
       console.warn("[MODERATION CHAT FAIL]", err);
+    }
+  };
+
+  const handleClearAllMessages = async () => {
+    if (!isAdmin) return;
+    if (!confirm("Voulez-vous vraiment supprimer tous les messages enregistrés dans les salons ?")) return;
+    try {
+      await fetch("/api/chat/clear-messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ salonId: roomId }),
+      });
+      setMessages([getWelcomeMessage(roomId)]);
+      try {
+        localStorage.removeItem(`has_chat_${roomId}_v1`);
+      } catch {}
+      await loadRealMessages();
+    } catch (err) {
+      console.warn("[CLEAR ALL MESSAGES FAIL]", err);
     }
   };
 
@@ -818,10 +841,21 @@ export function ChatRoom({
           )}
 
           {isAdmin && (
-            <span className="hidden md:inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60">
-              <ShieldCheck className="w-3 h-3 text-amber-600 dark:text-amber-400" />
-              Modérateur
-            </span>
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={handleClearAllMessages}
+                title="Supprimer tous les messages enregistrés dans les salons"
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/60 hover:bg-rose-100 dark:hover:bg-rose-900/40 transition-colors cursor-pointer"
+              >
+                <Trash2 className="w-3 h-3 text-rose-500" />
+                <span>Purger les messages</span>
+              </button>
+              <span className="hidden md:inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60">
+                <ShieldCheck className="w-3 h-3 text-amber-600 dark:text-amber-400" />
+                Modérateur
+              </span>
+            </div>
           )}
 
           {onClose && (
