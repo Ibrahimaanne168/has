@@ -889,16 +889,26 @@ export default function AdminEDTPage() {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[1000px] text-xs border-collapse">
+            <table className="w-full min-w-[1100px] text-xs border-collapse table-fixed">
+              <colgroup>
+                <col style={{ width: "140px" }} />
+                <col style={{ width: "calc((100% - 140px) / 7)" }} />
+                <col style={{ width: "calc((100% - 140px) / 7)" }} />
+                <col style={{ width: "calc((100% - 140px) / 7)" }} />
+                <col style={{ width: "calc((100% - 140px) / 7)" }} />
+                <col style={{ width: "calc((100% - 140px) / 7)" }} />
+                <col style={{ width: "calc((100% - 140px) / 7)" }} />
+                <col style={{ width: "calc((100% - 140px) / 7)" }} />
+              </colgroup>
               <thead>
                 <tr className="bg-[#0f2744] dark:bg-[#151D27] text-white divide-x divide-white/10 dark:divide-[#263241]">
-                  <th className="py-3 px-3 text-left uppercase tracking-wider font-bold w-36">
+                  <th className="py-3 px-3 text-left uppercase tracking-wider font-bold" style={{ width: "140px" }}>
                     Ligne (Heure)
                   </th>
                   {JOURS.map((j) => {
                     const count = filteredSeances.filter((s) => s.jour === j).length;
                     return (
-                      <th key={j} className="py-3 px-3 text-center uppercase tracking-wider font-bold">
+                      <th key={j} className="py-3 px-2 text-center uppercase tracking-wider font-bold">
                         <div>{j}</div>
                         <span className="text-[10px] font-normal text-white/60">
                           {count} cours
@@ -912,7 +922,7 @@ export default function AdminEDTPage() {
                 {distinctSlots.map((slot, i) => (
                   <tr key={slot} className={i % 2 === 0 ? "bg-white dark:bg-[#111821]" : "bg-slate-50/40 dark:bg-[#151D27]/30"}>
                     {/* Colonne Header Ligne avec suppression */}
-                    <td className="p-3 border-r border-slate-100 dark:border-[#263241] whitespace-nowrap bg-slate-50/80 dark:bg-[#151D27]/60 group/line">
+                    <td className="p-3 border-r border-slate-100 dark:border-[#263241] bg-slate-50/80 dark:bg-[#151D27]/60 group/line align-top h-44">
                       <div className="flex items-center justify-between gap-1.5">
                         <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800 dark:text-[#F5F7FA]">
                           <Clock className="w-3.5 h-3.5 text-[#e0521c] shrink-0" />
@@ -945,11 +955,18 @@ export default function AdminEDTPage() {
                               openAddModal(j, slot);
                             }
                           }}
-                          className={`p-2 border-r border-slate-100 dark:border-[#263241] last:border-r-0 min-w-[135px] transition-colors ${
+                          className={`p-2 border-r border-slate-100 dark:border-[#263241] last:border-r-0 align-top h-44 transition-colors ${
                             cells.length === 0 ? "hover:bg-blue-50/40 dark:hover:bg-blue-950/20 cursor-pointer" : ""
                           }`}
                         >
-                          <div className="space-y-1.5">
+                          <div className="h-full min-h-[160px] flex flex-col justify-between">
+                            {cells.length === 0 ? (
+                              <div className="h-full min-h-[160px] rounded-xl border border-dashed border-slate-200 dark:border-[#263241] flex flex-col items-center justify-center text-slate-300 dark:text-slate-600 hover:text-blue-500 hover:border-blue-400 hover:bg-blue-50/20 dark:hover:bg-blue-950/20 transition-all group/empty">
+                                <Plus className="w-5 h-5 opacity-40 group-hover/empty:opacity-100 group-hover/empty:scale-110 transition-all" />
+                                <span className="text-[10px] font-bold opacity-0 group-hover/empty:opacity-100 mt-1 transition-opacity">Ajouter cours</span>
+                              </div>
+                            ) : (
+                              <div className="space-y-1.5 flex-1 flex flex-col">
                             {cells.map((s) => {
                               const fBadge = getFiliereBadgeInfo(s.filieres);
                               return (
@@ -1065,12 +1082,14 @@ export default function AdminEDTPage() {
                                 e.stopPropagation();
                                 openAddModal(j, slot);
                               }}
-                              className="w-full py-1.5 rounded-lg border border-dashed border-slate-200 dark:border-[#263241] hover:border-slate-400 text-slate-400 hover:text-slate-700 dark:hover:text-[#F5F7FA] text-[10px] font-bold flex items-center justify-center gap-1 cursor-pointer transition-colors"
+                              className="w-full py-1 rounded-lg border border-dashed border-slate-200 dark:border-[#263241] hover:border-slate-400 text-slate-400 hover:text-slate-700 dark:hover:text-[#F5F7FA] text-[10px] font-bold flex items-center justify-center gap-1 cursor-pointer transition-colors mt-auto"
                             >
                               <Plus className="w-3 h-3" /> Ajouter
                             </button>
                           </div>
-                        </td>
+                        )}
+                      </div>
+                    </td>
                       );
                     })}
                   </tr>

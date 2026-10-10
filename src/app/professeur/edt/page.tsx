@@ -326,16 +326,26 @@ export default function ProfesseurEDTPage() {
               </div>
             ) : (
               <div className="overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-[#263241] shadow-sm">
-                <table className="w-full min-w-[800px] bg-white dark:bg-[#111821] text-sm">
+                <table className="w-full min-w-[1100px] bg-white dark:bg-[#111821] text-sm table-fixed border-collapse">
+                  <colgroup>
+                    <col style={{ width: "130px" }} />
+                    <col style={{ width: "calc((100% - 130px) / 7)" }} />
+                    <col style={{ width: "calc((100% - 130px) / 7)" }} />
+                    <col style={{ width: "calc((100% - 130px) / 7)" }} />
+                    <col style={{ width: "calc((100% - 130px) / 7)" }} />
+                    <col style={{ width: "calc((100% - 130px) / 7)" }} />
+                    <col style={{ width: "calc((100% - 130px) / 7)" }} />
+                    <col style={{ width: "calc((100% - 130px) / 7)" }} />
+                  </colgroup>
                   <thead>
-                    <tr className="bg-[#0f2744] dark:bg-[#151D27]">
-                      <th className="px-4 py-3 text-left text-xs font-bold text-white/70 dark:text-[#AAB4C0] uppercase tracking-wider w-24">Heure</th>
+                    <tr className="bg-[#0f2744] dark:bg-[#151D27] divide-x divide-white/10 dark:divide-[#263241]">
+                      <th className="px-4 py-3 text-left text-xs font-bold text-white/70 dark:text-[#AAB4C0] uppercase tracking-wider" style={{ width: "130px" }}>Heure</th>
                       {JOURS.map((jour) => {
                         const cnt = mySeances.filter((s) => s.jour === jour).length;
                         return (
-                          <th key={jour} className="px-3 py-3 text-center text-xs font-bold text-white dark:text-[#F5F7FA] uppercase tracking-wider">
-                            {jour}
-                            {cnt > 0 && <div className="text-[10px] font-normal text-white/50 dark:text-[#687585] mt-0.5">{cnt}</div>}
+                          <th key={jour} className="px-2 py-3 text-center text-xs font-bold text-white dark:text-[#F5F7FA] uppercase tracking-wider">
+                            <div>{jour}</div>
+                            {cnt > 0 && <div className="text-[10px] font-normal text-white/50 dark:text-[#687585] mt-0.5">{cnt} cours</div>}
                           </th>
                         );
                       })}
@@ -344,7 +354,7 @@ export default function ProfesseurEDTPage() {
                   <tbody className="divide-y divide-slate-100 dark:divide-[#263241]">
                     {timeSlots.map((slot, i) => (
                       <tr key={slot} className={i % 2 === 0 ? "bg-white dark:bg-[#111821]" : "bg-slate-50/60 dark:bg-[#151D27]/50"}>
-                        <td className="px-4 py-3 border-r border-slate-100 dark:border-[#263241] align-top whitespace-nowrap">
+                        <td className="px-4 py-3 border-r border-slate-100 dark:border-[#263241] align-top whitespace-nowrap h-44">
                           <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-600 dark:text-[#AAB4C0]">
                             <Clock className="w-3 h-3 text-[#e0521c]" />
                             {slot}
@@ -355,32 +365,44 @@ export default function ProfesseurEDTPage() {
                             (s) => s.jour === jour && `${s.heure_debut}–${s.heure_fin}` === slot
                           );
                           return (
-                            <td key={jour} className="px-2 py-2 border-r border-slate-100 dark:border-[#263241] align-top min-w-[125px]">
-                              {cells.map((s) => {
-                                const fBadge = getFiliereBadgeInfo(s.filieres);
-                                return (
-                                  <div key={s.id} className="rounded-xl border border-blue-200 dark:border-blue-900 bg-blue-50/70 dark:bg-[#151D27] p-2.5 mb-1.5 shadow-2xs space-y-1">
-                                    <p className="text-xs font-bold text-slate-900 dark:text-[#F5F7FA] leading-tight">{s.matiere_nom}</p>
-                                    <div>
-                                      <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-black border ${fBadge.color}`}>
-                                        {fBadge.label}
-                                      </span>
-                                    </div>
-                                    {s.meet_url && (
-                                      <div className="flex gap-1 mt-1.5 pt-1.5 border-t border-slate-200/60">
-                                        <a href={s.meet_url} target="_blank" rel="noopener noreferrer"
-                                          className="flex-1 flex items-center justify-center gap-1 py-1 rounded text-[10px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white">
-                                          <Video className="w-3 h-3" /> Lancer
-                                        </a>
-                                        <button onClick={() => handleCopy(s.meet_url!)}
-                                          className="p-1 border border-slate-200 rounded hover:bg-white text-slate-500 cursor-pointer">
-                                          {copiedLink === s.meet_url ? <CheckCircle2 className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
-                                        </button>
-                                      </div>
-                                    )}
+                            <td key={jour} className="p-2 border-r border-slate-100 dark:border-[#263241] last:border-r-0 align-top h-44">
+                              <div className="h-full min-h-[160px] flex flex-col justify-start">
+                                {cells.length === 0 ? (
+                                  <div className="h-full min-h-[160px] rounded-xl border border-dashed border-slate-200/60 dark:border-[#263241]/60 flex items-center justify-center text-slate-300 dark:text-slate-700 text-xs font-medium">
+                                    —
                                   </div>
-                                );
-                              })}
+                                ) : (
+                                  <div className="space-y-1.5 flex-1 flex flex-col">
+                                    {cells.map((s) => {
+                                      const fBadge = getFiliereBadgeInfo(s.filieres);
+                                      return (
+                                        <div key={s.id} className="rounded-xl border border-blue-200 dark:border-blue-900 bg-blue-50/70 dark:bg-[#151D27] p-2.5 shadow-2xs space-y-1 flex-1 flex flex-col justify-between">
+                                          <div>
+                                            <p className="text-xs font-bold text-slate-900 dark:text-[#F5F7FA] leading-tight">{s.matiere_nom}</p>
+                                            <div className="mt-1">
+                                              <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-black border ${fBadge.color}`}>
+                                                {fBadge.label}
+                                              </span>
+                                            </div>
+                                          </div>
+                                          {s.meet_url && (
+                                            <div className="flex gap-1 mt-2 pt-1.5 border-t border-slate-200/60 dark:border-[#263241]">
+                                              <a href={s.meet_url} target="_blank" rel="noopener noreferrer"
+                                                className="flex-1 flex items-center justify-center gap-1 py-1 rounded text-[10px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white">
+                                                <Video className="w-3 h-3" /> Lancer
+                                              </a>
+                                              <button onClick={() => handleCopy(s.meet_url!)}
+                                                className="p-1 border border-slate-200 dark:border-[#263241] rounded hover:bg-white text-slate-500 cursor-pointer">
+                                                {copiedLink === s.meet_url ? <CheckCircle2 className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
+                                              </button>
+                                            </div>
+                                          )}
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                )}
+                              </div>
                             </td>
                           );
                         })}
