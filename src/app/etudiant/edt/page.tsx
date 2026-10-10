@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import Image from "next/image";
 import {
   Clock,
   Video,
@@ -11,7 +10,7 @@ import {
   Download,
   Calendar,
   Layers,
-  Monitor,
+  Table as TableIcon,
   BookOpen,
   Filter,
 } from "lucide-react";
@@ -70,7 +69,7 @@ export default function EtudiantEDTPage() {
   const [seances, setSeances] = useState<SeanceEDT[]>([]);
   const [edts, setEdts] = useState<EmploiDuTemps[]>([]);
   const [copiedLink, setCopiedLink] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<"fiche" | "grille">("fiche");
+  const [viewMode, setViewMode] = useState<"tableau" | "grille">("tableau");
 
   // Niveau et filière de l'étudiant
   const userNiveau = (user.classe?.niveau || "L1") as "L1" | "L2";
@@ -95,7 +94,7 @@ export default function EtudiantEDTPage() {
     return seances.filter((s) => (s.niveau || "L1") === userNiveau);
   }, [seances, userNiveau]);
 
-  // Séances affichées selon le filtre sélectionné
+  // Séances affichées selon le filtre
   const displayedSeances = useMemo(() => {
     let list = promoSeances;
     if (filterMode === "MINE") {
@@ -117,7 +116,7 @@ export default function EtudiantEDTPage() {
     });
   }, [promoSeances, filterMode, userFiliere]);
 
-  // Créneaux horaires uniques triés
+  // Créneaux horaires uniques
   const timeSlots = useMemo(() => {
     return Array.from(
       new Set(displayedSeances.map((s) => `${s.heure_debut}–${s.heure_fin}`))
@@ -150,7 +149,7 @@ export default function EtudiantEDTPage() {
               </span>
             </div>
             <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] dark:text-[#F5F7FA] leading-snug">
-              Planning des Cours en Ligne
+              Tableau des Cours Hebdomadaires
             </h1>
             <p className="text-xs text-slate-500 dark:text-[#AAB4C0] mt-1">
               Promotion <strong className="text-[#0f2744] dark:text-[#F5F7FA]">Licence {userNiveau === "L2" ? "2" : "1"}</strong> — Votre filière : <strong className="text-[#e0521c] font-black">{userFiliere}</strong>
@@ -158,19 +157,19 @@ export default function EtudiantEDTPage() {
           </div>
 
           <div className="flex items-center gap-2.5">
-            {/* Bascule Affichage */}
+            {/* Bascule Tableau vs Grille */}
             <div className="flex p-1 bg-slate-100 dark:bg-[#151D27] rounded-xl border border-slate-200 dark:border-[#263241]">
               <button
                 type="button"
-                onClick={() => setViewMode("fiche")}
+                onClick={() => setViewMode("tableau")}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  viewMode === "fiche"
+                  viewMode === "tableau"
                     ? "bg-white dark:bg-[#0f2744] text-[#0f2744] dark:text-[#F5F7FA] shadow-xs"
                     : "text-slate-500 dark:text-[#AAB4C0] hover:text-slate-800"
                 }`}
               >
-                <Monitor className="w-3.5 h-3.5 text-[#e0521c]" />
-                Format Fiche HAS
+                <TableIcon className="w-3.5 h-3.5 text-[#e0521c]" />
+                Format Tableau
               </button>
               <button
                 type="button"
@@ -209,7 +208,7 @@ export default function EtudiantEDTPage() {
         <div className="flex items-center justify-between gap-3 p-3 bg-white dark:bg-[#111821] rounded-2xl border border-slate-200/90 dark:border-[#263241] shadow-xs flex-wrap">
           <div className="flex items-center gap-1.5">
             <Filter className="w-4 h-4 text-slate-400" />
-            <span className="text-xs font-bold text-slate-700 dark:text-[#F5F7FA]">Affichage :</span>
+            <span className="text-xs font-bold text-slate-700 dark:text-[#F5F7FA]">Filtrer les cours :</span>
           </div>
 
           <div className="flex items-center gap-1.5 flex-wrap">
@@ -249,36 +248,22 @@ export default function EtudiantEDTPage() {
           </div>
         </div>
 
-        {/* ── MODE 1 : VUE FICHE OFFICIELLE HAS (1 SEUL EDT PAR PROMOTION) ── */}
-        {viewMode === "fiche" && (
-          <div className="bg-white dark:bg-[#111821] rounded-3xl border border-slate-200/90 dark:border-[#263241] shadow-xl overflow-hidden max-w-5xl mx-auto">
-            {/* EN-TÊTE DE LA FICHE */}
-            <div className="p-6 sm:p-8 text-center bg-gradient-to-b from-slate-50 via-white to-slate-50/50 dark:from-[#151D27] dark:via-[#111821] dark:to-[#111821] border-b border-slate-200/80 dark:border-[#263241]">
-              <div className="flex justify-center mb-3">
-                <div className="w-20 h-20 relative rounded-full overflow-hidden border-2 border-slate-200 dark:border-[#263241] shadow-md bg-white p-1">
-                  <Image
-                    src="/images/logo-has.jpg"
-                    alt="Halil Académie Scientifique"
-                    width={80}
-                    height={80}
-                    className="object-contain w-full h-full"
-                  />
-                </div>
+        {/* ── 1. SOUS FORME DE TABLEAU POUR LES ÉTUDIANTS SELON LA CLASSE ── */}
+        {viewMode === "tableau" && (
+          <div className="bg-white dark:bg-[#111821] rounded-2xl border border-slate-200/90 dark:border-[#263241] shadow-xs overflow-hidden">
+            <div className="p-4 border-b border-slate-100 dark:border-[#263241] flex items-center justify-between">
+              <div>
+                <h2 className="font-serif text-base font-bold text-[#0f2744] dark:text-[#F5F7FA] flex items-center gap-2">
+                  <TableIcon className="w-4 h-4 text-[#e0521c]" />
+                  Emploi du Temps Licence {userNiveau === "L2" ? "2" : "1"} ({displayedSeances.length} séance{displayedSeances.length !== 1 ? "s" : ""})
+                </h2>
+                <p className="text-xs text-slate-400 dark:text-[#687585]">
+                  Filières différenciées (MPI, SML, MIASS) · Du Lundi au Dimanche
+                </p>
               </div>
-
-              <h2 className="font-serif text-2xl sm:text-3xl font-extrabold text-[#0f2744] dark:text-[#F5F7FA] tracking-tight uppercase">
-                HALIL ACADÉMIE SCIENTIFIQUE
-              </h2>
-              <h3 className="font-sans text-base sm:text-lg font-bold text-slate-800 dark:text-slate-200 mt-1 uppercase tracking-wide">
-                EMPLOI DU TEMPS LICENCE {userNiveau === "L2" ? "2" : "1"} (COURS EN LIGNE)
-              </h3>
-              <p className="text-xs text-slate-500 dark:text-[#AAB4C0] mt-0.5">
-                Filières différenciées : MPI · SML · MIASS
-              </p>
             </div>
 
-            {/* TABLEAU : JOURS | HORAIRES | MATIÈRE | FILIÈRE | ENSEIGNANT | LIEN MEET */}
-            <div className="p-5 sm:p-7">
+            <div className="p-4 sm:p-5">
               {displayedSeances.length === 0 ? (
                 <div className="py-12 text-center space-y-3 bg-slate-50/50 dark:bg-[#151D27]/30 rounded-2xl border border-dashed border-slate-200 dark:border-[#263241]">
                   <Calendar className="w-10 h-10 text-slate-300 dark:text-[#687585] mx-auto" />
@@ -290,19 +275,19 @@ export default function EtudiantEDTPage() {
                   </p>
                 </div>
               ) : (
-                <div className="overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-[#263241] shadow-xs">
-                  <table className="w-full text-left border-collapse">
+                <div className="overflow-x-auto rounded-xl border border-slate-200/90 dark:border-[#263241] shadow-xs">
+                  <table className="w-full text-left border-collapse text-xs">
                     <thead>
-                      <tr className="bg-[#0f2744] text-white dark:bg-[#151D27] text-xs uppercase tracking-wider font-extrabold divide-x divide-white/10 dark:divide-[#263241]">
-                        <th className="py-3.5 px-4 text-center w-32">JOURS</th>
-                        <th className="py-3.5 px-4 text-center w-40">HORAIRES</th>
-                        <th className="py-3.5 px-5">MATIÈRE</th>
-                        <th className="py-3.5 px-4 text-center w-36">FILIÈRE</th>
-                        <th className="py-3.5 px-5">ENSEIGNANT</th>
-                        <th className="py-3.5 px-4 text-center w-36">ACCÈS EN LIGNE</th>
+                      <tr className="bg-[#0f2744] text-white dark:bg-[#151D27] uppercase tracking-wider font-extrabold divide-x divide-white/10 dark:divide-[#263241]">
+                        <th className="py-3 px-4 text-center w-28">JOUR</th>
+                        <th className="py-3 px-4 text-center w-36">HORAIRES</th>
+                        <th className="py-3 px-5">MATIÈRE</th>
+                        <th className="py-3 px-4 text-center w-36">FILIÈRE</th>
+                        <th className="py-3 px-5">ENSEIGNANT</th>
+                        <th className="py-3 px-4 text-center w-36">ACCÈS EN LIGNE</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-[#263241] text-xs">
+                    <tbody className="divide-y divide-slate-100 dark:divide-[#263241]">
                       {displayedSeances.map((s, idx) => {
                         const isEven = idx % 2 === 0;
                         const fBadge = getFiliereBadgeInfo(s.filieres);
@@ -311,25 +296,23 @@ export default function EtudiantEDTPage() {
                           <tr
                             key={s.id}
                             className={`transition-colors hover:bg-slate-50/80 dark:hover:bg-[#151D27]/80 ${
-                              isEven ? "bg-white dark:bg-[#111821]" : "bg-slate-50/40 dark:bg-[#151D27]/40"
+                              isEven ? "bg-white dark:bg-[#111821]" : "bg-slate-50/40 dark:bg-[#151D27]/30"
                             }`}
                           >
-                            <td className="py-4 px-4 text-center font-bold text-sm text-[#0f2744] dark:text-[#F5F7FA] whitespace-nowrap">
-                              <span className="inline-block px-3 py-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200/60 dark:border-blue-900/50 text-[#0f2744] dark:text-blue-300 font-extrabold">
+                            <td className="py-3.5 px-4 text-center font-bold text-xs text-[#0f2744] dark:text-[#F5F7FA]">
+                              <span className="inline-block px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/40 border border-blue-200/60 dark:border-blue-900/50 text-[#0f2744] dark:text-blue-300 font-extrabold">
                                 {s.jour}
                               </span>
                             </td>
 
-                            <td className="py-4 px-4 text-center font-bold text-xs text-slate-700 dark:text-[#AAB4C0] whitespace-nowrap">
-                              <div className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-[#151D27] border border-slate-200/60 dark:border-[#263241]">
+                            <td className="py-3.5 px-4 text-center font-bold text-xs text-slate-700 dark:text-[#AAB4C0] whitespace-nowrap">
+                              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-[#151D27] border border-slate-200/60 dark:border-[#263241]">
                                 <Clock className="w-3.5 h-3.5 text-[#e0521c]" />
-                                <span>
-                                  {formatHeureDisplay(s.heure_debut)} – {formatHeureDisplay(s.heure_fin)}
-                                </span>
+                                <span>{formatHeureDisplay(s.heure_debut)} – {formatHeureDisplay(s.heure_fin)}</span>
                               </div>
                             </td>
 
-                            <td className="py-4 px-5 font-bold text-sm text-slate-900 dark:text-[#F5F7FA]">
+                            <td className="py-3.5 px-5 font-bold text-sm text-slate-900 dark:text-[#F5F7FA]">
                               <div className="flex items-center gap-2">
                                 <BookOpen className="w-4 h-4 text-[#0f2744] dark:text-[#e0521c] shrink-0" />
                                 <span>{s.matiere_nom}</span>
@@ -337,7 +320,7 @@ export default function EtudiantEDTPage() {
                             </td>
 
                             {/* FILIÈRE DIFFÉRENCIÉE */}
-                            <td className="py-4 px-4 text-center whitespace-nowrap">
+                            <td className="py-3.5 px-4 text-center whitespace-nowrap">
                               <span className={`inline-block px-2.5 py-1 rounded-lg text-xs font-black border ${fBadge.color} ${
                                 isMyFiliere ? "ring-2 ring-[#e0521c]/40 font-black" : ""
                               }`}>
@@ -345,7 +328,7 @@ export default function EtudiantEDTPage() {
                               </span>
                             </td>
 
-                            <td className="py-4 px-5 font-bold text-xs text-slate-800 dark:text-slate-200">
+                            <td className="py-3.5 px-5 font-bold text-xs text-slate-800 dark:text-slate-200">
                               <div className="flex items-center gap-2">
                                 <div className="w-6 h-6 rounded-full bg-orange-100 dark:bg-orange-950/50 text-[#e0521c] flex items-center justify-center font-black text-[10px] shrink-0">
                                   {(s.professeur_nom || "H")[0]}
@@ -354,7 +337,7 @@ export default function EtudiantEDTPage() {
                               </div>
                             </td>
 
-                            <td className="py-4 px-4 text-center">
+                            <td className="py-3.5 px-4 text-center">
                               {s.meet_url ? (
                                 <div className="flex items-center justify-center gap-1.5">
                                   <a
@@ -371,7 +354,7 @@ export default function EtudiantEDTPage() {
                                     type="button"
                                     onClick={() => handleCopyMeet(s.meet_url!)}
                                     title="Copier le lien Meet"
-                                    className="p-1.5 rounded-lg border border-slate-200 dark:border-[#263241] hover:bg-slate-100 dark:hover:bg-[#151D27] text-slate-500 dark:text-[#AAB4C0] cursor-pointer"
+                                    className="p-1.5 rounded-lg border border-slate-200 dark:border-[#263241] hover:bg-slate-100 dark:hover:bg-[#151D27] text-slate-500 cursor-pointer"
                                   >
                                     {copiedLink === s.meet_url ? (
                                       <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
@@ -392,31 +375,10 @@ export default function EtudiantEDTPage() {
                 </div>
               )}
             </div>
-
-            {/* PIED DE PAGE */}
-            <div className="p-6 text-center bg-slate-50/60 dark:bg-[#151D27]/40 border-t border-slate-200/80 dark:border-[#263241] space-y-2">
-              <div className="w-9 h-9 rounded-xl bg-white dark:bg-[#111821] border border-slate-200 dark:border-[#263241] shadow-xs flex items-center justify-center mx-auto text-[#0f2744] dark:text-[#e0521c]">
-                <Monitor className="w-5 h-5" />
-              </div>
-              <p className="font-sans text-xs sm:text-sm font-extrabold text-[#0f2744] dark:text-[#F5F7FA] tracking-wide uppercase">
-                TOUS LES COURS ET EMPLOIS DU TEMPS SONT PARTAGÉS DANS LA PLATEFORME HAS
-              </p>
-              <p className="text-xs text-slate-500 dark:text-[#AAB4C0] font-medium flex items-center justify-center gap-1.5">
-                <span>🌐 Site Web :</span>
-                <a
-                  href="https://has-academie.online"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-bold text-[#e0521c] hover:underline"
-                >
-                  has-académie.online
-                </a>
-              </p>
-            </div>
           </div>
         )}
 
-        {/* ── MODE 2 : VUE GRILLE SEMAINE ─────────────────────────── */}
+        {/* ── 2. FORMAT GRILLE HEBDOMADAIRE ────────────────────────── */}
         {viewMode === "grille" && (
           <div>
             {timeSlots.length === 0 ? (
