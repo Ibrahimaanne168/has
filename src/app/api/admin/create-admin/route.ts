@@ -8,12 +8,14 @@ const DEFAULT_ADMINS = [
     password: "Admin123!",
     username: "ibou",
     full_name: "El Hadji",
+    matricule: "ADM002",
   },
   {
     email: "halil@has-academie.online",
     password: "Admin123!",
     username: "halil",
     full_name: "Administration HAS",
+    matricule: "ADM001",
   },
 ];
 
@@ -70,6 +72,7 @@ export async function GET(request: NextRequest) {
             ...existing.user_metadata,
             full_name: adminInfo.full_name,
             username: adminInfo.username,
+            matricule: adminInfo.matricule,
             role: "admin",
             is_active: true,
           },
@@ -81,6 +84,7 @@ export async function GET(request: NextRequest) {
             email: adminInfo.email,
             username: adminInfo.username,
             full_name: adminInfo.full_name,
+            matricule: adminInfo.matricule,
             role: "admin",
             is_active: true,
             updated_at: new Date().toISOString(),
@@ -96,6 +100,7 @@ export async function GET(request: NextRequest) {
           user_metadata: {
             full_name: adminInfo.full_name,
             username: adminInfo.username,
+            matricule: adminInfo.matricule,
             role: "admin",
             is_active: true,
           },
@@ -110,6 +115,7 @@ export async function GET(request: NextRequest) {
               email: adminInfo.email,
               username: adminInfo.username,
               full_name: adminInfo.full_name,
+              matricule: adminInfo.matricule,
               role: "admin",
               is_active: true,
               created_at: new Date().toISOString(),

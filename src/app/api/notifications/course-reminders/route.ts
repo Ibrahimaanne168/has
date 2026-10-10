@@ -43,11 +43,29 @@ export async function handleReminderNotification(params: {
   const currentMinutesUTC = now.getUTCHours() * 60 + now.getUTCMinutes();
   const currentClock = `${String(now.getUTCHours()).padStart(2, "0")}:${String(now.getUTCMinutes()).padStart(2, "0")}`;
 
-  // Répertoire des séances (priorité aux séances passées en payload ou aux séances officielles)
+  // Répertoire des séances (priorité aux séances passées en payload ou aux séances enregistrées dans Supabase)
   let allSeances: SeanceEDT[] =
     params.seances && params.seances.length > 0
       ? params.seances
-      : DEFAULT_SEANCES_EDT;
+      : [];
+
+  if (allSeances.length === 0) {
+    try {
+      const supabaseAdmin = createAdminClient();
+      const { data: syncData } = await supabaseAdmin
+        .from("audit_logs")
+        .select("details")
+        .eq("action", "EDT_SEANCES_SYNC")
+        .order("created_at", { ascending: false })
+        .limit(1);
+      if (syncData && syncData.length > 0 && Array.isArray(syncData[0].details?.seances) && syncData[0].details.seances.length > 0) {
+        allSeances = syncData[0].details.seances;
+      }
+    } catch {}
+    if (allSeances.length === 0) {
+      allSeances = DEFAULT_SEANCES_EDT;
+    }
+  }
 
   let targetSeances: SeanceEDT[] = [];
   const isAuto40Min = params.mode === "auto_40min" || (!params.seanceId && !params.jour);

@@ -928,7 +928,7 @@ export function resetDefaultSeancesEDT(): SeanceEDT[] {
   return DEFAULT_SEANCES_EDT;
 }
 
-export function saveSeanceEDT(seance: SeanceEDT): void {
+export function saveSeanceEDT(seance: SeanceEDT, adminEmail?: string): void {
   unmarkSeanceAsDeleted(seance.id);
 
   let cleanMeet = seance.meet_url ? seance.meet_url.trim() : null;
@@ -945,11 +945,72 @@ export function saveSeanceEDT(seance: SeanceEDT): void {
     list.push(cleanSeance);
   }
   setStorageItem(STORAGE_KEYS.SEANCES_EDT, list);
+  pushSeancesToServer(list, adminEmail);
 }
 
-export function deleteSeanceEDT(id: string): void {
+export function deleteSeanceEDT(id: string, adminEmail?: string): void {
   markSeanceAsDeleted(id);
   const list = getStoredSeancesEDT().filter((s) => s.id !== id);
   setStorageItem(STORAGE_KEYS.SEANCES_EDT, list);
+  pushSeancesToServer(list, adminEmail);
+}
+
+/**
+ * Envoie la liste des séances au serveur Supabase pour partage instantané avec tous les comptes
+ */
+export async function pushSeancesToServer(seances: SeanceEDT[], adminEmail?: string): Promise<void> {
+  if (typeof window === "undefined") return;
+  try {
+    await fetch("/api/academic/seances", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ seances, adminEmail: adminEmail || "direction@halil-academie.com" }),
+    });
+  } catch {}
+}
+
+/**
+ * Récupère les séances enregistrées sur le serveur Supabase et fusionne les liens Meet
+ * dans le stockage local pour que tous les étudiants et autres comptes voient les mises à jour.
+ */
+export async function syncSeancesWithServer(): Promise<SeanceEDT[]> {
+  if (typeof window === "undefined") return DEFAULT_SEANCES_EDT;
+  try {
+    const res = await fetch("/api/academic/seances", { cache: "no-store" });
+    if (!res.ok) return getStoredSeancesEDT();
+    const data = await res.json();
+    if (data.success && Array.isArray(data.seances) && data.seances.length > 0) {
+      const local = getStoredSeancesEDT();
+      const deletedSet = new Set(getDeletedSeanceIds());
+      const map = new Map<string, SeanceEDT>();
+
+      // Initialiser avec local
+      local.forEach((s) => {
+        if (!deletedSet.has(s.id)) map.set(s.id, s);
+      });
+
+      // Mettre à jour avec les données serveur distantes
+      data.seances.forEach((serverSeance: SeanceEDT) => {
+        if (!deletedSet.has(serverSeance.id)) {
+          const existing = map.get(serverSeance.id);
+          if (existing) {
+            map.set(serverSeance.id, {
+              ...existing,
+              ...serverSeance,
+              meet_url: serverSeance.meet_url !== undefined ? serverSeance.meet_url : existing.meet_url,
+            });
+          } else {
+            map.set(serverSeance.id, serverSeance);
+          }
+        }
+      });
+
+      const merged = Array.from(map.values());
+      setStorageItem(STORAGE_KEYS.SEANCES_EDT, merged);
+      window.dispatchEvent(new CustomEvent("has_academic_storage_updated"));
+      return merged;
+    }
+  } catch {}
+  return getStoredSeancesEDT();
 }
 

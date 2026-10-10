@@ -107,6 +107,7 @@ export function DashboardLayout({
       try {
         localStorage.removeItem("has_current_student_profile_v2");
         localStorage.removeItem("has_current_professeur_profile_v2");
+        localStorage.removeItem("has_active_admin_session");
         sessionStorage.clear();
       } catch {
         // ignore
@@ -114,6 +115,68 @@ export function DashboardLayout({
     }
     router.push("/connexion");
   };
+
+  // Détection dynamique de l'administrateur connecté pour afficher son vrai profil (ex. El Hadji / ADM002)
+  const [currentAdminInfo, setCurrentAdminInfo] = useState<{
+    name: string;
+    matricule: string;
+    email: string;
+  } | null>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem("has_active_admin_session");
+        if (cached) return JSON.parse(cached);
+      } catch {}
+    }
+    return null;
+  });
+
+  React.useEffect(() => {
+    if (role === "admin") {
+      async function detectAdmin() {
+        try {
+          const { createClient } = await import("@/lib/supabase/client");
+          const supabase = createClient();
+          const { data: { user: authUser } } = await supabase.auth.getUser();
+          if (authUser) {
+            const meta = authUser.user_metadata || {};
+            let name = meta.full_name || meta.name;
+            let username = meta.username || authUser.email?.split("@")[0] || "";
+            let mat = meta.matricule;
+
+            try {
+              const { data: p } = await supabase
+                .from("profiles")
+                .select("*")
+                .eq("id", authUser.id)
+                .maybeSingle();
+              if (p) {
+                if (p.full_name) name = p.full_name;
+                if (p.username) username = p.username;
+                if (p.matricule) mat = p.matricule;
+              }
+            } catch {}
+
+            const isIbou = username.toLowerCase() === "ibou" || authUser.email?.toLowerCase().includes("ibou");
+            const finalName = isIbou ? (name || "El Hadji") : (name || "Administrateur HAS");
+            const finalMatricule = isIbou ? (mat || "ADM002") : (mat || "ADM001");
+            const finalEmail = authUser.email || userEmail;
+
+            const detected = {
+              name: finalName,
+              matricule: finalMatricule,
+              email: finalEmail,
+            };
+            setCurrentAdminInfo(detected);
+            if (typeof window !== "undefined") {
+              localStorage.setItem("has_active_admin_session", JSON.stringify(detected));
+            }
+          }
+        } catch {}
+      }
+      detectAdmin();
+    }
+  }, [role, userEmail]);
 
   const getRoleBadge = () => {
     switch (role) {
@@ -127,13 +190,23 @@ export function DashboardLayout({
   };
 
   const displayUserName =
-    role === "etudiant" && userName.toLowerCase().includes("administration")
+    role === "admin" && currentAdminInfo
+      ? currentAdminInfo.name
+      : role === "etudiant" && userName.toLowerCase().includes("administration")
       ? "Ibrahima Anne"
       : userName;
+
   const displayMatricule =
-    role === "etudiant" && (matriculeOrTitle === "ADM001" || !matriculeOrTitle)
+    role === "admin" && currentAdminInfo
+      ? currentAdminInfo.matricule
+      : role === "etudiant" && (matriculeOrTitle === "ADM001" || !matriculeOrTitle)
       ? "ETU001"
       : matriculeOrTitle;
+
+  const displayEmail =
+    role === "admin" && currentAdminInfo
+      ? currentAdminInfo.email
+      : userEmail;
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0B0F14] text-slate-900 dark:text-[#F5F7FA] flex flex-col transition-colors duration-200">
@@ -175,7 +248,7 @@ export function DashboardLayout({
 
               <div className="hidden sm:flex flex-col text-right">
                 <span className="text-xs font-semibold text-slate-800 dark:text-[#F5F7FA]">{displayUserName}</span>
-                <span className="text-[11px] text-slate-400 dark:text-[#AAB4C0]">{displayMatricule || userEmail}</span>
+                <span className="text-[11px] text-slate-400 dark:text-[#AAB4C0]">{displayMatricule || displayEmail}</span>
               </div>
 
               {getRoleBadge()}

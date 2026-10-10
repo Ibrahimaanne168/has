@@ -13,6 +13,7 @@ import { SeanceEDT, JourSemaine, Professeur, Matiere } from "@/lib/types";
 import {
   getStoredSeancesEDT, saveSeanceEDT, deleteSeanceEDT,
   getStoredProfesseurs, getStoredMatieres, resetDefaultSeancesEDT,
+  syncSeancesWithServer,
 } from "@/lib/academicStorage";
 import { recordAuditLog } from "@/lib/auditLogger";
 
@@ -338,6 +339,7 @@ export default function AdminEDTPage() {
 
   useEffect(() => {
     reloadData();
+    syncSeancesWithServer().then(() => reloadData()).catch(() => {});
     setSlotsMap({
       L1: loadPromoSlots("L1"),
       L2: loadPromoSlots("L2"),

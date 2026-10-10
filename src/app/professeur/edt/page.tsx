@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { useCurrentProfesseur } from "@/lib/useCurrentProfesseur";
-import { getStoredSeancesEDT } from "@/lib/academicStorage";
+import { getStoredSeancesEDT, syncSeancesWithServer } from "@/lib/academicStorage";
 import { SeanceEDT, JourSemaine } from "@/lib/types";
 
 const JOURS: JourSemaine[] = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
@@ -65,6 +65,7 @@ export default function ProfesseurEDTPage() {
 
   useEffect(() => {
     reload();
+    syncSeancesWithServer().then(() => reload()).catch(() => {});
     window.addEventListener("has_academic_storage_updated", reload);
     return () => window.removeEventListener("has_academic_storage_updated", reload);
   }, []);

@@ -9,14 +9,17 @@ import {
   CheckCircle2,
   Download,
   Calendar,
-  Layers,
   Table as TableIcon,
   BookOpen,
   Filter,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { useCurrentUser } from "@/lib/useCurrentUser";
-import { getStoredSeancesEDT, getStoredEDTs } from "@/lib/academicStorage";
+import {
+  getStoredSeancesEDT,
+  getStoredEDTs,
+  syncSeancesWithServer,
+} from "@/lib/academicStorage";
 import { SeanceEDT, JourSemaine, EmploiDuTemps } from "@/lib/types";
 import { downloadOrOpenDocument } from "@/lib/fileDownload";
 
@@ -69,13 +72,12 @@ export default function EtudiantEDTPage() {
   const [seances, setSeances] = useState<SeanceEDT[]>([]);
   const [edts, setEdts] = useState<EmploiDuTemps[]>([]);
   const [copiedLink, setCopiedLink] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<"tableau" | "grille">("tableau");
 
-  // Niveau et filière de l'étudiant
+  // Niveau et filière de l'étudiant (strictement cloisonné : L1 ne voit que L1, L2 que L2)
   const userNiveau = (user.classe?.niveau || "L1") as "L1" | "L2";
   const userFiliere = (user.filiere?.code || "MIASS") as "MPI" | "SML" | "MIASS";
 
-  // Filtre d'affichage : "MINE" (ses cours), "ALL" (tous les cours L1/L2), ou par filière
+  // Filtre d'affichage : "MINE" (ses cours), "ALL" (tous les cours de sa promotion), ou par filière
   const [filterMode, setFilterMode] = useState<string>("MINE");
 
   const reload = () => {
@@ -85,16 +87,18 @@ export default function EtudiantEDTPage() {
 
   useEffect(() => {
     reload();
+    // Synchroniser avec la base Supabase pour obtenir immédiatement les liens Google Meet enregistrés par l'admin
+    syncSeancesWithServer().then(() => reload()).catch(() => {});
     window.addEventListener("has_academic_storage_updated", reload);
     return () => window.removeEventListener("has_academic_storage_updated", reload);
   }, []);
 
-  // Séances de la promotion de l'étudiant (L1 ou L2)
+  // Séances strictement réservées à la promotion de l'étudiant (L1 ou L2)
   const promoSeances = useMemo(() => {
     return seances.filter((s) => (s.niveau || "L1") === userNiveau);
   }, [seances, userNiveau]);
 
-  // Séances affichées selon le filtre
+  // Séances affichées selon le filtre choisi
   const displayedSeances = useMemo(() => {
     let list = promoSeances;
     if (filterMode === "MINE") {
@@ -116,20 +120,6 @@ export default function EtudiantEDTPage() {
     });
   }, [promoSeances, filterMode, userFiliere]);
 
-  // Créneaux horaires uniques
-  const timeSlots = useMemo(() => {
-    return Array.from(
-      new Set(displayedSeances.map((s) => `${s.heure_debut}–${s.heure_fin}`))
-    ).sort((a, b) => {
-      const startA = a.split(/[–-]/)[0]?.trim() || "";
-      const startB = b.split(/[–-]/)[0]?.trim() || "";
-      if (startA !== startB) return startA.localeCompare(startB);
-      const endA = a.split(/[–-]/)[1]?.trim() || "";
-      const endB = b.split(/[–-]/)[1]?.trim() || "";
-      return endA.localeCompare(endB);
-    });
-  }, [displayedSeances]);
-
   const handleCopyMeet = (url: string) => {
     navigator?.clipboard?.writeText(url);
     setCopiedLink(url);
@@ -146,7 +136,7 @@ export default function EtudiantEDTPage() {
       matriculeOrTitle={user.matricule || "ETU001"}
     >
       <div className="space-y-6">
-        {/* En-tête */}
+        {/* En-tête officiel */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
@@ -164,34 +154,6 @@ export default function EtudiantEDTPage() {
           </div>
 
           <div className="flex items-center gap-2.5">
-            {/* Bascule Tableau vs Grille */}
-            <div className="flex p-1 bg-slate-100 dark:bg-[#151D27] rounded-xl border border-slate-200 dark:border-[#263241]">
-              <button
-                type="button"
-                onClick={() => setViewMode("tableau")}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  viewMode === "tableau"
-                    ? "bg-white dark:bg-[#0f2744] text-[#0f2744] dark:text-[#F5F7FA] shadow-xs"
-                    : "text-slate-500 dark:text-[#AAB4C0] hover:text-slate-800"
-                }`}
-              >
-                <TableIcon className="w-3.5 h-3.5 text-[#e0521c]" />
-                Format Tableau
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode("grille")}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                  viewMode === "grille"
-                    ? "bg-white dark:bg-[#0f2744] text-[#0f2744] dark:text-[#F5F7FA] shadow-xs"
-                    : "text-slate-500 dark:text-[#AAB4C0] hover:text-slate-800"
-                }`}
-              >
-                <Layers className="w-3.5 h-3.5 text-blue-500" />
-                Grille Semaine
-              </button>
-            </div>
-
             {currentEDT && (
               <button
                 type="button"
@@ -255,335 +217,219 @@ export default function EtudiantEDTPage() {
           </div>
         </div>
 
-        {/* ── 1. SOUS FORME DE TABLEAU POUR LES ÉTUDIANTS SELON LA CLASSE ── */}
-        {viewMode === "tableau" && (
-          <div className="bg-white dark:bg-[#111821] rounded-2xl border border-slate-200/90 dark:border-[#263241] shadow-xs overflow-hidden">
-            <div className="p-4 border-b border-slate-100 dark:border-[#263241] flex items-center justify-between">
-              <div>
-                <h2 className="font-serif text-base font-bold text-[#0f2744] dark:text-[#F5F7FA] flex items-center gap-2">
-                  <TableIcon className="w-4 h-4 text-[#e0521c]" />
-                  Emploi du Temps Licence {userNiveau === "L2" ? "2" : "1"} ({displayedSeances.length} séance{displayedSeances.length !== 1 ? "s" : ""})
-                </h2>
+        {/* ── EMPLOI DU TEMPS ÉTUDIANT (TABLEAU SUR PC, CARRÉS PLEINS SUR MOBILE) ── */}
+        <div className="bg-white dark:bg-[#111821] rounded-2xl border border-slate-200/90 dark:border-[#263241] shadow-xs overflow-hidden">
+          <div className="p-4 border-b border-slate-100 dark:border-[#263241] flex items-center justify-between">
+            <div>
+              <h2 className="font-serif text-base font-bold text-[#0f2744] dark:text-[#F5F7FA] flex items-center gap-2">
+                <TableIcon className="w-4 h-4 text-[#e0521c]" />
+                Emploi du Temps Licence {userNiveau === "L2" ? "2" : "1"} ({displayedSeances.length} séance{displayedSeances.length !== 1 ? "s" : ""})
+              </h2>
+              <p className="text-xs text-slate-400 dark:text-[#687585]">
+                Du Lundi au Dimanche · Liens Google Meet synchronisés en temps réel
+              </p>
+            </div>
+          </div>
+
+          <div className="p-4 sm:p-5">
+            {displayedSeances.length === 0 ? (
+              <div className="py-12 text-center space-y-3 bg-slate-50/50 dark:bg-[#151D27]/30 rounded-2xl border border-dashed border-slate-200 dark:border-[#263241]">
+                <Calendar className="w-10 h-10 text-slate-300 dark:text-[#687585] mx-auto" />
+                <p className="text-sm font-bold text-slate-600 dark:text-[#AAB4C0]">
+                  Aucun cours programmé pour ce filtre
+                </p>
                 <p className="text-xs text-slate-400 dark:text-[#687585]">
-                  Filières différenciées (MPI, SML, MIASS) · Du Lundi au Dimanche
+                  Sélectionnez « Tous les cours L{userNiveau === "L2" ? "2" : "1"} » ou vérifiez ultérieurement.
                 </p>
               </div>
-            </div>
-
-            <div className="p-4 sm:p-5">
-              {displayedSeances.length === 0 ? (
-                <div className="py-12 text-center space-y-3 bg-slate-50/50 dark:bg-[#151D27]/30 rounded-2xl border border-dashed border-slate-200 dark:border-[#263241]">
-                  <Calendar className="w-10 h-10 text-slate-300 dark:text-[#687585] mx-auto" />
-                  <p className="text-sm font-bold text-slate-600 dark:text-[#AAB4C0]">
-                    Aucun cours programmé pour ce filtre
-                  </p>
-                  <p className="text-xs text-slate-400 dark:text-[#687585]">
-                    Sélectionnez « Tous les cours » ou vérifiez ultérieurement.
-                  </p>
-                </div>
-              ) : (
-                <>
-                  {/* ── VERSION MOBILE : CARRÉS PLEINS BIEN LISIBLES ET PROFESSIONNELS ── */}
-                  <div className="md:hidden grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                    {displayedSeances.map((s) => {
-                      const fBadge = getFiliereBadgeInfo(s.filieres);
-                      const isMyFiliere = s.filieres?.includes(userFiliere);
-                      return (
-                        <div
-                          key={`mobile-${s.id}`}
-                          className="bg-white dark:bg-[#151D27] rounded-2xl border-2 border-slate-200/90 dark:border-[#263241] p-4 shadow-sm flex flex-col justify-between transition-all"
-                        >
-                          {/* En-tête plein : Jour & Horaires */}
-                          <div className="flex items-center justify-between gap-2 pb-3 border-b border-slate-100 dark:border-[#263241]">
-                            <span className="px-3 py-1 rounded-xl bg-[#0f2744] text-white dark:bg-[#1e293b] font-black text-xs uppercase tracking-wider">
-                              {s.jour}
-                            </span>
-                            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-orange-50 dark:bg-orange-950/40 text-[#e0521c] dark:text-orange-300 font-extrabold text-xs border border-orange-200/60 dark:border-orange-800/40">
-                              <Clock className="w-3.5 h-3.5" />
-                              <span>{formatHeureDisplay(s.heure_debut)} – {formatHeureDisplay(s.heure_fin)}</span>
-                            </div>
-                          </div>
-
-                          {/* Corps central du carré : Matière, Filière et Professeur */}
-                          <div className="py-3.5 space-y-2">
-                            <div className="flex items-start gap-2">
-                              <BookOpen className="w-4 h-4 text-[#0f2744] dark:text-[#e0521c] shrink-0 mt-0.5" />
-                              <h3 className="font-serif text-base font-extrabold text-slate-900 dark:text-[#F5F7FA] leading-tight">
-                                {s.matiere_nom}
-                              </h3>
-                            </div>
-
-                            <div className="flex items-center gap-2 pt-0.5">
-                              <span className="text-[11px] font-bold text-slate-400 dark:text-[#687585]">Filière :</span>
-                              <span
-                                className={`inline-block px-2.5 py-0.5 rounded-lg text-xs font-black border ${fBadge.color} ${
-                                  isMyFiliere ? "ring-2 ring-[#e0521c]/40 font-black" : ""
-                                }`}
-                              >
-                                {fBadge.label}
-                              </span>
-                            </div>
-
-                            <div className="flex items-center gap-2 pt-1 text-xs text-slate-700 dark:text-slate-300">
-                              <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-800 text-[#0f2744] dark:text-[#F5F7FA] flex items-center justify-center font-black text-[10px] shrink-0 border border-slate-200 dark:border-slate-700">
-                                {(s.professeur_nom || "H")[0]}
-                              </div>
-                              <span className="font-bold">{s.professeur_nom || "Mister Halil"}</span>
-                            </div>
-                          </div>
-
-                          {/* Pied du carré : Accès en ligne (Google Meet) */}
-                          <div className="pt-3 border-t border-slate-100 dark:border-[#263241]">
-                            {s.meet_url ? (
-                              <div className="flex items-center gap-2">
-                                <a
-                                  href={s.meet_url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition-colors"
-                                >
-                                  <Video className="w-3.5 h-3.5" />
-                                  <span>Rejoindre</span>
-                                  <ExternalLink className="w-3 h-3 ml-0.5" />
-                                </a>
-                                <button
-                                  type="button"
-                                  onClick={() => handleCopyMeet(s.meet_url!)}
-                                  title="Copier le lien Meet"
-                                  className="p-2 rounded-xl border border-slate-200 dark:border-[#263241] bg-slate-50 dark:bg-[#111821] hover:bg-slate-100 dark:hover:bg-[#151D27] text-slate-600 dark:text-slate-300 cursor-pointer"
-                                >
-                                  {copiedLink === s.meet_url ? (
-                                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                                  ) : (
-                                    <Copy className="w-4 h-4" />
-                                  )}
-                                </button>
-                              </div>
-                            ) : (
-                              <div className="text-center py-1.5 px-3 rounded-xl bg-slate-50 dark:bg-[#111821] border border-slate-100 dark:border-[#263241]">
-                                <span className="text-xs text-slate-400 italic">Lien non défini</span>
-                              </div>
-                            )}
+            ) : (
+              <>
+                {/* ── 1. VERSION MOBILE : CARRÉS PLEINS BIEN LISIBLES ET PROFESSIONNELS ── */}
+                <div className="md:hidden grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                  {displayedSeances.map((s) => {
+                    const fBadge = getFiliereBadgeInfo(s.filieres);
+                    const isMyFiliere = s.filieres?.includes(userFiliere);
+                    return (
+                      <div
+                        key={`mobile-${s.id}`}
+                        className="bg-white dark:bg-[#151D27] rounded-2xl border-2 border-slate-200/90 dark:border-[#263241] p-4 shadow-sm flex flex-col justify-between transition-all"
+                      >
+                        {/* En-tête plein : Jour & Horaires */}
+                        <div className="flex items-center justify-between gap-2 pb-3 border-b border-slate-100 dark:border-[#263241]">
+                          <span className="px-3 py-1 rounded-xl bg-[#0f2744] text-white dark:bg-[#1e293b] font-black text-xs uppercase tracking-wider">
+                            {s.jour}
+                          </span>
+                          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-orange-50 dark:bg-orange-950/40 border border-orange-200/60 dark:border-orange-800/40 text-[#e0521c] font-black text-xs">
+                            <Clock className="w-3 h-3 text-[#e0521c]" />
+                            <span>{formatHeureDisplay(s.heure_debut)} – {formatHeureDisplay(s.heure_fin)}</span>
                           </div>
                         </div>
-                      );
-                    })}
-                  </div>
 
-                  {/* ── VERSION TABLEAU POUR ÉCRANS MOYENS ET GRANDS (TABLETTE / DESKTOP) ── */}
-                  <div className="hidden md:block overflow-x-auto rounded-xl border border-slate-200/90 dark:border-[#263241] shadow-xs">
-                    <table className="w-full text-left border-collapse text-xs">
-                      <thead>
-                        <tr className="bg-[#0f2744] text-white dark:bg-[#151D27] uppercase tracking-wider font-extrabold divide-x divide-white/10 dark:divide-[#263241]">
-                          <th className="py-3 px-4 text-center w-28">JOUR</th>
-                          <th className="py-3 px-4 text-center w-36">HORAIRES</th>
-                          <th className="py-3 px-5">MATIÈRE</th>
-                          <th className="py-3 px-4 text-center w-36">FILIÈRE</th>
-                          <th className="py-3 px-5">ENSEIGNANT</th>
-                          <th className="py-3 px-4 text-center w-36">ACCÈS EN LIGNE</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-100 dark:divide-[#263241]">
-                        {displayedSeances.map((s, idx) => {
-                          const isEven = idx % 2 === 0;
-                          const fBadge = getFiliereBadgeInfo(s.filieres);
-                          const isMyFiliere = s.filieres?.includes(userFiliere);
-                          return (
-                            <tr
-                              key={s.id}
-                              className={`transition-colors hover:bg-slate-50/80 dark:hover:bg-[#151D27]/80 ${
-                                isEven ? "bg-white dark:bg-[#111821]" : "bg-slate-50/40 dark:bg-[#151D27]/30"
-                              }`}
-                            >
-                              <td className="py-3.5 px-4 text-center font-bold text-xs text-[#0f2744] dark:text-[#F5F7FA]">
-                                <span className="inline-block px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/40 border border-blue-200/60 dark:border-blue-900/50 text-[#0f2744] dark:text-blue-300 font-extrabold">
-                                  {s.jour}
-                                </span>
-                              </td>
+                        {/* Contenu principal */}
+                        <div className="py-3 space-y-2">
+                          <h3 className="font-bold text-sm text-[#0f2744] dark:text-[#F5F7FA] leading-tight">
+                            {s.matiere_nom}
+                          </h3>
 
-                              <td className="py-3.5 px-4 text-center font-bold text-xs text-slate-700 dark:text-[#AAB4C0] whitespace-nowrap">
-                                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-[#151D27] border border-slate-200/60 dark:border-[#263241]">
-                                  <Clock className="w-3.5 h-3.5 text-[#e0521c]" />
-                                  <span>{formatHeureDisplay(s.heure_debut)} – {formatHeureDisplay(s.heure_fin)}</span>
-                                </div>
-                              </td>
-
-                              <td className="py-3.5 px-5 font-bold text-sm text-slate-900 dark:text-[#F5F7FA]">
-                                <div className="flex items-center gap-2">
-                                  <BookOpen className="w-4 h-4 text-[#0f2744] dark:text-[#e0521c] shrink-0" />
-                                  <span>{s.matiere_nom}</span>
-                                </div>
-                              </td>
-
-                              {/* FILIÈRE DIFFÉRENCIÉE */}
-                              <td className="py-3.5 px-4 text-center whitespace-nowrap">
-                                <span className={`inline-block px-2.5 py-1 rounded-lg text-xs font-black border ${fBadge.color} ${
-                                  isMyFiliere ? "ring-2 ring-[#e0521c]/40 font-black" : ""
-                                }`}>
-                                  {fBadge.label}
-                                </span>
-                              </td>
-
-                              <td className="py-3.5 px-5 font-bold text-xs text-slate-800 dark:text-slate-200">
-                                <div className="flex items-center gap-2">
-                                  <div className="w-6 h-6 rounded-full bg-orange-100 dark:bg-orange-950/50 text-[#e0521c] flex items-center justify-center font-black text-[10px] shrink-0">
-                                    {(s.professeur_nom || "H")[0]}
-                                  </div>
-                                  <span>{s.professeur_nom || "Mister Halil"}</span>
-                                </div>
-                              </td>
-
-                              <td className="py-3.5 px-4 text-center">
-                                {s.meet_url ? (
-                                  <div className="flex items-center justify-center gap-1.5">
-                                    <a
-                                      href={s.meet_url}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold shadow-xs transition-colors"
-                                    >
-                                      <Video className="w-3.5 h-3.5" />
-                                      Rejoindre
-                                      <ExternalLink className="w-2.5 h-2.5" />
-                                    </a>
-                                    <button
-                                      type="button"
-                                      onClick={() => handleCopyMeet(s.meet_url!)}
-                                      title="Copier le lien Meet"
-                                      className="p-1.5 rounded-lg border border-slate-200 dark:border-[#263241] hover:bg-slate-100 dark:hover:bg-[#151D27] text-slate-500 cursor-pointer"
-                                    >
-                                      {copiedLink === s.meet_url ? (
-                                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                                      ) : (
-                                        <Copy className="w-3.5 h-3.5" />
-                                      )}
-                                    </button>
-                                  </div>
-                                ) : (
-                                  <span className="text-[11px] text-slate-400 italic">Lien non défini</span>
-                                )}
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* ── 2. FORMAT GRILLE HEBDOMADAIRE ────────────────────────── */}
-        {viewMode === "grille" && (
-          <div>
-            {timeSlots.length === 0 ? (
-              <div className="bg-white dark:bg-[#111821] rounded-2xl border border-slate-200/90 dark:border-[#263241] shadow-sm p-12 text-center">
-                <Calendar className="w-10 h-10 text-slate-200 dark:text-[#263241] mx-auto mb-3" />
-                <p className="text-sm font-semibold text-slate-500 dark:text-[#AAB4C0]">Aucun cours cette semaine</p>
-              </div>
-            ) : (
-              <div className="overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-[#263241] shadow-sm">
-                <table className="w-full min-w-[1100px] bg-white dark:bg-[#111821] text-sm table-fixed border-collapse">
-                  <colgroup>
-                    <col style={{ width: "130px" }} />
-                    <col style={{ width: "calc((100% - 130px) / 7)" }} />
-                    <col style={{ width: "calc((100% - 130px) / 7)" }} />
-                    <col style={{ width: "calc((100% - 130px) / 7)" }} />
-                    <col style={{ width: "calc((100% - 130px) / 7)" }} />
-                    <col style={{ width: "calc((100% - 130px) / 7)" }} />
-                    <col style={{ width: "calc((100% - 130px) / 7)" }} />
-                    <col style={{ width: "calc((100% - 130px) / 7)" }} />
-                  </colgroup>
-                  <thead>
-                    <tr className="bg-[#0f2744] dark:bg-[#151D27] divide-x divide-white/10 dark:divide-[#263241]">
-                      <th className="px-4 py-3 text-left text-xs font-bold text-white/70 dark:text-[#AAB4C0] uppercase tracking-wider" style={{ width: "130px" }}>
-                        Heure
-                      </th>
-                      {JOURS.map((jour) => {
-                        const cnt = displayedSeances.filter((s) => s.jour === jour).length;
-                        return (
-                          <th key={jour} className="px-2 py-3 text-center text-xs font-bold text-white dark:text-[#F5F7FA] uppercase tracking-wider">
-                            <div>{jour}</div>
-                            {cnt > 0 && <div className="text-[10px] font-normal text-white/50 mt-0.5">{cnt} cours</div>}
-                          </th>
-                        );
-                      })}
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-[#263241]">
-                    {timeSlots.map((slot, i) => (
-                      <tr key={slot} className={i % 2 === 0 ? "bg-white dark:bg-[#111821]" : "bg-slate-50/60 dark:bg-[#151D27]/50"}>
-                        <td className="px-4 py-3 border-r border-slate-100 dark:border-[#263241] align-top whitespace-nowrap h-44">
-                          <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-600 dark:text-[#AAB4C0]">
-                            <Clock className="w-3 h-3 text-[#e0521c]" />
-                            {slot}
+                          {/* Filière badge */}
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className={`inline-block px-2.5 py-1 rounded-lg text-[11px] font-black border ${fBadge.color} ${
+                              isMyFiliere ? "ring-2 ring-[#e0521c]/40" : ""
+                            }`}>
+                              {fBadge.label}
+                            </span>
                           </div>
-                        </td>
-                        {JOURS.map((jour) => {
-                          const cells = displayedSeances.filter(
-                            (s) => s.jour === jour && `${s.heure_debut}–${s.heure_fin}` === slot
-                          );
-                          return (
-                            <td key={jour} className="p-2 border-r border-slate-100 dark:border-[#263241] last:border-r-0 align-top h-44">
-                              <div className="h-full min-h-[160px] flex flex-col justify-start">
-                                {cells.length === 0 ? (
-                                  <div className="h-full min-h-[160px] rounded-xl border border-dashed border-slate-200/60 dark:border-[#263241]/60 flex items-center justify-center text-slate-300 dark:text-slate-700 text-xs font-medium">
-                                    —
-                                  </div>
+
+                          {/* Enseignant */}
+                          <div className="flex items-center gap-2 pt-1 text-xs text-slate-600 dark:text-slate-300">
+                            <div className="w-5 h-5 rounded-full bg-slate-100 dark:bg-[#111821] text-[#0f2744] dark:text-white flex items-center justify-center font-bold text-[10px] shrink-0 border border-slate-200 dark:border-slate-700">
+                              {(s.professeur_nom || "H")[0]}
+                            </div>
+                            <span className="font-semibold truncate">{s.professeur_nom || "Mister Halil"}</span>
+                          </div>
+                        </div>
+
+                        {/* Bouton d'accès Google Meet */}
+                        <div className="pt-3 border-t border-slate-100 dark:border-[#263241]">
+                          {s.meet_url ? (
+                            <div className="flex items-center gap-2">
+                              <a
+                                href={s.meet_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex-1 inline-flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-bold text-xs shadow-xs transition-all"
+                              >
+                                <Video className="w-4 h-4" />
+                                <span>Rejoindre Google Meet</span>
+                                <ExternalLink className="w-3 h-3 opacity-70" />
+                              </a>
+                              <button
+                                type="button"
+                                onClick={() => handleCopyMeet(s.meet_url!)}
+                                title="Copier le lien Meet"
+                                className="p-2 rounded-xl border border-slate-200 dark:border-[#263241] bg-slate-50 dark:bg-[#111821] hover:bg-slate-100 dark:hover:bg-[#151D27] text-slate-600 dark:text-slate-300 cursor-pointer"
+                              >
+                                {copiedLink === s.meet_url ? (
+                                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                                 ) : (
-                                  <div className="space-y-1.5 flex-1 flex flex-col">
-                                    {cells.map((s) => {
-                                      const fBadge = getFiliereBadgeInfo(s.filieres);
-                                      return (
-                                        <div key={s.id} className="rounded-xl border border-blue-200/80 dark:border-blue-900/60 bg-blue-50/60 dark:bg-[#151D27] p-2.5 shadow-2xs space-y-1 flex-1 flex flex-col justify-between">
-                                          <div>
-                                            <p className="text-xs font-bold text-slate-900 dark:text-[#F5F7FA] leading-tight">{s.matiere_nom}</p>
-                                            <div className="mt-1">
-                                              <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-black border ${fBadge.color}`}>
-                                                {fBadge.label}
-                                              </span>
-                                            </div>
-                                            <p className="text-[11px] font-semibold text-slate-700 dark:text-slate-300 mt-1">👤 {s.professeur_nom || "Mister Halil"}</p>
-                                          </div>
-                                          {s.meet_url && (
-                                            <div className="flex items-center gap-1 mt-2 pt-1.5 border-t border-current/10">
-                                              <a
-                                                href={s.meet_url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="flex-1 inline-flex items-center justify-center gap-1 py-1 rounded-md text-[10px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition-colors"
-                                              >
-                                                <Video className="w-3 h-3" />
-                                                Rejoindre
-                                              </a>
-                                              <button
-                                                onClick={() => handleCopyMeet(s.meet_url!)}
-                                                className="p-1 text-slate-500 hover:text-slate-800 border border-slate-200 dark:border-[#263241] rounded-md hover:bg-white transition-colors"
-                                              >
-                                                {copiedLink === s.meet_url ? <CheckCircle2 className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
-                                              </button>
-                                            </div>
-                                          )}
-                                        </div>
-                                      );
-                                    })}
-                                  </div>
+                                  <Copy className="w-4 h-4" />
                                 )}
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="text-center py-2 px-3 rounded-xl bg-slate-50 dark:bg-[#111821] border border-slate-100 dark:border-[#263241]">
+                              <span className="text-xs text-slate-400 italic">🎥 Lien bientôt disponible</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* ── 2. VERSION TABLEAU POUR PC & TABLETTE (DESKTOP) ── */}
+                <div className="hidden md:block overflow-x-auto rounded-xl border border-slate-200/90 dark:border-[#263241] shadow-xs">
+                  <table className="w-full text-left border-collapse text-xs">
+                    <thead>
+                      <tr className="bg-[#0f2744] text-white dark:bg-[#151D27] uppercase tracking-wider font-extrabold divide-x divide-white/10 dark:divide-[#263241]">
+                        <th className="py-3 px-4 text-center w-28">JOUR</th>
+                        <th className="py-3 px-4 text-center w-36">HORAIRES</th>
+                        <th className="py-3 px-5">MATIÈRE</th>
+                        <th className="py-3 px-4 text-center w-36">FILIÈRE</th>
+                        <th className="py-3 px-5">ENSEIGNANT</th>
+                        <th className="py-3 px-4 text-center w-44">ACCÈS EN LIGNE</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 dark:divide-[#263241]">
+                      {displayedSeances.map((s, idx) => {
+                        const isEven = idx % 2 === 0;
+                        const fBadge = getFiliereBadgeInfo(s.filieres);
+                        const isMyFiliere = s.filieres?.includes(userFiliere);
+                        return (
+                          <tr
+                            key={s.id}
+                            className={`transition-colors hover:bg-slate-50/80 dark:hover:bg-[#151D27]/80 ${
+                              isEven ? "bg-white dark:bg-[#111821]" : "bg-slate-50/40 dark:bg-[#151D27]/30"
+                            }`}
+                          >
+                            <td className="py-3.5 px-4 text-center font-bold text-xs text-[#0f2744] dark:text-[#F5F7FA]">
+                              <span className="inline-block px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/40 border border-blue-200/60 dark:border-blue-900/50 text-[#0f2744] dark:text-blue-300 font-extrabold">
+                                {s.jour}
+                              </span>
+                            </td>
+
+                            <td className="py-3.5 px-4 text-center font-bold text-xs text-slate-700 dark:text-[#AAB4C0] whitespace-nowrap">
+                              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-[#151D27] border border-slate-200/60 dark:border-[#263241]">
+                                <Clock className="w-3.5 h-3.5 text-[#e0521c]" />
+                                <span>{formatHeureDisplay(s.heure_debut)} – {formatHeureDisplay(s.heure_fin)}</span>
                               </div>
                             </td>
-                          );
-                        })}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+
+                            <td className="py-3.5 px-5 font-bold text-sm text-slate-900 dark:text-[#F5F7FA]">
+                              <div className="flex items-center gap-2">
+                                <BookOpen className="w-4 h-4 text-[#0f2744] dark:text-[#e0521c] shrink-0" />
+                                <span>{s.matiere_nom}</span>
+                              </div>
+                            </td>
+
+                            {/* FILIÈRE DIFFÉRENCIÉE */}
+                            <td className="py-3.5 px-4 text-center whitespace-nowrap">
+                              <span className={`inline-block px-2.5 py-1 rounded-lg text-xs font-black border ${fBadge.color} ${
+                                isMyFiliere ? "ring-2 ring-[#e0521c]/40 font-black" : ""
+                              }`}>
+                                {fBadge.label}
+                              </span>
+                            </td>
+
+                            <td className="py-3.5 px-5 font-bold text-xs text-slate-800 dark:text-slate-200">
+                              <div className="flex items-center gap-2">
+                                <div className="w-6 h-6 rounded-full bg-orange-100 dark:bg-orange-950/50 text-[#e0521c] flex items-center justify-center font-black text-[10px] shrink-0">
+                                  {(s.professeur_nom || "H")[0]}
+                                </div>
+                                <span>{s.professeur_nom || "Mister Halil"}</span>
+                              </div>
+                            </td>
+
+                            <td className="py-3.5 px-4 text-center">
+                              {s.meet_url ? (
+                                <div className="flex items-center justify-center gap-1.5">
+                                  <a
+                                    href={s.meet_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold shadow-xs transition-colors"
+                                  >
+                                    <Video className="w-3.5 h-3.5" />
+                                    Rejoindre Meet
+                                    <ExternalLink className="w-2.5 h-2.5" />
+                                  </a>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleCopyMeet(s.meet_url!)}
+                                    title="Copier le lien Meet"
+                                    className="p-1.5 rounded-lg border border-slate-200 dark:border-[#263241] hover:bg-slate-100 dark:hover:bg-[#151D27] text-slate-500 cursor-pointer"
+                                  >
+                                    {copiedLink === s.meet_url ? (
+                                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                                    ) : (
+                                      <Copy className="w-3.5 h-3.5" />
+                                    )}
+                                  </button>
+                                </div>
+                              ) : (
+                                <span className="text-[11px] text-slate-400 italic">🎥 Bientôt disponible</span>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </>
             )}
           </div>
-        )}
-
+        </div>
       </div>
     </DashboardLayout>
   );
