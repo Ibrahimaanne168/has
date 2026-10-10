@@ -237,7 +237,7 @@ export function getStoredProfesseurs(): Professeur[] {
   const list = getStorageItem<Professeur[]>(STORAGE_KEYS.PROFESSEURS, MOCK_PROFESSEURS);
   
   // S'assurer que tous les professeurs officiels de référence (ex: M. Diop, El Hadji Ibrahima Diop Sow) sont présents
-  let merged = [...list];
+  const merged = [...list];
   let updated = false;
   for (const mockProf of MOCK_PROFESSEURS) {
     if (!merged.some((p) => p.id === mockProf.id || p.full_name?.toLowerCase() === mockProf.full_name?.toLowerCase())) {
@@ -369,9 +369,7 @@ export function deleteSalon(id: string): void {
  */
 export function getAccessibleSalons(
   role?: UserRole,
-  userNiveau?: string,
-  _userClasse?: string,
-  _profClasses?: string[]
+  userNiveau?: string
 ): ChatSalon[] {
   const stored = getStoredSalons();
   const all = stored.length > 0 ? stored : DEFAULT_SALONS;
@@ -985,6 +983,18 @@ export function deleteSeanceEDT(id: string, adminEmail?: string): void {
   const list = getStoredSeancesEDT().filter((s) => s.id !== id);
   setStorageItem(STORAGE_KEYS.SEANCES_EDT, list);
   pushSeancesToServer(list, adminEmail);
+  pushDeletionToServer(id, adminEmail);
+}
+
+export async function pushDeletionToServer(deletedId: string, adminEmail?: string): Promise<void> {
+  if (typeof window === "undefined") return;
+  try {
+    await fetch("/api/academic/seances", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ deletedId, adminEmail: adminEmail || "direction@halil-academie.com" }),
+    });
+  } catch {}
 }
 
 /**

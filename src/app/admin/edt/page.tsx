@@ -3,9 +3,9 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Clock, Video, Plus, Trash2, Edit2, CheckCircle2, Copy,
-  ExternalLink, X, Save, BookOpen, Settings,
+  ExternalLink, X, Save, BookOpen,
   Calendar, Layers, Table as TableIcon, Filter, RotateCcw,
-  Mail, Loader2, Send,
+  Mail, Loader2,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/Button";
@@ -13,7 +13,7 @@ import { SeanceEDT, JourSemaine, Professeur, Matiere } from "@/lib/types";
 import {
   getStoredSeancesEDT, saveSeanceEDT, deleteSeanceEDT,
   getStoredProfesseurs, getStoredMatieres, resetDefaultSeancesEDT,
-  syncSeancesWithServer,
+  syncSeancesWithServer, DEFAULT_SEANCES_EDT,
 } from "@/lib/academicStorage";
 import { recordAuditLog } from "@/lib/auditLogger";
 
@@ -291,9 +291,19 @@ function savePromoSlots(niveau: "L1" | "L2", slots: string[]) {
 }
 
 export default function AdminEDTPage() {
-  const [seances, setSeances] = useState<SeanceEDT[]>([]);
-  const [profs, setProfs] = useState<Professeur[]>([]);
-  const [matieresList, setMatieresList] = useState<Matiere[]>([]);
+  const [seances, setSeances] = useState<SeanceEDT[]>(() => {
+    if (typeof window === "undefined") return DEFAULT_SEANCES_EDT;
+    const list = getStoredSeancesEDT();
+    return list.length > 0 ? list : DEFAULT_SEANCES_EDT;
+  });
+  const [profs, setProfs] = useState<Professeur[]>(() => {
+    if (typeof window === "undefined") return [];
+    return getStoredProfesseurs();
+  });
+  const [matieresList, setMatieresList] = useState<Matiere[]>(() => {
+    if (typeof window === "undefined") return [];
+    return getStoredMatieres();
+  });
 
   // Promotion sélectionnée : L1 ou L2 (un seul EDT par promo)
   const [activeNiveau, setActiveNiveau] = useState<"L1" | "L2">("L2");
@@ -303,9 +313,12 @@ export default function AdminEDTPage() {
   const [copiedLink, setCopiedLink] = useState<string | null>(null);
 
   // Lignes / tranches horaires par promotion
-  const [slotsMap, setSlotsMap] = useState<Record<"L1" | "L2", string[]>>({
-    L1: DEFAULT_SLOTS,
-    L2: DEFAULT_SLOTS,
+  const [slotsMap, setSlotsMap] = useState<Record<"L1" | "L2", string[]>>(() => {
+    if (typeof window === "undefined") return { L1: DEFAULT_SLOTS, L2: DEFAULT_SLOTS };
+    return {
+      L1: loadPromoSlots("L1"),
+      L2: loadPromoSlots("L2"),
+    };
   });
 
   // Modal d'ajout de ligne
@@ -335,15 +348,14 @@ export default function AdminEDTPage() {
     setSeances(list);
     setProfs(getStoredProfesseurs());
     setMatieresList(getStoredMatieres());
-  }, []);
-
-  useEffect(() => {
-    reloadData();
-    syncSeancesWithServer().then(() => reloadData()).catch(() => {});
     setSlotsMap({
       L1: loadPromoSlots("L1"),
       L2: loadPromoSlots("L2"),
     });
+  }, []);
+
+  useEffect(() => {
+    syncSeancesWithServer().then(() => reloadData()).catch(() => {});
     window.addEventListener("has_academic_storage_updated", reloadData);
     return () => window.removeEventListener("has_academic_storage_updated", reloadData);
   }, [reloadData]);
@@ -371,7 +383,7 @@ export default function AdminEDTPage() {
   // Matières disponibles pour la promotion active (L1 ou L2)
   const matieresForCurrentLevel = useMemo(() => {
     const fromCatalogue = Object.entries(CATALOGUE_MATIERES)
-      .filter(([_, info]) => info.niveau === activeNiveau || (info.niveau as string) === "TOUS")
+      .filter(([, info]) => info.niveau === activeNiveau || (info.niveau as string) === "TOUS")
       .map(([name]) => name);
 
     const fromStorage = matieresList
@@ -393,7 +405,7 @@ export default function AdminEDTPage() {
       if (filiereFilter === "TRONC_COMMUN") {
         list = list.filter((s) => !s.filieres || s.filieres.length === 0 || s.filieres.length >= 3);
       } else {
-        list = list.filter((s) => s.filieres && s.filieres.includes(filiereFilter as any));
+        list = list.filter((s) => s.filieres && s.filieres.includes(filiereFilter as "MPI" | "SML" | "MIASS"));
       }
     }
     return [...list].sort((a, b) => {
@@ -763,7 +775,7 @@ export default function AdminEDTPage() {
           <div className="flex items-center gap-2.5">
             <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
             <p className="text-xs text-blue-950 dark:text-blue-200">
-              <strong className="font-bold text-[#0f2744] dark:text-blue-100">Automatisme 40 min actif :</strong> Des emails avec lien de connexion Google Meet sont envoyés automatiquement 40 minutes avant chaque cours de la semaine aux étudiants concernés (L1 et L2 selon leur filière).
+              <strong className="font-bold text-[#0f2744] dark:text-blue-100">Automatisme 40 min actif :</strong> Des emails de rappel sont envoyés automatiquement 40 minutes avant chaque cours de la semaine pour inviter les étudiants concernés à rejoindre leur séance sur le portail.
             </p>
           </div>
           <button
@@ -772,7 +784,7 @@ export default function AdminEDTPage() {
             disabled={isSendingReminder}
             className="text-[11px] font-bold text-blue-700 dark:text-blue-300 hover:text-blue-900 dark:hover:text-blue-100 underline whitespace-nowrap cursor-pointer transition-colors"
           >
-            Tester l'automatisme 40 min &rarr;
+            Tester l&apos;automatisme 40 min &rarr;
           </button>
         </div>
 

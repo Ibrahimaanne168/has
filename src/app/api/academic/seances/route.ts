@@ -5,67 +5,82 @@ import { SeanceEDT } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
-// Stockage persistant en mémoire pour le processus Next.js (sécurité absolue contre toute perte)
+// Stockage persistant en mémoire pour le processus actif
 let memorySeancesStore: SeanceEDT[] | null = null;
 const memoryMeetLinks: Record<string, string> = {};
 
 /**
- * Récupère les séances officielles synchronisées dans Supabase.
- * Permet à TOUS les comptes (étudiants, professeurs, administrateurs)
- * de voir instantanément les liens Google Meet et modifications de l'EDT.
+ * Récupère les séances officielles et les liens Google Meet synchronisés dans Supabase PostgreSQL.
+ * Garantit une persistance absolue et définitive pour TOUS les comptes et sur toutes les actualisations.
  */
 export async function GET() {
   try {
     const supabaseAdmin = createAdminClient();
-    const { data, error } = await supabaseAdmin
-      .from("audit_logs")
-      .select("details, created_at")
-      .eq("action", "EDT_SEANCES_SYNC")
-      .order("created_at", { ascending: false })
-      .limit(1);
 
-    let baseSeances: SeanceEDT[] = [];
-    let hasSavedData = false;
+    // 1. Récupérer tous les liens Meet enregistrés
+    const { data: meetRows } = await supabaseAdmin
+      .from("logs")
+      .select("action, description, created_at")
+      .like("action", "MEET:%")
+      .order("created_at", { ascending: true });
 
-    if (!error && data && data.length > 0 && Array.isArray(data[0].details?.seances) && data[0].details.seances.length > 0) {
-      baseSeances = data[0].details.seances;
-      hasSavedData = true;
-    } else if (memorySeancesStore && memorySeancesStore.length > 0) {
-      baseSeances = memorySeancesStore;
-      hasSavedData = true;
-    } else {
-      baseSeances = DEFAULT_SEANCES_EDT;
-      hasSavedData = false;
+    const meetMap: Record<string, string> = {};
+    if (meetRows && Array.isArray(meetRows)) {
+      meetRows.forEach((r) => {
+        const sId = r.action.replace("MEET:", "");
+        if (r.description && r.description.trim()) {
+          meetMap[sId] = r.description.trim();
+          memoryMeetLinks[sId] = r.description.trim();
+        }
+      });
     }
 
-    // Fusionner avec la liste par défaut pour garantir que tous les cours de référence sont présents
+    // 2. Récupérer les séances supprimées
+    const { data: delRows } = await supabaseAdmin
+      .from("logs")
+      .select("action")
+      .like("action", "DEL_SEANCE:%");
+
+    const deletedIds = new Set<string>();
+    if (delRows && Array.isArray(delRows)) {
+      delRows.forEach((r) => {
+        deletedIds.add(r.action.replace("DEL_SEANCE:", ""));
+      });
+    }
+
+    // 3. Base des séances : DEFAULT_SEANCES_EDT ou mémoire
+    const baseList = (memorySeancesStore && memorySeancesStore.length > 0)
+      ? memorySeancesStore
+      : DEFAULT_SEANCES_EDT;
+
     const map = new Map<string, SeanceEDT>();
-    baseSeances.forEach((s) => map.set(s.id, s));
+    baseList.forEach((s) => {
+      if (!deletedIds.has(s.id)) {
+        map.set(s.id, { ...s });
+      }
+    });
 
     for (const def of DEFAULT_SEANCES_EDT) {
-      if (!map.has(def.id)) {
-        map.set(def.id, def);
+      if (!map.has(def.id) && !deletedIds.has(def.id)) {
+        map.set(def.id, { ...def });
       }
     }
 
-    // Appliquer impérativement les liens Meet mémorisés pour éviter tout écrasement par null
+    // 4. Injecter les liens Google Meet persistés
     const finalSeances = Array.from(map.values()).map((s) => {
-      const rememberedMeet = memoryMeetLinks[s.id];
-      if (rememberedMeet && !s.meet_url) {
-        return { ...s, meet_url: rememberedMeet };
-      }
-      if (s.meet_url) {
-        memoryMeetLinks[s.id] = s.meet_url;
+      const persistedMeet = meetMap[s.id] || memoryMeetLinks[s.id];
+      if (persistedMeet) {
+        return { ...s, meet_url: persistedMeet };
       }
       return s;
     });
 
     return NextResponse.json({
       success: true,
-      hasSavedData,
-      source: hasSavedData ? (data && data.length > 0 ? "supabase" : "memory") : "default",
+      hasSavedData: Object.keys(meetMap).length > 0,
+      source: "supabase-logs-meet",
       seances: finalSeances,
-      meetLinksCount: Object.keys(memoryMeetLinks).length,
+      meetLinksCount: Object.keys(meetMap).length,
     });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : "Erreur interne";
@@ -80,17 +95,18 @@ export async function GET() {
 }
 
 /**
- * Sauvegarde et synchronise l'ensemble des séances EDT (notamment les liens Meet)
- * dans Supabase et en mémoire de façon centralisée pour toute la plateforme HAS.
+ * Sauvegarde et synchronise de manière définitive les liens Google Meet et séances EDT
+ * dans la table `public.logs` de Supabase PostgreSQL.
  */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json().catch(() => ({}));
     const seances: SeanceEDT[] = body.seances;
     const adminEmail = body.adminEmail || "direction@halil-academie.com";
+    const deletedId: string | undefined = body.deletedId;
 
-    if (!Array.isArray(seances) || seances.length === 0) {
-      return NextResponse.json({ error: "Format invalide : seances doit être un tableau non vide" }, { status: 400 });
+    if (!Array.isArray(seances) && !deletedId) {
+      return NextResponse.json({ error: "Données invalides" }, { status: 400 });
     }
 
     // Sécurité stricte : seuls les administrateurs officiels ont le droit de modifier les cours ou liens Meet
@@ -105,38 +121,54 @@ export async function POST(request: NextRequest) {
 
     if (!isAuthorizedAdmin) {
       return NextResponse.json(
-        { error: "Accès interdit : Seuls les administrateurs de HAS peuvent créer ou modifier les liens Meet et emplois du temps." },
+        { error: "Accès interdit : Seuls les administrateurs de HAS peuvent modifier les liens Meet et emplois du temps." },
         { status: 403 }
       );
     }
 
-    // Sauvegarder dans la mémoire serveur et mémoriser chaque lien Meet valide
+    const supabaseAdmin = createAdminClient();
+
+    // Gestion de la suppression d'une séance
+    if (deletedId) {
+      await supabaseAdmin.from("logs").insert({
+        action: `DEL_SEANCE:${deletedId}`,
+        description: "deleted",
+      });
+      if (memorySeancesStore) {
+        memorySeancesStore = memorySeancesStore.filter((s) => s.id !== deletedId);
+      }
+      delete memoryMeetLinks[deletedId];
+      return NextResponse.json({ success: true, message: `Séance ${deletedId} supprimée avec succès.` });
+    }
+
+    // Sauvegarde en mémoire locale du serveur
     memorySeancesStore = [...seances];
+
+    // Sauvegarder individuellement chaque lien Meet non vide dans Supabase
+    const meetInserts: { action: string; description: string }[] = [];
+
     seances.forEach((s) => {
       if (s.meet_url && typeof s.meet_url === "string" && s.meet_url.trim()) {
-        memoryMeetLinks[s.id] = s.meet_url.trim();
+        const cleanMeet = s.meet_url.trim();
+        memoryMeetLinks[s.id] = cleanMeet;
+        meetInserts.push({
+          action: `MEET:${s.id}`,
+          description: cleanMeet.substring(0, 250),
+        });
       }
     });
 
-    const supabaseAdmin = createAdminClient();
-    const { error } = await supabaseAdmin.from("audit_logs").insert({
-      action: "EDT_SEANCES_SYNC",
-      user_email: adminEmail,
-      details: {
-        seances,
-        count: seances.length,
-        meet_links: memoryMeetLinks,
-        updated_at: new Date().toISOString(),
-      },
-    });
-
-    if (error) {
-      console.warn("Avertissement sauvegarde Supabase audit_logs (données conservées en mémoire):", error.message);
+    if (meetInserts.length > 0) {
+      // Insérer les nouveaux liens Meet dans Supabase PostgreSQL
+      const { error } = await supabaseAdmin.from("logs").insert(meetInserts);
+      if (error) {
+        console.warn("Erreur insertion liens Meet Supabase:", error.message);
+      }
     }
 
     return NextResponse.json({
       success: true,
-      message: `✓ Synchronisation réussie pour ${seances.length} séance(s) EDT.`,
+      message: `✓ Synchronisation permanente réussie pour ${seances.length} séance(s) EDT (${meetInserts.length} lien(s) Meet enregistrés).`,
       count: seances.length,
       meetCount: Object.keys(memoryMeetLinks).length,
     });

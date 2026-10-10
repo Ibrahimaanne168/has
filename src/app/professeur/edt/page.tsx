@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Calendar, Clock, Video, CheckCircle2, ExternalLink, Copy,
-  GraduationCap, Layers, Table as TableIcon, BookOpen, Filter, User,
+  Layers, Table as TableIcon, BookOpen, User,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { useCurrentProfesseur } from "@/lib/useCurrentProfesseur";
@@ -56,24 +56,26 @@ function getFiliereBadgeInfo(filieres?: ("MPI" | "SML" | "MIASS")[]) {
 
 export default function ProfesseurEDTPage() {
   const { prof } = useCurrentProfesseur();
-  const [seances, setSeances] = useState<SeanceEDT[]>([]);
+  const [seances, setSeances] = useState<SeanceEDT[]>(() => {
+    if (typeof window === "undefined") return [];
+    return getStoredSeancesEDT();
+  });
   const [activeNiveau, setActiveNiveau] = useState<"L1" | "L2">("L1");
   const [viewMode, setViewMode] = useState<"tableau" | "grille">("tableau");
   const [filterScope, setFilterScope] = useState<"ALL" | "MINE">("ALL");
   const [filiereFilter, setFiliereFilter] = useState<string>("ALL");
   const [copiedLink, setCopiedLink] = useState<string | null>(null);
 
-  const reload = () => setSeances(getStoredSeancesEDT());
+  const reload = useCallback(() => setSeances(getStoredSeancesEDT()), []);
 
   useEffect(() => {
-    reload();
-    syncSeancesWithServer().then(() => reload()).catch(() => {});
+    syncSeancesWithServer().then((s) => setSeances(s)).catch(() => {});
     window.addEventListener("has_academic_storage_updated", reload);
     return () => window.removeEventListener("has_academic_storage_updated", reload);
-  }, []);
+  }, [reload]);
 
   // Détection si une séance appartient au professeur connecté
-  const isMyCourse = (s: SeanceEDT) => {
+  const isMyCourse = useCallback((s: SeanceEDT) => {
     return Boolean(
       (prof.id && s.professeur_id === prof.id) ||
       (prof.matricule && s.professeur_id === prof.matricule) ||
@@ -86,7 +88,7 @@ export default function ProfesseurEDTPage() {
         s.professeur_nom && (s.professeur_nom.toLowerCase().includes("diop") || s.professeur_nom.toLowerCase().includes("sow"))) ||
       (prof.nom && prof.nom.toLowerCase().includes("ndiaye") && s.professeur_nom && s.professeur_nom.toLowerCase().includes("ndiogou"))
     );
-  };
+  }, [prof]);
 
   // Séances de la promotion active (L1 ou L2)
   const promoSeances = useMemo(() => {
@@ -105,7 +107,7 @@ export default function ProfesseurEDTPage() {
       if (filiereFilter === "TRONC_COMMUN") {
         list = list.filter((s) => !s.filieres || s.filieres.length === 0 || s.filieres.length >= 3);
       } else {
-        list = list.filter((s) => s.filieres && s.filieres.includes(filiereFilter as any));
+        list = list.filter((s) => s.filieres && s.filieres.includes(filiereFilter as "MPI" | "SML" | "MIASS"));
       }
     }
 
@@ -115,7 +117,7 @@ export default function ProfesseurEDTPage() {
       if (idxA !== idxB) return idxA - idxB;
       return a.heure_debut.localeCompare(b.heure_debut);
     });
-  }, [promoSeances, filterScope, filiereFilter, prof]);
+  }, [promoSeances, filterScope, filiereFilter, isMyCourse]);
 
   // Créneaux horaires uniques pour la vue grille
   const timeSlots = useMemo(() => {
@@ -140,8 +142,8 @@ export default function ProfesseurEDTPage() {
   // Compteurs globaux
   const countL1Total = useMemo(() => seances.filter((s) => (s.niveau || "L1") === "L1").length, [seances]);
   const countL2Total = useMemo(() => seances.filter((s) => s.niveau === "L2").length, [seances]);
-  const countMyL1 = useMemo(() => seances.filter((s) => (s.niveau || "L1") === "L1" && isMyCourse(s)).length, [seances, prof]);
-  const countMyL2 = useMemo(() => seances.filter((s) => s.niveau === "L2" && isMyCourse(s)).length, [seances, prof]);
+  const countMyL1 = useMemo(() => seances.filter((s) => (s.niveau || "L1") === "L1" && isMyCourse(s)).length, [seances, isMyCourse]);
+  const countMyL2 = useMemo(() => seances.filter((s) => s.niveau === "L2" && isMyCourse(s)).length, [seances, isMyCourse]);
 
   return (
     <DashboardLayout
