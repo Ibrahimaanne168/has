@@ -29,6 +29,7 @@ const STORAGE_KEYS = {
   SEANCES_EDT: "has_academic_seances_edt_v1",
   STUDENTS: "has_academic_students_v1",
   DELETED_ACCOUNTS: "has_academic_deleted_accounts_v1",
+  DELETED_SEANCES: "has_academic_deleted_seances_v1",
 };
 
 export const DEFAULT_SALONS: ChatSalon[] = [
@@ -828,62 +829,64 @@ export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [
   },
 ];
 
+export function getDeletedSeanceIds(): string[] {
+  return getStorageItem<string[]>(STORAGE_KEYS.DELETED_SEANCES, []);
+}
+
+export function markSeanceAsDeleted(id: string): void {
+  if (typeof window === "undefined") return;
+  const current = getDeletedSeanceIds();
+  if (!current.includes(id)) {
+    const next = [...current, id];
+    try {
+      localStorage.setItem(STORAGE_KEYS.DELETED_SEANCES, JSON.stringify(next));
+    } catch {}
+  }
+}
+
+export function unmarkSeanceAsDeleted(id: string): void {
+  if (typeof window === "undefined") return;
+  const current = getDeletedSeanceIds();
+  const next = current.filter((x) => x !== id);
+  try {
+    localStorage.setItem(STORAGE_KEYS.DELETED_SEANCES, JSON.stringify(next));
+  } catch {}
+}
+
 export function getStoredSeancesEDT(): SeanceEDT[] {
+  const deletedSet = new Set(getDeletedSeanceIds());
   const list = getStorageItem<SeanceEDT[]>(STORAGE_KEYS.SEANCES_EDT, DEFAULT_SEANCES_EDT);
+  
   if (!list || !Array.isArray(list) || list.length === 0) {
-    return DEFAULT_SEANCES_EDT;
+    return DEFAULT_SEANCES_EDT.filter((s) => !deletedSet.has(s.id));
   }
 
-  let changed = false;
-  // Nettoyer les anciens mocks obsolètes
-  const obsoleteIds = [
+  // Nettoyer les anciens mocks obsolètes et les séances explicitement supprimées
+  const obsoleteIds = new Set([
     "seance-has-l2-magneto",
     "seance-has-l2-analyse3",
     "seance-has-l1-electricite",
     "seance-has-l1-economie",
-  ];
-  const filtered = list.filter((s) => !obsoleteIds.includes(s.id));
-  if (filtered.length !== list.length) changed = true;
+  ]);
 
-  // Intégrer ou mettre à jour les séances officielles
-  for (const def of DEFAULT_SEANCES_EDT) {
-    const existingIndex = filtered.findIndex((s) => s.id === def.id);
-    if (existingIndex >= 0) {
-      const existing = filtered[existingIndex];
-      if (
-        JSON.stringify(existing.filieres || []) !== JSON.stringify(def.filieres || []) ||
-        existing.matiere_code !== def.matiere_code ||
-        existing.professeur_nom !== def.professeur_nom ||
-        existing.jour !== def.jour
-      ) {
-        filtered[existingIndex] = {
-          ...existing,
-          ...def,
-          meet_url: existing.meet_url || def.meet_url,
-        };
-        changed = true;
-      }
-    } else {
-      filtered.push(def);
-      changed = true;
-    }
-  }
-
-  if (changed && typeof window !== "undefined") {
-    try {
-      localStorage.setItem(STORAGE_KEYS.SEANCES_EDT, JSON.stringify(filtered));
-    } catch {}
-  }
+  const filtered = list.filter((s) => !obsoleteIds.has(s.id) && !deletedSet.has(s.id));
 
   return filtered;
 }
 
 export function resetDefaultSeancesEDT(): SeanceEDT[] {
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.removeItem(STORAGE_KEYS.DELETED_SEANCES);
+    } catch {}
+  }
   setStorageItem(STORAGE_KEYS.SEANCES_EDT, DEFAULT_SEANCES_EDT);
   return DEFAULT_SEANCES_EDT;
 }
 
 export function saveSeanceEDT(seance: SeanceEDT): void {
+  unmarkSeanceAsDeleted(seance.id);
+
   let cleanMeet = seance.meet_url ? seance.meet_url.trim() : null;
   if (cleanMeet && !cleanMeet.startsWith("http://") && !cleanMeet.startsWith("https://")) {
     cleanMeet = `https://${cleanMeet}`;
@@ -901,6 +904,7 @@ export function saveSeanceEDT(seance: SeanceEDT): void {
 }
 
 export function deleteSeanceEDT(id: string): void {
+  markSeanceAsDeleted(id);
   const list = getStoredSeancesEDT().filter((s) => s.id !== id);
   setStorageItem(STORAGE_KEYS.SEANCES_EDT, list);
 }

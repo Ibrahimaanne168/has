@@ -18,15 +18,7 @@ import { recordAuditLog } from "@/lib/auditLogger";
 
 const JOURS: JourSemaine[] = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
 
-const DEFAULT_SLOTS = [
-  "21:00–23:00",
-  "19:00–21:00",
-  "18:00–20:00",
-  "16:15–18:15",
-  "14:00–16:00",
-  "10:15–12:15",
-  "08:00–10:00",
-];
+const DEFAULT_SLOTS = ["21:00–23:00"];
 
 const PRESET_HORAIRES = [
   { label: "★ 21h00 - 23h00 (Horaire officiel HAS)", debut: "21:00", fin: "23:00" },
@@ -268,7 +260,13 @@ function loadPromoSlots(niveau: "L1" | "L2"): string[] {
     const raw = localStorage.getItem(`has_edt_slots_${niveau}`);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        // Nettoyer les anciens 7 slots d'usine (08h, 10h, etc.) s'ils n'ont pas été personnalisés
+        if (parsed.length >= 6 && parsed.includes("08:00–10:00") && parsed.includes("10:15–12:15")) {
+          return DEFAULT_SLOTS;
+        }
+        return parsed;
+      }
     }
   } catch {
     // fallback
