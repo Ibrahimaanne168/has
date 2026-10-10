@@ -48,14 +48,13 @@ const ENSEIGNANTS_PRESETS = [
   "Kalidou Ba",
 ];
 
-// Catalogue des matières officielles avec mapping rigoureux filières & professeur attitré
+// Catalogue des matières officielles avec mapping rigoureux filières & professeur attitré (liens Meet non fixes)
 const CATALOGUE_MATIERES: Record<
   string,
   {
     niveau: "L1" | "L2";
     filieres: ("MPI" | "SML" | "MIASS")[];
     professeurDefaut: string;
-    meetUrl?: string;
   }
 > = {
   // --- LICENCE 1 ---
@@ -63,61 +62,51 @@ const CATALOGUE_MATIERES: Record<
     niveau: "L1",
     filieres: ["MPI", "SML", "MIASS"],
     professeurDefaut: "Pape Ibrahima Samb",
-    meetUrl: "https://meet.google.com/has-anal-un",
   },
   "Analyse 2": {
     niveau: "L1",
     filieres: ["MPI", "SML", "MIASS"],
     professeurDefaut: "Pape Ibrahima Samb",
-    meetUrl: "https://meet.google.com/has-anal-deux",
   },
   "Algèbre 1": {
     niveau: "L1",
     filieres: ["MPI", "SML", "MIASS"],
     professeurDefaut: "Pape Ibrahima Samb",
-    meetUrl: "https://meet.google.com/has-alg-un",
   },
   "Algèbre 2": {
     niveau: "L1",
     filieres: ["MPI", "SML", "MIASS"],
     professeurDefaut: "Pape Ibrahima Samb",
-    meetUrl: "https://meet.google.com/has-alg-deux",
   },
   "Electricité": {
     niveau: "L1",
     filieres: ["MPI", "SML"],
     professeurDefaut: "Kalidou Ba",
-    meetUrl: "https://meet.google.com/has-elec-un",
   },
   "Mécanique du point": {
     niveau: "L1",
     filieres: ["MPI", "SML"],
     professeurDefaut: "Ndiogou Ndiaye",
-    meetUrl: "https://meet.google.com/has-meca-point",
   },
   "Optique Géométrique": {
     niveau: "L1",
     filieres: ["MPI", "SML"],
     professeurDefaut: "Ndiogou Ndiaye",
-    meetUrl: "https://meet.google.com/has-optique",
   },
   "Programmation Python": {
     niveau: "L1",
     filieres: ["MPI", "MIASS"],
     professeurDefaut: "Pape Thiam",
-    meetUrl: "https://meet.google.com/has-python-l1",
   },
   "Langage C": {
     niveau: "L1",
     filieres: ["MPI"],
     professeurDefaut: "Pape Thiam",
-    meetUrl: "https://meet.google.com/has-langage-c",
   },
   "Economie Générale": {
     niveau: "L1",
     filieres: ["MIASS"],
     professeurDefaut: "Pape Ibrahima Samb",
-    meetUrl: "https://meet.google.com/has-eco-gen",
   },
 
   // --- LICENCE 2 ---
@@ -125,67 +114,56 @@ const CATALOGUE_MATIERES: Record<
     niveau: "L2",
     filieres: ["MPI", "SML", "MIASS"],
     professeurDefaut: "Pape Ibrahima Samb",
-    meetUrl: "https://meet.google.com/has-anal-trois",
   },
   "Analyse 4": {
     niveau: "L2",
     filieres: ["MPI", "SML", "MIASS"],
     professeurDefaut: "Pape Ibrahima Samb",
-    meetUrl: "https://meet.google.com/has-anal-four",
   },
   "Algèbre 3": {
     niveau: "L2",
     filieres: ["MPI", "SML", "MIASS"],
     professeurDefaut: "Pape Ibrahima Samb",
-    meetUrl: "https://meet.google.com/has-alg-trois",
   },
   "Analyse Numérique Matricielle": {
     niveau: "L2",
     filieres: ["MPI", "SML"],
     professeurDefaut: "Pape Ibrahima Samb",
-    meetUrl: "https://meet.google.com/has-anm-l2",
   },
   "Programmation Orientée Objet Python": {
     niveau: "L2",
     filieres: ["MPI", "MIASS"],
     professeurDefaut: "Ibrahima Anne",
-    meetUrl: "https://meet.google.com/has-poo-python",
   },
   "Base de données": {
     niveau: "L2",
     filieres: ["MPI", "MIASS"],
     professeurDefaut: "Ibrahima Anne",
-    meetUrl: "https://meet.google.com/has-bdd-sql",
   },
   "Mécanique Générale": {
     niveau: "L2",
     filieres: ["MPI", "SML"],
     professeurDefaut: "El Hadji Ibrahima Diop Sow",
-    meetUrl: "https://meet.google.com/has-meca-gen",
   },
   "Thermodynamique": {
     niveau: "L2",
     filieres: ["MPI", "SML"],
     professeurDefaut: "Ndiogou Ndiaye",
-    meetUrl: "https://meet.google.com/has-thermo",
   },
   "Magnétostatique et Régime Variable": {
     niveau: "L2",
     filieres: ["MPI", "SML"],
     professeurDefaut: "Ndiogou Ndiaye",
-    meetUrl: "https://meet.google.com/has-magneto",
   },
   "Probabilités et Statistiques": {
     niveau: "L2",
     filieres: ["MPI", "SML", "MIASS"],
     professeurDefaut: "Pape Ibrahima Samb",
-    meetUrl: "https://meet.google.com/has-proba-stats",
   },
   "Economie": {
     niveau: "L2",
     filieres: ["MIASS"],
     professeurDefaut: "Pape Ibrahima Samb",
-    meetUrl: "https://meet.google.com/has-eco-l2",
   },
 };
 
@@ -405,10 +383,6 @@ export default function AdminEDTPage() {
       setFormFilieres(cat.filieres);
       // 2. Déduction automatique de l'enseignant par défaut
       setFormEnseignant(cat.professeurDefaut);
-      // 3. Lien Meet pré-rempli si présent
-      if (cat.meetUrl && !formMeetUrl) {
-        setFormMeetUrl(cat.meetUrl);
-      }
     } else {
       // Recherche dans la base des matières
       const found = matieresList.find(
@@ -898,7 +872,7 @@ export default function AdminEDTPage() {
                                     👤 {s.professeur_nom || "Mister Halil"}
                                   </div>
 
-                                  {s.meet_url && (
+                                  {s.meet_url ? (
                                     <div className="pt-1.5 border-t border-slate-200/50 dark:border-[#263241] flex gap-1">
                                       <a
                                         href={s.meet_url}
@@ -922,6 +896,30 @@ export default function AdminEDTPage() {
                                         ) : (
                                           <Copy className="w-3 h-3" />
                                         )}
+                                      </button>
+                                    </div>
+                                  ) : (
+                                    <div className="pt-1.5 border-t border-slate-200/50 dark:border-[#263241] flex gap-1">
+                                      <a
+                                        href="https://meet.google.com/new"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        onClick={(e) => e.stopPropagation()}
+                                        className="flex-1 py-1 px-1.5 rounded bg-slate-100 hover:bg-slate-200 dark:bg-[#151D27] text-slate-600 dark:text-[#AAB4C0] font-bold text-[10px] flex items-center justify-center gap-1"
+                                        title="Créer une réunion sur Google Meet"
+                                      >
+                                        <Video className="w-3 h-3 text-[#e0521c]" /> Créer Meet
+                                      </a>
+                                      <button
+                                        type="button"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          openEditModal(s);
+                                        }}
+                                        className="px-1.5 py-1 rounded border border-slate-200 dark:border-[#263241] text-slate-500 hover:bg-white cursor-pointer text-[10px] font-bold"
+                                        title="Coller le lien Meet"
+                                      >
+                                        Coller
                                       </button>
                                     </div>
                                   )}
@@ -1059,12 +1057,25 @@ export default function AdminEDTPage() {
                             </button>
                           </div>
                         ) : (
-                          <button
-                            onClick={() => openEditModal(s)}
-                            className="text-[10px] text-slate-400 hover:underline cursor-pointer"
-                          >
-                            + Ajouter Meet
-                          </button>
+                          <div className="flex items-center justify-center gap-1.5">
+                            <a
+                              href="https://meet.google.com/new"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 px-2 py-1 rounded-lg border border-dashed border-slate-300 dark:border-[#263241] text-slate-500 hover:text-slate-800 dark:hover:text-[#F5F7FA] text-[10px] font-medium"
+                              title="Ouvrir meet.new pour générer le lien"
+                            >
+                              <Video className="w-3 h-3 text-[#e0521c]" />
+                              Créer Meet
+                            </a>
+                            <button
+                              type="button"
+                              onClick={() => openEditModal(s)}
+                              className="text-[10px] text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
+                            >
+                              Coller
+                            </button>
+                          </div>
                         )}
                       </td>
 
@@ -1418,28 +1429,55 @@ export default function AdminEDTPage() {
                   </div>
                 </div>
 
-                {/* 6. Lien Google Meet */}
+                {/* 6. Lien Google Meet (généré puis copié) */}
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-[#F5F7FA] mb-1">
-                    Lien Google Meet :
-                  </label>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-bold text-slate-700 dark:text-[#F5F7FA]">
+                      Lien Google Meet (visio) :
+                    </label>
+                    <a
+                      href="https://meet.google.com/new"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-1 rounded-lg border border-emerald-200 dark:border-emerald-800"
+                    >
+                      <Video className="w-3.5 h-3.5" />
+                      1. Créer la réunion sur Meet (meet.new)
+                      <ExternalLink className="w-2.5 h-2.5" />
+                    </a>
+                  </div>
+
                   <div className="flex gap-2">
                     <input
                       type="url"
-                      placeholder="https://meet.google.com/abc-defg-hij"
+                      placeholder="2. Collez ici le lien copié (ex: https://meet.google.com/abc-defg-hij)..."
                       value={formMeetUrl}
                       onChange={(e) => setFormMeetUrl(e.target.value)}
-                      className="flex-1 h-10 px-3 rounded-xl border border-slate-200 dark:border-[#263241] bg-white dark:bg-[#151D27] text-slate-900 dark:text-[#F5F7FA] text-xs"
+                      className="flex-1 h-10 px-3 rounded-xl border border-slate-200 dark:border-[#263241] bg-white dark:bg-[#151D27] text-slate-900 dark:text-[#F5F7FA] text-xs font-mono"
                     />
-                    <a
-                      href="https://meet.new"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-3 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 text-xs font-bold flex items-center gap-1 shrink-0"
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        try {
+                          const text = await navigator.clipboard.readText();
+                          if (text && text.trim()) {
+                            setFormMeetUrl(text.trim());
+                            flash("✓ Lien Meet collé depuis le presse-papier");
+                          }
+                        } catch {
+                          alert("Collez directement le lien copié dans le champ avec Ctrl+V.");
+                        }
+                      }}
+                      title="Coller le lien copié depuis Google Meet"
+                      className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#151D27] dark:hover:bg-[#263241] border border-slate-200 dark:border-[#263241] text-xs font-bold text-slate-700 dark:text-[#AAB4C0] flex items-center gap-1 shrink-0 cursor-pointer"
                     >
-                      <Video className="w-3.5 h-3.5" /> Créer
-                    </a>
+                      <Copy className="w-3.5 h-3.5 text-slate-500" />
+                      Coller
+                    </button>
                   </div>
+                  <p className="text-[11px] text-slate-400 mt-1">
+                    Les liens Meet ne sont pas statiques : cliquez sur <em>Créer la réunion</em>, copiez le lien généré par Google Meet puis collez-le ici.
+                  </p>
                 </div>
 
                 <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-[#263241]">
