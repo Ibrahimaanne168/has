@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import {
   Calendar, Clock, Video, CheckCircle2, ExternalLink, Copy,
-  GraduationCap, Layers, Table as TableIcon, BookOpen,
+  GraduationCap, Layers, Table as TableIcon, BookOpen, Filter, User,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { useCurrentProfesseur } from "@/lib/useCurrentProfesseur";
@@ -57,8 +57,10 @@ function getFiliereBadgeInfo(filieres?: ("MPI" | "SML" | "MIASS")[]) {
 export default function ProfesseurEDTPage() {
   const { prof } = useCurrentProfesseur();
   const [seances, setSeances] = useState<SeanceEDT[]>([]);
-  const [activeNiveau, setActiveNiveau] = useState<"L1" | "L2">("L2");
+  const [activeNiveau, setActiveNiveau] = useState<"L1" | "L2">("L1");
   const [viewMode, setViewMode] = useState<"tableau" | "grille">("tableau");
+  const [filterScope, setFilterScope] = useState<"ALL" | "MINE">("ALL");
+  const [filiereFilter, setFiliereFilter] = useState<string>("ALL");
   const [copiedLink, setCopiedLink] = useState<string | null>(null);
 
   const reload = () => setSeances(getStoredSeancesEDT());
@@ -70,40 +72,64 @@ export default function ProfesseurEDTPage() {
     return () => window.removeEventListener("has_academic_storage_updated", reload);
   }, []);
 
-  // Séances du prof connecté (par id, matricule ou par nom / Mister Halil)
-  const mySeances = useMemo(() =>
-    seances.filter((s) => {
-      const isMe =
-        (prof.id && s.professeur_id === prof.id) ||
-        (prof.matricule && s.professeur_id === prof.matricule) ||
-        (prof.full_name && s.professeur_nom && s.professeur_nom.toLowerCase().includes(prof.full_name.toLowerCase())) ||
-        (prof.nom && s.professeur_nom && s.professeur_nom.toLowerCase().includes(prof.nom.toLowerCase())) ||
-        ((prof.username === "halilsamb" || (prof.nom && prof.nom.toLowerCase().includes("samb"))) &&
-          s.professeur_nom && s.professeur_nom.toLowerCase().includes("halil")) ||
-        (prof.nom && prof.nom.toLowerCase().includes("thiam") && s.professeur_nom && s.professeur_nom.toLowerCase().includes("thiam")) ||
-        (((prof.nom && prof.nom.toLowerCase().includes("sow")) || (prof.prenom && prof.prenom.toLowerCase().includes("diop"))) &&
-          s.professeur_nom && (s.professeur_nom.toLowerCase().includes("diop") || s.professeur_nom.toLowerCase().includes("sow"))) ||
-        (prof.nom && prof.nom.toLowerCase().includes("ndiaye") && s.professeur_nom && s.professeur_nom.toLowerCase().includes("ndiogou"));
-      return isMe && (s.niveau || "L1") === activeNiveau;
-    }),
-    [seances, prof, activeNiveau]
-  );
+  // Détection si une séance appartient au professeur connecté
+  const isMyCourse = (s: SeanceEDT) => {
+    return Boolean(
+      (prof.id && s.professeur_id === prof.id) ||
+      (prof.matricule && s.professeur_id === prof.matricule) ||
+      (prof.full_name && s.professeur_nom && s.professeur_nom.toLowerCase().includes(prof.full_name.toLowerCase())) ||
+      (prof.nom && s.professeur_nom && s.professeur_nom.toLowerCase().includes(prof.nom.toLowerCase())) ||
+      ((prof.username === "halilsamb" || (prof.nom && prof.nom.toLowerCase().includes("samb"))) &&
+        s.professeur_nom && s.professeur_nom.toLowerCase().includes("halil")) ||
+      (prof.nom && prof.nom.toLowerCase().includes("thiam") && s.professeur_nom && s.professeur_nom.toLowerCase().includes("thiam")) ||
+      (((prof.nom && prof.nom.toLowerCase().includes("sow")) || (prof.prenom && prof.prenom.toLowerCase().includes("diop"))) &&
+        s.professeur_nom && (s.professeur_nom.toLowerCase().includes("diop") || s.professeur_nom.toLowerCase().includes("sow"))) ||
+      (prof.nom && prof.nom.toLowerCase().includes("ndiaye") && s.professeur_nom && s.professeur_nom.toLowerCase().includes("ndiogou"))
+    );
+  };
 
-  // Tri par jour puis par heure
-  const sortedMySeances = useMemo(() => {
-    return [...mySeances].sort((a, b) => {
+  // Séances de la promotion active (L1 ou L2)
+  const promoSeances = useMemo(() => {
+    return seances.filter((s) => (s.niveau || "L1") === activeNiveau);
+  }, [seances, activeNiveau]);
+
+  // Séances filtrées selon la vue professeur (Tous les cours vs Mes cours) et la filière
+  const displayedSeances = useMemo(() => {
+    let list = promoSeances;
+
+    if (filterScope === "MINE") {
+      list = list.filter(isMyCourse);
+    }
+
+    if (filiereFilter !== "ALL") {
+      if (filiereFilter === "TRONC_COMMUN") {
+        list = list.filter((s) => !s.filieres || s.filieres.length === 0 || s.filieres.length >= 3);
+      } else {
+        list = list.filter((s) => s.filieres && s.filieres.includes(filiereFilter as any));
+      }
+    }
+
+    return [...list].sort((a, b) => {
       const idxA = JOURS.indexOf(a.jour);
       const idxB = JOURS.indexOf(b.jour);
       if (idxA !== idxB) return idxA - idxB;
       return a.heure_debut.localeCompare(b.heure_debut);
     });
-  }, [mySeances]);
+  }, [promoSeances, filterScope, filiereFilter, prof]);
 
+  // Créneaux horaires uniques pour la vue grille
   const timeSlots = useMemo(() => {
-    const slots = new Set<string>();
-    mySeances.forEach((s) => slots.add(`${s.heure_debut}–${s.heure_fin}`));
-    return Array.from(slots).sort();
-  }, [mySeances]);
+    return Array.from(
+      new Set(displayedSeances.map((s) => `${s.heure_debut}–${s.heure_fin}`))
+    ).sort((a, b) => {
+      const startA = a.split(/[–-]/)[0]?.trim() || "";
+      const startB = b.split(/[–-]/)[0]?.trim() || "";
+      if (startA !== startB) return startA.localeCompare(startB);
+      const endA = a.split(/[–-]/)[1]?.trim() || "";
+      const endB = b.split(/[–-]/)[1]?.trim() || "";
+      return endA.localeCompare(endB);
+    });
+  }, [displayedSeances]);
 
   const handleCopy = (url: string) => {
     navigator?.clipboard?.writeText(url);
@@ -111,14 +137,11 @@ export default function ProfesseurEDTPage() {
     setTimeout(() => setCopiedLink(null), 2500);
   };
 
-  const totalMySessions = seances.filter((s) =>
-    (prof.id && s.professeur_id === prof.id) ||
-    (prof.matricule && s.professeur_id === prof.matricule) ||
-    (prof.full_name && s.professeur_nom && s.professeur_nom.toLowerCase().includes(prof.full_name.toLowerCase())) ||
-    (prof.nom && s.professeur_nom && s.professeur_nom.toLowerCase().includes(prof.nom.toLowerCase())) ||
-    ((prof.username === "halilsamb" || (prof.nom && prof.nom.toLowerCase().includes("samb"))) &&
-      s.professeur_nom && s.professeur_nom.toLowerCase().includes("halil"))
-  ).length;
+  // Compteurs globaux
+  const countL1Total = useMemo(() => seances.filter((s) => (s.niveau || "L1") === "L1").length, [seances]);
+  const countL2Total = useMemo(() => seances.filter((s) => s.niveau === "L2").length, [seances]);
+  const countMyL1 = useMemo(() => seances.filter((s) => (s.niveau || "L1") === "L1" && isMyCourse(s)).length, [seances, prof]);
+  const countMyL2 = useMemo(() => seances.filter((s) => s.niveau === "L2" && isMyCourse(s)).length, [seances, prof]);
 
   return (
     <DashboardLayout
@@ -133,13 +156,15 @@ export default function ProfesseurEDTPage() {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <Calendar className="w-4 h-4 text-[#e0521c]" />
-              <span className="text-[11px] font-bold tracking-wider uppercase text-[#e0521c]">Mon Emploi du Temps</span>
+              <span className="text-[11px] font-bold tracking-wider uppercase text-[#e0521c]">
+                Emplois du Temps — Halil Académie Scientifique
+              </span>
             </div>
             <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] dark:text-[#F5F7FA] leading-snug">
-              Tableau de Mes Cours
+              Emploi du Temps des Cours
             </h1>
             <p className="text-xs text-slate-500 dark:text-[#AAB4C0] mt-1">
-              <strong className="text-[#0f2744] dark:text-[#F5F7FA]">{totalMySessions}</strong> séance(s) au total · Promotion active : <strong>Licence {activeNiveau === "L2" ? "2" : "1"}</strong>
+              Consultez l&apos;intégralité des cours officiels de <strong>Licence 1</strong> et <strong>Licence 2</strong> avec les liens Google Meet associés.
             </p>
           </div>
 
@@ -174,156 +199,314 @@ export default function ProfesseurEDTPage() {
           </div>
         </div>
 
-        {/* Onglets L1 / L2 */}
-        <div className="flex gap-2 p-1.5 bg-slate-100/90 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] rounded-2xl w-fit">
-          {(["L1", "L2"] as const).map((niv) => {
-            const cnt = seances.filter((s) =>
-              ((prof.id && s.professeur_id === prof.id) ||
-              (prof.matricule && s.professeur_id === prof.matricule) ||
-              (prof.full_name && s.professeur_nom && s.professeur_nom.toLowerCase().includes(prof.full_name.toLowerCase())) ||
-              (prof.nom && s.professeur_nom && s.professeur_nom.toLowerCase().includes(prof.nom.toLowerCase())) ||
-              ((prof.username === "halilsamb" || (prof.nom && prof.nom.toLowerCase().includes("samb"))) &&
-                s.professeur_nom && s.professeur_nom.toLowerCase().includes("halil"))) &&
-              (s.niveau || "L1") === niv
-            ).length;
-            return (
+        {/* Sélection de la promotion (L1 ou L2) & Filtres */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 bg-white dark:bg-[#111821] rounded-2xl border border-slate-200/90 dark:border-[#263241] shadow-xs flex-wrap">
+          {/* Onglets L1 / L2 */}
+          <div className="flex gap-2 p-1 bg-slate-100/90 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] rounded-xl">
+            <button
+              onClick={() => setActiveNiveau("L1")}
+              className={`px-4 py-2 rounded-lg text-xs font-black transition-all flex items-center gap-2 cursor-pointer ${
+                activeNiveau === "L1"
+                  ? "bg-[#0f2744] dark:bg-[#e0521c] text-white shadow-sm"
+                  : "text-slate-600 dark:text-[#AAB4C0] hover:text-slate-900"
+              }`}
+            >
+              Licence 1 (L1)
+              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
+                activeNiveau === "L1" ? "bg-white/20 text-white" : "bg-slate-200 dark:bg-[#263241] text-slate-600 dark:text-[#AAB4C0]"
+              }`}>
+                {countL1Total} cours
+              </span>
+            </button>
+            <button
+              onClick={() => setActiveNiveau("L2")}
+              className={`px-4 py-2 rounded-lg text-xs font-black transition-all flex items-center gap-2 cursor-pointer ${
+                activeNiveau === "L2"
+                  ? "bg-[#0f2744] dark:bg-[#e0521c] text-white shadow-sm"
+                  : "text-slate-600 dark:text-[#AAB4C0] hover:text-slate-900"
+              }`}
+            >
+              Licence 2 (L2)
+              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
+                activeNiveau === "L2" ? "bg-white/20 text-white" : "bg-slate-200 dark:bg-[#263241] text-slate-600 dark:text-[#AAB4C0]"
+              }`}>
+                {countL2Total} cours
+              </span>
+            </button>
+          </div>
+
+          {/* Filtre Tous les cours vs Mes cours */}
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <button
+              onClick={() => setFilterScope("ALL")}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                filterScope === "ALL"
+                  ? "bg-[#0f2744] text-white dark:bg-slate-700 shadow-xs"
+                  : "bg-slate-100 dark:bg-[#151D27] text-slate-600 dark:text-[#AAB4C0] hover:bg-slate-200"
+              }`}
+            >
+              Tous les cours ({promoSeances.length})
+            </button>
+            <button
+              onClick={() => setFilterScope("MINE")}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                filterScope === "MINE"
+                  ? "bg-[#e0521c] text-white shadow-xs"
+                  : "bg-slate-100 dark:bg-[#151D27] text-slate-600 dark:text-[#AAB4C0] hover:bg-slate-200"
+              }`}
+            >
+              <User className="w-3 h-3" />
+              Mes cours ({activeNiveau === "L1" ? countMyL1 : countMyL2})
+            </button>
+
+            {/* Filtres par filière */}
+            {(["TRONC_COMMUN", "MPI", "SML", "MIASS"] as const).map((fil) => (
               <button
-                key={niv}
-                onClick={() => setActiveNiveau(niv)}
-                className={`px-5 py-2.5 rounded-xl text-xs font-black transition-all flex items-center gap-2 cursor-pointer ${
-                  activeNiveau === niv
-                    ? "bg-[#0f2744] dark:bg-[#e0521c] text-white shadow-sm"
-                    : "text-slate-600 dark:text-[#AAB4C0] hover:text-slate-900"
+                key={fil}
+                onClick={() => setFiliereFilter(filiereFilter === fil ? "ALL" : fil)}
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  filiereFilter === fil
+                    ? "bg-[#0f2744] text-white dark:bg-[#e0521c] shadow-xs"
+                    : "bg-slate-100 dark:bg-[#151D27] text-slate-600 dark:text-[#AAB4C0] hover:bg-slate-200"
                 }`}
               >
-                Licence {niv === "L1" ? "1 (L1)" : "2 (L2)"}
-                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
-                  activeNiveau === niv ? "bg-white/20 text-white" : "bg-slate-200 dark:bg-[#263241] text-slate-600 dark:text-[#AAB4C0]"
-                }`}>
-                  {cnt}
-                </span>
+                {fil === "TRONC_COMMUN" ? "Tronc commun" : fil}
               </button>
-            );
-          })}
+            ))}
+          </div>
         </div>
 
-        {/* ── 1. SOUS FORME DE TABLEAU POUR LES ENSEIGNANTS SELON LA CLASSE ── */}
+        {/* ── 1. FORMAT TABLEAU ENSEIGNANT (AFFICHAGE DE TOUS LES EDTS) ── */}
         {viewMode === "tableau" && (
           <div className="bg-white dark:bg-[#111821] rounded-2xl border border-slate-200/90 dark:border-[#263241] shadow-xs overflow-hidden">
             <div className="p-4 border-b border-slate-100 dark:border-[#263241] flex items-center justify-between">
-              <h2 className="font-serif text-base font-bold text-[#0f2744] dark:text-[#F5F7FA] flex items-center gap-2">
-                <TableIcon className="w-4 h-4 text-[#e0521c]" />
-                Vos Séances en Licence {activeNiveau === "L2" ? "2" : "1"} ({sortedMySeances.length})
-              </h2>
-              <span className="text-xs text-slate-400">
-                Filières différenciées (MPI, SML, MIASS)
-              </span>
+              <div>
+                <h2 className="font-serif text-base font-bold text-[#0f2744] dark:text-[#F5F7FA] flex items-center gap-2">
+                  <TableIcon className="w-4 h-4 text-[#e0521c]" />
+                  Emploi du Temps Licence {activeNiveau === "L2" ? "2" : "1"} ({displayedSeances.length} séance{displayedSeances.length !== 1 ? "s" : ""})
+                </h2>
+                <p className="text-xs text-slate-400 dark:text-[#687585]">
+                  {filterScope === "ALL" ? "Tous les cours officiels de la promotion" : "Vos cours assignés uniquement"} · Filières différenciées (MPI, SML, MIASS)
+                </p>
+              </div>
             </div>
 
             <div className="p-4 sm:p-5">
-              {sortedMySeances.length === 0 ? (
+              {displayedSeances.length === 0 ? (
                 <div className="py-12 text-center space-y-3 bg-slate-50/50 dark:bg-[#151D27]/30 rounded-2xl border border-dashed border-slate-200 dark:border-[#263241]">
                   <Calendar className="w-10 h-10 text-slate-300 dark:text-[#687585] mx-auto" />
                   <p className="text-sm font-bold text-slate-600 dark:text-[#AAB4C0]">
-                    Aucune séance programmée en Licence {activeNiveau === "L2" ? "2" : "1"}
+                    Aucune séance trouvée pour ce filtre
                   </p>
                   <p className="text-xs text-slate-400 dark:text-[#687585]">
-                    L&apos;administration n&apos;a pas encore publié de cours vous concernant sur cette promotion.
+                    Sélectionnez « Tous les cours » pour voir la grille complète de la promotion.
                   </p>
                 </div>
               ) : (
-                <div className="overflow-x-auto rounded-xl border border-slate-200/90 dark:border-[#263241] shadow-xs">
-                  <table className="w-full text-left border-collapse text-xs">
-                    <thead>
-                      <tr className="bg-[#0f2744] text-white dark:bg-[#151D27] uppercase tracking-wider font-extrabold divide-x divide-white/10 dark:divide-[#263241]">
-                        <th className="py-3 px-4 text-center w-28">JOUR</th>
-                        <th className="py-3 px-4 text-center w-36">HORAIRES</th>
-                        <th className="py-3 px-5">MATIÈRE</th>
-                        <th className="py-3 px-4 text-center w-36">FILIÈRE</th>
-                        <th className="py-3 px-4 text-center w-36">LIEN MEET</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-[#263241]">
-                      {sortedMySeances.map((s, idx) => {
-                        const isEven = idx % 2 === 0;
-                        const fBadge = getFiliereBadgeInfo(s.filieres);
-                        return (
-                          <tr
-                            key={s.id}
-                            className={`transition-colors hover:bg-slate-50/80 dark:hover:bg-[#151D27]/80 ${
-                              isEven ? "bg-white dark:bg-[#111821]" : "bg-slate-50/40 dark:bg-[#151D27]/30"
-                            }`}
-                          >
-                            <td className="py-3.5 px-4 text-center font-bold text-xs text-[#0f2744] dark:text-[#F5F7FA]">
-                              <span className="inline-block px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/40 border border-blue-200/60 dark:border-blue-900/50 text-[#0f2744] dark:text-blue-300 font-extrabold">
-                                {s.jour}
-                              </span>
-                            </td>
+                <>
+                  {/* Version Mobile : Cartes pleines */}
+                  <div className="md:hidden grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    {displayedSeances.map((s) => {
+                      const fBadge = getFiliereBadgeInfo(s.filieres);
+                      const isMine = isMyCourse(s);
+                      return (
+                        <div
+                          key={`mobile-${s.id}`}
+                          className={`rounded-2xl border-2 p-4 shadow-sm flex flex-col justify-between transition-all ${
+                            isMine
+                              ? "bg-orange-50/40 dark:bg-[#151D27] border-[#e0521c]/50"
+                              : "bg-white dark:bg-[#151D27] border-slate-200/90 dark:border-[#263241]"
+                          }`}
+                        >
+                          <div className="flex items-center justify-between gap-2 pb-3 border-b border-slate-100 dark:border-[#263241]">
+                            <span className="px-3 py-1 rounded-xl bg-[#0f2744] text-white dark:bg-[#1e293b] font-black text-xs uppercase tracking-wider">
+                              {s.jour}
+                            </span>
+                            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-orange-50 dark:bg-orange-950/40 border border-orange-200/60 dark:border-orange-800/40 text-[#e0521c] font-black text-xs">
+                              <Clock className="w-3 h-3 text-[#e0521c]" />
+                              <span>{formatHeureDisplay(s.heure_debut)} – {formatHeureDisplay(s.heure_fin)}</span>
+                            </div>
+                          </div>
 
-                            <td className="py-3.5 px-4 text-center font-bold text-xs text-slate-700 dark:text-[#AAB4C0] whitespace-nowrap">
-                              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-[#151D27] border border-slate-200/60 dark:border-[#263241]">
-                                <Clock className="w-3.5 h-3.5 text-[#e0521c]" />
-                                <span>{formatHeureDisplay(s.heure_debut)} – {formatHeureDisplay(s.heure_fin)}</span>
-                              </div>
-                            </td>
+                          <div className="py-3 space-y-2">
+                            <div className="flex items-start justify-between gap-2">
+                              <h3 className="font-bold text-sm text-[#0f2744] dark:text-[#F5F7FA] leading-tight">
+                                {s.matiere_nom}
+                              </h3>
+                              {isMine && (
+                                <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-black bg-[#e0521c] text-white shrink-0">
+                                  ★ Mon cours
+                                </span>
+                              )}
+                            </div>
 
-                            <td className="py-3.5 px-5 font-bold text-sm text-slate-900 dark:text-[#F5F7FA]">
-                              <div className="flex items-center gap-2">
-                                <BookOpen className="w-4 h-4 text-[#0f2744] dark:text-[#e0521c] shrink-0" />
-                                <span>{s.matiere_nom}</span>
-                              </div>
-                            </td>
-
-                            <td className="py-3.5 px-4 text-center whitespace-nowrap">
-                              <span className={`inline-block px-2.5 py-1 rounded-lg text-xs font-black border ${fBadge.color}`}>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className={`inline-block px-2.5 py-1 rounded-lg text-[11px] font-black border ${fBadge.color}`}>
                                 {fBadge.label}
                               </span>
-                            </td>
+                            </div>
 
-                            <td className="py-3.5 px-4 text-center">
-                              {s.meet_url ? (
-                                <div className="flex items-center justify-center gap-1.5">
-                                  <a
-                                    href={s.meet_url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold shadow-xs transition-colors"
-                                  >
-                                    <Video className="w-3.5 h-3.5" />
-                                    Lancer Meet
-                                    <ExternalLink className="w-2.5 h-2.5" />
-                                  </a>
-                                  <button
-                                    type="button"
-                                    onClick={() => handleCopy(s.meet_url!)}
-                                    title="Copier le lien"
-                                    className="p-1.5 rounded-lg border border-slate-200 dark:border-[#263241] hover:bg-slate-100 dark:hover:bg-[#151D27] text-slate-500 cursor-pointer"
-                                  >
-                                    {copiedLink === s.meet_url ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
-                                  </button>
+                            <div className="flex items-center gap-2 pt-1 text-xs text-slate-600 dark:text-slate-300">
+                              <div className="w-5 h-5 rounded-full bg-slate-100 dark:bg-[#111821] text-[#0f2744] dark:text-white flex items-center justify-center font-bold text-[10px] shrink-0 border border-slate-200 dark:border-slate-700">
+                                {(s.professeur_nom || "H")[0]}
+                              </div>
+                              <span className="font-semibold truncate">{s.professeur_nom || "Mister Halil"}</span>
+                            </div>
+                          </div>
+
+                          <div className="pt-3 border-t border-slate-100 dark:border-[#263241]">
+                            {s.meet_url ? (
+                              <div className="flex items-center gap-2">
+                                <a
+                                  href={s.meet_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex-1 inline-flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-bold text-xs shadow-xs transition-all"
+                                >
+                                  <Video className="w-4 h-4" />
+                                  <span>Rejoindre Meet</span>
+                                  <ExternalLink className="w-3 h-3 opacity-70" />
+                                </a>
+                                <button
+                                  type="button"
+                                  onClick={() => handleCopy(s.meet_url!)}
+                                  title="Copier le lien Meet"
+                                  className="p-2 rounded-xl border border-slate-200 dark:border-[#263241] bg-slate-50 dark:bg-[#111821] hover:bg-slate-100 dark:hover:bg-[#151D27] text-slate-600 dark:text-slate-300 cursor-pointer"
+                                >
+                                  {copiedLink === s.meet_url ? (
+                                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                                  ) : (
+                                    <Copy className="w-4 h-4" />
+                                  )}
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="text-center py-2 px-3 rounded-xl bg-slate-50 dark:bg-[#111821] border border-slate-100 dark:border-[#263241]">
+                                <span className="text-xs text-slate-400 italic">🎥 Lien Meet à définir</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Version Desktop : Tableau complet avec Enseignant et Liens Meet */}
+                  <div className="hidden md:block overflow-x-auto rounded-xl border border-slate-200/90 dark:border-[#263241] shadow-xs">
+                    <table className="w-full text-left border-collapse text-xs">
+                      <thead>
+                        <tr className="bg-[#0f2744] text-white dark:bg-[#151D27] uppercase tracking-wider font-extrabold divide-x divide-white/10 dark:divide-[#263241]">
+                          <th className="py-3 px-4 text-center w-28">JOUR</th>
+                          <th className="py-3 px-4 text-center w-36">HORAIRES</th>
+                          <th className="py-3 px-5">MATIÈRE</th>
+                          <th className="py-3 px-4 text-center w-36">FILIÈRE</th>
+                          <th className="py-3 px-5">ENSEIGNANT</th>
+                          <th className="py-3 px-4 text-center w-44">SALLE DE COURS (MEET)</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100 dark:divide-[#263241]">
+                        {displayedSeances.map((s, idx) => {
+                          const isEven = idx % 2 === 0;
+                          const fBadge = getFiliereBadgeInfo(s.filieres);
+                          const isMine = isMyCourse(s);
+                          return (
+                            <tr
+                              key={s.id}
+                              className={`transition-colors hover:bg-slate-50/80 dark:hover:bg-[#151D27]/80 ${
+                                isMine
+                                  ? "bg-orange-50/30 dark:bg-orange-950/20 font-semibold"
+                                  : isEven
+                                  ? "bg-white dark:bg-[#111821]"
+                                  : "bg-slate-50/40 dark:bg-[#151D27]/30"
+                              }`}
+                            >
+                              <td className="py-3.5 px-4 text-center font-bold text-xs text-[#0f2744] dark:text-[#F5F7FA]">
+                                <span className="inline-block px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/40 border border-blue-200/60 dark:border-blue-900/50 text-[#0f2744] dark:text-blue-300 font-extrabold">
+                                  {s.jour}
+                                </span>
+                              </td>
+
+                              <td className="py-3.5 px-4 text-center font-bold text-xs text-slate-700 dark:text-[#AAB4C0] whitespace-nowrap">
+                                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-[#151D27] border border-slate-200/60 dark:border-[#263241]">
+                                  <Clock className="w-3.5 h-3.5 text-[#e0521c]" />
+                                  <span>{formatHeureDisplay(s.heure_debut)} – {formatHeureDisplay(s.heure_fin)}</span>
                                 </div>
-                              ) : (
-                                <span className="text-[11px] text-slate-400 italic">Lien non défini</span>
-                              )}
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
+                              </td>
+
+                              <td className="py-3.5 px-5 font-bold text-sm text-slate-900 dark:text-[#F5F7FA]">
+                                <div className="flex items-center gap-2">
+                                  <BookOpen className="w-4 h-4 text-[#0f2744] dark:text-[#e0521c] shrink-0" />
+                                  <span>{s.matiere_nom}</span>
+                                  {isMine && (
+                                    <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-black bg-[#e0521c] text-white shrink-0">
+                                      ★ Mon cours
+                                    </span>
+                                  )}
+                                </div>
+                              </td>
+
+                              <td className="py-3.5 px-4 text-center whitespace-nowrap">
+                                <span className={`inline-block px-2.5 py-1 rounded-lg text-xs font-black border ${fBadge.color}`}>
+                                  {fBadge.label}
+                                </span>
+                              </td>
+
+                              <td className="py-3.5 px-5 font-bold text-xs text-slate-800 dark:text-slate-200">
+                                <div className="flex items-center gap-2">
+                                  <div className="w-6 h-6 rounded-full bg-orange-100 dark:bg-orange-950/50 text-[#e0521c] flex items-center justify-center font-black text-[10px] shrink-0">
+                                    {(s.professeur_nom || "H")[0]}
+                                  </div>
+                                  <span className={isMine ? "text-[#e0521c] font-black" : ""}>
+                                    {s.professeur_nom || "Mister Halil"}
+                                  </span>
+                                </div>
+                              </td>
+
+                              <td className="py-3.5 px-4 text-center">
+                                {s.meet_url ? (
+                                  <div className="flex items-center justify-center gap-1.5">
+                                    <a
+                                      href={s.meet_url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold shadow-xs transition-colors"
+                                    >
+                                      <Video className="w-3.5 h-3.5" />
+                                      Lancer Meet
+                                      <ExternalLink className="w-2.5 h-2.5" />
+                                    </a>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleCopy(s.meet_url!)}
+                                      title="Copier le lien"
+                                      className="p-1.5 rounded-lg border border-slate-200 dark:border-[#263241] hover:bg-slate-100 dark:hover:bg-[#151D27] text-slate-500 cursor-pointer"
+                                    >
+                                      {copiedLink === s.meet_url ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <span className="text-[11px] text-slate-400 italic">Lien Meet à définir</span>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
               )}
             </div>
           </div>
         )}
 
-        {/* ── 2. FORMAT GRILLE HEBDOMADAIRE ────────────────────────── */}
+        {/* ── 2. FORMAT GRILLE HEBDOMADAIRE (POUR PROFESSEURS) ── */}
         {viewMode === "grille" && (
           <div>
             {timeSlots.length === 0 ? (
               <div className="bg-white dark:bg-[#111821] rounded-2xl border border-slate-200/90 dark:border-[#263241] shadow-sm p-12 text-center">
                 <Calendar className="w-10 h-10 text-slate-200 dark:text-[#263241] mx-auto mb-3" />
-                <p className="text-sm font-semibold text-slate-500 dark:text-[#AAB4C0]">Aucune séance en {activeNiveau}</p>
+                <p className="text-sm font-semibold text-slate-500 dark:text-[#AAB4C0]">Aucun cours trouvé pour Licence {activeNiveau === "L2" ? "2" : "1"}</p>
               </div>
             ) : (
               <div className="overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-[#263241] shadow-sm">
@@ -342,7 +525,7 @@ export default function ProfesseurEDTPage() {
                     <tr className="bg-[#0f2744] dark:bg-[#151D27] divide-x divide-white/10 dark:divide-[#263241]">
                       <th className="px-4 py-3 text-left text-xs font-bold text-white/70 dark:text-[#AAB4C0] uppercase tracking-wider" style={{ width: "130px" }}>Heure</th>
                       {JOURS.map((jour) => {
-                        const cnt = mySeances.filter((s) => s.jour === jour).length;
+                        const cnt = displayedSeances.filter((s) => s.jour === jour).length;
                         return (
                           <th key={jour} className="px-2 py-3 text-center text-xs font-bold text-white dark:text-[#F5F7FA] uppercase tracking-wider">
                             <div>{jour}</div>
@@ -355,45 +538,72 @@ export default function ProfesseurEDTPage() {
                   <tbody className="divide-y divide-slate-100 dark:divide-[#263241]">
                     {timeSlots.map((slot, i) => (
                       <tr key={slot} className={i % 2 === 0 ? "bg-white dark:bg-[#111821]" : "bg-slate-50/60 dark:bg-[#151D27]/50"}>
-                        <td className="px-4 py-3 border-r border-slate-100 dark:border-[#263241] align-top whitespace-nowrap h-44">
+                        <td className="px-4 py-3 border-r border-slate-100 dark:border-[#263241] align-top whitespace-nowrap h-40">
                           <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-600 dark:text-[#AAB4C0]">
                             <Clock className="w-3 h-3 text-[#e0521c]" />
                             {slot}
                           </div>
                         </td>
                         {JOURS.map((jour) => {
-                          const cells = mySeances.filter(
+                          const cells = displayedSeances.filter(
                             (s) => s.jour === jour && `${s.heure_debut}–${s.heure_fin}` === slot
                           );
                           return (
-                            <td key={jour} className="p-2 border-r border-slate-100 dark:border-[#263241] last:border-r-0 align-top h-44">
-                              <div className="h-full min-h-[160px] flex flex-col justify-start">
+                            <td key={jour} className="p-2 border-r border-slate-100 dark:border-[#263241] last:border-r-0 align-top h-40">
+                              <div className="h-full min-h-[140px] flex flex-col justify-start">
                                 {cells.length === 0 ? (
-                                  <div className="h-full min-h-[160px] rounded-xl border border-dashed border-slate-200/60 dark:border-[#263241]/60 flex items-center justify-center text-slate-300 dark:text-slate-700 text-xs font-medium">
+                                  <div className="h-full min-h-[140px] rounded-xl border border-dashed border-slate-200/60 dark:border-[#263241]/60 flex items-center justify-center text-slate-300 dark:text-slate-700 text-xs font-medium">
                                     —
                                   </div>
                                 ) : (
                                   <div className="space-y-1.5 flex-1 flex flex-col">
                                     {cells.map((s) => {
                                       const fBadge = getFiliereBadgeInfo(s.filieres);
+                                      const isMine = isMyCourse(s);
                                       return (
-                                        <div key={s.id} className="rounded-xl border border-blue-200 dark:border-blue-900 bg-blue-50/70 dark:bg-[#151D27] p-2.5 shadow-2xs space-y-1 flex-1 flex flex-col justify-between">
+                                        <div
+                                          key={s.id}
+                                          className={`rounded-xl border p-2.5 shadow-2xs space-y-1 flex-1 flex flex-col justify-between ${
+                                            isMine
+                                              ? "border-[#e0521c] bg-orange-50/70 dark:bg-[#1e293b]"
+                                              : "border-blue-200/80 dark:border-blue-900/60 bg-blue-50/60 dark:bg-[#151D27]"
+                                          }`}
+                                        >
                                           <div>
-                                            <p className="text-xs font-bold text-slate-900 dark:text-[#F5F7FA] leading-tight">{s.matiere_nom}</p>
+                                            <div className="flex items-start justify-between gap-1">
+                                              <p className="text-xs font-bold text-slate-900 dark:text-[#F5F7FA] leading-tight">
+                                                {s.matiere_nom}
+                                              </p>
+                                              {isMine && (
+                                                <span className="text-[9px] font-black px-1 py-0.2 rounded bg-[#e0521c] text-white shrink-0">
+                                                  ★
+                                                </span>
+                                              )}
+                                            </div>
                                             <div className="mt-1">
                                               <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-black border ${fBadge.color}`}>
                                                 {fBadge.label}
                                               </span>
                                             </div>
+                                            <p className="text-[11px] font-semibold text-slate-700 dark:text-slate-300 mt-1 truncate">
+                                              👤 {s.professeur_nom || "Mister Halil"}
+                                            </p>
                                           </div>
                                           {s.meet_url && (
-                                            <div className="flex gap-1 mt-2 pt-1.5 border-t border-slate-200/60 dark:border-[#263241]">
-                                              <a href={s.meet_url} target="_blank" rel="noopener noreferrer"
-                                                className="flex-1 flex items-center justify-center gap-1 py-1 rounded text-[10px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white">
-                                                <Video className="w-3 h-3" /> Lancer
+                                            <div className="flex items-center gap-1 mt-2 pt-1.5 border-t border-current/10">
+                                              <a
+                                                href={s.meet_url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex-1 inline-flex items-center justify-center gap-1 py-1 rounded-md text-[10px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition-colors"
+                                              >
+                                                <Video className="w-3 h-3" />
+                                                Lancer Meet
                                               </a>
-                                              <button onClick={() => handleCopy(s.meet_url!)}
-                                                className="p-1 border border-slate-200 dark:border-[#263241] rounded hover:bg-white text-slate-500 cursor-pointer">
+                                              <button
+                                                onClick={() => handleCopy(s.meet_url!)}
+                                                className="p-1 text-slate-500 hover:text-slate-800 border border-slate-200 dark:border-[#263241] rounded-md hover:bg-white transition-colors"
+                                              >
                                                 {copiedLink === s.meet_url ? <CheckCircle2 className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
                                               </button>
                                             </div>
@@ -415,7 +625,6 @@ export default function ProfesseurEDTPage() {
             )}
           </div>
         )}
-
       </div>
     </DashboardLayout>
   );
