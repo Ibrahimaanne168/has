@@ -75,17 +75,28 @@ export async function GET(request: NextRequest) {
       });
 
       if (matchedUser?.email) {
+        const uEmail = (matchedUser.email || "").toLowerCase();
+        const uUsername = (matchedUser.user_metadata?.username || "").toLowerCase();
+        const uFullName = (matchedUser.user_metadata?.full_name || "").toLowerCase();
+
         let role = matchedUser.user_metadata?.role;
-        if (!role || cleanId === "ibou" || cleanId === "halil" || matchedUser.user_metadata?.username === "ibou" || matchedUser.user_metadata?.username === "halil") {
-          role =
-            cleanId === "ibou" || cleanId === "halil" || matchedUser.user_metadata?.username === "ibou" || matchedUser.user_metadata?.username === "halil"
-              ? "admin"
-              : matchedUser.user_metadata?.role ||
-                (matchedUser.email?.includes("admin") || matchedUser.email?.includes("halil-academie")
-                  ? "admin"
-                  : matchedUser.email?.endsWith("@has-academie.online")
-                  ? "professeur"
-                  : "etudiant");
+        const isAdmin =
+          role === "admin" ||
+          cleanId === "ibou" ||
+          cleanId === "halil" ||
+          cleanId === "el hadji" ||
+          uUsername === "ibou" ||
+          uUsername === "halil" ||
+          uEmail.startsWith("ibou@") ||
+          uEmail.startsWith("halil@") ||
+          uEmail.startsWith("direction@") ||
+          uEmail.includes("admin") ||
+          uFullName === "el hadji";
+
+        if (isAdmin) {
+          role = "admin";
+        } else if (!role) {
+          role = uEmail.includes("prof") ? "professeur" : "etudiant";
         }
 
         return NextResponse.json({

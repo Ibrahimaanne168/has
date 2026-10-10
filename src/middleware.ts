@@ -132,12 +132,27 @@ export async function middleware(request: NextRequest) {
     return redirectRes;
   }
 
-  // Déduction automatique du rôle si non encore renseigné
-  if (!userRole) {
-    const email = (user.email || "").toLowerCase();
-    if (email.includes("admin") || email.startsWith("halil@") || email.startsWith("direction@") || email.endsWith("@has-internal.local")) {
-      userRole = "admin";
-    } else if (email.includes("prof") || email.endsWith("@has-academie.online")) {
+  // Déduction stricte et prioritaire du rôle administrateur (El Hadji / Halil / Direction)
+  const email = (user.email || "").toLowerCase();
+  const metaUsername = (meta.username || "").toLowerCase();
+  const metaFullName = (meta.full_name || "").toLowerCase();
+
+  const isAdmin =
+    userRole === "admin" ||
+    meta.role === "admin" ||
+    email.startsWith("ibou@") ||
+    email.startsWith("halil@") ||
+    email.startsWith("direction@") ||
+    email.includes("admin") ||
+    email.endsWith("@has-internal.local") ||
+    metaUsername === "ibou" ||
+    metaUsername === "halil" ||
+    metaFullName === "el hadji";
+
+  if (isAdmin) {
+    userRole = "admin";
+  } else if (!userRole) {
+    if (email.includes("prof")) {
       userRole = "professeur";
     } else {
       userRole = "etudiant";

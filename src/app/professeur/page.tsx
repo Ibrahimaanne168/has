@@ -24,17 +24,34 @@ import { Cours, Message } from "@/lib/types";
 
 export default function ProfesseurDashboard() {
   const { prof } = useCurrentProfesseur();
-  const [courses, setCourses] = useState<Cours[]>([]);
-  const [directMessages, setDirectMessages] = useState<Message[]>([]);
-
-  const loadData = () => {
-    setCourses(getStoredCourses());
-    setDirectMessages(getStoredDirectMessages());
-  };
+  const [courses, setCourses] = useState<Cours[]>(() => {
+    if (typeof window === "undefined") return [];
+    return getStoredCourses();
+  });
+  const [directMessages, setDirectMessages] = useState<Message[]>(() => {
+    if (typeof window === "undefined") return [];
+    return getStoredDirectMessages();
+  });
 
   useEffect(() => {
-    loadData();
-    const handleUpdate = () => loadData();
+    if (typeof window !== "undefined") {
+      const authRole = localStorage.getItem("has_auth_role");
+      const authIdent = (localStorage.getItem("has_auth_identifier") || "").toLowerCase();
+      if (
+        authRole === "admin" ||
+        authIdent === "ibou" ||
+        authIdent === "halil" ||
+        authIdent.startsWith("ibou@") ||
+        authIdent.startsWith("halil@")
+      ) {
+        window.location.href = "/admin";
+        return;
+      }
+    }
+    const handleUpdate = () => {
+      setCourses(getStoredCourses());
+      setDirectMessages(getStoredDirectMessages());
+    };
     window.addEventListener("has_academic_storage_updated", handleUpdate);
     return () => window.removeEventListener("has_academic_storage_updated", handleUpdate);
   }, []);
@@ -89,7 +106,7 @@ export default function ProfesseurDashboard() {
               {prof.specialite || "Enseignant-Chercheur"}
             </span>
             <span className="px-3 py-1.5 rounded-lg bg-[#0f2744]/10 dark:bg-[#151D27] border border-transparent dark:border-[#263241] text-xs font-mono font-bold text-[#0f2744] dark:text-[#e0521c]">
-              {prof.matricule || "PROF-HAS"}
+              {prof.matricule && prof.matricule !== "PROF-HAS" ? prof.matricule : "PRF001"}
             </span>
           </div>
         </div>

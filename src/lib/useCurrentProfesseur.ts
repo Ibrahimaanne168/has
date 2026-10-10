@@ -106,15 +106,23 @@ export function useCurrentProfesseur() {
             localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedProf));
           } else {
             // Création d'un profil professeur dynamique si non présent dans la liste
+            const isAdmin =
+              meta.role === "admin" ||
+              authEmail.startsWith("ibou@") ||
+              authEmail.startsWith("halil@") ||
+              authEmail.startsWith("direction@") ||
+              authUsername === "ibou" ||
+              authUsername === "halil";
+
             const newProf: Professeur = {
               id: authUser.id,
-              full_name: meta.full_name || meta.name || authUser.email?.split("@")[0] || "Enseignant HAS",
+              full_name: meta.full_name || meta.name || (authUsername === "ibou" ? "El Hadji" : "Administration HAS"),
               email: authUser.email || "",
               username: meta.username || authUser.email?.split("@")[0] || null,
               phone: meta.phone || null,
-              matricule: meta.matricule || "PROF-HAS",
-              specialite: meta.specialite || "Informatique",
-              bio: meta.bio || "Enseignant-chercheur à Halil Académie Scientifique.",
+              matricule: meta.matricule || (isAdmin ? (authUsername === "ibou" || authEmail.startsWith("ibou@") ? "ADM002" : "ADM001") : "PROF-HAS"),
+              specialite: isAdmin ? "Administration HAS" : (meta.specialite || "Informatique"),
+              bio: isAdmin ? "Administrateur officiel de HAS." : (meta.bio || "Enseignant-chercheur à Halil Académie Scientifique."),
               is_active: true,
               matieres: [],
               niveaux: ["L1", "L2"],

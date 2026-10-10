@@ -41,20 +41,36 @@ function ConnexionForm() {
 
     try {
       const cleanInput = emailOrUsername.trim().toLowerCase();
+      const isAdminInput =
+        cleanInput === "ibou" ||
+        cleanInput === "halil" ||
+        cleanInput === "admin" ||
+        cleanInput === "el hadji" ||
+        cleanInput.startsWith("ibou@") ||
+        cleanInput.startsWith("halil@") ||
+        cleanInput.startsWith("direction@") ||
+        cleanInput.includes("admin");
+
       const allProfs = getStoredProfesseurs();
-      const matchedProf = allProfs.find((p) =>
-        (p.email && p.email.toLowerCase() === cleanInput) ||
-        (p.username && p.username.toLowerCase() === cleanInput) ||
-        (p.matricule && p.matricule.toLowerCase() === cleanInput) ||
-        (p.full_name && p.full_name.toLowerCase() === cleanInput) ||
-        cleanInput.includes(p.username?.toLowerCase() || "___") ||
-        (p.nom && cleanInput.includes(p.nom.toLowerCase()))
-      );
+      const matchedProf = !isAdminInput
+        ? allProfs.find((p) =>
+            (p.email && p.email.toLowerCase() === cleanInput) ||
+            (p.username && p.username.toLowerCase() === cleanInput) ||
+            (p.matricule && p.matricule.toLowerCase() === cleanInput) ||
+            (p.full_name && p.full_name.toLowerCase() === cleanInput)
+          )
+        : null;
 
       if (matchedProf && typeof window !== "undefined") {
         try {
           localStorage.setItem("has_current_professeur_profile_v2", JSON.stringify(matchedProf));
           localStorage.setItem("has_auth_role", "professeur");
+          localStorage.setItem("has_auth_identifier", cleanInput);
+        } catch {}
+      } else if (isAdminInput && typeof window !== "undefined") {
+        try {
+          localStorage.removeItem("has_current_professeur_profile_v2");
+          localStorage.setItem("has_auth_role", "admin");
           localStorage.setItem("has_auth_identifier", cleanInput);
         } catch {}
       }
@@ -145,18 +161,23 @@ function ConnexionForm() {
           } catch {}
         }
 
-        if (!role || cleanInput === "ibou" || cleanInput === "halil") {
-          if (
-            cleanInput === "ibou" ||
-            cleanInput === "halil" ||
-            authEmail.toLowerCase().includes("admin") ||
-            authEmail.toLowerCase().startsWith("halil@") ||
-            authEmail.toLowerCase().startsWith("ibou@") ||
-            authEmail.toLowerCase().startsWith("direction@") ||
-            authEmail.toLowerCase().endsWith("@has-internal.local")
-          ) {
-            role = "admin";
-          } else if (matchedProf || authEmail.toLowerCase().includes("prof")) {
+        const isAuthAdmin =
+          role === "admin" ||
+          meta.role === "admin" ||
+          isAdminInput ||
+          cleanInput === "ibou" ||
+          cleanInput === "halil" ||
+          cleanInput === "el hadji" ||
+          authEmail.toLowerCase().includes("admin") ||
+          authEmail.toLowerCase().startsWith("halil@") ||
+          authEmail.toLowerCase().startsWith("ibou@") ||
+          authEmail.toLowerCase().startsWith("direction@") ||
+          authEmail.toLowerCase().endsWith("@has-internal.local");
+
+        if (isAuthAdmin) {
+          role = "admin";
+        } else if (!role) {
+          if (matchedProf || authEmail.toLowerCase().includes("prof")) {
             role = "professeur";
           } else {
             role = "etudiant";

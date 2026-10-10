@@ -132,33 +132,41 @@ export function DashboardLayout({
   });
 
   React.useEffect(() => {
-    if (role === "admin") {
-      async function detectAdmin() {
-        try {
-          const { createClient } = await import("@/lib/supabase/client");
-          const supabase = createClient();
-          const { data: { user: authUser } } = await supabase.auth.getUser();
-          if (authUser) {
-            const meta = authUser.user_metadata || {};
-            let name = meta.full_name || meta.name;
-            let username = meta.username || authUser.email?.split("@")[0] || "";
-            let mat = meta.matricule;
+    async function detectAdmin() {
+      try {
+        const { createClient } = await import("@/lib/supabase/client");
+        const supabase = createClient();
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        if (authUser) {
+          const meta = authUser.user_metadata || {};
+          let name = meta.full_name || meta.name;
+          let username = meta.username || authUser.email?.split("@")[0] || "";
+          let mat = meta.matricule;
 
-            try {
-              const { data: p } = await supabase
-                .from("profiles")
-                .select("*")
-                .eq("id", authUser.id)
-                .maybeSingle();
-              if (p) {
-                if (p.full_name) name = p.full_name;
-                if (p.username) username = p.username;
-                if (p.matricule) mat = p.matricule;
-              }
-            } catch {}
+          try {
+            const { data: p } = await supabase
+              .from("profiles")
+              .select("*")
+              .eq("id", authUser.id)
+              .maybeSingle();
+            if (p) {
+              if (p.full_name) name = p.full_name;
+              if (p.username) username = p.username;
+              if (p.matricule) mat = p.matricule;
+            }
+          } catch {}
 
-            const isIbou = username.toLowerCase() === "ibou" || authUser.email?.toLowerCase().includes("ibou");
-            const finalName = isIbou ? (name || "El Hadji") : (name || "Administrateur HAS");
+          const uEmail = (authUser.email || "").toLowerCase();
+          const isIbou = username.toLowerCase() === "ibou" || uEmail.includes("ibou") || (name && name.toLowerCase() === "el hadji");
+          const isAdmin =
+            meta.role === "admin" ||
+            isIbou ||
+            uEmail.startsWith("halil@") ||
+            uEmail.startsWith("direction@") ||
+            uEmail.includes("admin");
+
+          if (isAdmin) {
+            const finalName = isIbou ? "El Hadji" : (name || "Administrateur HAS");
             const finalMatricule = isIbou ? (mat || "ADM002") : (mat || "ADM001");
             const finalEmail = authUser.email || userEmail;
 
@@ -172,13 +180,26 @@ export function DashboardLayout({
               localStorage.setItem("has_active_admin_session", JSON.stringify(detected));
             }
           }
-        } catch {}
-      }
-      detectAdmin();
+        }
+      } catch {}
     }
-  }, [role, userEmail]);
+    detectAdmin();
+  }, [userEmail]);
+
+  const isAdminSession = Boolean(
+    role === "admin" ||
+    (currentAdminInfo && (
+      currentAdminInfo.matricule?.startsWith("ADM") ||
+      currentAdminInfo.email?.includes("ibou") ||
+      currentAdminInfo.email?.includes("halil") ||
+      currentAdminInfo.email?.includes("direction")
+    ))
+  );
 
   const getRoleBadge = () => {
+    if (isAdminSession) {
+      return <Badge variant="accent">Administrateur</Badge>;
+    }
     switch (role) {
       case "admin":
         return <Badge variant="accent">Administrateur</Badge>;
@@ -190,21 +211,21 @@ export function DashboardLayout({
   };
 
   const displayUserName =
-    role === "admin" && currentAdminInfo
+    isAdminSession && currentAdminInfo
       ? currentAdminInfo.name
       : role === "etudiant" && userName.toLowerCase().includes("administration")
       ? "Ibrahima Anne"
       : userName;
 
   const displayMatricule =
-    role === "admin" && currentAdminInfo
+    isAdminSession && currentAdminInfo
       ? currentAdminInfo.matricule
       : role === "etudiant" && (matriculeOrTitle === "ADM001" || !matriculeOrTitle)
       ? "ETU001"
       : matriculeOrTitle;
 
   const displayEmail =
-    role === "admin" && currentAdminInfo
+    isAdminSession && currentAdminInfo
       ? currentAdminInfo.email
       : userEmail;
 
