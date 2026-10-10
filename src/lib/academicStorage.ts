@@ -635,29 +635,56 @@ export function isCourseConcernedForStudent(
   return false;
 }
 
-// Aucune séance fictive : c'est l'admin qui les crée en temps réel
-export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [];
+// Emploi du temps de référence HAS (ex: Licence 2 MIASS — Semestre 4)
+export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [
+  {
+    id: "seance-has-miass-s4-mardi",
+    classe_id: "cls-l2-miass",
+    classe_nom: "LICENCE 2 MIASS - SEMESTRE 4",
+    semestre: "Semestre 4",
+    jour: "Mardi",
+    heure_debut: "21:00",
+    heure_fin: "23:00",
+    matiere_nom: "Analyse 4",
+    matiere_code: "MAT004",
+    professeur_nom: "Mister Halil",
+    professeur_id: "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
+    type_seance: "COURS",
+    meet_url: "https://meet.google.com/has-anal-four",
+    niveau: "L2",
+    filieres: ["MIASS"],
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: "seance-has-miass-s4-jeudi",
+    classe_id: "cls-l2-miass",
+    classe_nom: "LICENCE 2 MIASS - SEMESTRE 4",
+    semestre: "Semestre 4",
+    jour: "Jeudi",
+    heure_debut: "21:00",
+    heure_fin: "23:00",
+    matiere_nom: "Probabilité",
+    matiere_code: "MAT020",
+    professeur_nom: "Mister Halil",
+    professeur_id: "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
+    type_seance: "COURS",
+    meet_url: "https://meet.google.com/has-prob-deux",
+    niveau: "L2",
+    filieres: ["MIASS"],
+    created_at: new Date().toISOString(),
+  },
+];
 
 export function getStoredSeancesEDT(): SeanceEDT[] {
-  const list = getStorageItem<SeanceEDT[]>(STORAGE_KEYS.SEANCES_EDT, DEFAULT_SEANCES_EDT);
-  // Nettoyage automatique pour s'assurer qu'aucun lien Meet ne contient de chiffres
-  return list.map((s) => {
-    if (s.meet_url && /\d/.test(s.meet_url)) {
-      // Remplacer les chiffres par des lettres
-      const cleanUrl = s.meet_url.replace(/\d/g, (d) => String.fromCharCode(97 + parseInt(d, 10)));
-      return { ...s, meet_url: cleanUrl };
-    }
-    return s;
-  });
+  return getStorageItem<SeanceEDT[]>(STORAGE_KEYS.SEANCES_EDT, DEFAULT_SEANCES_EDT);
 }
 
 export function saveSeanceEDT(seance: SeanceEDT): void {
-  // S'assurer que le meet_url ne contient absolument aucun chiffre
-  let cleanMeetUrl = seance.meet_url;
-  if (cleanMeetUrl && /\d/.test(cleanMeetUrl)) {
-    cleanMeetUrl = cleanMeetUrl.replace(/\d/g, (d) => String.fromCharCode(97 + parseInt(d, 10)));
+  let cleanMeet = seance.meet_url ? seance.meet_url.trim() : null;
+  if (cleanMeet && !cleanMeet.startsWith("http://") && !cleanMeet.startsWith("https://")) {
+    cleanMeet = `https://${cleanMeet}`;
   }
-  const cleanSeance = { ...seance, meet_url: cleanMeetUrl };
+  const cleanSeance: SeanceEDT = { ...seance, meet_url: cleanMeet };
 
   const list = getStoredSeancesEDT();
   const index = list.findIndex((s) => s.id === cleanSeance.id);

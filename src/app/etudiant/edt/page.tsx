@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import {
   Clock,
   Video,
@@ -9,6 +10,9 @@ import {
   CheckCircle2,
   Download,
   Calendar,
+  Layers,
+  Monitor,
+  BookOpen,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { useCurrentUser } from "@/lib/useCurrentUser";
@@ -16,21 +20,31 @@ import { getStoredSeancesEDT, getStoredEDTs } from "@/lib/academicStorage";
 import { SeanceEDT, JourSemaine, EmploiDuTemps } from "@/lib/types";
 import { downloadOrOpenDocument } from "@/lib/fileDownload";
 
-const JOURS: JourSemaine[] = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+const JOURS: JourSemaine[] = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
 
 const TYPE_COLORS: Record<string, { bg: string; text: string; border: string }> = {
-  CM: { bg: "bg-blue-50",    text: "text-blue-700",    border: "border-blue-200" },
-  TD: { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200" },
-  TP: { bg: "bg-amber-50",   text: "text-amber-700",   border: "border-amber-200" },
+  COURS: { bg: "bg-blue-50 dark:bg-blue-950/40",    text: "text-blue-700 dark:text-blue-300",    border: "border-blue-200 dark:border-blue-800/50" },
+  CM:    { bg: "bg-blue-50 dark:bg-blue-950/40",    text: "text-blue-700 dark:text-blue-300",    border: "border-blue-200 dark:border-blue-800/50" },
+  TD:    { bg: "bg-emerald-50 dark:bg-emerald-950/40", text: "text-emerald-700 dark:text-emerald-300", border: "border-emerald-200 dark:border-emerald-800/50" },
+  TP:    { bg: "bg-amber-50 dark:bg-amber-950/40",   text: "text-amber-700 dark:text-amber-300",   border: "border-amber-200 dark:border-amber-800/50" },
 };
+
+function formatHeureDisplay(h: string) {
+  if (!h) return "";
+  if (h.includes("h")) return h;
+  const parts = h.split(":");
+  if (parts.length >= 2) return `${parts[0]}h${parts[1]}`;
+  return h;
+}
 
 export default function EtudiantEDTPage() {
   const { user } = useCurrentUser();
   const [seances, setSeances] = useState<SeanceEDT[]>([]);
   const [edts, setEdts] = useState<EmploiDuTemps[]>([]);
   const [copiedLink, setCopiedLink] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<"fiche" | "grille">("fiche");
 
-  // Niveau et filière de l'étudiant (fixes, pas de sélection)
+  // Niveau et filière de l'étudiant
   const userNiveau = (user.classe?.niveau || "L1") as "L1" | "L2";
   const userFiliere = (user.filiere?.code || "MPI") as "MPI" | "SML" | "MIASS";
 
@@ -54,6 +68,14 @@ export default function EtudiantEDTPage() {
     return true; // tronc commun
   });
 
+  // Tri par jour puis par heure
+  const sortedMySeances = [...mySeances].sort((a, b) => {
+    const idxA = JOURS.indexOf(a.jour);
+    const idxB = JOURS.indexOf(b.jour);
+    if (idxA !== idxB) return idxA - idxB;
+    return a.heure_debut.localeCompare(b.heure_debut);
+  });
+
   // Créneaux horaires uniques triés
   const timeSlots = Array.from(
     new Set(mySeances.map((s) => `${s.heure_debut}–${s.heure_fin}`))
@@ -66,6 +88,7 @@ export default function EtudiantEDTPage() {
   };
 
   const currentEDT = edts.find((e) => e.classe?.niveau === userNiveau);
+  const classeTitle = `LICENCE ${userNiveau === "L2" ? "2" : "1"} ${userFiliere} - ${userNiveau === "L2" ? "SEMESTRE 4" : "SEMESTRE 2"}`;
 
   return (
     <DashboardLayout
@@ -74,143 +97,304 @@ export default function EtudiantEDTPage() {
       userEmail={user.email}
       matriculeOrTitle={user.matricule || "ETU001"}
     >
-      <div className="space-y-5">
+      <div className="space-y-6">
         {/* En-tête */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <Calendar className="w-4 h-4 text-[#e0521c]" />
               <span className="text-[11px] font-bold tracking-wider uppercase text-[#e0521c]">
-                Emploi du Temps — Semaine en cours
+                Emploi du Temps Officiel — Semaine en cours
               </span>
             </div>
             <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] dark:text-[#F5F7FA] leading-snug">
-              Planning Hebdomadaire
+              Planning des Cours en Ligne
             </h1>
             <p className="text-xs text-slate-500 dark:text-[#AAB4C0] mt-1">
               <strong className="text-[#0f2744] dark:text-[#F5F7FA]">{userNiveau}</strong> —{" "}
-              <strong className="text-[#e0521c]">{userFiliere}</strong>
+              <strong className="text-[#e0521c]">{userFiliere}</strong> ({mySeances.length} séance(s) programmée(s))
             </p>
           </div>
-          {currentEDT && (
-            <button
-              type="button"
-              onClick={(e) =>
-                downloadOrOpenDocument(
-                  currentEDT.file_url,
-                  currentEDT.file_name || `${(currentEDT.title || "Emploi_du_temps").replace(/[/\\?%*:|"<>]/g, "_")}.pdf`,
-                  e
-                )
-              }
-              className="inline-flex items-center gap-2 px-3.5 py-2 bg-[#0f2744] dark:bg-[#e0521c] hover:bg-[#183a62] dark:hover:bg-[#c84418] text-white text-xs font-semibold rounded-lg shadow-xs transition-colors shrink-0 cursor-pointer active:scale-95"
-            >
-              <Download className="w-3.5 h-3.5 text-[#e0521c] dark:text-white" />
-              EDT officiel (PDF)
-            </button>
-          )}
+
+          <div className="flex items-center gap-2.5">
+            {/* Bascule Affichage */}
+            <div className="flex p-1 bg-slate-100 dark:bg-[#151D27] rounded-xl border border-slate-200 dark:border-[#263241]">
+              <button
+                type="button"
+                onClick={() => setViewMode("fiche")}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  viewMode === "fiche"
+                    ? "bg-white dark:bg-[#0f2744] text-[#0f2744] dark:text-[#F5F7FA] shadow-xs"
+                    : "text-slate-500 dark:text-[#AAB4C0] hover:text-slate-800"
+                }`}
+              >
+                <Monitor className="w-3.5 h-3.5 text-[#e0521c]" />
+                Fiche Officielle
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode("grille")}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  viewMode === "grille"
+                    ? "bg-white dark:bg-[#0f2744] text-[#0f2744] dark:text-[#F5F7FA] shadow-xs"
+                    : "text-slate-500 dark:text-[#AAB4C0] hover:text-slate-800"
+                }`}
+              >
+                <Layers className="w-3.5 h-3.5 text-blue-500" />
+                Grille Semaine
+              </button>
+            </div>
+
+            {currentEDT && (
+              <button
+                type="button"
+                onClick={(e) =>
+                  downloadOrOpenDocument(
+                    currentEDT.file_url,
+                    currentEDT.file_name || `${(currentEDT.title || "Emploi_du_temps").replace(/[/\\?%*:|"<>]/g, "_")}.pdf`,
+                    e
+                  )
+                }
+                className="inline-flex items-center gap-2 px-3.5 py-2 bg-[#0f2744] dark:bg-[#e0521c] hover:bg-[#183a62] dark:hover:bg-[#c84418] text-white text-xs font-semibold rounded-lg shadow-xs transition-colors shrink-0 cursor-pointer active:scale-95"
+              >
+                <Download className="w-3.5 h-3.5 text-[#e0521c] dark:text-white" />
+                EDT officiel (PDF)
+              </button>
+            )}
+          </div>
         </div>
 
-        {/* Tableau EDT */}
-        {timeSlots.length === 0 ? (
-          <div className="bg-white dark:bg-[#111821] rounded-xl border border-slate-200/90 dark:border-[#263241] shadow-sm p-12 text-center">
-            <Calendar className="w-10 h-10 text-slate-200 dark:text-[#263241] mx-auto mb-3" />
-            <p className="text-sm font-semibold text-slate-500 dark:text-[#AAB4C0]">Aucun cours cette semaine</p>
-            <p className="text-xs text-slate-400 dark:text-[#687585] mt-1">
-              L&apos;administration n&apos;a pas encore publié de cours pour votre classe.
-            </p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto rounded-xl border border-slate-200/90 dark:border-[#263241] shadow-sm">
-            <table className="w-full min-w-[800px] bg-white dark:bg-[#111821] text-sm">
-              <thead>
-                <tr className="bg-[#0f2744] dark:bg-[#151D27]">
-                  <th className="px-4 py-3 text-left text-xs font-bold text-white/70 dark:text-[#AAB4C0] uppercase tracking-wider w-24">
-                    Heure
-                  </th>
-                  {JOURS.map((jour) => {
-                    const cnt = mySeances.filter((s) => s.jour === jour).length;
-                    return (
-                      <th key={jour} className="px-4 py-3 text-center text-xs font-bold text-white dark:text-[#F5F7FA] uppercase tracking-wider">
-                        <div>{jour}</div>
-                        {cnt > 0 && <div className="text-[10px] font-normal text-white/50 dark:text-[#687585] mt-0.5">{cnt}</div>}
-                      </th>
-                    );
-                  })}
-                </tr>
-              </thead>
-              <tbody>
-                {timeSlots.map((slot, i) => (
-                  <tr key={slot} className={i % 2 === 0 ? "bg-white dark:bg-[#111821]" : "bg-slate-50/60 dark:bg-[#151D27]/50"}>
-                    <td className="px-4 py-3 border-r border-slate-100 dark:border-[#263241]">
-                      <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-600 dark:text-[#AAB4C0] whitespace-nowrap">
-                        <Clock className="w-3 h-3 text-[#e0521c]" />
-                        {slot}
-                      </div>
-                    </td>
-                    {JOURS.map((jour) => {
-                      const cells = mySeances.filter(
-                        (s) => s.jour === jour && `${s.heure_debut}–${s.heure_fin}` === slot
-                      );
-                      return (
-                        <td key={jour} className="px-2 py-2 border-r border-slate-100 dark:border-[#263241] align-top">
-                          {cells.map((s) => {
-                            const tc = TYPE_COLORS[s.type_seance || "CM"] || TYPE_COLORS.CM;
-                            const fLabel =
-                              s.filieres && s.filieres.length > 0 && s.filieres.length < 3
-                                ? s.filieres.join(", ")
-                                : null;
-                            return (
-                              <div key={s.id} className={`rounded-lg border p-2.5 mb-1.5 ${tc.bg} ${tc.border}`}>
-                                <div className="flex items-center justify-between gap-1 mb-1">
-                                  <span className={`text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded ${tc.bg} ${tc.text} border ${tc.border}`}>
-                                    {s.type_seance || "CM"}
-                                  </span>
-                                  {fLabel && (
-                                    <span className="text-[9px] font-bold text-[#e0521c] bg-orange-50 border border-orange-200 px-1.5 py-0.5 rounded-full">
-                                      {fLabel}
-                                    </span>
-                                  )}
-                                </div>
-                                <p className="text-xs font-bold text-slate-900 leading-snug line-clamp-2">{s.matiere_nom}</p>
-                                <p className="text-[10px] text-slate-500 font-mono">{s.matiere_code}</p>
-                                <p className="text-[10px] text-slate-600 mt-1 truncate">{s.professeur_nom}</p>
-                                <span className="inline-flex items-center gap-1 text-[9px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded mt-1">
-                                  🌐 En ligne
+        {/* ── MODE 1 : VUE FICHE OFFICIELLE HAS ───────────────────── */}
+        {viewMode === "fiche" && (
+          <div className="bg-white dark:bg-[#111821] rounded-3xl border border-slate-200/90 dark:border-[#263241] shadow-xl overflow-hidden max-w-4xl mx-auto">
+            {/* EN-TÊTE DE LA FICHE */}
+            <div className="p-6 sm:p-8 text-center bg-gradient-to-b from-slate-50 via-white to-slate-50/50 dark:from-[#151D27] dark:via-[#111821] dark:to-[#111821] border-b border-slate-200/80 dark:border-[#263241]">
+              <div className="flex justify-center mb-3">
+                <div className="w-20 h-20 relative rounded-full overflow-hidden border-2 border-slate-200 dark:border-[#263241] shadow-md bg-white p-1">
+                  <Image
+                    src="/images/logo-has.jpg"
+                    alt="Halil Académie Scientifique"
+                    width={80}
+                    height={80}
+                    className="object-contain w-full h-full"
+                  />
+                </div>
+              </div>
+
+              <h2 className="font-serif text-2xl sm:text-3xl font-extrabold text-[#0f2744] dark:text-[#F5F7FA] tracking-tight uppercase">
+                HALIL ACADÉMIE SCIENTIFIQUE
+              </h2>
+              <h3 className="font-sans text-base sm:text-lg font-bold text-slate-800 dark:text-slate-200 mt-1 uppercase tracking-wide">
+                {classeTitle} (COURS EN LIGNE)
+              </h3>
+            </div>
+
+            {/* TABLEAU : JOURS | HORAIRES | MATIÈRE | ENSEIGNANT | LIEN MEET */}
+            <div className="p-5 sm:p-7">
+              {sortedMySeances.length === 0 ? (
+                <div className="py-12 text-center space-y-3 bg-slate-50/50 dark:bg-[#151D27]/30 rounded-2xl border border-dashed border-slate-200 dark:border-[#263241]">
+                  <Calendar className="w-10 h-10 text-slate-300 dark:text-[#687585] mx-auto" />
+                  <p className="text-sm font-bold text-slate-600 dark:text-[#AAB4C0]">
+                    Aucun cours programmé pour votre classe cette semaine
+                  </p>
+                  <p className="text-xs text-slate-400 dark:text-[#687585]">
+                    L&apos;administration mettra à jour l&apos;emploi du temps sous peu.
+                  </p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-[#263241] shadow-xs">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-[#0f2744] text-white dark:bg-[#151D27] text-xs uppercase tracking-wider font-extrabold divide-x divide-white/10 dark:divide-[#263241]">
+                        <th className="py-3.5 px-5 text-center w-36">JOURS</th>
+                        <th className="py-3.5 px-5 text-center w-44">HORAIRES</th>
+                        <th className="py-3.5 px-6">MATIÈRE</th>
+                        <th className="py-3.5 px-6">ENSEIGNANT</th>
+                        <th className="py-3.5 px-4 text-center w-40">ACCÈS EN LIGNE</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 dark:divide-[#263241] text-xs">
+                      {sortedMySeances.map((s, idx) => {
+                        const isEven = idx % 2 === 0;
+                        return (
+                          <tr
+                            key={s.id}
+                            className={`transition-colors hover:bg-slate-50/80 dark:hover:bg-[#151D27]/80 ${
+                              isEven ? "bg-white dark:bg-[#111821]" : "bg-slate-50/40 dark:bg-[#151D27]/40"
+                            }`}
+                          >
+                            <td className="py-4 px-5 text-center font-bold text-sm text-[#0f2744] dark:text-[#F5F7FA] whitespace-nowrap">
+                              <span className="inline-block px-3 py-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200/60 dark:border-blue-900/50 text-[#0f2744] dark:text-blue-300 font-extrabold">
+                                {s.jour}
+                              </span>
+                            </td>
+
+                            <td className="py-4 px-5 text-center font-bold text-xs text-slate-700 dark:text-[#AAB4C0] whitespace-nowrap">
+                              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-[#151D27] border border-slate-200/60 dark:border-[#263241]">
+                                <Clock className="w-3.5 h-3.5 text-[#e0521c]" />
+                                <span>
+                                  {formatHeureDisplay(s.heure_debut)} – {formatHeureDisplay(s.heure_fin)}
                                 </span>
-                                {s.meet_url && (
-                                  <div className="flex items-center gap-1 mt-1.5 pt-1.5 border-t border-current/10">
-                                    <a
-                                      href={s.meet_url}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="flex-1 inline-flex items-center justify-center gap-1.5 py-1 rounded text-[10px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition-colors"
-                                    >
-                                      <Video className="w-3 h-3" />
-                                      Rejoindre
-                                      <ExternalLink className="w-2.5 h-2.5" />
-                                    </a>
-                                    <button
-                                      onClick={() => handleCopyMeet(s.meet_url!)}
-                                      className="p-1 text-slate-500 hover:text-slate-800 border border-slate-200 rounded hover:bg-white transition-colors"
-                                    >
-                                      {copiedLink === s.meet_url
-                                        ? <CheckCircle2 className="w-3 h-3 text-emerald-500" />
-                                        : <Copy className="w-3 h-3" />}
-                                    </button>
-                                  </div>
-                                )}
                               </div>
-                            );
-                          })}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                            </td>
+
+                            <td className="py-4 px-6 font-bold text-sm text-slate-900 dark:text-[#F5F7FA]">
+                              <div className="flex items-center gap-2">
+                                <BookOpen className="w-4 h-4 text-[#0f2744] dark:text-[#e0521c] shrink-0" />
+                                <span>{s.matiere_nom}</span>
+                              </div>
+                            </td>
+
+                            <td className="py-4 px-6 font-bold text-xs text-slate-800 dark:text-slate-200">
+                              <div className="flex items-center gap-2">
+                                <div className="w-6 h-6 rounded-full bg-orange-100 dark:bg-orange-950/50 text-[#e0521c] flex items-center justify-center font-black text-[10px] shrink-0">
+                                  {(s.professeur_nom || "H")[0]}
+                                </div>
+                                <span>{s.professeur_nom || "Mister Halil"}</span>
+                              </div>
+                            </td>
+
+                            <td className="py-4 px-4 text-center">
+                              {s.meet_url ? (
+                                <div className="flex items-center justify-center gap-1.5">
+                                  <a
+                                    href={s.meet_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold shadow-xs transition-colors"
+                                  >
+                                    <Video className="w-3.5 h-3.5" />
+                                    Rejoindre
+                                    <ExternalLink className="w-2.5 h-2.5" />
+                                  </a>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleCopyMeet(s.meet_url!)}
+                                    title="Copier le lien Meet"
+                                    className="p-1.5 rounded-lg border border-slate-200 dark:border-[#263241] hover:bg-slate-100 dark:hover:bg-[#151D27] text-slate-500 dark:text-[#AAB4C0] cursor-pointer"
+                                  >
+                                    {copiedLink === s.meet_url ? (
+                                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                                    ) : (
+                                      <Copy className="w-3.5 h-3.5" />
+                                    )}
+                                  </button>
+                                </div>
+                              ) : (
+                                <span className="text-[11px] text-slate-400 italic">Lien non défini</span>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+
+            {/* PIED DE PAGE */}
+            <div className="p-6 text-center bg-slate-50/60 dark:bg-[#151D27]/40 border-t border-slate-200/80 dark:border-[#263241] space-y-2">
+              <div className="w-9 h-9 rounded-xl bg-white dark:bg-[#111821] border border-slate-200 dark:border-[#263241] shadow-xs flex items-center justify-center mx-auto text-[#0f2744] dark:text-[#e0521c]">
+                <Monitor className="w-5 h-5" />
+              </div>
+              <p className="font-sans text-xs sm:text-sm font-extrabold text-[#0f2744] dark:text-[#F5F7FA] tracking-wide uppercase">
+                TOUS LES COURS ET EMPLOIS DU TEMPS SONT PARTAGÉS DANS LA PLATEFORME HAS
+              </p>
+              <p className="text-xs text-slate-500 dark:text-[#AAB4C0] font-medium flex items-center justify-center gap-1.5">
+                <span>🌐 Site Web :</span>
+                <a
+                  href="https://has-academie.online"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-bold text-[#e0521c] hover:underline"
+                >
+                  has-académie.online
+                </a>
+              </p>
+            </div>
           </div>
         )}
+
+        {/* ── MODE 2 : VUE GRILLE SEMAINE ─────────────────────────── */}
+        {viewMode === "grille" && (
+          <div>
+            {timeSlots.length === 0 ? (
+              <div className="bg-white dark:bg-[#111821] rounded-2xl border border-slate-200/90 dark:border-[#263241] shadow-sm p-12 text-center">
+                <Calendar className="w-10 h-10 text-slate-200 dark:text-[#263241] mx-auto mb-3" />
+                <p className="text-sm font-semibold text-slate-500 dark:text-[#AAB4C0]">Aucun cours cette semaine</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto rounded-2xl border border-slate-200/90 dark:border-[#263241] shadow-sm">
+                <table className="w-full min-w-[900px] bg-white dark:bg-[#111821] text-sm">
+                  <thead>
+                    <tr className="bg-[#0f2744] dark:bg-[#151D27] divide-x divide-white/10 dark:divide-[#263241]">
+                      <th className="px-4 py-3 text-left text-xs font-bold text-white/70 dark:text-[#AAB4C0] uppercase tracking-wider w-24">
+                        Heure
+                      </th>
+                      {JOURS.map((jour) => {
+                        const cnt = mySeances.filter((s) => s.jour === jour).length;
+                        return (
+                          <th key={jour} className="px-3 py-3 text-center text-xs font-bold text-white dark:text-[#F5F7FA] uppercase tracking-wider">
+                            <div>{jour}</div>
+                            {cnt > 0 && <div className="text-[10px] font-normal text-white/50 mt-0.5">{cnt} cours</div>}
+                          </th>
+                        );
+                      })}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-[#263241]">
+                    {timeSlots.map((slot, i) => (
+                      <tr key={slot} className={i % 2 === 0 ? "bg-white dark:bg-[#111821]" : "bg-slate-50/60 dark:bg-[#151D27]/50"}>
+                        <td className="px-4 py-3 border-r border-slate-100 dark:border-[#263241] align-top whitespace-nowrap">
+                          <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-600 dark:text-[#AAB4C0]">
+                            <Clock className="w-3 h-3 text-[#e0521c]" />
+                            {slot}
+                          </div>
+                        </td>
+                        {JOURS.map((jour) => {
+                          const cells = mySeances.filter(
+                            (s) => s.jour === jour && `${s.heure_debut}–${s.heure_fin}` === slot
+                          );
+                          return (
+                            <td key={jour} className="px-2 py-2 border-r border-slate-100 dark:border-[#263241] align-top min-w-[125px]">
+                              {cells.map((s) => (
+                                <div key={s.id} className="rounded-xl border border-blue-200/80 dark:border-blue-900/60 bg-blue-50/60 dark:bg-[#151D27] p-2.5 mb-1.5 shadow-2xs">
+                                  <p className="text-xs font-bold text-slate-900 dark:text-[#F5F7FA] leading-tight">{s.matiere_nom}</p>
+                                  <p className="text-[11px] font-semibold text-slate-700 dark:text-slate-300 mt-1">👤 {s.professeur_nom || "Mister Halil"}</p>
+                                  {s.meet_url && (
+                                    <div className="flex items-center gap-1 mt-2 pt-1.5 border-t border-current/10">
+                                      <a
+                                        href={s.meet_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex-1 inline-flex items-center justify-center gap-1 py-1 rounded-md text-[10px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition-colors"
+                                      >
+                                        <Video className="w-3 h-3" />
+                                        Rejoindre
+                                      </a>
+                                      <button
+                                        onClick={() => handleCopyMeet(s.meet_url!)}
+                                        className="p-1 text-slate-500 hover:text-slate-800 border border-slate-200 dark:border-[#263241] rounded-md hover:bg-white transition-colors"
+                                      >
+                                        {copiedLink === s.meet_url ? <CheckCircle2 className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
+                                      </button>
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+
       </div>
     </DashboardLayout>
   );

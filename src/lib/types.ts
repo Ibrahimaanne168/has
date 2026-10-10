@@ -114,24 +114,26 @@ export interface EmploiDuTemps {
   classe?: Classe;
 }
 
-export type JourSemaine = "Lundi" | "Mardi" | "Mercredi" | "Jeudi" | "Vendredi" | "Samedi";
+export type JourSemaine = "Lundi" | "Mardi" | "Mercredi" | "Jeudi" | "Vendredi" | "Samedi" | "Dimanche";
 
 export interface SeanceEDT {
   id: string;
   classe_id: string;
+  classe_nom?: string;                         // ex: "Licence 2 MIASS - Semestre 4"
+  semestre?: string;                           // ex: "Semestre 4"
   jour: JourSemaine;
-  heure_debut: string; // ex: "08:00"
-  heure_fin: string;   // ex: "10:00"
+  heure_debut: string; // ex: "08:00" ou "21h00"
+  heure_fin: string;   // ex: "10:00" ou "23h00"
   matiere_nom: string;
   matiere_code: string;
   professeur_nom: string;
   professeur_id?: string;
   meet_url?: string | null;
   semaine?: string;
-  type_seance?: "CM" | "TD" | "TP";
+  type_seance?: "CM" | "TD" | "TP" | "COURS";
   created_at: string;
-  // Nouveau : niveau et filières concernées
-  niveau?: "L1" | "L2";                         // L1 ou L2
+  // Niveau et filières concernées
+  niveau?: "L1" | "L2" | "L3" | "Master";
   filieres?: ("MPI" | "SML" | "MIASS")[];       // [] ou undefined = toutes les filières du niveau
 }
 

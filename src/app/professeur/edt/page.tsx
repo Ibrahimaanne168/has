@@ -9,17 +9,18 @@ import { useCurrentProfesseur } from "@/lib/useCurrentProfesseur";
 import { getStoredSeancesEDT } from "@/lib/academicStorage";
 import { SeanceEDT, JourSemaine } from "@/lib/types";
 
-const JOURS: JourSemaine[] = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+const JOURS: JourSemaine[] = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
 const TYPE_COLORS: Record<string, { bg: string; text: string; border: string }> = {
-  CM: { bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-200" },
-  TD: { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200" },
-  TP: { bg: "bg-amber-50", text: "text-amber-700", border: "border-amber-200" },
+  COURS: { bg: "bg-blue-50 dark:bg-blue-950/40", text: "text-blue-700 dark:text-blue-300", border: "border-blue-200 dark:border-blue-800" },
+  CM: { bg: "bg-blue-50 dark:bg-blue-950/40", text: "text-blue-700 dark:text-blue-300", border: "border-blue-200 dark:border-blue-800" },
+  TD: { bg: "bg-emerald-50 dark:bg-emerald-950/40", text: "text-emerald-700 dark:text-emerald-300", border: "border-emerald-200 dark:border-emerald-800" },
+  TP: { bg: "bg-amber-50 dark:bg-amber-950/40", text: "text-amber-700 dark:text-amber-300", border: "border-amber-200 dark:border-amber-800" },
 };
 
 export default function ProfesseurEDTPage() {
   const { prof } = useCurrentProfesseur();
   const [seances, setSeances] = useState<SeanceEDT[]>([]);
-  const [activeNiveau, setActiveNiveau] = useState<"L1" | "L2">("L1");
+  const [activeNiveau, setActiveNiveau] = useState<"L1" | "L2">("L2");
   const [copiedLink, setCopiedLink] = useState<string | null>(null);
 
   const reload = () => setSeances(getStoredSeancesEDT());
@@ -36,8 +37,10 @@ export default function ProfesseurEDTPage() {
       const isMe =
         (prof.id && s.professeur_id === prof.id) ||
         (prof.matricule && s.professeur_id === prof.matricule) ||
-        (prof.full_name && s.professeur_nom.toLowerCase().includes(prof.full_name.toLowerCase())) ||
-        (prof.nom && s.professeur_nom.toLowerCase().includes(prof.nom.toLowerCase()));
+        (prof.full_name && s.professeur_nom && s.professeur_nom.toLowerCase().includes(prof.full_name.toLowerCase())) ||
+        (prof.nom && s.professeur_nom && s.professeur_nom.toLowerCase().includes(prof.nom.toLowerCase())) ||
+        ((prof.username === "halilsamb" || (prof.nom && prof.nom.toLowerCase().includes("samb"))) &&
+          s.professeur_nom && s.professeur_nom.toLowerCase().includes("halil"));
       return isMe && (s.niveau || "L1") === activeNiveau;
     }),
     [seances, prof, activeNiveau]
@@ -156,15 +159,14 @@ export default function ProfesseurEDTPage() {
                             const tc = TYPE_COLORS[s.type_seance || "CM"] || TYPE_COLORS.CM;
                             const fLabel = s.filieres?.length ? s.filieres.join(", ") : "Toutes filières";
                             return (
-                              <div key={s.id} className={`rounded-lg border p-2.5 mb-1.5 ${tc.bg} ${tc.border}`}>
-                                <div className="flex items-center justify-between mb-1">
-                                  <span className={`text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded ${tc.bg} ${tc.text} border ${tc.border}`}>
-                                    {s.type_seance || "CM"}
-                                  </span>
-                                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${s.filieres?.length ? "text-[#e0521c] bg-orange-50 border border-orange-200" : "text-slate-500 bg-slate-100 border border-slate-200"}`}>
-                                    {fLabel}
-                                  </span>
-                                </div>
+                              <div key={s.id} className="rounded-lg border border-blue-200 dark:border-blue-900 bg-blue-50/70 dark:bg-[#151D27] p-2.5 mb-1.5 shadow-2xs">
+                                {fLabel && (
+                                  <div className="flex items-center justify-end mb-1">
+                                    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${s.filieres?.length ? "text-[#e0521c] bg-orange-50 border border-orange-200" : "text-slate-500 bg-slate-100 border border-slate-200"}`}>
+                                      {fLabel}
+                                    </span>
+                                  </div>
+                                )}
                                 <p className="text-xs font-bold text-slate-900 line-clamp-2">{s.matiere_nom}</p>
                                 <p className="text-[10px] font-mono text-slate-500">{s.matiere_code}</p>
                                 <span className="inline-flex items-center gap-1 text-[9px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded mt-1">
