@@ -4,14 +4,14 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Clock, Video, Plus, Trash2, Edit2, CheckCircle2, Copy,
   ExternalLink, X, Save, BookOpen, Settings,
-  Calendar, Layers, Table as TableIcon, Filter, AlertTriangle,
+  Calendar, Layers, Table as TableIcon, Filter, RotateCcw,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/Button";
-import { SeanceEDT, JourSemaine, Professeur } from "@/lib/types";
+import { SeanceEDT, JourSemaine, Professeur, Matiere } from "@/lib/types";
 import {
   getStoredSeancesEDT, saveSeanceEDT, deleteSeanceEDT,
-  getStoredProfesseurs,
+  getStoredProfesseurs, getStoredMatieres, resetDefaultSeancesEDT,
 } from "@/lib/academicStorage";
 import { recordAuditLog } from "@/lib/auditLogger";
 
@@ -40,13 +40,154 @@ const PRESET_HORAIRES = [
 const FILIERES_OPTIONS: Array<"MPI" | "SML" | "MIASS"> = ["MPI", "SML", "MIASS"];
 
 const ENSEIGNANTS_PRESETS = [
-  "Mister Halil",
   "Pape Ibrahima Samb",
   "Ibrahima Anne",
-  "Dr. Abdoulaye Diallo",
-  "Dr. Mamadou Ndiaye",
-  "Dr. Fatou Sow",
+  "Ndiogou Ndiaye",
+  "El Hadji Ibrahima Diop Sow",
+  "Pape Thiam",
+  "Kalidou Ba",
 ];
+
+// Catalogue des matières officielles avec mapping rigoureux filières & professeur attitré
+const CATALOGUE_MATIERES: Record<
+  string,
+  {
+    niveau: "L1" | "L2";
+    filieres: ("MPI" | "SML" | "MIASS")[];
+    professeurDefaut: string;
+    meetUrl?: string;
+  }
+> = {
+  // --- LICENCE 1 ---
+  "Analyse 1": {
+    niveau: "L1",
+    filieres: ["MPI", "SML", "MIASS"],
+    professeurDefaut: "Pape Ibrahima Samb",
+    meetUrl: "https://meet.google.com/has-anal-un",
+  },
+  "Analyse 2": {
+    niveau: "L1",
+    filieres: ["MPI", "SML", "MIASS"],
+    professeurDefaut: "Pape Ibrahima Samb",
+    meetUrl: "https://meet.google.com/has-anal-deux",
+  },
+  "Algèbre 1": {
+    niveau: "L1",
+    filieres: ["MPI", "SML", "MIASS"],
+    professeurDefaut: "Pape Ibrahima Samb",
+    meetUrl: "https://meet.google.com/has-alg-un",
+  },
+  "Algèbre 2": {
+    niveau: "L1",
+    filieres: ["MPI", "SML", "MIASS"],
+    professeurDefaut: "Pape Ibrahima Samb",
+    meetUrl: "https://meet.google.com/has-alg-deux",
+  },
+  "Electricité": {
+    niveau: "L1",
+    filieres: ["MPI", "SML"],
+    professeurDefaut: "Kalidou Ba",
+    meetUrl: "https://meet.google.com/has-elec-un",
+  },
+  "Mécanique du point": {
+    niveau: "L1",
+    filieres: ["MPI", "SML"],
+    professeurDefaut: "Ndiogou Ndiaye",
+    meetUrl: "https://meet.google.com/has-meca-point",
+  },
+  "Optique Géométrique": {
+    niveau: "L1",
+    filieres: ["MPI", "SML"],
+    professeurDefaut: "Ndiogou Ndiaye",
+    meetUrl: "https://meet.google.com/has-optique",
+  },
+  "Programmation Python": {
+    niveau: "L1",
+    filieres: ["MPI", "MIASS"],
+    professeurDefaut: "Pape Thiam",
+    meetUrl: "https://meet.google.com/has-python-l1",
+  },
+  "Langage C": {
+    niveau: "L1",
+    filieres: ["MPI"],
+    professeurDefaut: "Pape Thiam",
+    meetUrl: "https://meet.google.com/has-langage-c",
+  },
+  "Economie Générale": {
+    niveau: "L1",
+    filieres: ["MIASS"],
+    professeurDefaut: "Pape Ibrahima Samb",
+    meetUrl: "https://meet.google.com/has-eco-gen",
+  },
+
+  // --- LICENCE 2 ---
+  "Analyse 3": {
+    niveau: "L2",
+    filieres: ["MPI", "SML", "MIASS"],
+    professeurDefaut: "Pape Ibrahima Samb",
+    meetUrl: "https://meet.google.com/has-anal-trois",
+  },
+  "Analyse 4": {
+    niveau: "L2",
+    filieres: ["MPI", "SML", "MIASS"],
+    professeurDefaut: "Pape Ibrahima Samb",
+    meetUrl: "https://meet.google.com/has-anal-four",
+  },
+  "Algèbre 3": {
+    niveau: "L2",
+    filieres: ["MPI", "SML", "MIASS"],
+    professeurDefaut: "Pape Ibrahima Samb",
+    meetUrl: "https://meet.google.com/has-alg-trois",
+  },
+  "Analyse Numérique Matricielle": {
+    niveau: "L2",
+    filieres: ["MPI", "SML"],
+    professeurDefaut: "Pape Ibrahima Samb",
+    meetUrl: "https://meet.google.com/has-anm-l2",
+  },
+  "Programmation Orientée Objet Python": {
+    niveau: "L2",
+    filieres: ["MPI", "MIASS"],
+    professeurDefaut: "Ibrahima Anne",
+    meetUrl: "https://meet.google.com/has-poo-python",
+  },
+  "Base de données": {
+    niveau: "L2",
+    filieres: ["MPI", "MIASS"],
+    professeurDefaut: "Ibrahima Anne",
+    meetUrl: "https://meet.google.com/has-bdd-sql",
+  },
+  "Mécanique Générale": {
+    niveau: "L2",
+    filieres: ["MPI", "SML"],
+    professeurDefaut: "El Hadji Ibrahima Diop Sow",
+    meetUrl: "https://meet.google.com/has-meca-gen",
+  },
+  "Thermodynamique": {
+    niveau: "L2",
+    filieres: ["MPI", "SML"],
+    professeurDefaut: "Ndiogou Ndiaye",
+    meetUrl: "https://meet.google.com/has-thermo",
+  },
+  "Magnétostatique et Régime Variable": {
+    niveau: "L2",
+    filieres: ["MPI", "SML"],
+    professeurDefaut: "Ndiogou Ndiaye",
+    meetUrl: "https://meet.google.com/has-magneto",
+  },
+  "Probabilités et Statistiques": {
+    niveau: "L2",
+    filieres: ["MPI", "SML", "MIASS"],
+    professeurDefaut: "Pape Ibrahima Samb",
+    meetUrl: "https://meet.google.com/has-proba-stats",
+  },
+  "Economie": {
+    niveau: "L2",
+    filieres: ["MIASS"],
+    professeurDefaut: "Pape Ibrahima Samb",
+    meetUrl: "https://meet.google.com/has-eco-l2",
+  },
+};
 
 function formatHeureDisplay(h: string) {
   if (!h) return "";
@@ -129,6 +270,7 @@ function savePromoSlots(niveau: "L1" | "L2", slots: string[]) {
 export default function AdminEDTPage() {
   const [seances, setSeances] = useState<SeanceEDT[]>([]);
   const [profs, setProfs] = useState<Professeur[]>([]);
+  const [matieresList, setMatieresList] = useState<Matiere[]>([]);
 
   // Promotion sélectionnée : L1 ou L2 (un seul EDT par promo)
   const [activeNiveau, setActiveNiveau] = useState<"L1" | "L2">("L2");
@@ -152,8 +294,7 @@ export default function AdminEDTPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingSeance, setEditingSeance] = useState<SeanceEDT | null>(null);
 
-  // Formulaire modal cours
-  const [formNiveau, setFormNiveau] = useState<"L1" | "L2">("L2");
+  // Formulaire modal cours (le niveau est verrouillé à activeNiveau !)
   const [formFilieres, setFormFilieres] = useState<("MPI" | "SML" | "MIASS")[]>(["MIASS"]);
   const [formJour, setFormJour] = useState<JourSemaine>("Mardi");
   const [formDebut, setFormDebut] = useState("21:00");
@@ -163,8 +304,13 @@ export default function AdminEDTPage() {
   const [formMeetUrl, setFormMeetUrl] = useState("https://meet.google.com/has-anal-four");
 
   const reloadData = useCallback(() => {
-    setSeances(getStoredSeancesEDT());
+    let list = getStoredSeancesEDT();
+    if (list.length === 0) {
+      list = resetDefaultSeancesEDT();
+    }
+    setSeances(list);
     setProfs(getStoredProfesseurs());
+    setMatieresList(getStoredMatieres());
   }, []);
 
   useEffect(() => {
@@ -189,13 +335,26 @@ export default function AdminEDTPage() {
     setTimeout(() => setCopiedLink(null), 2500);
   };
 
-  // Liste des enseignants
+  // Liste globale des enseignants
   const enseignantsList = useMemo(() => {
     const fromProfs = profs
       .map((p) => (p.full_name || p.nom || "").trim())
       .filter((n): n is string => Boolean(n));
     return Array.from(new Set([...ENSEIGNANTS_PRESETS, ...fromProfs]));
   }, [profs]);
+
+  // Matières disponibles pour la promotion active (L1 ou L2)
+  const matieresForCurrentLevel = useMemo(() => {
+    const fromCatalogue = Object.entries(CATALOGUE_MATIERES)
+      .filter(([_, info]) => info.niveau === activeNiveau)
+      .map(([name]) => name);
+
+    const fromStorage = matieresList
+      .filter((m) => (m.niveau || (m.classes?.some((c) => c.startsWith("L2")) ? "L2" : "L1")) === activeNiveau)
+      .map((m) => m.name);
+
+    return Array.from(new Set([...fromCatalogue, ...fromStorage]));
+  }, [activeNiveau, matieresList]);
 
   // Séances de la promotion active (L1 ou L2)
   const promoSeances = useMemo(() => {
@@ -224,7 +383,6 @@ export default function AdminEDTPage() {
   const distinctSlots = useMemo(() => {
     const configured = slotsMap[activeNiveau] || DEFAULT_SLOTS;
     const set = new Set<string>(configured);
-    // On s'assure qu'aucun cours existant de la promo n'est caché
     promoSeances.forEach((s) => set.add(`${s.heure_debut}–${s.heure_fin}`));
     return Array.from(set).sort((a, b) => {
       const startA = a.split(/[–-]/)[0]?.trim() || "";
@@ -237,10 +395,68 @@ export default function AdminEDTPage() {
   const countL1 = useMemo(() => seances.filter((s) => (s.niveau || "L1") === "L1").length, [seances]);
   const countL2 = useMemo(() => seances.filter((s) => s.niveau === "L2").length, [seances]);
 
-  // Ouvrir modal pour modifier un créneau / cours existant
+  // Sélection intelligente de la matière : pré-remplit automatiquement filières & prof par défaut
+  const handleSelectMatiere = (matiereNom: string) => {
+    setFormMatiere(matiereNom);
+    const cat = CATALOGUE_MATIERES[matiereNom];
+
+    if (cat) {
+      // 1. Déduction automatique des filières
+      setFormFilieres(cat.filieres);
+      // 2. Déduction automatique de l'enseignant par défaut
+      setFormEnseignant(cat.professeurDefaut);
+      // 3. Lien Meet pré-rempli si présent
+      if (cat.meetUrl && !formMeetUrl) {
+        setFormMeetUrl(cat.meetUrl);
+      }
+    } else {
+      // Recherche dans la base des matières
+      const found = matieresList.find(
+        (m) => m.name.toLowerCase() === matiereNom.toLowerCase() || m.code?.toLowerCase() === matiereNom.toLowerCase()
+      );
+      if (found) {
+        if (found.classes && found.classes.length > 0) {
+          const text = found.classes.join(" ").toUpperCase();
+          const fils: ("MPI" | "SML" | "MIASS")[] = [];
+          if (text.includes("MPI")) fils.push("MPI");
+          if (text.includes("SML")) fils.push("SML");
+          if (text.includes("MIASS")) fils.push("MIASS");
+          setFormFilieres(fils.length > 0 ? fils : ["MPI", "SML", "MIASS"]);
+        }
+        if (found.professeur?.full_name) {
+          setFormEnseignant(found.professeur.full_name);
+        } else if (found.professeur?.nom) {
+          setFormEnseignant(found.professeur.nom);
+        }
+      } else {
+        // Heuristiques intelligentes avec les professeurs officiels HAS
+        const lower = matiereNom.toLowerCase();
+        if (lower.includes("analyse") || lower.includes("algèbre") || lower.includes("math") || lower.includes("proba")) {
+          setFormFilieres(["MPI", "SML", "MIASS"]);
+          setFormEnseignant("Pape Ibrahima Samb");
+        } else if (lower.includes("élec")) {
+          setFormFilieres(["MPI", "SML"]);
+          setFormEnseignant("Kalidou Ba");
+        } else if (lower.includes("mécanique générale")) {
+          setFormFilieres(["MPI", "SML"]);
+          setFormEnseignant("El Hadji Ibrahima Diop Sow");
+        } else if (lower.includes("mécanique") || lower.includes("thermo") || lower.includes("optique") || lower.includes("magnéto")) {
+          setFormFilieres(["MPI", "SML"]);
+          setFormEnseignant("Ndiogou Ndiaye");
+        } else if (lower.includes("écono")) {
+          setFormFilieres(["MIASS"]);
+          setFormEnseignant("Pape Ibrahima Samb");
+        } else if (lower.includes("python") || lower.includes("base de données") || lower.includes("langage c") || lower.includes("info")) {
+          setFormFilieres(lower.includes("langage c") ? ["MPI"] : ["MPI", "MIASS"]);
+          setFormEnseignant(activeNiveau === "L1" ? "Pape Thiam" : "Ibrahima Anne");
+        }
+      }
+    }
+  };
+
+  // Ouvrir modal pour modifier un cours existant
   const openEditModal = (s: SeanceEDT) => {
     setEditingSeance(s);
-    setFormNiveau((s.niveau || "L1") as "L1" | "L2");
     setFormFilieres(s.filieres && s.filieres.length > 0 ? s.filieres : ["MPI", "SML", "MIASS"]);
     setFormJour(s.jour);
     setFormDebut(s.heure_debut || "21:00");
@@ -251,22 +467,21 @@ export default function AdminEDTPage() {
     setModalOpen(true);
   };
 
-  // Ouvrir modal pour ajouter dans un créneau spécifique
+  // Ouvrir modal pour ajouter dans un créneau spécifique (niveau verrouillé à activeNiveau)
   const openAddModal = (
-    niveau: "L1" | "L2" = activeNiveau,
     jour: JourSemaine = "Lundi",
-    slotStr: string = "21:00–23:00"
+    slotStr: string = "18:00–20:00"
   ) => {
     setEditingSeance(null);
-    setFormNiveau(niveau);
-    setFormFilieres(["MIASS"]);
     setFormJour(jour);
     const { debut, fin } = parseSlotString(slotStr);
     setFormDebut(debut);
     setFormFin(fin);
-    setFormMatiere("");
-    setFormEnseignant("Mister Halil");
     setFormMeetUrl("");
+
+    // Choix d'une première matière par défaut selon le niveau
+    const defaultMatiere = activeNiveau === "L2" ? "Analyse 4" : "Analyse 2";
+    handleSelectMatiere(defaultMatiere);
     setModalOpen(true);
   };
 
@@ -300,7 +515,6 @@ export default function AdminEDTPage() {
         `Attention : la ligne « ${slotStr} » contient ${inSlot.length} cours pour la Licence ${activeNiveau === "L2" ? "2" : "1"}.\n\nVoulez-vous supprimer cette ligne ET supprimer tous les cours qui s'y trouvent ?`
       );
       if (!ok) return;
-      // Supprimer tous les cours dans cette ligne
       inSlot.forEach((s) => {
         deleteSeanceEDT(s.id);
         recordAuditLog({
@@ -368,23 +582,23 @@ export default function AdminEDTPage() {
     }
   };
 
-  // Enregistrer depuis modal (Ajout ou Modification)
+  // Enregistrer depuis modal
   const handleSaveModal = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formMatiere.trim()) {
-      alert("Veuillez indiquer le nom de la matière (ex: Analyse 4).");
+      alert("Veuillez indiquer le nom de la matière.");
       return;
     }
     if (!formEnseignant.trim()) {
-      alert("Veuillez indiquer le nom de l'enseignant (ex: Mister Halil).");
+      alert("Veuillez indiquer le nom de l'enseignant.");
       return;
     }
 
     const seanceData: SeanceEDT = {
       id: editingSeance?.id || `seance-${Date.now()}-${Math.random().toString(36).substring(2, 5)}`,
-      classe_id: `promo-${formNiveau.toLowerCase()}`,
-      classe_nom: formNiveau === "L2" ? "Licence 2" : "Licence 1",
-      semestre: formNiveau === "L2" ? "Semestre 4" : "Semestre 2",
+      classe_id: `promo-${activeNiveau.toLowerCase()}`,
+      classe_nom: activeNiveau === "L2" ? "Licence 2" : "Licence 1",
+      semestre: activeNiveau === "L2" ? "Semestre 4" : "Semestre 2",
       jour: formJour,
       heure_debut: formDebut,
       heure_fin: formFin,
@@ -393,7 +607,7 @@ export default function AdminEDTPage() {
       professeur_nom: formEnseignant.trim(),
       meet_url: formMeetUrl.trim() || null,
       type_seance: "COURS",
-      niveau: formNiveau,
+      niveau: activeNiveau,
       filieres: formFilieres.length === 3 ? [] : formFilieres,
       created_at: editingSeance?.created_at || new Date().toISOString(),
     };
@@ -433,7 +647,7 @@ export default function AdminEDTPage() {
               Grille Tableau des Cours
             </h1>
             <p className="text-xs text-slate-500 dark:text-[#AAB4C0] mt-1">
-              Un seul emploi du temps par promotion (<strong>Licence 1</strong> et <strong>Licence 2</strong>) avec filières différenciées (<strong>MPI</strong>, <strong>SML</strong>, <strong>MIASS</strong>). Créneaux cliquables et modifiables.
+              Un seul emploi du temps par promotion (<strong>Licence 1</strong> et <strong>Licence 2</strong>) avec filières différenciées (<strong>MPI</strong>, <strong>SML</strong>, <strong>MIASS</strong>).
             </p>
           </div>
 
@@ -447,7 +661,7 @@ export default function AdminEDTPage() {
               Ajouter une ligne
             </Button>
             <Button
-              onClick={() => openAddModal(activeNiveau, "Lundi")}
+              onClick={() => openAddModal("Lundi")}
               variant="accent"
               size="sm"
               leftIcon={<Plus className="w-4 h-4" />}
@@ -493,7 +707,7 @@ export default function AdminEDTPage() {
             })}
           </div>
 
-          {/* Filtres filières */}
+          {/* Filtres filières & réinitialisation si nécessaire */}
           <div className="flex items-center gap-1.5 flex-wrap">
             <Filter className="w-3.5 h-3.5 text-slate-400 shrink-0 ml-2" />
             <span className="text-[11px] font-bold text-slate-500 dark:text-[#AAB4C0] mr-1">Filière :</span>
@@ -517,6 +731,22 @@ export default function AdminEDTPage() {
                 {f.label}
               </button>
             ))}
+
+            {(countL1 === 0 || countL2 === 0) && (
+              <button
+                type="button"
+                onClick={() => {
+                  resetDefaultSeancesEDT();
+                  reloadData();
+                  flash("✓ Cours de référence réinitialisés avec succès");
+                }}
+                className="ml-2 text-[11px] text-[#e0521c] hover:underline font-bold flex items-center gap-1 cursor-pointer"
+                title="Recharger les cours officiels HAS"
+              >
+                <RotateCcw className="w-3 h-3" />
+                Charger les cours par défaut
+              </button>
+            )}
           </div>
         </div>
 
@@ -529,7 +759,7 @@ export default function AdminEDTPage() {
                 Grille Tableau — Licence {activeNiveau === "L2" ? "2" : "1"} (Lundi au Dimanche)
               </h2>
               <p className="text-xs text-slate-400 dark:text-[#AAB4C0] mt-0.5">
-                Cliquez sur un cours pour le modifier, ou sur une case vide pour y ajouter un cours. Vous pouvez ajouter ou supprimer des lignes d&apos;horaires.
+                Cliquez sur un cours pour le modifier, ou sur une case vide pour y ajouter un cours directement en Licence {activeNiveau === "L2" ? "2" : "1"}.
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -545,9 +775,9 @@ export default function AdminEDTPage() {
                 size="sm"
                 variant="accent"
                 leftIcon={<Plus className="w-3.5 h-3.5" />}
-                onClick={() => openAddModal(activeNiveau, "Lundi")}
+                onClick={() => openAddModal("Lundi")}
               >
-                Nouveau cours
+                Nouveau cours ({activeNiveau})
               </Button>
             </div>
           </div>
@@ -575,7 +805,7 @@ export default function AdminEDTPage() {
               <tbody className="divide-y divide-slate-100 dark:divide-[#263241] align-top">
                 {distinctSlots.map((slot, i) => (
                   <tr key={slot} className={i % 2 === 0 ? "bg-white dark:bg-[#111821]" : "bg-slate-50/40 dark:bg-[#151D27]/30"}>
-                    {/* Colonne Header Ligne avec suppression de la ligne */}
+                    {/* Colonne Header Ligne avec suppression */}
                     <td className="p-3 border-r border-slate-100 dark:border-[#263241] whitespace-nowrap bg-slate-50/80 dark:bg-[#151D27]/60 group/line">
                       <div className="flex items-center justify-between gap-1.5">
                         <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800 dark:text-[#F5F7FA]">
@@ -585,7 +815,7 @@ export default function AdminEDTPage() {
                         <button
                           type="button"
                           onClick={() => handleRemoveLine(slot)}
-                          title={`Supprimer la ligne horaire ${slot}`}
+                          title={`Supprimer la tranche horaire ${slot}`}
                           className="opacity-40 group-hover/line:opacity-100 hover:opacity-100 p-1 rounded-md hover:bg-red-50 dark:hover:bg-red-950/40 text-slate-400 hover:text-red-600 transition-all cursor-pointer"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -606,7 +836,7 @@ export default function AdminEDTPage() {
                           key={j}
                           onClick={() => {
                             if (cells.length === 0) {
-                              openAddModal(activeNiveau, j, slot);
+                              openAddModal(j, slot);
                             }
                           }}
                           className={`p-2 border-r border-slate-100 dark:border-[#263241] last:border-r-0 min-w-[135px] transition-colors ${
@@ -703,7 +933,7 @@ export default function AdminEDTPage() {
                               type="button"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                openAddModal(activeNiveau, j, slot);
+                                openAddModal(j, slot);
                               }}
                               className="w-full py-1.5 rounded-lg border border-dashed border-slate-200 dark:border-[#263241] hover:border-slate-400 text-slate-400 hover:text-slate-700 dark:hover:text-[#F5F7FA] text-[10px] font-bold flex items-center justify-center gap-1 cursor-pointer transition-colors"
                             >
@@ -969,7 +1199,7 @@ export default function AdminEDTPage() {
           </div>
         )}
 
-        {/* ── MODAL D'AJOUT / MODIFICATION DE COURS ──────────────────── */}
+        {/* ── MODAL D'AJOUT / MODIFICATION DE COURS (PROMO VERROUILLÉE) ──── */}
         {modalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
             <div className="bg-white dark:bg-[#111821] border border-slate-200/90 dark:border-[#263241] rounded-3xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
@@ -978,9 +1208,14 @@ export default function AdminEDTPage() {
                   <h3 className="font-serif text-lg font-bold text-[#0f2744] dark:text-[#F5F7FA]">
                     {editingSeance ? "Modifier le cours" : "Ajouter un cours"}
                   </h3>
-                  <p className="text-xs text-slate-400 dark:text-[#AAB4C0] mt-0.5">
-                    Emploi du temps Licence {formNiveau === "L2" ? "2" : "1"}
-                  </p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="px-2.5 py-0.5 rounded-md text-xs font-extrabold bg-[#0f2744] dark:bg-[#e0521c] text-white">
+                      Licence {activeNiveau === "L2" ? "2 (L2)" : "1 (L1)"}
+                    </span>
+                    <span className="text-xs text-slate-400">
+                      Promotion automatiquement définie
+                    </span>
+                  </div>
                 </div>
                 <button
                   type="button"
@@ -992,33 +1227,106 @@ export default function AdminEDTPage() {
               </div>
 
               <form onSubmit={handleSaveModal} className="p-6 space-y-4">
-                {/* Promotion */}
+
+                {/* 1. Matière avec sélection intelligente */}
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-[#F5F7FA] mb-1">
-                    Promotion * :
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {(["L1", "L2"] as const).map((n) => (
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-xs font-bold text-slate-700 dark:text-[#F5F7FA]">
+                      Matière au programme (Licence {activeNiveau === "L2" ? "2" : "1"}) * :
+                    </label>
+                    <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">
+                      ⚡ Règle auto : filières & prof pré-remplis
+                    </span>
+                  </div>
+
+                  {/* Sélecteur déroulant des matières du niveau */}
+                  <select
+                    value={matieresForCurrentLevel.includes(formMatiere) ? formMatiere : ""}
+                    onChange={(e) => {
+                      if (e.target.value) {
+                        handleSelectMatiere(e.target.value);
+                      }
+                    }}
+                    className="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-[#263241] bg-white dark:bg-[#151D27] text-slate-900 dark:text-[#F5F7FA] text-xs font-bold mb-2 cursor-pointer"
+                  >
+                    <option value="">-- Choisir une matière au programme ({activeNiveau}) --</option>
+                    {matieresForCurrentLevel.map((mName) => (
+                      <option key={mName} value={mName}>
+                        {mName}
+                      </option>
+                    ))}
+                  </select>
+
+                  {/* Champ texte direct modifiable */}
+                  <input
+                    type="text"
+                    required
+                    placeholder="Ou saisissez un nom de matière..."
+                    value={formMatiere}
+                    onChange={(e) => handleSelectMatiere(e.target.value)}
+                    className="w-full h-9 px-3 rounded-lg border border-slate-200 dark:border-[#263241] bg-slate-50 dark:bg-[#151D27] text-slate-900 dark:text-[#F5F7FA] text-xs font-medium"
+                  />
+
+                  {/* Suggestions rapides sous forme de pilules cliquables */}
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    {matieresForCurrentLevel.slice(0, 5).map((mName) => (
                       <button
-                        key={n}
+                        key={mName}
                         type="button"
-                        onClick={() => setFormNiveau(n)}
-                        className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
-                          formNiveau === n
-                            ? "bg-[#0f2744] text-white dark:bg-[#e0521c] border-transparent shadow-xs"
-                            : "bg-slate-50 dark:bg-[#151D27] text-slate-700 dark:text-[#AAB4C0] border-slate-200 dark:border-[#263241]"
+                        onClick={() => handleSelectMatiere(mName)}
+                        className={`text-[10px] px-2 py-0.5 rounded-md font-semibold transition-all cursor-pointer ${
+                          formMatiere === mName
+                            ? "bg-[#0f2744] dark:bg-[#e0521c] text-white"
+                            : "bg-slate-100 dark:bg-[#151D27] text-slate-600 dark:text-[#AAB4C0] hover:bg-slate-200"
                         }`}
                       >
-                        Licence {n === "L1" ? "1 (L1)" : "2 (L2)"}
+                        {mName}
                       </button>
                     ))}
                   </div>
                 </div>
 
-                {/* Filière(s) différenciées */}
+                {/* 2. Enseignant avec déduction automatique & modification libre */}
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-xs font-bold text-slate-700 dark:text-[#F5F7FA]">
+                      Nom de l&apos;Enseignant * :
+                    </label>
+                    <span className="text-[10px] text-slate-400">
+                      Modifiable selon vos désirs
+                    </span>
+                  </div>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Ex: Mister Halil"
+                    value={formEnseignant}
+                    onChange={(e) => setFormEnseignant(e.target.value)}
+                    className="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-[#263241] bg-white dark:bg-[#151D27] text-slate-900 dark:text-[#F5F7FA] text-xs font-bold"
+                  />
+                  {/* Boutons pour changer le prof en 1 clic */}
+                  <div className="flex flex-wrap gap-1 mt-1.5">
+                    {enseignantsList.map((name) => (
+                      <button
+                        key={name}
+                        type="button"
+                        onClick={() => setFormEnseignant(name)}
+                        className={`text-[10px] px-2 py-0.5 rounded transition-all cursor-pointer ${
+                          formEnseignant === name
+                            ? "bg-[#e0521c] text-white font-bold"
+                            : "bg-slate-100 dark:bg-[#151D27] text-slate-600 dark:text-[#AAB4C0] hover:bg-slate-200"
+                        }`}
+                      >
+                        {name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 3. Filière(s) concernée(s) (automatique mais personnalisable) */}
                 <div>
                   <label className="block text-xs font-bold text-slate-700 dark:text-[#F5F7FA] mb-1.5">
-                    Filière(s) concernée(s) * :
+                    Filière(s) concernée(s) :
                   </label>
                   <div className="flex flex-wrap gap-2">
                     <button
@@ -1061,7 +1369,7 @@ export default function AdminEDTPage() {
                   </div>
                 </div>
 
-                {/* Jour de la semaine */}
+                {/* 4. Jour de la semaine */}
                 <div>
                   <label className="block text-xs font-bold text-slate-700 dark:text-[#F5F7FA] mb-1.5">
                     Jour de la semaine * :
@@ -1084,7 +1392,7 @@ export default function AdminEDTPage() {
                   </div>
                 </div>
 
-                {/* Horaires */}
+                {/* 5. Horaires */}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-xs font-bold text-slate-700 dark:text-[#F5F7FA] mb-1">
@@ -1110,49 +1418,7 @@ export default function AdminEDTPage() {
                   </div>
                 </div>
 
-                {/* Matière */}
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-[#F5F7FA] mb-1">
-                    Nom de la Matière * :
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Ex: Analyse 4, Probabilité..."
-                    value={formMatiere}
-                    onChange={(e) => setFormMatiere(e.target.value)}
-                    className="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-[#263241] bg-white dark:bg-[#151D27] text-slate-900 dark:text-[#F5F7FA] text-xs font-bold"
-                  />
-                </div>
-
-                {/* Enseignant */}
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-[#F5F7FA] mb-1">
-                    Nom de l&apos;Enseignant * :
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Ex: Mister Halil"
-                    value={formEnseignant}
-                    onChange={(e) => setFormEnseignant(e.target.value)}
-                    className="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-[#263241] bg-white dark:bg-[#151D27] text-slate-900 dark:text-[#F5F7FA] text-xs font-bold"
-                  />
-                  <div className="flex flex-wrap gap-1 mt-1.5">
-                    {enseignantsList.slice(0, 4).map((name) => (
-                      <button
-                        key={name}
-                        type="button"
-                        onClick={() => setFormEnseignant(name)}
-                        className="text-[10px] px-2 py-0.5 rounded bg-slate-100 dark:bg-[#151D27] text-slate-600 dark:text-[#AAB4C0] hover:bg-slate-200"
-                      >
-                        {name}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Lien Meet */}
+                {/* 6. Lien Google Meet */}
                 <div>
                   <label className="block text-xs font-bold text-slate-700 dark:text-[#F5F7FA] mb-1">
                     Lien Google Meet :

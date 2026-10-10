@@ -648,7 +648,7 @@ export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [
     heure_fin: "23:00",
     matiere_nom: "Analyse 4",
     matiere_code: "MAT004",
-    professeur_nom: "Mister Halil",
+    professeur_nom: "Pape Ibrahima Samb",
     professeur_id: "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
     type_seance: "COURS",
     meet_url: "https://meet.google.com/has-anal-four",
@@ -666,7 +666,7 @@ export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [
     heure_fin: "23:00",
     matiere_nom: "Probabilité",
     matiere_code: "MAT020",
-    professeur_nom: "Mister Halil",
+    professeur_nom: "Pape Ibrahima Samb",
     professeur_id: "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
     type_seance: "COURS",
     meet_url: "https://meet.google.com/has-prob-deux",
@@ -684,7 +684,8 @@ export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [
     heure_fin: "21:00",
     matiere_nom: "Magnétostatique et Régime Variable",
     matiere_code: "MAT017",
-    professeur_nom: "Dr. Abdoulaye Diallo",
+    professeur_nom: "Ndiogou Ndiaye",
+    professeur_id: "25013b47-9a78-4f97-8552-977450abdad2",
     type_seance: "COURS",
     meet_url: "https://meet.google.com/has-magn-stat",
     niveau: "L2",
@@ -701,7 +702,7 @@ export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [
     heure_fin: "20:00",
     matiere_nom: "Analyse 3",
     matiere_code: "MAT004",
-    professeur_nom: "Mister Halil",
+    professeur_nom: "Pape Ibrahima Samb",
     professeur_id: "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
     type_seance: "COURS",
     meet_url: "https://meet.google.com/has-anal-trois",
@@ -721,7 +722,7 @@ export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [
     heure_fin: "20:00",
     matiere_nom: "Analyse 2",
     matiere_code: "MAT015",
-    professeur_nom: "Mister Halil",
+    professeur_nom: "Pape Ibrahima Samb",
     professeur_id: "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
     type_seance: "COURS",
     meet_url: "https://meet.google.com/has-anal-deux",
@@ -739,7 +740,8 @@ export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [
     heure_fin: "20:00",
     matiere_nom: "Electricité",
     matiere_code: "MAT013",
-    professeur_nom: "Dr. Abdoulaye Diallo",
+    professeur_nom: "Kalidou Ba",
+    professeur_id: "b3624bdb-2544-4995-989d-fc38e478d256",
     type_seance: "COURS",
     meet_url: "https://meet.google.com/has-elec-un",
     niveau: "L1",
@@ -756,7 +758,8 @@ export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [
     heure_fin: "20:00",
     matiere_nom: "Economie Générale",
     matiere_code: "MAT014",
-    professeur_nom: "Dr. Mamadou Ndiaye",
+    professeur_nom: "Pape Ibrahima Samb",
+    professeur_id: "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
     type_seance: "COURS",
     meet_url: "https://meet.google.com/has-eco-gen",
     niveau: "L1",
@@ -766,7 +769,16 @@ export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [
 ];
 
 export function getStoredSeancesEDT(): SeanceEDT[] {
-  return getStorageItem<SeanceEDT[]>(STORAGE_KEYS.SEANCES_EDT, DEFAULT_SEANCES_EDT);
+  const list = getStorageItem<SeanceEDT[]>(STORAGE_KEYS.SEANCES_EDT, DEFAULT_SEANCES_EDT);
+  if (!list || !Array.isArray(list) || list.length === 0) {
+    return DEFAULT_SEANCES_EDT;
+  }
+  return list;
+}
+
+export function resetDefaultSeancesEDT(): SeanceEDT[] {
+  setStorageItem(STORAGE_KEYS.SEANCES_EDT, DEFAULT_SEANCES_EDT);
+  return DEFAULT_SEANCES_EDT;
 }
 
 export function saveSeanceEDT(seance: SeanceEDT): void {
@@ -790,3 +802,4 @@ export function deleteSeanceEDT(id: string): void {
   const list = getStoredSeancesEDT().filter((s) => s.id !== id);
   setStorageItem(STORAGE_KEYS.SEANCES_EDT, list);
 }
+
