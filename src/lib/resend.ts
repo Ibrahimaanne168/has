@@ -413,22 +413,11 @@ export async function sendCourseReminderEmail({
           </table>
         </div>
 
-        ${meetUrl ? `
-        <div style="text-align: center; margin: 28px 0;">
-          <a href="${meetUrl}" style="display: inline-block; background-color: #0f2744; color: #ffffff; font-size: 15px; font-weight: 700; text-decoration: none; padding: 14px 32px; border-radius: 8px; box-shadow: 0 2px 6px rgba(15,39,68,0.25);">
-            🎥 Rejoindre la salle de cours (Google Meet) &rarr;
-          </a>
-          <p style="color: #64748b; font-size: 12px; margin-top: 10px;">
-            Lien direct : <a href="${meetUrl}" style="color: #e0521c; text-decoration: underline; word-break: break-all;">${meetUrl}</a>
-          </p>
-        </div>
-        ` : `
-        <div style="text-align: center; margin: 24px 0;">
-          <a href="https://www.has-academie.online/etudiant/edt" style="display: inline-block; background-color: #0f2744; color: #ffffff; font-size: 14px; font-weight: 700; text-decoration: none; padding: 12px 28px; border-radius: 8px;">
-            Consulter l'emploi du temps sur mon espace &rarr;
+        <div style="text-align: center; margin: 26px 0;">
+          <a href="https://www.has-academie.online/etudiant/edt" style="display: inline-block; background-color: #0f2744; color: #ffffff; font-size: 14px; font-weight: 700; text-decoration: none; padding: 14px 30px; border-radius: 8px; box-shadow: 0 2px 6px rgba(15,39,68,0.25);">
+            Consulter mon emploi du temps sur mon espace &rarr;
           </a>
         </div>
-        `}
 
         <p style="color: #64748b; font-size: 13px; line-height: 1.5; margin: 20px 0 0 0; padding-top: 16px; border-top: 1px solid #f1f5f9; text-align: center;">
           Pensez à vous connecter quelques minutes avant le début de la séance avec vos cahiers et calculatrices prêts.

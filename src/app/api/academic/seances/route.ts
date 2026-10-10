@@ -93,6 +93,23 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Format invalide : seances doit être un tableau non vide" }, { status: 400 });
     }
 
+    // Sécurité stricte : seuls les administrateurs officiels ont le droit de modifier les cours ou liens Meet
+    const emailNorm = (adminEmail || "").toLowerCase();
+    const isAuthorizedAdmin =
+      emailNorm.includes("admin") ||
+      emailNorm.startsWith("halil@") ||
+      emailNorm.startsWith("ibou@") ||
+      emailNorm.startsWith("direction@") ||
+      emailNorm.endsWith("@has-internal.local") ||
+      emailNorm.endsWith("@has-academie.online");
+
+    if (!isAuthorizedAdmin) {
+      return NextResponse.json(
+        { error: "Accès interdit : Seuls les administrateurs de HAS peuvent créer ou modifier les liens Meet et emplois du temps." },
+        { status: 403 }
+      );
+    }
+
     // Sauvegarder dans la mémoire serveur et mémoriser chaque lien Meet valide
     memorySeancesStore = [...seances];
     seances.forEach((s) => {
