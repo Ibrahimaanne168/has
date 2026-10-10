@@ -75,13 +75,18 @@ export async function GET(request: NextRequest) {
       });
 
       if (matchedUser?.email) {
-        const role =
-          matchedUser.user_metadata?.role ||
-          (matchedUser.email?.includes("admin") || matchedUser.email?.includes("halil-academie")
-            ? "admin"
-            : matchedUser.email?.endsWith("@has-academie.online")
-            ? "professeur"
-            : "etudiant");
+        let role = matchedUser.user_metadata?.role;
+        if (!role || cleanId === "ibou" || cleanId === "halil" || matchedUser.user_metadata?.username === "ibou" || matchedUser.user_metadata?.username === "halil") {
+          role =
+            cleanId === "ibou" || cleanId === "halil" || matchedUser.user_metadata?.username === "ibou" || matchedUser.user_metadata?.username === "halil"
+              ? "admin"
+              : matchedUser.user_metadata?.role ||
+                (matchedUser.email?.includes("admin") || matchedUser.email?.includes("halil-academie")
+                  ? "admin"
+                  : matchedUser.email?.endsWith("@has-academie.online")
+                  ? "professeur"
+                  : "etudiant");
+        }
 
         return NextResponse.json({
           email: matchedUser.email,

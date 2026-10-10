@@ -145,10 +145,13 @@ function ConnexionForm() {
           } catch {}
         }
 
-        if (!role) {
+        if (!role || cleanInput === "ibou" || cleanInput === "halil") {
           if (
+            cleanInput === "ibou" ||
+            cleanInput === "halil" ||
             authEmail.toLowerCase().includes("admin") ||
             authEmail.toLowerCase().startsWith("halil@") ||
+            authEmail.toLowerCase().startsWith("ibou@") ||
             authEmail.toLowerCase().startsWith("direction@") ||
             authEmail.toLowerCase().endsWith("@has-internal.local")
           ) {
@@ -176,7 +179,7 @@ function ConnexionForm() {
       }
 
       // Mode démo / local si Supabase non encore connecté
-      if (emailOrUsername.toLowerCase().includes("admin")) {
+      if (emailOrUsername.toLowerCase().includes("admin") || cleanInput === "ibou" || cleanInput === "halil") {
         window.location.href = "/admin";
       } else if (matchedProf || emailOrUsername.toLowerCase().includes("prof")) {
         window.location.href = "/professeur";

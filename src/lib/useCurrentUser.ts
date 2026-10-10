@@ -62,8 +62,11 @@ export function useCurrentUser() {
             detectedRole === "professeur" ||
             authUser.email?.includes("admin") ||
             authUser.email?.startsWith("halil@") ||
+            authUser.email?.startsWith("ibou@") ||
             authUser.email?.startsWith("direction@") ||
             authUser.email?.endsWith("@has-internal.local") ||
+            meta.username === "ibou" ||
+            meta.username === "halil" ||
             (dbProfile?.full_name || meta.full_name || "").toLowerCase().includes("administration");
 
           // Si l'utilisateur connecté dans Supabase est un compte administrateur ou enseignant,

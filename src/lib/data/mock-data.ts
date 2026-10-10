@@ -285,7 +285,7 @@ export const MOCK_PROFESSEURS: ProfesseurProfile[] = [
 export const MOCK_STUDENT: Profile = {
   id: "s1111111-1111-1111-1111-111111111111",
   email: "anneibrahima2005@gmail.com",
-  username: "ibou",
+  username: "ibrahima",
   full_name: "Ibrahima Anne",
   role: "etudiant",
   phone: "+221 77 551 81 96",
