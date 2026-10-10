@@ -1126,7 +1126,131 @@ export default function AdminEDTPage() {
             </span>
           </div>
 
-          <div className="overflow-x-auto">
+          {/* ── VERSION MOBILE : CARRÉS PLEINS BIEN LISIBLES ET PROFESSIONNELS ── */}
+          <div className="md:hidden grid grid-cols-1 sm:grid-cols-2 gap-3.5 p-4 bg-slate-50/40 dark:bg-[#111821]">
+            {filteredSeances.map((s) => {
+              const fBadge = getFiliereBadgeInfo(s.filieres);
+              return (
+                <div
+                  key={`admin-mobile-${s.id}`}
+                  onClick={() => openEditModal(s)}
+                  className="bg-white dark:bg-[#151D27] rounded-2xl border-2 border-slate-200/90 dark:border-[#263241] p-4 shadow-sm flex flex-col justify-between transition-all cursor-pointer hover:border-[#0f2744]/40 dark:hover:border-[#e0521c]/40"
+                >
+                  {/* En-tête : Jour & Horaires */}
+                  <div className="flex items-center justify-between gap-2 pb-3 border-b border-slate-100 dark:border-[#263241]">
+                    <span className="px-3 py-1 rounded-xl bg-[#0f2744] text-white dark:bg-[#1e293b] font-black text-xs uppercase tracking-wider">
+                      {s.jour}
+                    </span>
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-orange-50 dark:bg-orange-950/40 text-[#e0521c] dark:text-orange-300 font-extrabold text-xs border border-orange-200/60 dark:border-orange-800/40">
+                      <Clock className="w-3.5 h-3.5" />
+                      <span>{formatHeureDisplay(s.heure_debut)} – {formatHeureDisplay(s.heure_fin)}</span>
+                    </div>
+                  </div>
+
+                  {/* Corps central du carré : Matière, Filière et Professeur */}
+                  <div className="py-3.5 space-y-2">
+                    <div className="flex items-start gap-2">
+                      <BookOpen className="w-4 h-4 text-[#0f2744] dark:text-[#e0521c] shrink-0 mt-0.5" />
+                      <h3 className="font-serif text-base font-extrabold text-slate-900 dark:text-[#F5F7FA] leading-tight">
+                        {s.matiere_nom}
+                      </h3>
+                    </div>
+
+                    <div className="flex items-center gap-2 pt-0.5">
+                      <span className="text-[11px] font-bold text-slate-400 dark:text-[#687585]">Filière :</span>
+                      <span className={`inline-block px-2.5 py-0.5 rounded-lg text-xs font-black border ${fBadge.color}`}>
+                        {fBadge.label}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 pt-1 text-xs text-slate-700 dark:text-slate-300">
+                      <div className="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-800 text-[#0f2744] dark:text-[#F5F7FA] flex items-center justify-center font-black text-[10px] shrink-0 border border-slate-200 dark:border-slate-700">
+                        {(s.professeur_nom || "H")[0]}
+                      </div>
+                      <span className="font-bold">{s.professeur_nom || "Mister Halil"}</span>
+                    </div>
+                  </div>
+
+                  {/* Pied du carré : Accès Meet & Actions Admin */}
+                  <div className="pt-3 border-t border-slate-100 dark:border-[#263241] space-y-2.5" onClick={(e) => e.stopPropagation()}>
+                    {s.meet_url ? (
+                      <div className="flex items-center gap-2">
+                        <a
+                          href={s.meet_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition-colors"
+                        >
+                          <Video className="w-3.5 h-3.5" />
+                          <span>Rejoindre Meet</span>
+                          <ExternalLink className="w-3 h-3 ml-0.5" />
+                        </a>
+                        <button
+                          type="button"
+                          onClick={() => handleCopyMeet(s.meet_url!)}
+                          title="Copier le lien Meet"
+                          className="p-2 rounded-xl border border-slate-200 dark:border-[#263241] bg-slate-50 dark:bg-[#111821] hover:bg-slate-100 dark:hover:bg-[#151D27] text-slate-600 dark:text-slate-300 cursor-pointer"
+                        >
+                          {copiedLink === s.meet_url ? (
+                            <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                          ) : (
+                            <Copy className="w-4 h-4" />
+                          )}
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <a
+                          href="https://meet.google.com/new"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl border border-dashed border-slate-300 dark:border-[#263241] bg-slate-50 dark:bg-[#111821] text-slate-600 dark:text-[#AAB4C0] text-xs font-bold hover:bg-slate-100 transition-colors"
+                        >
+                          <Video className="w-3.5 h-3.5 text-[#e0521c]" />
+                          <span>Créer Meet</span>
+                        </a>
+                        <button
+                          type="button"
+                          onClick={() => openEditModal(s)}
+                          className="px-3 py-2 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-bold text-xs border border-blue-200 dark:border-blue-800"
+                        >
+                          Coller
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Actions administrateur sur mobile */}
+                    <div className="flex items-center justify-end gap-1.5 pt-1">
+                      <button
+                        type="button"
+                        onClick={() => openEditModal(s)}
+                        className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-[#111821] hover:bg-blue-50 text-slate-600 hover:text-blue-600 text-xs font-bold transition-colors"
+                      >
+                        <Edit2 className="w-3 h-3" /> Modifier
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => handleDuplicate(s, e)}
+                        className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-[#111821] hover:bg-emerald-50 text-slate-600 hover:text-emerald-600 text-xs font-bold transition-colors"
+                      >
+                        <Copy className="w-3 h-3" /> Dupliquer
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => handleDelete(s.id, s.matiere_nom, e)}
+                        className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-[#111821] hover:bg-red-50 text-slate-400 hover:text-red-600 text-xs font-bold transition-colors"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* ── VERSION TABLEAU POUR ÉCRANS MOYENS ET GRANDS (DESKTOP) ── */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
                 <tr className="bg-[#0f2744] text-white dark:bg-[#151D27] uppercase tracking-wider font-extrabold divide-x divide-white/10 dark:divide-[#263241]">
