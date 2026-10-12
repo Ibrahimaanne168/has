@@ -13,7 +13,7 @@ import {
   Profile,
   MatiereAssignee,
 } from "./types";
-import { MOCK_PROFESSEURS, MOCK_FILIERES, MOCK_CLASSES, MOCK_MATIERES, MOCK_STUDENT } from "./data/mock-data";
+import { MOCK_PROFESSEURS, MOCK_FILIERES, MOCK_CLASSES, MOCK_MATIERES, MOCK_STUDENT, MOCK_STUDENTS } from "./data/mock-data";
 import { sendLocalNotification } from "./useNotifications";
 
 const STORAGE_KEYS = {
@@ -292,7 +292,12 @@ export const DEFAULT_STUDENTS: Profile[] = [MOCK_STUDENT];
 
 export function getStoredStudents(): Profile[] {
   const list = getStorageItem<Profile[]>(STORAGE_KEYS.STUDENTS, DEFAULT_STUDENTS);
-  return list.filter((s) => !isAccountDeleted(s.id, s.email));
+  return list.filter((s) => {
+    if (isAccountDeleted(s.id, s.email)) return false;
+    // Supprimer tout éventuel résidu de fausse donnée ou mock temporaire
+    if (s.id.startsWith("s-l1-") || s.id.startsWith("s-l2-")) return false;
+    return true;
+  });
 }
 
 export function saveStudent(student: Profile): void {

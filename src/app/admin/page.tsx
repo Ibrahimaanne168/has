@@ -11,36 +11,39 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { MOCK_PROFESSEURS, MOCK_CLASSES } from "@/lib/data/mock-data";
-import { getStoredCourses, getStoredEDTs, getStoredCommuniques, getStoredProfesseurs } from "@/lib/academicStorage";
+import { getStoredCourses, getStoredEDTs, getStoredCommuniques, getStoredProfesseurs, getStoredStudents } from "@/lib/academicStorage";
 
 export default function AdminDashboard() {
   const [coursesCount, setCoursesCount] = React.useState(0);
   const [edtsCount, setEdtsCount] = React.useState(0);
   const [communiquesCount, setCommuniquesCount] = React.useState(0);
   const [profsCount, setProfsCount] = React.useState(6);
+  const [studentsCount, setStudentsCount] = React.useState(0);
 
   React.useEffect(() => {
     setCoursesCount(getStoredCourses().length);
     setEdtsCount(getStoredEDTs().length);
     setCommuniquesCount(getStoredCommuniques().length);
     setProfsCount(getStoredProfesseurs().length);
+    setStudentsCount(getStoredStudents().length);
     const handleUpdate = () => {
       setCoursesCount(getStoredCourses().length);
       setEdtsCount(getStoredEDTs().length);
       setCommuniquesCount(getStoredCommuniques().length);
       setProfsCount(getStoredProfesseurs().length);
+      setStudentsCount(getStoredStudents().length);
     };
     window.addEventListener("has_academic_storage_updated", handleUpdate);
     return () => window.removeEventListener("has_academic_storage_updated", handleUpdate);
   }, []);
 
   const stats = [
+    { label: "Étudiants inscrits", value: studentsCount.toString(), icon: <Users className="w-6 h-6" />, color: "text-[#0f2744] dark:text-cyan-400", bg: "bg-blue-50 dark:bg-[#151D27]", trend: "L1 & L2 — MPI, SML, MIASS" },
     { label: "Enseignants actifs", value: profsCount.toString(), icon: <GraduationCap className="w-6 h-6" />, color: "text-emerald-700 dark:text-emerald-400", bg: "bg-emerald-50 dark:bg-emerald-950/30", trend: "Personnel enseignant" },
     { label: "Cours & Chapitres", value: coursesCount.toString(), icon: <BookOpen className="w-6 h-6" />, color: "text-blue-700 dark:text-cyan-400", bg: "bg-blue-50 dark:bg-[#151D27]", trend: coursesCount === 0 ? "Aucun publié" : `${coursesCount} actif(s)` },
     { label: "Emplois du temps", value: edtsCount.toString(), icon: <Calendar className="w-6 h-6" />, color: "text-[#0f2744] dark:text-[#F5F7FA]", bg: "bg-[#0f2744]/8 dark:bg-[#151D27]", trend: edtsCount === 0 ? "En attente" : `${edtsCount} validé(s)` },
     { label: "Classes actives", value: MOCK_CLASSES.length.toString(), icon: <BarChart3 className="w-6 h-6" />, color: "text-amber-700 dark:text-amber-400", bg: "bg-amber-50 dark:bg-amber-950/30", trend: "Année 2024-2025" },
     { label: "Communiqués officiels", value: communiquesCount.toString(), icon: <Bell className="w-6 h-6" />, color: "text-purple-700 dark:text-purple-400", bg: "bg-purple-50 dark:bg-purple-950/30", trend: communiquesCount === 0 ? "Aucun" : `${communiquesCount} publié(s)` },
-    { label: "Statut Système", value: "Actif", icon: <ShieldCheck className="w-6 h-6" />, color: "text-emerald-700 dark:text-emerald-400", bg: "bg-emerald-50 dark:bg-emerald-950/30", trend: "Plateforme en ligne" },
   ];
 
   const recentActions = [
@@ -84,8 +87,9 @@ export default function AdminDashboard() {
         {/* Actions rapides Admin */}
         <div className="bg-white dark:bg-[#111821] rounded-xl border border-slate-200/90 dark:border-[#263241] p-6 shadow-xs dark:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.4)] space-y-4">
           <h2 className="font-serif text-lg font-bold text-[#0f2744] dark:text-[#F5F7FA]">Actions Administratives Rapides</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-6 gap-3">
             {[
+              { label: "Liste des Étudiants", href: "/admin/etudiants", icon: <GraduationCap className="w-5 h-5 text-blue-600 dark:text-cyan-400" /> },
               { label: "Valider Inscriptions", href: "/admin/inscriptions", icon: <UserCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> },
               { label: "Gérer les comptes", href: "/admin/comptes", icon: <Users className="w-5 h-5" /> },
               { label: "Cours & Chapitres", href: "/admin/cours", icon: <BookOpen className="w-5 h-5" /> },

@@ -347,6 +347,8 @@ export const MOCK_STUDENT: Profile = {
   filiere: MOCK_FILIERES[0],
 };
 
+export const MOCK_STUDENTS: Profile[] = [MOCK_STUDENT];
+
 export const MOCK_COURS: Cours[] = [];
 
 export const MOCK_COMMUNIQUES: Communique[] = [];
