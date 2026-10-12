@@ -14,7 +14,7 @@ export const MOCK_FILIERES: Filiere[] = [
   {
     id: "22222222-2222-2222-2222-222222222222",
     code: "SML",
-    name: "Science de la mer et du Littoral",
+    name: "Science de la mer et du littoral",
     description:
       "Perfectionnement méthodique en sciences marines, dynamique côtière, océanographie physique et instrumentation scientifique.",
     cycle: "Licence",
@@ -54,7 +54,7 @@ export const MOCK_CLASSES: Classe[] = [
     id: "cls-l1-sml",
     filiere_id: "22222222-2222-2222-2222-222222222222",
     code: "L1-SML",
-    name: "Licence 1 — SML (Science de la mer et du Littoral)",
+    name: "Licence 1 — SML (Science de la mer et du littoral)",
     niveau: "L1",
     annee_scolaire: "2024-2025",
   },
@@ -62,7 +62,7 @@ export const MOCK_CLASSES: Classe[] = [
     id: "cls-l2-sml",
     filiere_id: "22222222-2222-2222-2222-222222222222",
     code: "L2-SML",
-    name: "Licence 2 — SML (Science de la mer et du Littoral)",
+    name: "Licence 2 — SML (Science de la mer et du littoral)",
     niveau: "L2",
     annee_scolaire: "2024-2025",
   },

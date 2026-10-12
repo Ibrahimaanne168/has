@@ -282,7 +282,7 @@ ON CONFLICT (id) DO NOTHING;
 -- Filières
 INSERT INTO filieres (id, nom, description) VALUES
 (1, 'MPI', 'Mathématiques, Physique et Informatique — Formation fondamentale et modélisation scientifique.'),
-(2, 'SML', 'Sciences de la Mer et du Littoral — Océanographie physique, biologie marine et environnement.'),
+(2, 'SML', 'Science de la mer et du littoral — Océanographie physique, biologie marine et environnement.'),
 (3, 'MIASS', 'Mathématiques et Informatique Appliquées aux Sciences Sociales — Statistiques, analyse de données et économétrie.')
 ON CONFLICT (id) DO NOTHING;
 

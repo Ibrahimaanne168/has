@@ -420,9 +420,9 @@ export default function InscriptionPage() {
                     onChange={(e) => setFiliere(e.target.value as "MPI" | "SML" | "MIASS")}
                     className="w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-[#263241] bg-white dark:bg-[#151D27] text-xs font-medium text-slate-900 dark:text-[#F5F7FA] focus:outline-none focus:ring-2 focus:ring-[#0f2744] dark:focus:ring-[#e0521c]"
                   >
-                    <option value="MPI">MPI (Maths, Physique, Info)</option>
-                    <option value="SML">SML (Sciences Matière, Logiciel)</option>
-                    <option value="MIASS">MIASS (Maths & Info Appliquées)</option>
+                    <option value="MPI">MPI (Mathématiques, Physique et Informatique)</option>
+                    <option value="SML">SML (Science de la mer et du littoral)</option>
+                    <option value="MIASS">MIASS (Mathématiques et informatique appliquées aux sciences sociales)</option>
                   </select>
                 </div>
 

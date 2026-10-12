@@ -306,12 +306,12 @@ export default function AdminChatPage() {
                       onChange={(e) => setFormClasse(e.target.value)}
                       className="w-full text-sm border border-slate-200 dark:border-[#263241] rounded-lg p-2.5 bg-white dark:bg-[#151D27] text-slate-800 dark:text-[#F5F7FA] focus:outline-none focus:ring-2 focus:ring-[#0f2744]/20 dark:focus:ring-[#e0521c]/30"
                     >
-                      <option value="L1 MPI">L1 MPI (Maths, Physique, Info)</option>
-                      <option value="L2 MPI">L2 MPI (Maths, Physique, Info)</option>
-                      <option value="L1 SML">L1 SML (Sciences de la Mer & Littoral)</option>
-                      <option value="L2 SML">L2 SML (Sciences de la Mer & Littoral)</option>
-                      <option value="L1 MIASS">L1 MIASS (Maths & Info Appliquées)</option>
-                      <option value="L2 MIASS">L2 MIASS (Maths & Info Appliquées)</option>
+                      <option value="L1 MPI">L1 MPI (Mathématiques, Physique et Informatique)</option>
+                      <option value="L2 MPI">L2 MPI (Mathématiques, Physique et Informatique)</option>
+                      <option value="L1 SML">L1 SML (Science de la mer et du littoral)</option>
+                      <option value="L2 SML">L2 SML (Science de la mer et du littoral)</option>
+                      <option value="L1 MIASS">L1 MIASS (Mathématiques et informatique appliquées aux sciences sociales)</option>
+                      <option value="L2 MIASS">L2 MIASS (Mathématiques et informatique appliquées aux sciences sociales)</option>
                     </select>
                   </div>
                 )}
