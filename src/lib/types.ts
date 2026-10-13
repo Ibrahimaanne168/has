@@ -180,6 +180,7 @@ export interface Professeur {
   nom?: string;
   email: string;
   username?: string | null;
+  password?: string | null;
   phone: string | null;
   matricule: string;
   specialite: string;

@@ -351,7 +351,8 @@ INSERT INTO users (id, role_id, login, password_hash, nom, prenom, telephone, em
 (4, 2, 'ndiogou', '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im', 'Ndiaye', 'Ndiogou', '772772709', 'ndiogou.ndiaye@has.sn', 'uploads/profs/photo_2026-07-20_16-46-11_2.jpg', FALSE),
 (5, 2, 'diopsow', '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im', 'Sow', 'El Hadji Ibrahima Diop', '776689777', 'diop.sow@has.sn', 'uploads/profs/photo_2026-07-20_16-29-37.jpg', FALSE),
 (6, 2, 'papethiam', '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im', 'Thiam', 'Pape', '787318427', 'pape.thiam@has.sn', NULL, FALSE),
-(7, 2, 'kalidou', '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im', 'Ba', 'Kalidou', '782718397', 'kalidou.ba@has.sn', NULL, FALSE)
+(7, 2, 'kalidou', '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im', 'Ba', 'Kalidou', '782718397', 'kalidou.ba@has.sn', NULL, FALSE),
+(14, 2, 'mamour', '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im', 'Diop', 'El Hadji Mamour Seynabou', '776689777', 'mamour@has.sn', NULL, FALSE)
 ON CONFLICT (id) DO UPDATE SET password_hash = EXCLUDED.password_hash;
 
 -- Enseignants
@@ -361,13 +362,15 @@ INSERT INTO enseignants (id, user_id, filiere_id, biographie) VALUES
 (3, 4, 1, 'Physicien, spécialiste en Mécanique Analytique et Thermodynamique'),
 (4, 5, 1, 'Enseignant en Physique Appliquée et Ondes'),
 (5, 6, 3, 'Ingénieur Informatique, architectures Web et Systèmes'),
-(6, 7, 1, 'Professeur de Sciences Physiques et Électromagnétisme')
+(6, 7, 1, 'Professeur de Sciences Physiques et Électromagnétisme'),
+(7, 14, 3, 'Enseignant-chercheur en Économie, Finance des entreprises et Gestion financière pour la filière MIASS.')
 ON CONFLICT (id) DO NOTHING;
 
 -- Enseignant <-> Filières
 INSERT INTO enseignant_filiere (enseignant_id, filiere_id) VALUES
 (1, 1), (1, 2), (1, 3),
 (2, 1), (2, 2), (2, 3),
+(7, 3),
 (3, 1), (3, 2),
 (4, 1), (4, 2),
 (5, 1), (5, 2), (5, 3),

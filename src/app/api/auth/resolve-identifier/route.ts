@@ -106,6 +106,20 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // 3. Tenter via la table users (PostgreSQL)
+    try {
+      const { data: dbUser } = await supabaseAdmin
+        .from("users")
+        .select("email, role_id, login")
+        .or(`login.ilike.${cleanId},email.ilike.${cleanId}`)
+        .maybeSingle();
+
+      if (dbUser?.email) {
+        const role = dbUser.role_id === 1 ? "admin" : dbUser.role_id === 2 ? "professeur" : "etudiant";
+        return NextResponse.json({ email: dbUser.email, role });
+      }
+    } catch {}
+
     // Si aucune correspondance n'est trouvée, renvoyer l'identifiant brut (si déjà un email)
     return NextResponse.json({ email: identifier });
   } catch (err: unknown) {

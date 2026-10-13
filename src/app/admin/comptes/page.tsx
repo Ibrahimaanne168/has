@@ -39,6 +39,8 @@ export default function AdminComptesPage() {
   // Form state
   const [formName, setFormName] = useState("");
   const [formEmail, setFormEmail] = useState("");
+  const [formUsername, setFormUsername] = useState("");
+  const [formPassword, setFormPassword] = useState("");
   const [formRole, setFormRole] = useState<UserRole>("etudiant");
   const [formFiliereId, setFormFiliereId] = useState("");
   const [formClasseId, setFormClasseId] = useState("");
@@ -52,8 +54,8 @@ export default function AdminComptesPage() {
   const [selectedClasses, setSelectedClasses] = useState<string[]>(["L1 MPI"]);
 
   const loadData = () => {
-    const storedProfs = getStoredProfesseurs().filter((p) => !isAccountDeleted(p.id, p.email));
-    const storedStudents = getStoredStudents().filter((s) => !isAccountDeleted(s.id, s.email));
+    const storedProfs = getStoredProfesseurs().filter((p) => !isAccountDeleted(p.id, p.email, p.username, p.full_name));
+    const storedStudents = getStoredStudents().filter((s) => !isAccountDeleted(s.id, s.email, s.username, s.full_name));
     setProfs(storedProfs);
 
     // Charger les inscriptions en attente de validation administrative et tous les comptes du serveur
@@ -173,15 +175,17 @@ export default function AdminComptesPage() {
     setEditUser(null);
     setFormName("");
     setFormEmail("");
+    setFormUsername("");
+    setFormPassword("professeur");
     setFormRole("professeur");
     setFormFiliereId("");
     setFormClasseId("");
     setFormPhone("");
-    setFormSpecialite("");
+    setFormSpecialite("Economie");
     setFormBio("");
     setSelectedMatieres([]);
     setSelectedNiveaux(["L1"]);
-    setSelectedClasses(["L1 MPI"]);
+    setSelectedClasses(["L1 MIASS"]);
     setModalOpen(true);
   };
 
@@ -189,6 +193,8 @@ export default function AdminComptesPage() {
     setEditUser(u);
     setFormName(u.full_name);
     setFormEmail(u.email);
+    setFormUsername(u.username || u.email.split("@")[0].toLowerCase());
+    setFormPassword("");
     setFormRole(u.role);
     setFormFiliereId(u.filiere_id || "");
     setFormClasseId(u.classe_id || "");
@@ -196,7 +202,7 @@ export default function AdminComptesPage() {
     setFormSpecialite(u.specialite || "");
     setFormBio(u.bio || "");
 
-    const foundProf = profs.find((p) => p.id === u.id);
+    const foundProf = profs.find((p) => p.id === u.id || p.email === u.email);
     if (foundProf) {
       setSelectedMatieres(foundProf.matieres.map((m) => m.nom));
       setSelectedNiveaux(foundProf.niveaux);
@@ -227,9 +233,32 @@ export default function AdminComptesPage() {
     );
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const year = new Date().getFullYear();
+    const effectiveUsername = formUsername.trim().toLowerCase() || formEmail.split("@")[0].toLowerCase();
+
+    // 1. Synchronisation serveur dans Supabase Auth & PostgreSQL
+    try {
+      await fetch("/api/admin/comptes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "save",
+          userId: editUser?.id,
+          email: formEmail,
+          username: effectiveUsername,
+          password: formPassword || undefined,
+          fullName: formName,
+          role: formRole,
+          phone: formPhone,
+          specialite: formSpecialite,
+          bio: formBio,
+        }),
+      });
+    } catch (err) {
+      console.warn("Erreur synchronisation compte serveur:", err);
+    }
 
     if (formRole === "professeur") {
       // Préparer les matières assignées avec niveau et classes
@@ -250,10 +279,11 @@ export default function AdminComptesPage() {
         id: profId,
         user_id: editUser?.id || profs.length + 2,
         email: formEmail,
-        username: formEmail.split("@")[0].toLowerCase(),
+        username: effectiveUsername,
+        password: formPassword || undefined,
         full_name: formName,
-        prenom: formName.split(" ")[0] || "",
-        nom: formName.split(" ").slice(1).join(" ") || "",
+        prenom: formName.split(" ").slice(0, -1).join(" ") || formName.split(" ")[0] || "",
+        nom: formName.split(" ").slice(-1)[0] || "",
         phone: formPhone || null,
         matricule: editUser?.matricule || `HAS-ENS-${year}-${Math.floor(100 + Math.random() * 900)}`,
         specialite: deducedSpecialite,
@@ -263,11 +293,11 @@ export default function AdminComptesPage() {
         is_active: true,
         matieres: matieresAssignees,
         niveaux: selectedNiveaux.length > 0 ? selectedNiveaux : ["L1"],
-        classes: selectedClasses.length > 0 ? selectedClasses : ["L1 MPI"],
+        classes: selectedClasses.length > 0 ? selectedClasses : ["L1 MIASS"],
       };
 
       saveProfesseur(newProf);
-      setSuccessMsg(`L'enseignant ${formName} a été enregistré avec succès (matières et classes assignées).`);
+      setSuccessMsg(`L'enseignant ${formName} (login: ${effectiveUsername}) a été enregistré avec succès.`);
     } else {
       // Étudiant ou Admin
       if (editUser) {
@@ -275,6 +305,7 @@ export default function AdminComptesPage() {
           ...editUser,
           full_name: formName,
           email: formEmail,
+          username: effectiveUsername,
           role: formRole,
           filiere_id: formFiliereId || null,
           classe_id: formClasseId || null,
@@ -293,7 +324,7 @@ export default function AdminComptesPage() {
           email: formEmail,
           full_name: formName,
           role: formRole,
-          username: formEmail.split("@")[0].toLowerCase(),
+          username: effectiveUsername,
           phone: formPhone || null,
           matricule:
             formRole === "etudiant"
@@ -322,31 +353,39 @@ export default function AdminComptesPage() {
           saveStudent(newUser);
         }
         setUsers((prev) => [newUser, ...prev]);
-        setSuccessMsg(`Le compte de ${formName} a été créé.`);
+        setSuccessMsg(`Le compte de ${formName} (login: ${effectiveUsername}) a été créé.`);
       }
     }
 
     setModalOpen(false);
+    loadData();
     setTimeout(() => setSuccessMsg(null), 4000);
   };
 
   const handleDelete = async (userId: string) => {
     const u = users.find((x) => x.id === userId);
     const targetEmail = u?.email;
+    const targetUsername = u?.username;
     const targetFullName = u?.full_name || "l'utilisateur";
 
     // 1. Mémorisation immédiate dans la liste des comptes supprimés (bloque toute résurrection)
-    markAccountAsDeleted(userId, targetEmail);
+    markAccountAsDeleted(userId, targetEmail, targetUsername, targetFullName);
 
     // 2. Mise à jour instantanée de l'état UI
     setUsers((prev) =>
       prev.filter(
-        (x) => x.id !== userId && (!targetEmail || x.email?.toLowerCase() !== targetEmail.toLowerCase())
+        (x) =>
+          x.id !== userId &&
+          (!targetEmail || x.email?.toLowerCase() !== targetEmail.toLowerCase()) &&
+          (!targetUsername || x.username?.toLowerCase() !== targetUsername.toLowerCase()) &&
+          (!targetFullName || x.full_name?.toLowerCase() !== targetFullName.toLowerCase())
       )
     );
     setPendingStudents((prev) =>
       prev.filter(
-        (x) => x.id !== userId && (!targetEmail || x.email?.toLowerCase() !== targetEmail.toLowerCase())
+        (x) =>
+          x.id !== userId &&
+          (!targetEmail || x.email?.toLowerCase() !== targetEmail.toLowerCase())
       )
     );
     setDeleteConfirm(null);
@@ -354,20 +393,21 @@ export default function AdminComptesPage() {
 
     // 3. Suppression dans le stockage local
     if (u?.role === "professeur") {
-      deleteProfesseur(userId, targetEmail);
+      deleteProfesseur(userId, targetEmail, targetUsername, targetFullName);
     } else {
-      deleteStudent(userId, targetEmail);
+      deleteStudent(userId, targetEmail, targetUsername, targetFullName);
     }
 
-    // 4. Suppression définitive dans Supabase (Auth + profiles)
+    // 4. Suppression définitive dans Supabase (Auth + PostgreSQL users + profiles)
     try {
-      await fetch("/api/admin/validation-inscriptions", {
+      await fetch("/api/admin/comptes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          studentId: userId,
-          email: targetEmail,
           action: "delete",
+          userId,
+          email: targetEmail,
+          username: targetUsername,
         }),
       });
     } catch (err) {
@@ -538,7 +578,14 @@ export default function AdminComptesPage() {
                             {roleInfo[u.role].icon}
                           </div>
                           <div>
-                            <div className="font-semibold text-slate-900 dark:text-[#F5F7FA] text-xs">{u.full_name}</div>
+                            <div className="font-semibold text-slate-900 dark:text-[#F5F7FA] text-xs flex items-center gap-1.5">
+                              <span>{u.full_name}</span>
+                              {u.username && (
+                                <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-slate-100 dark:bg-[#1c2633] text-slate-600 dark:text-cyan-300 border border-slate-200 dark:border-[#263241]">
+                                  @{u.username}
+                                </span>
+                              )}
+                            </div>
                             <div className="text-[11px] text-slate-400 dark:text-[#687585] font-mono">{u.email}</div>
                           </div>
                         </div>
@@ -635,6 +682,30 @@ export default function AdminComptesPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <Input label="Nom complet" required placeholder="Ex. Pr. Papa Samb, Dr. Ousmane Touré..." value={formName} onChange={(e) => setFormName(e.target.value)} />
                   <Input label="Email académique" type="email" required placeholder="nom.prenom@has.sn" value={formEmail} onChange={(e) => setFormEmail(e.target.value)} />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <Input
+                      label="Identifiant / Login (nom d'utilisateur)"
+                      required
+                      placeholder="Ex: mamour, ibou, papa..."
+                      value={formUsername}
+                      onChange={(e) => setFormUsername(e.target.value)}
+                    />
+                    <p className="text-[11px] text-slate-500 dark:text-[#AAB4C0]">Identifiant utilisé pour se connecter à l&apos;espace.</p>
+                  </div>
+                  <div className="space-y-1">
+                    <Input
+                      label={editUser ? "Nouveau mot de passe (optionnel)" : "Mot de passe de connexion"}
+                      type="text"
+                      required={!editUser}
+                      placeholder={editUser ? "Laisser vide pour conserver" : "Ex: professeur, Has2026!..."}
+                      value={formPassword}
+                      onChange={(e) => setFormPassword(e.target.value)}
+                    />
+                    <p className="text-[11px] text-slate-500 dark:text-[#AAB4C0]">Mot de passe de connexion de l&apos;utilisateur.</p>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

@@ -86,6 +86,8 @@ export default function ProfesseurEDTPage() {
       (prof.nom && prof.nom.toLowerCase().includes("thiam") && s.professeur_nom && s.professeur_nom.toLowerCase().includes("thiam")) ||
       (((prof.nom && prof.nom.toLowerCase().includes("sow")) || (prof.prenom && prof.prenom.toLowerCase().includes("diop"))) &&
         s.professeur_nom && (s.professeur_nom.toLowerCase().includes("diop") || s.professeur_nom.toLowerCase().includes("sow"))) ||
+      ((prof.username === "mamour" || (prof.full_name && prof.full_name.toLowerCase().includes("mamour"))) &&
+        s.professeur_nom && (s.professeur_nom.toLowerCase().includes("mamour") || s.professeur_nom.toLowerCase().includes("diop"))) ||
       (prof.nom && prof.nom.toLowerCase().includes("ndiaye") && s.professeur_nom && s.professeur_nom.toLowerCase().includes("ndiogou"))
     );
   }, [prof]);

@@ -193,12 +193,19 @@ export function getDeletedAccounts(): string[] {
   return getStorageItem<string[]>(STORAGE_KEYS.DELETED_ACCOUNTS, []);
 }
 
-export function markAccountAsDeleted(id?: string | null, email?: string | null): void {
+export function markAccountAsDeleted(
+  id?: string | null,
+  email?: string | null,
+  username?: string | null,
+  fullName?: string | null
+): void {
   if (typeof window === "undefined") return;
   const current = getDeletedAccounts();
   const toAdd: string[] = [];
   if (id && id.trim()) toAdd.push(id.toLowerCase().trim());
   if (email && email.trim()) toAdd.push(email.toLowerCase().trim());
+  if (username && username.trim()) toAdd.push(username.toLowerCase().trim());
+  if (fullName && fullName.trim()) toAdd.push(fullName.toLowerCase().trim());
   if (toAdd.length === 0) return;
   const merged = Array.from(new Set([...current, ...toAdd]));
   try {
@@ -208,12 +215,19 @@ export function markAccountAsDeleted(id?: string | null, email?: string | null):
   }
 }
 
-export function unmarkAccountAsDeleted(id?: string | null, email?: string | null): void {
+export function unmarkAccountAsDeleted(
+  id?: string | null,
+  email?: string | null,
+  username?: string | null,
+  fullName?: string | null
+): void {
   if (typeof window === "undefined") return;
   const current = getDeletedAccounts();
   const toRemove = new Set<string>();
   if (id && id.trim()) toRemove.add(id.toLowerCase().trim());
   if (email && email.trim()) toRemove.add(email.toLowerCase().trim());
+  if (username && username.trim()) toRemove.add(username.toLowerCase().trim());
+  if (fullName && fullName.trim()) toRemove.add(fullName.toLowerCase().trim());
   const updated = current.filter((x) => !toRemove.has(x.toLowerCase().trim()));
   try {
     localStorage.setItem(STORAGE_KEYS.DELETED_ACCOUNTS, JSON.stringify(updated));
@@ -222,53 +236,131 @@ export function unmarkAccountAsDeleted(id?: string | null, email?: string | null
   }
 }
 
-export function isAccountDeleted(id?: string | null, email?: string | null): boolean {
-  if (!id && !email) return false;
+export function isAccountDeleted(
+  id?: string | null,
+  email?: string | null,
+  username?: string | null,
+  fullName?: string | null
+): boolean {
+  if (!id && !email && !username && !fullName) return false;
   const current = getDeletedAccounts();
   if (!current || current.length === 0) return false;
   const set = new Set(current.map((x) => x.toLowerCase().trim()));
   if (id && set.has(id.toLowerCase().trim())) return true;
   if (email && set.has(email.toLowerCase().trim())) return true;
+  if (username && set.has(username.toLowerCase().trim())) return true;
+  if (fullName && set.has(fullName.toLowerCase().trim())) return true;
   return false;
 }
 
 // === GESTION DES PROFESSEURS (L'ADMIN PEUT TOUT AJOUTER / MODIFIER) ===
 export function getStoredProfesseurs(): Professeur[] {
-  const list = getStorageItem<Professeur[]>(STORAGE_KEYS.PROFESSEURS, MOCK_PROFESSEURS);
-  
-  // S'assurer que tous les professeurs officiels de référence (ex: M. Diop, El Hadji Ibrahima Diop Sow) sont présents
+  let list = getStorageItem<Professeur[]>(STORAGE_KEYS.PROFESSEURS, MOCK_PROFESSEURS);
+
+  // Migration automatique de l'ancien M. Diop vers El Hadji Mamour Seynabou Diop
+  const mamourOfficial = MOCK_PROFESSEURS.find((p) => p.username === "mamour") || {
+    id: "prof-mamour",
+    user_id: 14,
+    email: "mamour@has.sn",
+    username: "mamour",
+    password: "professeur",
+    prenom: "El Hadji Mamour Seynabou",
+    nom: "Diop",
+    full_name: "El Hadji Mamour Seynabou Diop",
+    role: "professeur",
+    phone: "+221 77 668 89 77",
+    matricule: "PROF008",
+    filiere_id: "33333333-3333-3333-3333-333333333333",
+    classe_id: null,
+    bio: "Enseignant-chercheur en Économie, Finance des entreprises et Gestion financière pour la filière MIASS.",
+    specialite: "Economie",
+    avatar_url: null,
+    photo: null,
+    is_active: true,
+    created_at: "2024-01-15T08:00:00Z",
+    updated_at: "2026-09-01T08:00:00Z",
+    niveaux: ["L1", "L2"],
+    classes: ["L1 MIASS", "L2 MIASS"],
+    matieres: [
+      { id: 26, nom: "Finance des entreprises", code: "MAT026", niveau: "L1", classes: ["L1 MIASS"] },
+      { id: 14, nom: "Economie Générale", code: "MAT014", niveau: "L1", classes: ["L1 MIASS"] },
+      { id: 8, nom: "Economie", code: "MAT008", niveau: "L2", classes: ["L2 MIASS"] },
+    ],
+  };
+
+  let migrated = false;
+  list = list.map((p) => {
+    if (
+      p.id === "prof-m-diop" ||
+      p.email?.toLowerCase() === "diop@halil-academie.com" ||
+      p.full_name?.toLowerCase() === "m. diop" ||
+      (p.nom?.toLowerCase() === "diop" && (!p.prenom || p.prenom.trim() === "M."))
+    ) {
+      migrated = true;
+      return {
+        ...mamourOfficial,
+        ...p,
+        id: "prof-mamour",
+        full_name: "El Hadji Mamour Seynabou Diop",
+        prenom: "El Hadji Mamour Seynabou",
+        nom: "Diop",
+        username: "mamour",
+        email: "mamour@has.sn",
+        specialite: "Economie",
+      };
+    }
+    return p;
+  });
+
+  // Fusionner les professeurs de référence SAUF ceux qui ont été explicitement supprimés
   const merged = [...list];
-  let updated = false;
+  let updated = migrated;
   for (const mockProf of MOCK_PROFESSEURS) {
-    if (!merged.some((p) => p.id === mockProf.id || p.full_name?.toLowerCase() === mockProf.full_name?.toLowerCase())) {
-      if (!isAccountDeleted(mockProf.id, mockProf.email)) {
+    const isDeleted = isAccountDeleted(mockProf.id, mockProf.email, mockProf.username, mockProf.full_name);
+    if (!isDeleted) {
+      const exists = merged.some(
+        (p) =>
+          p.id?.toLowerCase() === mockProf.id.toLowerCase() ||
+          p.full_name?.toLowerCase() === mockProf.full_name?.toLowerCase() ||
+          (mockProf.username && p.username?.toLowerCase() === mockProf.username.toLowerCase())
+      );
+      if (!exists) {
         merged.push(mockProf);
         updated = true;
       }
     }
   }
-  if (updated && typeof window !== "undefined") {
+
+  // Filtrer impérativement tous les comptes marqués comme supprimés
+  const cleaned = merged.filter(
+    (p) => !isAccountDeleted(p.id, p.email, p.username, p.full_name)
+  );
+
+  if ((updated || cleaned.length !== merged.length) && typeof window !== "undefined") {
     try {
-      localStorage.setItem(STORAGE_KEYS.PROFESSEURS, JSON.stringify(merged));
+      localStorage.setItem(STORAGE_KEYS.PROFESSEURS, JSON.stringify(cleaned));
     } catch {}
   }
 
-  return merged
-    .filter((p) => !isAccountDeleted(p.id, p.email))
-    .map((p) => ({
-      ...p,
-      specialite: deduceSpecialiteFromMatieres(p.matieres, p.specialite),
-    }));
+  return cleaned.map((p) => ({
+    ...p,
+    specialite: deduceSpecialiteFromMatieres(p.matieres, p.specialite),
+  }));
 }
 
 export function saveProfesseur(prof: Professeur): void {
-  unmarkAccountAsDeleted(prof.id, prof.email);
+  unmarkAccountAsDeleted(prof.id, prof.email, prof.username, prof.full_name);
   const profs = getStoredProfesseurs();
   const normalizedProf = {
     ...prof,
     specialite: deduceSpecialiteFromMatieres(prof.matieres, prof.specialite),
   };
-  const index = profs.findIndex((p) => p.id === prof.id);
+  const index = profs.findIndex(
+    (p) =>
+      p.id === prof.id ||
+      (prof.email && p.email?.toLowerCase() === prof.email.toLowerCase()) ||
+      (prof.username && p.username?.toLowerCase() === prof.username.toLowerCase())
+  );
   if (index >= 0) {
     profs[index] = normalizedProf;
   } else {
@@ -277,13 +369,36 @@ export function saveProfesseur(prof: Professeur): void {
   setStorageItem(STORAGE_KEYS.PROFESSEURS, profs);
 }
 
-export function deleteProfesseur(id: string, email?: string | null): void {
-  const currentProfs = getStoredProfesseurs();
-  const target = currentProfs.find((p) => p.id === id || (email && p.email?.toLowerCase() === email.toLowerCase()));
-  markAccountAsDeleted(id, email || target?.email);
-  const profs = currentProfs.filter(
-    (p) => p.id !== id && (!email || p.email?.toLowerCase() !== email.toLowerCase())
+export function deleteProfesseur(
+  id: string,
+  email?: string | null,
+  username?: string | null,
+  fullName?: string | null
+): void {
+  const currentProfs = getStorageItem<Professeur[]>(STORAGE_KEYS.PROFESSEURS, MOCK_PROFESSEURS);
+  const target = currentProfs.find(
+    (p) =>
+      p.id === id ||
+      (email && p.email?.toLowerCase() === email.toLowerCase()) ||
+      (username && p.username?.toLowerCase() === username.toLowerCase()) ||
+      (fullName && p.full_name?.toLowerCase() === fullName.toLowerCase())
   );
+
+  const effId = id || target?.id;
+  const effEmail = email || target?.email;
+  const effUsername = username || target?.username;
+  const effFullName = fullName || target?.full_name;
+
+  markAccountAsDeleted(effId, effEmail, effUsername, effFullName);
+
+  const profs = currentProfs.filter((p) => {
+    if (effId && p.id?.toLowerCase() === effId.toLowerCase()) return false;
+    if (effEmail && p.email?.toLowerCase() === effEmail.toLowerCase()) return false;
+    if (effUsername && p.username?.toLowerCase() === effUsername.toLowerCase()) return false;
+    if (effFullName && p.full_name?.toLowerCase() === effFullName.toLowerCase()) return false;
+    return true;
+  });
+
   setStorageItem(STORAGE_KEYS.PROFESSEURS, profs);
 }
 
@@ -312,12 +427,32 @@ export function saveStudent(student: Profile): void {
   setStorageItem(STORAGE_KEYS.STUDENTS, list);
 }
 
-export function deleteStudent(id: string, email?: string | null): void {
+export function deleteStudent(
+  id: string,
+  email?: string | null,
+  username?: string | null,
+  fullName?: string | null
+): void {
   const currentList = getStoredStudents();
-  const target = currentList.find((s) => s.id === id || (email && s.email?.toLowerCase() === email.toLowerCase()));
-  markAccountAsDeleted(id, email || target?.email);
+  const target = currentList.find(
+    (s) =>
+      s.id === id ||
+      (email && s.email?.toLowerCase() === email.toLowerCase()) ||
+      (username && s.username?.toLowerCase() === username.toLowerCase()) ||
+      (fullName && s.full_name?.toLowerCase() === fullName.toLowerCase())
+  );
+  const effId = id || target?.id;
+  const effEmail = email || target?.email;
+  const effUsername = username || target?.username;
+  const effFullName = fullName || target?.full_name;
+
+  markAccountAsDeleted(effId, effEmail, effUsername, effFullName);
   const list = currentList.filter(
-    (s) => s.id !== id && (!email || s.email?.toLowerCase() !== email.toLowerCase())
+    (s) =>
+      (!effId || s.id?.toLowerCase() !== effId.toLowerCase()) &&
+      (!effEmail || s.email?.toLowerCase() !== effEmail.toLowerCase()) &&
+      (!effUsername || s.username?.toLowerCase() !== effUsername.toLowerCase()) &&
+      (!effFullName || s.full_name?.toLowerCase() !== effFullName.toLowerCase())
   );
   setStorageItem(STORAGE_KEYS.STUDENTS, list);
 }
@@ -841,8 +976,8 @@ export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [
     heure_fin: "23:00",
     matiere_nom: "Finance des entreprises",
     matiere_code: "MAT026",
-    professeur_nom: "M. Diop",
-    professeur_id: "prof-m-diop",
+    professeur_nom: "El Hadji Mamour Seynabou Diop",
+    professeur_id: "prof-mamour",
     type_seance: "COURS",
     meet_url: null,
     niveau: "L1",
@@ -937,8 +1072,17 @@ export function getStoredSeancesEDT(): SeanceEDT[] {
     }
   }
 
-  // Appliquer et préserver en permanence les liens Google Meet mémorisés
+  // Appliquer et préserver en permanence les liens Google Meet mémorisés et migrer M. Diop
   for (const s of filtered) {
+    if (
+      s.professeur_nom?.toLowerCase() === "m. diop" ||
+      s.professeur_id === "prof-m-diop" ||
+      (s.matiere_nom?.toLowerCase().includes("finance") && (!s.professeur_nom || s.professeur_nom.toLowerCase().includes("diop")))
+    ) {
+      s.professeur_nom = "El Hadji Mamour Seynabou Diop";
+      s.professeur_id = "prof-mamour";
+    }
+
     const saved = meetLinks[s.id];
     if (saved && (!s.meet_url || !s.meet_url.trim())) {
       s.meet_url = saved;

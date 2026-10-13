@@ -38,7 +38,7 @@ const ENSEIGNANTS_PRESETS = [
   "Pape Ibrahima Samb",
   "Ibrahima Anne",
   "Ndiogou Ndiaye",
-  "M. Diop",
+  "El Hadji Mamour Seynabou Diop",
   "El Hadji Ibrahima Diop Sow",
   "Pape Thiam",
   "Kalidou Ba",
@@ -112,12 +112,12 @@ const CATALOGUE_MATIERES: Record<
   "Finance des entreprises": {
     niveau: "L1",
     filieres: ["MIASS"],
-    professeurDefaut: "M. Diop",
+    professeurDefaut: "El Hadji Mamour Seynabou Diop",
   },
   "Economie Générale": {
     niveau: "L1",
     filieres: ["MIASS"],
-    professeurDefaut: "Pape Ibrahima Samb",
+    professeurDefaut: "El Hadji Mamour Seynabou Diop",
   },
 
   // --- LICENCE 2 ---
@@ -194,7 +194,7 @@ const CATALOGUE_MATIERES: Record<
   "Economie": {
     niveau: "L2",
     filieres: ["MIASS"],
-    professeurDefaut: "Pape Ibrahima Samb",
+    professeurDefaut: "El Hadji Mamour Seynabou Diop",
   },
 };
 
@@ -479,12 +479,9 @@ export default function AdminEDTPage() {
         } else if (lower.includes("mécanique") || lower.includes("thermo") || lower.includes("optique") || lower.includes("magnéto")) {
           setFormFilieres(["MPI", "SML"]);
           setFormEnseignant("Ndiogou Ndiaye");
-        } else if (lower.includes("finance")) {
+        } else if (lower.includes("finance") || lower.includes("écono")) {
           setFormFilieres(["MIASS"]);
-          setFormEnseignant("M. Diop");
-        } else if (lower.includes("écono")) {
-          setFormFilieres(["MIASS"]);
-          setFormEnseignant("Pape Ibrahima Samb");
+          setFormEnseignant("El Hadji Mamour Seynabou Diop");
         } else if (lower.includes("python") || lower.includes("base de données") || lower.includes("langage c") || lower.includes("info")) {
           setFormFilieres(lower.includes("langage c") ? ["MPI"] : ["MPI", "MIASS"]);
           setFormEnseignant(activeNiveau === "L1" ? "Pape Thiam" : "Ibrahima Anne");

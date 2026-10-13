@@ -226,7 +226,38 @@ async function deleteUserPermanently(
     } catch {}
   }
 
-  // 5. Audit log
+  // 5. Suppression dans la table users (PostgreSQL) et enseignants
+  try {
+    const searchFilter = [
+      targetEmail ? `email.ilike.${targetEmail}` : null,
+      studentId ? `login.ilike.${studentId}` : null,
+    ].filter(Boolean).join(",");
+
+    if (searchFilter) {
+      const { data: dbUsers } = await supabaseAdmin
+        .from("users")
+        .select("id")
+        .or(searchFilter);
+
+      if (dbUsers && dbUsers.length > 0) {
+        for (const du of dbUsers) {
+          const { data: ensList } = await supabaseAdmin.from("enseignants").select("id").eq("user_id", du.id);
+          if (ensList && ensList.length > 0) {
+            for (const e of ensList) {
+              await supabaseAdmin.from("enseignant_matiere").delete().eq("enseignant_id", e.id);
+              await supabaseAdmin.from("enseignant_filiere").delete().eq("enseignant_id", e.id);
+              await supabaseAdmin.from("enseignants").delete().eq("id", e.id);
+            }
+          }
+          await supabaseAdmin.from("users").delete().eq("id", du.id);
+        }
+      }
+    }
+  } catch (dbErr) {
+    console.warn("[DELETE-DB-USERS-WARN]", dbErr);
+  }
+
+  // 6. Audit log
   try {
     await supabaseAdmin.from("audit_logs").insert({
       action: "SUPPRESSION_COMPTE_ADMIN",
