@@ -698,7 +698,7 @@ export default function ProfesseurEDTPage() {
                                                 className="flex-1 inline-flex items-center justify-center gap-1 py-1 rounded-md text-[10px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition-colors"
                                               >
                                                 <Video className="w-3 h-3" />
-                                                Lancer Meet
+                                                {isMine ? "Lancer Meet" : "Rejoindre Meet"}
                                               </a>
                                               {isMine && (
                                                 <button

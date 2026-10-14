@@ -1035,16 +1035,47 @@ export function getStoredMeetLinks(): Record<string, string> {
 export function saveMeetLink(seanceId: string, meetUrl?: string | null): void {
   if (typeof window === "undefined") return;
   const current = getStoredMeetLinks();
+  let cleanMeet: string | null = null;
   if (meetUrl && meetUrl.trim()) {
-    let clean = meetUrl.trim();
-    if (!clean.startsWith("http://") && !clean.startsWith("https://")) {
-      clean = `https://${clean}`;
+    cleanMeet = meetUrl.trim();
+    if (!cleanMeet.startsWith("http://") && !cleanMeet.startsWith("https://")) {
+      cleanMeet = `https://${cleanMeet}`;
     }
-    current[seanceId] = clean;
+    current[seanceId] = cleanMeet;
   } else {
     delete current[seanceId];
   }
   setStorageItem(STORAGE_KEYS.MEET_LINKS, current);
+
+  // Mettre à jour immédiatement la séance dans SEANCES_EDT local
+  const seances = getStorageItem<SeanceEDT[]>(STORAGE_KEYS.SEANCES_EDT, []);
+  if (Array.isArray(seances) && seances.length > 0) {
+    const updated = seances.map((s) => (s.id === seanceId ? { ...s, meet_url: cleanMeet } : s));
+    setStorageItem(STORAGE_KEYS.SEANCES_EDT, updated);
+  }
+}
+
+/**
+ * Synchronise en temps réel la création ou suppression d'un lien Meet par un enseignant
+ */
+export async function syncSeanceMeetToServer(
+  seanceId: string,
+  meetUrl: string | null,
+  userEmail?: string
+): Promise<void> {
+  if (typeof window === "undefined") return;
+  try {
+    await fetch("/api/academic/seances", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        seanceId,
+        meetUrl,
+        adminEmail: userEmail || "professeur@has.sn",
+        isProfAction: true,
+      }),
+    });
+  } catch {}
 }
 
 /**
@@ -1079,7 +1110,7 @@ export async function clearAllMeetLinks(adminEmail?: string): Promise<void> {
 // Purge automatique pour réinitialiser tous les anciens liens Meet sur tous les navigateurs
 if (typeof window !== "undefined") {
   try {
-    const PURGE_FLAG = "has_all_meets_cleared_v3";
+    const PURGE_FLAG = "has_all_meets_cleared_v5";
     if (!localStorage.getItem(PURGE_FLAG)) {
       localStorage.setItem(PURGE_FLAG, "true");
       localStorage.removeItem(STORAGE_KEYS.MEET_LINKS);
@@ -1118,7 +1149,7 @@ export function getStoredSeancesEDT(): SeanceEDT[] {
     }
   }
 
-  // Migrer M. Diop et préserver uniquement les liens explicitement existants
+  // Migrer M. Diop et préserver uniquement les liens explicitement configurés
   for (const s of filtered) {
     if (
       s.professeur_nom?.toLowerCase() === "m. diop" ||
@@ -1129,9 +1160,12 @@ export function getStoredSeancesEDT(): SeanceEDT[] {
       s.professeur_id = "prof-mamour";
     }
 
+    // Le lien Meet ne provient QUE d'un lien explicitement configuré par l'enseignant
     const saved = meetLinks[s.id];
-    if (saved && s.meet_url) {
-      s.meet_url = saved;
+    if (saved && typeof saved === "string" && saved.trim()) {
+      s.meet_url = saved.trim();
+    } else {
+      s.meet_url = null;
     }
   }
 

@@ -118,8 +118,10 @@ export async function POST(request: NextRequest) {
     const adminEmail = body.adminEmail || "direction@halil-academie.com";
     const clearAllMeets: boolean = Boolean(body.clearAllMeets);
     const deletedId = body.deletedId as string | undefined;
+    const seanceId = body.seanceId as string | undefined;
+    const isSingleMeetUpdate = Boolean(seanceId && ("meetUrl" in body));
 
-    if (!Array.isArray(seances) && !deletedId && !clearAllMeets) {
+    if (!Array.isArray(seances) && !deletedId && !clearAllMeets && !isSingleMeetUpdate) {
       return NextResponse.json({ error: "Données invalides" }, { status: 400 });
     }
 
@@ -151,18 +153,18 @@ export async function POST(request: NextRequest) {
 
     const supabaseAdmin = createAdminClient();
 
-    // Gestion de la purge totale de tous les liens Meet
+    // 1. Gestion de la purge totale de tous les liens Meet
     if (clearAllMeets) {
       for (const k of Object.keys(memoryMeetLinks)) delete memoryMeetLinks[k];
       if (memorySeancesStore) {
         memorySeancesStore = memorySeancesStore.map((s) => ({ ...s, meet_url: null }));
       }
       try {
+        await supabaseAdmin.from("logs").delete().like("action", "MEET:%");
         await supabaseAdmin.from("logs").insert({
           action: "MEETS_RESET_ALL",
           description: "Tous les liens Meet ont été purgés à la demande de l'administration",
         });
-        await supabaseAdmin.from("logs").delete().like("action", "MEET:%");
       } catch (err) {
         console.warn("Erreur lors de la purge logs Supabase:", err);
       }
@@ -172,7 +174,44 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Gestion de la suppression d'une séance
+    // 2. Mise à jour / suppression ciblée du lien Meet d'une séance (utilisé par le modal Prof)
+    if (isSingleMeetUpdate && seanceId) {
+      const rawMeet = body.meetUrl;
+      const cleanMeet = rawMeet && typeof rawMeet === "string" && rawMeet.trim() ? rawMeet.trim() : null;
+
+      try {
+        await supabaseAdmin.from("logs").delete().eq("action", `MEET:${seanceId}`);
+      } catch (err) {
+        console.warn("Erreur suppression log MEET:", err);
+      }
+
+      if (cleanMeet) {
+        await supabaseAdmin.from("logs").insert({
+          action: `MEET:${seanceId}`,
+          description: cleanMeet.substring(0, 250),
+        });
+        memoryMeetLinks[seanceId] = cleanMeet;
+      } else {
+        delete memoryMeetLinks[seanceId];
+      }
+
+      if (memorySeancesStore) {
+        memorySeancesStore = memorySeancesStore.map((s) =>
+          s.id === seanceId ? { ...s, meet_url: cleanMeet } : s
+        );
+      }
+
+      return NextResponse.json({
+        success: true,
+        message: cleanMeet
+          ? `Lien Meet pour la séance ${seanceId} enregistré.`
+          : `Lien Meet pour la séance ${seanceId} supprimé.`,
+        seanceId,
+        meetUrl: cleanMeet,
+      });
+    }
+
+    // 3. Gestion de la suppression d'une séance
     if (deletedId) {
       await supabaseAdmin.from("logs").insert({
         action: `DEL_SEANCE:${deletedId}`,
@@ -182,16 +221,22 @@ export async function POST(request: NextRequest) {
         memorySeancesStore = memorySeancesStore.filter((s) => s.id !== deletedId);
       }
       delete memoryMeetLinks[deletedId];
+      try {
+        await supabaseAdmin.from("logs").delete().eq("action", `MEET:${deletedId}`);
+      } catch {}
       return NextResponse.json({ success: true, message: `Séance ${deletedId} supprimée avec succès.` });
     }
 
-    // Sauvegarde en mémoire locale du serveur
+    // 4. Sauvegarde / synchronisation en masse
     memorySeancesStore = [...seances];
 
-    // Sauvegarder individuellement chaque lien Meet non vide dans Supabase
     const meetInserts: { action: string; description: string }[] = [];
 
-    seances.forEach((s) => {
+    for (const s of seances) {
+      try {
+        await supabaseAdmin.from("logs").delete().eq("action", `MEET:${s.id}`);
+      } catch {}
+
       if (s.meet_url && typeof s.meet_url === "string" && s.meet_url.trim()) {
         const cleanMeet = s.meet_url.trim();
         memoryMeetLinks[s.id] = cleanMeet;
@@ -199,11 +244,12 @@ export async function POST(request: NextRequest) {
           action: `MEET:${s.id}`,
           description: cleanMeet.substring(0, 250),
         });
+      } else {
+        delete memoryMeetLinks[s.id];
       }
-    });
+    }
 
     if (meetInserts.length > 0) {
-      // Insérer les nouveaux liens Meet dans Supabase PostgreSQL
       const { error } = await supabaseAdmin.from("logs").insert(meetInserts);
       if (error) {
         console.warn("Erreur insertion liens Meet Supabase:", error.message);
@@ -212,7 +258,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: `✓ Synchronisation permanente réussie pour ${seances.length} séance(s) EDT (${meetInserts.length} lien(s) Meet enregistrés).`,
+      message: `✓ Synchronisation réussie pour ${seances.length} séance(s) EDT (${meetInserts.length} lien(s) Meet actif(s)).`,
       count: seances.length,
       meetCount: Object.keys(memoryMeetLinks).length,
     });

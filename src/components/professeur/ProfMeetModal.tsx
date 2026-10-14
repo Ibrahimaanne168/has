@@ -7,7 +7,6 @@ import {
   ExternalLink,
   Copy,
   CheckCircle2,
-  Sparkles,
   Trash2,
   Save,
   Clock,
@@ -15,11 +14,9 @@ import {
 } from "lucide-react";
 import { SeanceEDT } from "@/lib/types";
 import {
-  generateMeetLink,
   saveMeetLink,
   saveSeanceEDT,
-  getStoredSeancesEDT,
-  pushSeancesToServer,
+  syncSeanceMeetToServer,
 } from "@/lib/academicStorage";
 import { Button } from "@/components/ui/Button";
 
@@ -39,7 +36,6 @@ export function ProfMeetModal({
   userEmail,
 }: ProfMeetModalProps) {
   const [meetUrl, setMeetUrl] = useState("");
-  const [copied, setCopied] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -51,13 +47,6 @@ export function ProfMeetModal({
   }, [seance]);
 
   if (!isOpen || !seance) return null;
-
-  const handleGenerate = () => {
-    const generated = generateMeetLink();
-    setMeetUrl(generated);
-    setToastMessage("✓ Nouveau lien Google Meet généré automatiquement");
-    setTimeout(() => setToastMessage(null), 3000);
-  };
 
   const handlePasteClipboard = async () => {
     try {
@@ -72,7 +61,7 @@ export function ProfMeetModal({
     }
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
 
@@ -86,15 +75,16 @@ export function ProfMeetModal({
       meet_url: cleanMeet,
     };
 
-    // 1. Sauvegarder dans le cache persistant des liens Meet
+    // 1. Sauvegarder dans le cache local persistant
     saveMeetLink(seance.id, cleanMeet);
-
-    // 2. Sauvegarder dans la séance EDT globale
     saveSeanceEDT(updatedSeance, userEmail);
 
-    // 3. Synchroniser avec le serveur
-    const all = getStoredSeancesEDT();
-    pushSeancesToServer(all, userEmail);
+    // 2. Synchroniser sur le serveur en direct pour tous les étudiants
+    await syncSeanceMeetToServer(seance.id, cleanMeet, userEmail);
+
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("has_academic_storage_updated"));
+    }
 
     setIsSaving(false);
     if (onSaved) {
@@ -103,7 +93,8 @@ export function ProfMeetModal({
     onClose();
   };
 
-  const handleClear = () => {
+  const handleClear = async () => {
+    setIsSaving(true);
     setMeetUrl("");
     saveMeetLink(seance.id, null);
     const updatedSeance: SeanceEDT = {
@@ -111,6 +102,15 @@ export function ProfMeetModal({
       meet_url: null,
     };
     saveSeanceEDT(updatedSeance, userEmail);
+
+    // Synchroniser la suppression sur le serveur
+    await syncSeanceMeetToServer(seance.id, null, userEmail);
+
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("has_academic_storage_updated"));
+    }
+
+    setIsSaving(false);
     if (onSaved) {
       onSaved(updatedSeance);
     }
@@ -166,39 +166,31 @@ export function ProfMeetModal({
             </div>
           )}
 
-          {/* Actions rapides pour créer ou générer */}
-          <div>
-            <label className="block text-xs font-bold text-slate-700 dark:text-[#F5F7FA] mb-2">
-              Créer ou insérer votre réunion :
+          {/* Étape 1 : Ouvrir Google Meet */}
+          <div className="space-y-2">
+            <label className="block text-xs font-bold text-slate-700 dark:text-[#F5F7FA]">
+              Étape 1 : Créer votre réunion sur Google Meet
             </label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <a
-                href="https://meet.google.com/new"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition-all text-center"
-              >
-                <Video className="w-4 h-4 shrink-0" />
-                <span>1. Ouvrir Google Meet</span>
-                <ExternalLink className="w-3 h-3 opacity-80" />
-              </a>
-
-              <button
-                type="button"
-                onClick={handleGenerate}
-                className="inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/40 dark:hover:bg-orange-900/50 border border-orange-200 dark:border-orange-800/60 text-[#e0521c] font-bold text-xs transition-all cursor-pointer"
-              >
-                <Sparkles className="w-4 h-4 shrink-0" />
-                <span>2. Générer lien HAS</span>
-              </button>
-            </div>
+            <a
+              href="https://meet.google.com/new"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-bold text-xs shadow-xs transition-all text-center"
+            >
+              <Video className="w-4 h-4 shrink-0" />
+              <span>Ouvrir Google Meet (Créer la réunion)</span>
+              <ExternalLink className="w-3.5 h-3.5 opacity-80" />
+            </a>
+            <p className="text-[11px] text-slate-500 dark:text-[#AAB4C0] leading-relaxed">
+              Google Meet s&apos;ouvre dans un nouvel onglet. Copiez l&apos;adresse de votre réunion puis collez-la à l&apos;étape 2 ci-dessous.
+            </p>
           </div>
 
-          {/* Champ du lien */}
+          {/* Étape 2 : Coller le lien */}
           <div>
             <div className="flex items-center justify-between mb-1.5">
               <label className="block text-xs font-bold text-slate-700 dark:text-[#F5F7FA]">
-                Lien Google Meet (https://meet.google.com/...) :
+                Étape 2 : Coller le lien de votre réunion :
               </label>
               <button
                 type="button"
@@ -231,7 +223,8 @@ export function ProfMeetModal({
                 <button
                   type="button"
                   onClick={handleClear}
-                  className="inline-flex items-center gap-1 text-xs text-red-500 hover:text-red-700 dark:hover:text-red-400 font-bold cursor-pointer"
+                  disabled={isSaving}
+                  className="inline-flex items-center gap-1 text-xs text-red-500 hover:text-red-700 dark:hover:text-red-400 font-bold cursor-pointer disabled:opacity-50"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                   Retirer le lien
@@ -240,7 +233,7 @@ export function ProfMeetModal({
             </div>
 
             <div className="flex items-center gap-2">
-              <Button type="button" variant="outline" size="sm" onClick={onClose}>
+              <Button type="button" variant="outline" size="sm" onClick={onClose} disabled={isSaving}>
                 Annuler
               </Button>
               <Button
