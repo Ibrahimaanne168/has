@@ -29,6 +29,7 @@ import {
   getStudentsForProfesseur,
   getStoredSeancesEDT,
   syncSeancesWithServer,
+  syncCoursesWithServer,
 } from "@/lib/academicStorage";
 import { Cours, Message, SeanceEDT } from "@/lib/types";
 import { ProfEmailVerificationBanner } from "@/components/professeur/ProfEmailVerificationBanner";
@@ -67,6 +68,7 @@ export default function ProfesseurDashboard() {
       }
     }
     syncSeancesWithServer().then((s) => setSeances(s)).catch(() => {});
+    syncCoursesWithServer().then((c: Cours[]) => setCourses(c)).catch(() => {});
     const handleUpdate = () => {
       setCourses(getStoredCourses());
       setDirectMessages(getStoredDirectMessages());
@@ -94,13 +96,17 @@ export default function ProfesseurDashboard() {
     );
   });
 
-  // Cours strictement associés à ce professeur (par id, matricule ou nom)
+  // Cours strictement associés à ce professeur (par id, matricule, email, username ou matière)
   const myCourses = courses.filter((c) => {
     const profIdMatch = c.professeur_id === prof.id || c.professeur?.id === prof.id;
     const profMatriculeMatch = prof.matricule && (c.professeur?.matricule === prof.matricule || c.professeur_id === prof.matricule);
-    const profEmailMatch = prof.email && c.professeur?.email === prof.email;
+    const profEmailMatch = prof.email && c.professeur?.email?.toLowerCase() === prof.email.toLowerCase();
+    const profUsernameMatch = prof.username && (c.professeur?.username === prof.username || (c.professeur?.email && c.professeur.email.toLowerCase().includes(prof.username.toLowerCase())));
     const profNameMatch = prof.nom && c.professeur?.full_name?.toLowerCase().includes(prof.nom.toLowerCase());
-    return profIdMatch || profMatriculeMatch || profEmailMatch || profNameMatch;
+    const profMatiereMatch = prof.matieres?.some(
+      (pm) => pm.code === c.matiere?.code || String(pm.id) === String(c.matiere_id) || pm.nom.toLowerCase() === c.matiere?.name?.toLowerCase()
+    );
+    return profIdMatch || profMatriculeMatch || profEmailMatch || profUsernameMatch || profNameMatch || profMatiereMatch;
   });
 
   // Messages réellement reçus par cet enseignant

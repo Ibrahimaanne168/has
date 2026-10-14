@@ -19,6 +19,7 @@ import {
   getStoredClasses,
   getStoredMatieres,
   getStoredProfesseurs,
+  syncCoursesWithServer,
   fileToDataUrl,
 } from "@/lib/academicStorage";
 import { PdfViewerModal } from "@/components/ui/PdfViewerModal";
@@ -59,10 +60,12 @@ export default function AdminCoursPage() {
 
   useEffect(() => {
     reloadData();
+    syncCoursesWithServer().then(() => reloadData());
     const handleUpdate = () => reloadData();
     window.addEventListener("has_academic_storage_updated", handleUpdate);
     return () => window.removeEventListener("has_academic_storage_updated", handleUpdate);
   }, []);
+
 
   const selectedProf = profs.find((p) => p.id === formProfId) || profs[0];
   const selectedMatiereObj = matieres.find((m) => m.id === formMatiereId) || matieres[0];
@@ -428,10 +431,30 @@ export default function AdminCoursPage() {
                               return;
                             }
                             setIsUploading(true);
+                            setFormPdfName(file.name);
+                            const cleanTitle = file.name.replace(/\.pdf$/i, "").replace(/[-_]/g, " ").trim();
+                            setFormTitle(cleanTitle);
+
+                            // 1. Upload serveur permanent
                             try {
-                              setFormPdfName(file.name);
-                              const cleanTitle = file.name.replace(/\.pdf$/i, "").replace(/[-_]/g, " ").trim();
-                              setFormTitle(cleanTitle);
+                              const fd = new FormData();
+                              fd.append("file", file);
+                              const res = await fetch("/api/academic/courses/upload", {
+                                method: "POST",
+                                body: fd,
+                              });
+                              const data = await res.json();
+                              if (data.success && data.fileUrl) {
+                                setFormFileUrl(data.fileUrl);
+                                setIsUploading(false);
+                                return;
+                              }
+                            } catch (uploadErr) {
+                              console.warn("Upload serveur fallback base64:", uploadErr);
+                            }
+
+                            // 2. Fallback base64
+                            try {
                               const dataUrl = await fileToDataUrl(file);
                               setFormFileUrl(dataUrl);
                             } catch (err) {

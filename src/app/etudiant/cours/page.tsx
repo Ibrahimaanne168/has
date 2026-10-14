@@ -17,22 +17,36 @@ import { Card, CardContent, CardFooter } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { MOCK_MATIERES } from "@/lib/data/mock-data";
 import { useCurrentUser } from "@/lib/useCurrentUser";
-import { getStoredCourses } from "@/lib/academicStorage";
-import { Cours } from "@/lib/types";
+import { getStoredCourses, syncCoursesWithServer, getStoredMatieres, isCourseConcernedForStudent, normalizeClasseCode } from "@/lib/academicStorage";
+import { Cours, Matiere } from "@/lib/types";
 import { downloadOrOpenDocument } from "@/lib/fileDownload";
 import { PdfViewerModal } from "@/components/ui/PdfViewerModal";
 
 export default function EtudiantCoursPage() {
   const { user } = useCurrentUser();
   const [courses, setCourses] = useState<Cours[]>([]);
+  const [matieres, setMatieres] = useState<Matiere[]>([]);
   const [viewingCourse, setViewingCourse] = useState<Cours | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedMatiere, setSelectedMatiere] = useState<string>("all");
   const [onlyFavorites, setOnlyFavorites] = useState(false);
 
   useEffect(() => {
+    // 1. Chargement instantané depuis le cache local
     setCourses(getStoredCourses());
-    const handleUpdate = () => setCourses(getStoredCourses());
+    setMatieres(getStoredMatieres());
+
+    // 2. Synchronisation en arrière-plan avec le serveur / Supabase (multi-appareils)
+    syncCoursesWithServer().then((synced) => {
+      if (synced && synced.length > 0) {
+        setCourses(synced);
+      }
+    });
+
+    const handleUpdate = () => {
+      setCourses(getStoredCourses());
+      setMatieres(getStoredMatieres());
+    };
     window.addEventListener("has_academic_storage_updated", handleUpdate);
     return () => window.removeEventListener("has_academic_storage_updated", handleUpdate);
   }, []);
@@ -46,41 +60,51 @@ export default function EtudiantCoursPage() {
   };
 
   const userClasseCode = user.classe?.code || "";
-  const userNiveau = user.classe?.niveau || "";
+  const userNiveau = user.classe?.niveau || (normalizeClasseCode(userClasseCode).startsWith("L2") ? "L2" : "L1");
 
   const filteredCourses = courses.filter((c) => {
-    const courseClasses: string[] = (c.classes && c.classes.length > 0)
-      ? c.classes
-      : (c.matiere?.classes && c.matiere.classes.length > 0)
-        ? c.matiere.classes
-        : (c.classe?.code ? [c.classe.code] : []);
+    // 1. Filtrage souple par classe / niveau de l'étudiant
+    const matchesClasse = isCourseConcernedForStudent(c, userClasseCode, userNiveau);
 
-    const matchesClasse = courseClasses.length === 0 ||
-      courseClasses.some((cls) => {
-        const clsUpper = cls.toUpperCase();
-        const userUpper = userClasseCode.toUpperCase();
-        if (clsUpper === userUpper) return true;
-        if (userNiveau && clsUpper === userNiveau.toUpperCase()) return true;
-        return false;
-      });
+    // 2. Filtre par onglet (Tous / Matières L1 / Matières L2)
+    const courseLevel = (
+      c.matiere?.niveau ||
+      (c.classes && c.classes.some((cls) => cls.toUpperCase().includes("L2")) ? "L2" : "L1")
+    ).toUpperCase();
 
-    // Filtre par onglet Matières L1 ou L2
     const matchesNiveauTab =
-      activeNiveauTab === "all" ||
-      (c.matiere?.niveau === activeNiveauTab) ||
-      courseClasses.some((cls) => cls.toUpperCase().startsWith(activeNiveauTab));
+      activeNiveauTab === "all" ? true : courseLevel === activeNiveauTab;
 
+    // 3. Recherche textuelle
+    const query = searchQuery.trim().toLowerCase();
     const matchesSearch =
-      c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (c.description && c.description.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesMatiere = selectedMatiere === "all" || c.matiere_id === selectedMatiere;
+      !query ||
+      c.title.toLowerCase().includes(query) ||
+      (c.description && c.description.toLowerCase().includes(query)) ||
+      (c.matiere?.name && c.matiere.name.toLowerCase().includes(query)) ||
+      (c.professeur?.full_name && c.professeur.full_name.toLowerCase().includes(query));
+
+    // 4. Filtre par matière (comparaison tolérante string/number)
+    const matchesMatiere =
+      selectedMatiere === "all" ||
+      String(c.matiere_id) === String(selectedMatiere) ||
+      String(c.matiere?.id) === String(selectedMatiere) ||
+      c.matiere?.code === selectedMatiere;
+
+    // 5. Favoris
     const matchesFavorites = !onlyFavorites || c.is_favorite;
-    return matchesClasse && matchesNiveauTab && matchesSearch && matchesMatiere && matchesFavorites;
+
+    // Si l'étudiant est sur l'onglet Tous, on affiche les cours qui concernent sa promotion/niveau
+    // S'il clique expressément sur un onglet L1 ou L2, on affiche les cours de ce niveau
+    const accessCondition = activeNiveauTab === "all" ? matchesClasse : matchesNiveauTab;
+
+    return accessCondition && matchesSearch && matchesMatiere && matchesFavorites;
   });
 
-  const availableMatieres = MOCK_MATIERES.filter((m) => {
+  const allMatieresList = matieres.length > 0 ? matieres : MOCK_MATIERES;
+  const availableMatieres = allMatieresList.filter((m) => {
     if (activeNiveauTab === "all") return true;
-    return m.niveau === activeNiveauTab || (m.classes || []).some((cls) => cls.startsWith(activeNiveauTab));
+    return m.niveau === activeNiveauTab || (m.classes || []).some((cls) => cls.includes(activeNiveauTab));
   });
 
   return (

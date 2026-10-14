@@ -11,7 +11,8 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { MOCK_PROFESSEURS, MOCK_CLASSES } from "@/lib/data/mock-data";
-import { getStoredCourses, getStoredEDTs, getStoredCommuniques, getStoredProfesseurs, getStoredStudents } from "@/lib/academicStorage";
+import { getStoredCourses, getStoredEDTs, getStoredCommuniques, getStoredProfesseurs, getStoredStudents, syncCoursesWithServer } from "@/lib/academicStorage";
+import { Cours } from "@/lib/types";
 
 export default function AdminDashboard() {
   const [coursesCount, setCoursesCount] = React.useState(0);
@@ -26,6 +27,11 @@ export default function AdminDashboard() {
     setCommuniquesCount(getStoredCommuniques().length);
     setProfsCount(getStoredProfesseurs().length);
     setStudentsCount(getStoredStudents().length);
+
+    syncCoursesWithServer().then((c: Cours[]) => {
+      if (c) setCoursesCount(c.length);
+    });
+
     const handleUpdate = () => {
       setCoursesCount(getStoredCourses().length);
       setEdtsCount(getStoredEDTs().length);

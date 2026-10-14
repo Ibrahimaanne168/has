@@ -30,6 +30,7 @@ import {
   deleteCourse,
   getStoredClasses,
   getStoredMatieres,
+  syncCoursesWithServer,
   fileToDataUrl,
 } from "@/lib/academicStorage";
 import { PdfViewerModal } from "@/components/ui/PdfViewerModal";
@@ -44,6 +45,7 @@ export default function ProfesseurCoursPage() {
   const [editingCourse, setEditingCourse] = useState<Cours | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const [formTitle, setFormTitle] = useState("");
   const [formDescription, setFormDescription] = useState("");
@@ -61,6 +63,11 @@ export default function ProfesseurCoursPage() {
 
   React.useEffect(() => {
     reloadData();
+    // Synchroniser avec le serveur Supabase au montage (permet de récupérer les cours ajoutés depuis un autre appareil)
+    syncCoursesWithServer().then(() => {
+      reloadData();
+    });
+
     const handleUpdate = () => reloadData();
     window.addEventListener("has_academic_storage_updated", handleUpdate);
     return () => window.removeEventListener("has_academic_storage_updated", handleUpdate);
@@ -106,15 +113,27 @@ export default function ProfesseurCoursPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingCourse && !formPdfName) {
+    if (!editingCourse && !formPdfName && !formPdfUrl) {
       alert("Veuillez sélectionner un fichier PDF pour ce cours.");
       return;
     }
 
     const matiere = matieres.find((m) => m.id === formMatiereId) || profMatieres[0];
     const resolvedPdfName = formPdfName || `${formTitle.toLowerCase().replace(/[^a-z0-9]/g, "-")}.pdf`;
-    const targetClasses = matiere?.classes || [];
-    const primaryClasse = classes.find((c) => targetClasses.includes(c.code)) || classes[0];
+
+    // Classes cibles garanties (si la matière n'a pas de classes, on met les classes du niveau pour que tous les étudiants le voient)
+    let targetClasses = matiere?.classes || [];
+    if (!targetClasses || targetClasses.length === 0) {
+      if (matiere?.niveau === "L2") {
+        targetClasses = ["L2-MPI", "L2-SML", "L2-MIASS"];
+      } else {
+        targetClasses = ["L1-MPI", "L1-SML", "L1-MIASS"];
+      }
+    }
+
+    const primaryClasse = classes.find((c) =>
+      targetClasses.some((tc) => tc.replace(/[\s-_]/g, "").toUpperCase() === c.code.replace(/[\s-_]/g, "").toUpperCase())
+    ) || classes[0];
 
     if (editingCourse) {
       const updated: Cours = {
@@ -171,13 +190,50 @@ export default function ProfesseurCoursPage() {
     setTimeout(() => setSuccessMsg(null), 3000);
   };
 
-  // Seuls les cours concernant ce professeur sont affichés
-  const myCourses = courses.filter((c) => {
+  const [filterMode, setFilterMode] = useState<"all" | "mine">("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedMatiereFilter, setSelectedMatiereFilter] = useState("all");
+
+  // Fonction infaillible pour déterminer si un cours appartient au professeur connecté
+  const isMyCourse = (c: Cours): boolean => {
     const profIdMatch = c.professeur_id === prof.id || c.professeur?.id === prof.id;
     const profMatriculeMatch = prof.matricule && (c.professeur?.matricule === prof.matricule || c.professeur_id === prof.matricule);
-    const profEmailMatch = prof.email && c.professeur?.email === prof.email;
+    const profEmailMatch = prof.email && c.professeur?.email?.toLowerCase() === prof.email.toLowerCase();
+    const profUsernameMatch = prof.username && (c.professeur?.username === prof.username || (c.professeur?.email && c.professeur.email.toLowerCase().includes(prof.username.toLowerCase())));
     const profNameMatch = prof.nom && c.professeur?.full_name?.toLowerCase().includes(prof.nom.toLowerCase());
-    return profIdMatch || profMatriculeMatch || profEmailMatch || profNameMatch;
+    const profMatiereMatch = prof.matieres?.some(
+      (pm) => pm.code === c.matiere?.code || String(pm.id) === String(c.matiere_id) || pm.nom.toLowerCase() === c.matiere?.name?.toLowerCase()
+    );
+    return Boolean(profIdMatch || profMatriculeMatch || profEmailMatch || profUsernameMatch || profNameMatch || profMatiereMatch);
+  };
+
+  const myCourses = courses.filter(isMyCourse);
+
+  const displayedCourses = courses.filter((c) => {
+    // 1. Filtre Tous vs Mes cours
+    if (filterMode === "mine" && !isMyCourse(c)) return false;
+
+    // 2. Recherche textuelle
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      const match =
+        c.title.toLowerCase().includes(q) ||
+        (c.description && c.description.toLowerCase().includes(q)) ||
+        (c.matiere?.name && c.matiere.name.toLowerCase().includes(q)) ||
+        (c.professeur?.full_name && c.professeur.full_name.toLowerCase().includes(q));
+      if (!match) return false;
+    }
+
+    // 3. Filtre par matière
+    if (selectedMatiereFilter !== "all") {
+      const matchMat =
+        String(c.matiere_id) === String(selectedMatiereFilter) ||
+        String(c.matiere?.id) === String(selectedMatiereFilter) ||
+        c.matiere?.code === selectedMatiereFilter;
+      if (!matchMat) return false;
+    }
+
+    return true;
   });
 
   return (
@@ -188,28 +244,31 @@ export default function ProfesseurCoursPage() {
       matriculeOrTitle={prof.matricule || "PROF001"}
     >
       <div className="space-y-6">
-        {/* En-tête */}
+        {/* En-tête avec bascule de vue Tous / Mes cours */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <p className="text-[11px] font-bold tracking-wider uppercase text-[#e0521c] mb-1">
-              Catalogue Personnel
+              Espace Pédagogique Enseignant
             </p>
             <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] dark:text-[#F5F7FA] leading-snug">
-              Gestion de Mes Cours
+              Catalogue &amp; Gestion des Cours
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-[#AAB4C0] mt-1">
-              Publiez, modifiez ou retirez vos supports — seuls vos cours sont accessibles ici
+              Consultez l&apos;ensemble des supports officiels et gérez vos propres cours (mis en valeur distincte).
             </p>
           </div>
-          <Button
-            variant="accent"
-            size="md"
-            onClick={openCreateModal}
-            className="rounded-lg text-xs sm:text-sm font-semibold shrink-0"
-            leftIcon={<PlusCircle className="w-4 h-4" />}
-          >
-            Publier un nouveau cours
-          </Button>
+
+          <div className="flex items-center gap-2 flex-wrap">
+            <Button
+              variant="accent"
+              size="md"
+              onClick={openCreateModal}
+              className="rounded-lg text-xs sm:text-sm font-semibold shrink-0"
+              leftIcon={<PlusCircle className="w-4 h-4" />}
+            >
+              Publier un nouveau cours
+            </Button>
+          </div>
         </div>
 
         {/* Message de succès */}
@@ -220,36 +279,118 @@ export default function ProfesseurCoursPage() {
           </div>
         )}
 
-        {/* Grille des cours en cartes géométriques */}
-        {myCourses.length === 0 ? (
+        {/* Barre de filtres : Vue Tous vs Mes cours, Recherche et Matières */}
+        <div className="bg-white dark:bg-[#111821] p-4 rounded-xl border border-slate-200/90 dark:border-[#263241] shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] flex flex-col md:flex-row gap-3 items-center justify-between">
+          {/* Onglets sélecteurs */}
+          <div className="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-[#151D27] rounded-xl border border-slate-200/80 dark:border-[#263241] w-full md:w-auto shrink-0">
+            <button
+              onClick={() => setFilterMode("all")}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 flex-1 md:flex-initial justify-center ${
+                filterMode === "all"
+                  ? "bg-[#0f2744] dark:bg-[#1a385c] text-white shadow-xs"
+                  : "text-slate-600 dark:text-[#AAB4C0] hover:text-slate-900 dark:hover:text-[#F5F7FA]"
+              }`}
+            >
+              <BookOpen className="w-3.5 h-3.5" />
+              <span>Tous les cours ({courses.length})</span>
+            </button>
+            <button
+              onClick={() => setFilterMode("mine")}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 flex-1 md:flex-initial justify-center ${
+                filterMode === "mine"
+                  ? "bg-[#e0521c] text-white shadow-xs"
+                  : "text-slate-600 dark:text-[#AAB4C0] hover:text-[#e0521c]"
+              }`}
+            >
+              <span>★ Mes cours ({myCourses.length})</span>
+            </button>
+          </div>
+
+          {/* Recherche & Filtre matière */}
+          <div className="flex flex-col sm:flex-row items-center gap-2.5 w-full md:w-auto">
+            <div className="relative w-full sm:w-64">
+              <input
+                type="text"
+                placeholder="Rechercher par titre, matière..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-3 py-2 text-xs border border-slate-200/90 dark:border-[#263241] bg-white dark:bg-[#151D27] text-slate-800 dark:text-[#F5F7FA] rounded-lg focus:outline-none focus:ring-1 focus:ring-[#0f2744] dark:focus:ring-[#e0521c]"
+              />
+            </div>
+
+            <select
+              value={selectedMatiereFilter}
+              onChange={(e) => setSelectedMatiereFilter(e.target.value)}
+              className="text-xs border border-slate-200/90 dark:border-[#263241] rounded-lg px-3 py-2 bg-white dark:bg-[#151D27] text-slate-700 dark:text-[#F5F7FA] focus:outline-none focus:ring-1 focus:ring-[#0f2744] w-full sm:w-auto"
+            >
+              <option value="all">Toutes les matières</option>
+              {matieres.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.code} — {m.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Grille des cours avec couleur distincte pour vos publications */}
+        {displayedCourses.length === 0 ? (
           <div className="bg-white dark:bg-[#111821] rounded-xl border border-slate-200/90 dark:border-[#263241] p-16 text-center shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)]">
             <BookOpen className="w-12 h-12 text-slate-200 dark:text-[#687585] mx-auto mb-3" />
-            <p className="text-sm font-semibold text-slate-600 dark:text-[#AAB4C0]">Aucun cours publié pour vos matières et classes pour l&apos;instant.</p>
-            <p className="text-xs text-slate-400 dark:text-[#687585] mt-1">Cliquez sur « Publier un nouveau cours » pour déposer un support PDF.</p>
+            <p className="text-sm font-semibold text-slate-600 dark:text-[#AAB4C0]">
+              {filterMode === "mine"
+                ? "Vous n'avez pas encore publié de cours dans ce filtre."
+                : "Aucun cours ne correspond aux critères sélectionnés."}
+            </p>
+            <p className="text-xs text-slate-400 dark:text-[#687585] mt-1">
+              Cliquez sur « Publier un nouveau cours » pour déposer un support PDF.
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {myCourses.map((c) => {
+            {displayedCourses.map((c) => {
+              const isMine = isMyCourse(c);
               const displayClasses =
                 c.classes && c.classes.length > 0
                   ? c.classes
                   : c.matiere?.classes && c.matiere.classes.length > 0
                   ? c.matiere.classes
-                  : [c.classe?.code || "Tous"];
+                  : [c.classe?.code || "Toutes promotions"];
 
               return (
-                <Card key={c.id} hoverEffect className="flex flex-col overflow-hidden">
+                <Card
+                  key={c.id}
+                  hoverEffect
+                  className={`flex flex-col overflow-hidden transition-all duration-200 ${
+                    isMine
+                      ? "border-2 border-[#e0521c] dark:border-[#e0521c] bg-gradient-to-b from-[#e0521c]/[0.04] via-white to-amber-500/[0.03] dark:from-[#24130d] dark:via-[#111821] dark:to-[#18120b] shadow-[0_4px_20px_-4px_rgba(224,82,28,0.22)] ring-1 ring-[#e0521c]/25"
+                      : "border border-slate-200/90 dark:border-[#263241] bg-white dark:bg-[#111821] opacity-95"
+                  }`}
+                >
                   <div className="p-5 flex-1 flex flex-col">
-                    {/* 1. En-tête badges */}
-                    <div className="flex items-center gap-1.5 flex-wrap mb-2.5">
-                      <Badge variant="primary" size="sm" uppercase>{c.matiere?.code || "MATIÈRE"}</Badge>
-                      {displayClasses.map((cls) => (
-                        <Badge key={cls} variant="neutral" size="sm">{cls}</Badge>
-                      ))}
+                    {/* 1. En-tête badges avec mise en valeur distincte pour VOS cours */}
+                    <div className="flex items-center justify-between gap-1.5 flex-wrap mb-2.5">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <Badge variant="primary" size="sm" uppercase>{c.matiere?.code || "MATIÈRE"}</Badge>
+                        {displayClasses.slice(0, 3).map((cls) => (
+                          <Badge key={cls} variant="neutral" size="sm">{cls}</Badge>
+                        ))}
+                      </div>
+
+                      {/* Badge distinctif majeur */}
+                      {isMine ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#e0521c] text-white shadow-xs">
+                          ★ Votre cours
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 dark:bg-[#1E293B] text-slate-600 dark:text-[#AAB4C0] border border-slate-200/60 dark:border-[#263241]">
+                          {c.professeur?.full_name || "Administration"}
+                        </span>
+                      )}
                     </div>
 
                     {/* 2. Catégorie matière */}
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-[#e0521c] mb-1">
+                    <p className={`text-[10px] font-bold uppercase tracking-wider mb-1 ${isMine ? "text-[#e0521c]" : "text-slate-500 dark:text-[#AAB4C0]"}`}>
                       {c.matiere?.name}
                     </p>
 
@@ -265,65 +406,81 @@ export default function ProfesseurCoursPage() {
                     )}
 
                     {/* 4. Métadonnées filaires */}
-                    <div className="pt-3 border-t border-slate-100/90 dark:border-[#263241] space-y-1 text-xs text-slate-400 dark:text-[#687585]">
-                      <div className="flex items-center gap-1.5">
-                        <GraduationCap className="w-3.5 h-3.5 shrink-0" />
-                        <span className="font-medium text-slate-600 dark:text-[#AAB4C0]">
-                          Classes concernées : {displayClasses.join(", ")}
+                    <div className="pt-3 border-t border-slate-100/90 dark:border-[#263241] space-y-1.5 text-xs text-slate-400 dark:text-[#687585]">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="flex items-center gap-1.5 truncate">
+                          <GraduationCap className={`w-3.5 h-3.5 shrink-0 ${isMine ? "text-[#e0521c]" : "text-[#0f2744] dark:text-[#687585]"}`} />
+                          <span className={`font-medium truncate ${isMine ? "text-[#e0521c] font-bold" : "text-slate-600 dark:text-[#AAB4C0]"}`}>
+                            {isMine ? "Publié par vous" : (c.professeur?.full_name || "Direction HAS")}
+                          </span>
                         </span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="flex items-center gap-1.5">
-                          <Calendar className="w-3.5 h-3.5 shrink-0" />
-                          {new Date(c.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })}
+
+                        <span className="flex items-center gap-1 text-[11px] shrink-0">
+                          <Calendar className="w-3 h-3 shrink-0" />
+                          {new Date(c.created_at).toLocaleDateString("fr-FR", { day: "numeric", month: "short" })}
                         </span>
-                        {c.file_url && (
-                          <div className="flex items-center gap-1.5">
-                            <button
-                              type="button"
-                              onClick={() => setViewingCourse(c)}
-                              className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 bg-[#0f2744] hover:bg-[#1a385c] text-white rounded-md cursor-pointer transition-colors shadow-xs"
-                            >
-                              <Eye className="w-3 h-3" />
-                              Consulter
-                            </button>
-                            <a
-                              href={c.file_url}
-                              download={c.file_name || `${c.title}.pdf`}
-                              title="Télécharger une copie PDF"
-                              className="inline-flex items-center gap-1 text-[11px] text-slate-500 dark:text-[#AAB4C0] hover:text-[#0f2744] dark:hover:text-[#e0521c] font-medium transition-colors"
-                            >
-                              <Download className="w-3.5 h-3.5" />
-                            </a>
-                          </div>
-                        )}
                       </div>
                     </div>
                   </div>
 
                   {/* 5. Pied de carte : actions professeur */}
-                  <CardFooter className="flex items-center justify-between p-3 bg-slate-50/70 dark:bg-[#151D27] border-t border-slate-100/90 dark:border-[#263241]">
-                    <div className="flex items-center gap-1.5">
-                      <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-1 bg-[#0f2744]/10 dark:bg-[#111821] text-[#0f2744] dark:text-[#F5F7FA] border border-transparent dark:border-[#263241] rounded-md">
-                        <FileText className="w-3.5 h-3.5 text-[#e0521c]" />
-                        Document PDF permanent
-                      </span>
+                  <CardFooter className={`flex items-center justify-between p-3 border-t ${
+                    isMine
+                      ? "bg-amber-50/50 dark:bg-[#1a1410] border-[#e0521c]/20 dark:border-[#e0521c]/30"
+                      : "bg-slate-50/70 dark:bg-[#151D27] border-slate-100/90 dark:border-[#263241]"
+                  }`}>
+                    {/* Boutons de consultation */}
+                    <div className="flex items-center gap-1.5 flex-1 mr-2">
+                      {c.file_url && (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => setViewingCourse(c)}
+                            className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-lg cursor-pointer transition-colors shadow-xs ${
+                              isMine
+                                ? "bg-[#e0521c] hover:bg-[#c84418] text-white"
+                                : "bg-[#0f2744] hover:bg-[#1a385c] text-white"
+                            }`}
+                          >
+                            <Eye className="w-3 h-3" />
+                            Consulter
+                          </button>
+                          <a
+                            href={c.file_url}
+                            download={c.file_name || `${c.title}.pdf`}
+                            title="Télécharger le support PDF"
+                            className="inline-flex items-center p-1 text-slate-500 dark:text-[#AAB4C0] hover:text-[#0f2744] dark:hover:text-[#e0521c] transition-colors"
+                          >
+                            <Download className="w-3.5 h-3.5" />
+                          </a>
+                        </>
+                      )}
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <button
-                        onClick={() => openEditModal(c)}
-                        className="p-1.5 text-slate-500 dark:text-[#AAB4C0] hover:text-[#0f2744] dark:hover:text-[#F5F7FA] hover:bg-white dark:hover:bg-[#111821] rounded-lg transition-colors border border-transparent hover:border-slate-200/90 dark:hover:border-[#263241]"
-                        title="Modifier ce cours"
-                      >
-                        <Edit2 className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={() => setDeleteConfirm(c.id)}
-                        className="p-1.5 text-slate-500 dark:text-[#AAB4C0] hover:text-red-600 dark:hover:text-rose-400 hover:bg-red-50 dark:hover:bg-rose-950/30 rounded-lg transition-colors border border-transparent hover:border-red-200/80 dark:hover:border-rose-900/40"
-                        title="Supprimer ce cours"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+
+                    {/* Actions de gestion : activées pour les cours du professeur */}
+                    <div className="flex items-center gap-1 shrink-0">
+                      {isMine ? (
+                        <>
+                          <button
+                            onClick={() => openEditModal(c)}
+                            className="p-1.5 text-slate-600 dark:text-[#AAB4C0] hover:text-[#e0521c] hover:bg-white dark:hover:bg-[#111821] rounded-lg transition-colors border border-slate-200/60 dark:border-[#263241]"
+                            title="Modifier ce cours"
+                          >
+                            <Edit2 className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => setDeleteConfirm(c.id)}
+                            className="p-1.5 text-slate-500 dark:text-[#AAB4C0] hover:text-red-600 dark:hover:text-rose-400 hover:bg-red-50 dark:hover:bg-rose-950/30 rounded-lg transition-colors border border-transparent hover:border-red-200"
+                            title="Supprimer ce cours"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </>
+                      ) : (
+                        <span className="text-[10px] text-slate-400 dark:text-[#687585] italic px-1">
+                          Lecture seule
+                        </span>
+                      )}
                     </div>
                   </CardFooter>
                 </Card>
@@ -358,10 +515,15 @@ export default function ProfesseurCoursPage() {
                     Déposer le document du cours (Format PDF uniquement)
                   </p>
                   <p className="text-[11px] text-slate-500 dark:text-[#AAB4C0]">
-                    Le nom de votre fichier PDF est automatiquement sauvegardé et assigné comme titre
+                    Le document est sauvegardé sur le serveur et rendu accessible à tous vos étudiants sur n'importe quel appareil.
                   </p>
                   
-                  {formPdfName ? (
+                  {isUploading ? (
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800/40 text-xs font-semibold text-blue-800 dark:text-blue-300 mt-1 animate-pulse">
+                      <Upload className="w-4 h-4 animate-spin" />
+                      <span>Téléversement du fichier en cours...</span>
+                    </div>
+                  ) : formPdfName ? (
                     <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/40 text-xs font-semibold text-emerald-800 dark:text-emerald-300 mt-1">
                       <FileText className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                       <span className="truncate max-w-xs">{formPdfName}</span>
@@ -384,14 +546,37 @@ export default function ProfesseurCoursPage() {
                               alert("Veuillez sélectionner un fichier PDF uniquement.");
                               return;
                             }
+                            setIsUploading(true);
                             setFormPdfName(file.name);
                             const cleanTitle = file.name.replace(/\.pdf$/i, "").replace(/[-_]/g, " ").trim();
                             setFormTitle(cleanTitle);
+
+                            // 1. Upload serveur permanent
+                            try {
+                              const fd = new FormData();
+                              fd.append("file", file);
+                              const res = await fetch("/api/academic/courses/upload", {
+                                method: "POST",
+                                body: fd,
+                              });
+                              const data = await res.json();
+                              if (data.success && data.fileUrl) {
+                                setFormPdfUrl(data.fileUrl);
+                                setIsUploading(false);
+                                return;
+                              }
+                            } catch (uploadErr) {
+                              console.warn("Upload serveur fallback base64:", uploadErr);
+                            }
+
+                            // 2. Fallback base64
                             try {
                               const base64 = await fileToDataUrl(file);
                               setFormPdfUrl(base64);
                             } catch {
                               setFormPdfUrl(URL.createObjectURL(file));
+                            } finally {
+                              setIsUploading(false);
                             }
                           }
                         }}

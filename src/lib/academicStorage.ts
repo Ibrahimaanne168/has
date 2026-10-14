@@ -76,7 +76,7 @@ function setStorageItem<T>(key: string, value: T): void {
   }
 }
 
-// === GESTION DES COURS & CHAPITRES (SEUL L'ADMIN PEUT PUBLIER/SUPPRIMER) ===
+// === GESTION DES COURS & CHAPITRES (ADMINISTRATION & PROFESSEURS) ===
 export function getStoredCourses(): Cours[] {
   return getStorageItem<Cours[]>(STORAGE_KEYS.COURS, []);
 }
@@ -91,6 +91,10 @@ export function saveCourse(course: Cours): void {
     courses.unshift(course);
   }
   setStorageItem(STORAGE_KEYS.COURS, courses);
+
+  // Synchronisation serveur et Supabase immédiate pour visibilité sur tous les appareils
+  pushCourseToServer(course);
+
   if (isNew) {
     sendLocalNotification({
       type: "cours",
@@ -105,7 +109,89 @@ export function saveCourse(course: Cours): void {
 export function deleteCourse(id: string): void {
   const courses = getStoredCourses().filter((c) => c.id !== id);
   setStorageItem(STORAGE_KEYS.COURS, courses);
+  pushCourseDeletionToServer(id);
 }
+
+export async function pushCourseToServer(course: Cours): Promise<void> {
+  if (typeof window === "undefined") return;
+  try {
+    await fetch("/api/academic/courses", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ course }),
+    });
+  } catch (err) {
+    console.warn("Info pushCourseToServer:", err);
+  }
+}
+
+export async function pushCourseDeletionToServer(id: string): Promise<void> {
+  if (typeof window === "undefined") return;
+  try {
+    await fetch(`/api/academic/courses?id=${encodeURIComponent(id)}`, {
+      method: "DELETE",
+    });
+  } catch (err) {
+    console.warn("Info pushCourseDeletionToServer:", err);
+  }
+}
+
+/**
+ * Récupère tous les cours enregistrés sur le serveur / Supabase et met à jour le cache local.
+ * Garantit que les cours mis par un professeur sur un appareil sont visibles instantanément
+ * sur son autre appareil et par TOUS les étudiants concernés.
+ */
+export async function syncCoursesWithServer(): Promise<Cours[]> {
+  if (typeof window === "undefined") return getStoredCourses();
+  try {
+    const res = await fetch("/api/academic/courses", { cache: "no-store" });
+    if (!res.ok) return getStoredCourses();
+    const data = await res.json();
+    if (data.success && Array.isArray(data.courses)) {
+      const local = getStoredCourses();
+      const map = new Map<string, Cours>();
+
+      // 1. Initialiser avec les cours du serveur (source de vérité cloud multi-appareils)
+      data.courses.forEach((sc: Cours) => {
+        if (sc && sc.id) map.set(sc.id, sc);
+      });
+
+      // 2. Si le stockage local contenait un cours récemment ajouté non encore sur le serveur
+      local.forEach((lc: Cours) => {
+        if (lc && lc.id && !map.has(lc.id)) {
+          map.set(lc.id, lc);
+          pushCourseToServer(lc);
+        }
+      });
+
+      const merged = Array.from(map.values()).sort(
+        (a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()
+      );
+
+      try {
+        localStorage.setItem(STORAGE_KEYS.COURS, JSON.stringify(merged));
+      } catch {
+        // En cas de dépassement de quota (par exemple anciens gros fichiers base64)
+        const cleaned = merged.map((c) => {
+          if (c.file_url && c.file_url.startsWith("data:")) {
+            return { ...c, file_url: "/documents/cours.pdf" };
+          }
+          return c;
+        });
+        try {
+          localStorage.setItem(STORAGE_KEYS.COURS, JSON.stringify(cleaned));
+        } catch {}
+      }
+
+      window.dispatchEvent(new Event("has_academic_storage_updated"));
+      return merged;
+    }
+  } catch (err) {
+    console.warn("Info syncCoursesWithServer:", err);
+  }
+  return getStoredCourses();
+}
+
 
 // === GESTION DES EMPLOIS DU TEMPS (SEUL L'ADMIN PEUT PUBLIER/SUPPRIMER) ===
 export function getStoredEDTs(): EmploiDuTemps[] {
@@ -760,9 +846,14 @@ export function getNextMatiereCode(): string {
   return `MAT${String(count).padStart(3, "0")}`;
 }
 
+export function normalizeClasseCode(code?: string | null): string {
+  if (!code) return "";
+  return code.toUpperCase().replace(/[\s\-_]/g, "");
+}
+
 /**
- * Vérifie si un cours concerne un étudiant selon sa classe (ou son niveau).
- * Les matières définissent les classes concernées (ex: Électricité en L1 MPI et SML, Maths en L1 entier).
+ * Vérifie avec une tolérance absolue si un cours concerne un étudiant selon sa classe (ou son niveau).
+ * Résout définitivement tout décalage d'espaces ("L1 MPI"), de tirets ("L1-MPI") ou de majuscules.
  */
 export function isCourseConcernedForStudent(
   course: Cours,
@@ -770,33 +861,56 @@ export function isCourseConcernedForStudent(
   userNiveau?: string
 ): boolean {
   if (!userClasseCode && !userNiveau) return true;
-  const targetCode = (userClasseCode || "").replace("-", " ").toUpperCase();
-  const targetNiveau = (userNiveau || "L1").toUpperCase();
+
+  const targetCodeNorm = normalizeClasseCode(userClasseCode);
+  const targetNiveau = (userNiveau || (targetCodeNorm.startsWith("L2") ? "L2" : "L1")).toUpperCase();
 
   // 1. Classes spécifiées sur le cours ou sur sa matière
-  const concernedClasses = course.classes || course.matiere?.classes;
-  if (concernedClasses && concernedClasses.length > 0) {
-    const isDirectMatch = concernedClasses.some((c) => {
-      const norm = c.replace("-", " ").toUpperCase();
-      return norm === targetCode || targetCode.includes(norm) || norm.includes(targetCode);
+  const rawClasses = [
+    ...(course.classes || []),
+    ...(course.matiere?.classes || []),
+    ...(course.classe?.code ? [course.classe.code] : []),
+  ];
+
+  // Si aucune classe n'est restreinte : cours général visible par toute la promotion
+  if (rawClasses.length === 0) {
+    const matNiveau = (course.matiere?.niveau || "").toUpperCase();
+    if (matNiveau) {
+      return matNiveau === targetNiveau || targetCodeNorm.startsWith(matNiveau);
+    }
+    return true;
+  }
+
+  // 2. Normalisation de toutes les classes cibles
+  const normalizedClasses = rawClasses.map(normalizeClasseCode).filter(Boolean);
+
+  // 3. Correspondance directe stricte ou réciproque
+  if (targetCodeNorm) {
+    const match = normalizedClasses.some((c) => {
+      if (c === targetCodeNorm) return true;
+      if (targetCodeNorm.includes(c) || c.includes(targetCodeNorm)) return true;
+      return false;
     });
-    if (isDirectMatch) return true;
+    if (match) return true;
   }
 
-  // 2. Si le cours ou sa matière a un niveau spécifié (ex: "L1")
-  const matiereNiveau = course.matiere?.niveau;
-  if (matiereNiveau && matiereNiveau.toUpperCase() === targetNiveau) {
-    if (!concernedClasses || concernedClasses.length === 0) return true;
-  }
+  // 4. Si la classe cible est juste le niveau (ex: "L1" ou "L2")
+  const niveauMatch = normalizedClasses.some((c) => {
+    if (c === targetNiveau) return true;
+    if (c.startsWith(targetNiveau)) return true;
+    return false;
+  });
+  if (niveauMatch) return true;
 
-  // 3. Fallback sur classe_id directe
-  if (course.classe?.code) {
-    const norm = course.classe.code.replace("-", " ").toUpperCase();
-    if (norm === targetCode || targetCode.includes(norm) || norm.includes(targetCode)) return true;
+  // 5. Matière associée au même niveau
+  const matiereNiveau = (course.matiere?.niveau || "").toUpperCase();
+  if (matiereNiveau && matiereNiveau === targetNiveau) {
+    return true;
   }
 
   return false;
 }
+
 
 // Emploi du temps de référence HAS (Un seul EDT par promotion L1 et L2, filières différenciées)
 // Tous les cours officiels de HAS sont dispensés en soirée sur le créneau 21h00 - 23h00

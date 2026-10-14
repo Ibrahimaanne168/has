@@ -22,7 +22,7 @@ import {
   MOCK_COMMUNIQUES,
 } from "@/lib/data/mock-data";
 import { useCurrentUser } from "@/lib/useCurrentUser";
-import { getStoredCourses, getStoredEDTs } from "@/lib/academicStorage";
+import { getStoredCourses, getStoredEDTs, syncCoursesWithServer, isCourseConcernedForStudent, normalizeClasseCode } from "@/lib/academicStorage";
 import { Cours, EmploiDuTemps } from "@/lib/types";
 import { downloadOrOpenDocument } from "@/lib/fileDownload";
 import { PdfViewerModal } from "@/components/ui/PdfViewerModal";
@@ -34,9 +34,14 @@ export default function EtudiantDashboard() {
   const [hasEDT, setHasEDT] = useState(false);
 
   useEffect(() => {
+    const userClasseCode = user.classe?.code || "";
+    const userNiveau = user.classe?.niveau || (normalizeClasseCode(userClasseCode).startsWith("L2") ? "L2" : "L1");
+
     const loadData = () => {
       const storedCourses = getStoredCourses();
-      setCourses(storedCourses);
+      const relevant = storedCourses.filter((c) => isCourseConcernedForStudent(c, userClasseCode, userNiveau));
+      setCourses(relevant.length > 0 ? relevant : storedCourses);
+
       const storedEDTs = getStoredEDTs();
       const userEDT = storedEDTs.find(
         (e) =>
@@ -45,10 +50,21 @@ export default function EtudiantDashboard() {
       );
       setHasEDT(!!userEDT);
     };
+
     loadData();
+
+    // Synchronisation en arrière-plan avec le serveur / Supabase
+    syncCoursesWithServer().then((synced) => {
+      if (synced && synced.length > 0) {
+        const relevant = synced.filter((c) => isCourseConcernedForStudent(c, userClasseCode, userNiveau));
+        setCourses(relevant.length > 0 ? relevant : synced);
+      }
+    });
+
     window.addEventListener("has_academic_storage_updated", loadData);
     return () => window.removeEventListener("has_academic_storage_updated", loadData);
   }, [user.classe_id, user.classe]);
+
 
   const toggleFavorite = (courseId: string) => {
     setCourses((prev) =>
