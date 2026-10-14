@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
-  Clock, Video, Plus, Trash2, Edit2, CheckCircle2, Copy,
+  Clock, Video, VideoOff, Plus, Trash2, Edit2, CheckCircle2, Copy,
   ExternalLink, X, Save, BookOpen,
   Calendar, Layers, Table as TableIcon, Filter, RotateCcw,
   Mail, Loader2,
@@ -13,7 +13,7 @@ import { SeanceEDT, JourSemaine, Professeur, Matiere } from "@/lib/types";
 import {
   getStoredSeancesEDT, saveSeanceEDT, deleteSeanceEDT,
   getStoredProfesseurs, getStoredMatieres, resetDefaultSeancesEDT,
-  syncSeancesWithServer, DEFAULT_SEANCES_EDT,
+  syncSeancesWithServer, DEFAULT_SEANCES_EDT, clearAllMeetLinks,
 } from "@/lib/academicStorage";
 import { recordAuditLog } from "@/lib/auditLogger";
 
@@ -338,7 +338,8 @@ export default function AdminEDTPage() {
   const [formFin, setFormFin] = useState("23:00");
   const [formMatiere, setFormMatiere] = useState("Analyse 4");
   const [formEnseignant, setFormEnseignant] = useState("Mister Halil");
-  const [formMeetUrl, setFormMeetUrl] = useState("https://meet.google.com/has-anal-four");
+  const [formMeetUrl, setFormMeetUrl] = useState("");
+  const [isClearingMeets, setIsClearingMeets] = useState(false);
 
   const reloadData = useCallback(() => {
     let list = getStoredSeancesEDT();
@@ -763,6 +764,26 @@ export default function AdminEDTPage() {
     }
   };
 
+  // Suppression totale de tous les liens Meet (les profs les créeront au moment voulu)
+  const handleClearAllMeets = async () => {
+    const ok = confirm(
+      "Confirmez-vous la suppression de TOUS les liens Google Meet ?\n\nLes professeurs créeront et ajouteront eux-mêmes leur lien Meet au moment voulu (1h avant le début de leur cours)."
+    );
+    if (!ok) return;
+
+    setIsClearingMeets(true);
+    try {
+      await clearAllMeetLinks();
+      reloadData();
+      flash("✓ Tous les liens Google Meet ont été supprimés avec succès. Les professeurs les créeront au moment voulu.");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Erreur";
+      alert(`Erreur lors de la suppression des liens Meet : ${msg}`);
+    } finally {
+      setIsClearingMeets(false);
+    }
+  };
+
   return (
     <DashboardLayout role="admin" userName="Administration HAS" userEmail="direction@halil-academie.com" matriculeOrTitle="ADM001">
       <div className="space-y-6">
@@ -834,6 +855,23 @@ export default function AdminEDTPage() {
               leftIcon={<Plus className="w-4 h-4" />}
             >
               Nouveau Cours
+            </Button>
+            <Button
+              onClick={handleClearAllMeets}
+              variant="outline"
+              size="sm"
+              disabled={isClearingMeets}
+              leftIcon={
+                isClearingMeets ? (
+                  <Loader2 className="w-4 h-4 animate-spin text-rose-500" />
+                ) : (
+                  <VideoOff className="w-4 h-4 text-rose-500" />
+                )
+              }
+              className="border-rose-200 dark:border-rose-900/60 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-rose-700 dark:text-rose-300"
+              title="Supprimer tous les liens Google Meet existants. Les professeurs les créeront au moment voulu (1h avant leur cours)."
+            >
+              {isClearingMeets ? "Suppression..." : "Supprimer tous les Meet"}
             </Button>
           </div>
         </div>

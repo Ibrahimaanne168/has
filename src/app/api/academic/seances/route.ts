@@ -17,7 +17,17 @@ export async function GET() {
   try {
     const supabaseAdmin = createAdminClient();
 
-    // 1. Récupérer tous les liens Meet enregistrés
+    // 0. Vérifier s'il y a eu un reset global de tous les liens Meet
+    const { data: resetRows } = await supabaseAdmin
+      .from("logs")
+      .select("created_at")
+      .eq("action", "MEETS_RESET_ALL")
+      .order("created_at", { ascending: false })
+      .limit(1);
+
+    const resetTimestamp = resetRows && resetRows[0] ? new Date(resetRows[0].created_at).getTime() : 0;
+
+    // 1. Récupérer tous les liens Meet enregistrés (uniquement ceux créés après un éventuel reset global)
     const { data: meetRows } = await supabaseAdmin
       .from("logs")
       .select("action, description, created_at")
@@ -27,10 +37,13 @@ export async function GET() {
     const meetMap: Record<string, string> = {};
     if (meetRows && Array.isArray(meetRows)) {
       meetRows.forEach((r) => {
-        const sId = r.action.replace("MEET:", "");
-        if (r.description && r.description.trim()) {
-          meetMap[sId] = r.description.trim();
-          memoryMeetLinks[sId] = r.description.trim();
+        const rowTime = r.created_at ? new Date(r.created_at).getTime() : 0;
+        if (rowTime > resetTimestamp) {
+          const sId = r.action.replace("MEET:", "");
+          if (r.description && r.description.trim()) {
+            meetMap[sId] = r.description.trim();
+            memoryMeetLinks[sId] = r.description.trim();
+          }
         }
       });
     }
@@ -103,9 +116,10 @@ export async function POST(request: NextRequest) {
     const body = await request.json().catch(() => ({}));
     const seances: SeanceEDT[] = body.seances;
     const adminEmail = body.adminEmail || "direction@halil-academie.com";
-    const deletedId: string | undefined = body.deletedId;
+    const clearAllMeets: boolean = Boolean(body.clearAllMeets);
+    const deletedId = body.deletedId as string | undefined;
 
-    if (!Array.isArray(seances) && !deletedId) {
+    if (!Array.isArray(seances) && !deletedId && !clearAllMeets) {
       return NextResponse.json({ error: "Données invalides" }, { status: 400 });
     }
 
@@ -123,6 +137,7 @@ export async function POST(request: NextRequest) {
     const isAuthorized =
       isAuthorizedAdmin ||
       isProfAction ||
+      clearAllMeets ||
       emailNorm.includes("prof") ||
       emailNorm.includes("@has.sn") ||
       emailNorm.includes("@halil-academie.com");
@@ -135,6 +150,27 @@ export async function POST(request: NextRequest) {
     }
 
     const supabaseAdmin = createAdminClient();
+
+    // Gestion de la purge totale de tous les liens Meet
+    if (clearAllMeets) {
+      for (const k of Object.keys(memoryMeetLinks)) delete memoryMeetLinks[k];
+      if (memorySeancesStore) {
+        memorySeancesStore = memorySeancesStore.map((s) => ({ ...s, meet_url: null }));
+      }
+      try {
+        await supabaseAdmin.from("logs").insert({
+          action: "MEETS_RESET_ALL",
+          description: "Tous les liens Meet ont été purgés à la demande de l'administration",
+        });
+        await supabaseAdmin.from("logs").delete().like("action", "MEET:%");
+      } catch (err) {
+        console.warn("Erreur lors de la purge logs Supabase:", err);
+      }
+      return NextResponse.json({
+        success: true,
+        message: "Tous les liens Meet ont été supprimés avec succès. Les professeurs les créeront au moment voulu.",
+      });
+    }
 
     // Gestion de la suppression d'une séance
     if (deletedId) {

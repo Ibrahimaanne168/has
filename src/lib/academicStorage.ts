@@ -1047,6 +1047,52 @@ export function saveMeetLink(seanceId: string, meetUrl?: string | null): void {
   setStorageItem(STORAGE_KEYS.MEET_LINKS, current);
 }
 
+/**
+ * Supprime tous les liens Google Meet de toutes les séances.
+ * Les professeurs les créeront au moment voulu (1h avant leur cours).
+ */
+export async function clearAllMeetLinks(adminEmail?: string): Promise<void> {
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.removeItem(STORAGE_KEYS.MEET_LINKS);
+      localStorage.setItem(STORAGE_KEYS.MEET_LINKS, "{}");
+      const list = getStoredSeancesEDT();
+      const cleaned = list.map((s) => ({ ...s, meet_url: null }));
+      setStorageItem(STORAGE_KEYS.SEANCES_EDT, cleaned);
+      setStorageItem(STORAGE_KEYS.MEET_LINKS, {});
+      window.dispatchEvent(new Event("has_academic_storage_updated"));
+    } catch {}
+
+    try {
+      await fetch("/api/academic/seances", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          clearAllMeets: true,
+          adminEmail: adminEmail || "direction@halil-academie.com",
+        }),
+      });
+    } catch {}
+  }
+}
+
+// Purge automatique pour réinitialiser tous les anciens liens Meet sur tous les navigateurs
+if (typeof window !== "undefined") {
+  try {
+    const PURGE_FLAG = "has_all_meets_cleared_v3";
+    if (!localStorage.getItem(PURGE_FLAG)) {
+      localStorage.setItem(PURGE_FLAG, "true");
+      localStorage.removeItem(STORAGE_KEYS.MEET_LINKS);
+      localStorage.setItem(STORAGE_KEYS.MEET_LINKS, "{}");
+      const localSeances = getStorageItem<SeanceEDT[]>(STORAGE_KEYS.SEANCES_EDT, []);
+      if (Array.isArray(localSeances) && localSeances.length > 0) {
+        const cleaned = localSeances.map((s) => ({ ...s, meet_url: null }));
+        localStorage.setItem(STORAGE_KEYS.SEANCES_EDT, JSON.stringify(cleaned));
+      }
+    }
+  } catch {}
+}
+
 export function getStoredSeancesEDT(): SeanceEDT[] {
   const deletedSet = new Set(getDeletedSeanceIds());
   const list = getStorageItem<SeanceEDT[]>(STORAGE_KEYS.SEANCES_EDT, DEFAULT_SEANCES_EDT);
@@ -1072,7 +1118,7 @@ export function getStoredSeancesEDT(): SeanceEDT[] {
     }
   }
 
-  // Appliquer et préserver en permanence les liens Google Meet mémorisés et migrer M. Diop
+  // Migrer M. Diop et préserver uniquement les liens explicitement existants
   for (const s of filtered) {
     if (
       s.professeur_nom?.toLowerCase() === "m. diop" ||
@@ -1084,10 +1130,8 @@ export function getStoredSeancesEDT(): SeanceEDT[] {
     }
 
     const saved = meetLinks[s.id];
-    if (saved && (!s.meet_url || !s.meet_url.trim())) {
+    if (saved && s.meet_url) {
       s.meet_url = saved;
-    } else if (s.meet_url && s.meet_url.trim()) {
-      meetLinks[s.id] = s.meet_url.trim();
     }
   }
 
@@ -1181,25 +1225,17 @@ export async function syncSeancesWithServer(): Promise<SeanceEDT[]> {
         if (!deletedSet.has(s.id)) map.set(s.id, s);
       });
 
-      let localHasMoreMeets = false;
-
-      // Mettre à jour avec les données serveur distantes SANS JAMAIS ÉCRASER un lien Meet existant par null
+      // Mettre à jour avec les données serveur distantes
       data.seances.forEach((serverSeance: SeanceEDT) => {
         if (!deletedSet.has(serverSeance.id)) {
           const existing = map.get(serverSeance.id);
           const serverMeet = serverSeance.meet_url && serverSeance.meet_url.trim() ? serverSeance.meet_url.trim() : null;
-          const localMeet = (existing && existing.meet_url && existing.meet_url.trim()) ? existing.meet_url.trim() : null;
-          const cachedMeet = meetLinks[serverSeance.id] || null;
-
-          // Règle d'or : le lien Meet serveur s'il existe, sinon le lien local, sinon le cache
-          const finalMeet = serverMeet || localMeet || cachedMeet || null;
-
-          if (localMeet && !serverMeet) {
-            localHasMoreMeets = true;
-          }
+          const finalMeet = serverMeet || null;
 
           if (finalMeet) {
             meetLinks[serverSeance.id] = finalMeet;
+          } else {
+            delete meetLinks[serverSeance.id];
           }
 
           if (existing) {
@@ -1220,12 +1256,6 @@ export async function syncSeancesWithServer(): Promise<SeanceEDT[]> {
       const merged = Array.from(map.values());
       setStorageItem(STORAGE_KEYS.SEANCES_EDT, merged);
       setStorageItem(STORAGE_KEYS.MEET_LINKS, meetLinks);
-
-      // Si le local avait des liens Meet que le serveur ne connaissait pas ou si le serveur n'avait que les défauts,
-      // on pousse immédiatement vers le serveur pour synchroniser tout le monde !
-      if (localHasMoreMeets || !data.hasSavedData) {
-        pushSeancesToServer(merged);
-      }
 
       window.dispatchEvent(new CustomEvent("has_academic_storage_updated"));
       return merged;
