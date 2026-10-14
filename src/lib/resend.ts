@@ -442,3 +442,195 @@ export async function sendCourseReminderEmail({
     htmlContent,
   });
 }
+
+/**
+ * Envoi d'un email de rappel au professeur 1h avant son cours
+ * pour lui rappeler de se connecter et de renseigner son lien Google Meet
+ */
+export async function sendProfesseurMeetReminderEmail({
+  email,
+  profName,
+  matiereNom,
+  jour,
+  horaireDebut,
+  horaireFin,
+  niveau,
+  filieres,
+  meetUrl,
+}: {
+  email: string;
+  profName: string;
+  matiereNom: string;
+  jour: string;
+  horaireDebut: string;
+  horaireFin: string;
+  niveau?: string | null;
+  filieres?: string[] | null;
+  meetUrl?: string | null;
+}) {
+  const subject = `⏰ Rappel : Votre cours de ${matiereNom} débute dans 1h (${horaireDebut}) — Créez votre lien Meet`;
+  const htmlContent = `
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+      <div style="background-color: #0f2744; padding: 26px 24px; text-align: center;">
+        <h1 style="color: #ffffff; margin: 0; font-size: 20px; font-weight: 800; letter-spacing: 0.5px;">HALIL ACADÉMIE SCIENTIFIQUE</h1>
+        <p style="color: #cbd5e1; margin: 6px 0 0 0; font-size: 13px;">Espace Corps Professoral • Alerte de Séance</p>
+      </div>
+
+      <div style="padding: 32px 26px; background-color: #ffffff;">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <span style="display: inline-block; background-color: #fff7ed; border: 1px solid #fed7aa; color: #c2410c; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding: 6px 14px; border-radius: 9999px;">
+            ⚡ Votre cours débute dans 1 heure — ${jour} à ${horaireDebut}
+          </span>
+        </div>
+
+        <h2 style="color: #0f2744; margin: 0 0 14px 0; font-size: 22px; font-weight: 800; text-align: center;">
+          ${matiereNom}
+        </h2>
+
+        <p style="color: #334155; font-size: 15px; line-height: 1.6; margin: 0 0 16px 0;">
+          Bonjour Cher(e) <strong>${profName}</strong>,
+        </p>
+
+        <p style="color: #334155; font-size: 14px; line-height: 1.6; margin: 0 0 20px 0;">
+          Votre séance officielle de <strong>${matiereNom}</strong> est programmée dans <strong>1 heure</strong> (à <strong>${horaireDebut}</strong>).
+        </p>
+
+        <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 16px 18px; margin: 0 0 22px 0;">
+          <p style="color: #166534; font-size: 13px; font-weight: 700; margin: 0 0 6px 0;">
+            📌 Action à effectuer avant le début du cours :
+          </p>
+          <p style="color: #15803d; font-size: 13px; line-height: 1.5; margin: 0;">
+            Veuillez entrer dans votre espace HAS pour <strong>créer votre réunion Google Meet</strong> et y coller le lien afin que vos étudiants puissent vous rejoindre à l'heure.
+          </p>
+        </div>
+
+        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px 20px; margin: 0 0 24px 0;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+            <tr>
+              <td style="color: #64748b; padding: 6px 0; font-weight: 600;">Jour :</td>
+              <td style="color: #0f2744; font-weight: 700; text-align: right; padding: 6px 0;">${jour}</td>
+            </tr>
+            <tr>
+              <td style="color: #64748b; padding: 6px 0; font-weight: 600;">Horaires :</td>
+              <td style="color: #e0521c; font-weight: 800; text-align: right; padding: 6px 0;">${horaireDebut} — ${horaireFin}</td>
+            </tr>
+            <tr>
+              <td style="color: #64748b; padding: 6px 0; font-weight: 600;">Promotion & Filière :</td>
+              <td style="color: #0f2744; font-weight: 700; text-align: right; padding: 6px 0;">
+                ${niveau || "HAS"} ${filieres && filieres.length > 0 ? "— " + filieres.join(" / ") : "(Tronc Commun)"}
+              </td>
+            </tr>
+            ${meetUrl ? `
+            <tr>
+              <td style="color: #64748b; padding: 6px 0; font-weight: 600;">Lien Meet actuel :</td>
+              <td style="color: #059669; font-weight: 700; text-align: right; padding: 6px 0; word-break: break-all;">
+                ${meetUrl}
+              </td>
+            </tr>` : `
+            <tr>
+              <td style="color: #64748b; padding: 6px 0; font-weight: 600;">Statut Meet :</td>
+              <td style="color: #dc2626; font-weight: 800; text-align: right; padding: 6px 0;">
+                Non renseigné — À ajouter
+              </td>
+            </tr>`}
+          </table>
+        </div>
+
+        <div style="text-align: center; margin: 26px 0; display: flex; flex-direction: column; gap: 10px; align-items: center;">
+          <a href="https://www.has-academie.online/professeur/edt" style="display: inline-block; background-color: #0f2744; color: #ffffff; font-size: 14px; font-weight: 700; text-decoration: none; padding: 14px 28px; border-radius: 8px; box-shadow: 0 2px 6px rgba(15,39,68,0.25);">
+            ➡️ Entrer sur HAS pour ajouter mon Meet
+          </a>
+          <a href="https://meet.google.com/new" target="_blank" style="display: inline-block; background-color: #059669; color: #ffffff; font-size: 13px; font-weight: 700; text-decoration: none; padding: 10px 22px; border-radius: 8px;">
+            🎥 Ouvrir Google Meet pour créer une réunion (meet.new)
+          </a>
+        </div>
+
+        <p style="color: #64748b; font-size: 12px; line-height: 1.5; margin: 20px 0 0 0; padding-top: 16px; border-top: 1px solid #f1f5f9; text-align: center;">
+          L'administration planifie les cours de l'emploi du temps, et vous restez entièrement maître de votre salle virtuelle de cours.
+        </p>
+      </div>
+
+      <div style="background-color: #f1f5f9; padding: 18px; text-align: center; border-top: 1px solid #e2e8f0;">
+        <p style="color: #64748b; font-size: 12px; margin: 0 0 4px 0;">
+          Halil Académie Scientifique • Plateforme Pédagogique
+        </p>
+        <p style="color: #94a3b8; font-size: 11px; margin: 0;">
+          Cet email est un rappel automatique transmis 1h avant la tenue de vos cours.
+        </p>
+      </div>
+    </div>
+  `;
+
+  return sendTransactionalEmail({
+    toEmail: email,
+    toName: profName,
+    subject,
+    htmlContent,
+  });
+}
+
+/**
+ * Envoi d'un code de vérification à 6 chiffres pour valider l'adresse email réelle d'un enseignant
+ */
+export async function sendProfEmailVerificationCode(email: string, profName: string, code: string) {
+  const subject = `Code de vérification : ${code} — Validez votre adresse email officielle HAS`;
+  const htmlContent = `
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+      <div style="background-color: #0f2744; padding: 26px 24px; text-align: center;">
+        <h1 style="color: #ffffff; margin: 0; font-size: 20px; font-weight: 800; letter-spacing: 0.5px;">HALIL ACADÉMIE SCIENTIFIQUE</h1>
+        <p style="color: #cbd5e1; margin: 6px 0 0 0; font-size: 13px;">Direction Académique • Validation de l'Adresse Enseignant</p>
+      </div>
+
+      <div style="padding: 32px 26px; background-color: #ffffff;">
+        <h2 style="color: #0f2744; margin: 0 0 14px 0; font-size: 20px; font-weight: 800; text-align: center;">
+          Certification de votre adresse email
+        </h2>
+
+        <p style="color: #334155; font-size: 15px; line-height: 1.6; margin: 0 0 16px 0;">
+          Bonjour Cher(e) <strong>${profName}</strong>,
+        </p>
+
+        <p style="color: #334155; font-size: 14px; line-height: 1.6; margin: 0 0 20px 0;">
+          Vous avez initié la validation de votre véritable adresse email sur votre espace enseignant <strong>Halil Académie Scientifique</strong>.
+          Cette validation est indispensable pour recevoir :
+        </p>
+
+        <ul style="color: #334155; font-size: 13px; line-height: 1.8; margin: 0 0 24px 20px; padding: 0;">
+          <li>Le rappel automatique par email <strong>1 heure avant chaque cours</strong> pour créer et ajouter votre lien Google Meet.</li>
+          <li>Les communications officielles et notifications pédagogiques de l'administration.</li>
+        </ul>
+
+        <div style="margin: 28px 0; text-align: center;">
+          <span style="display: inline-block; background-color: #f0f5fa; border: 2px dashed #0f2744; color: #0f2744; font-size: 34px; font-weight: 800; letter-spacing: 8px; padding: 14px 28px; border-radius: 10px;">
+            ${code}
+          </span>
+        </div>
+
+        <p style="color: #64748b; font-size: 13px; line-height: 1.5; text-align: center; margin: 0 0 20px 0;">
+          Ce code est valable pendant <strong>15 minutes</strong>. Saisissez-le sur votre plateforme pour confirmer immédiatement votre adresse.
+        </p>
+
+        <p style="color: #94a3b8; font-size: 12px; line-height: 1.5; margin: 20px 0 0 0; padding-top: 16px; border-top: 1px solid #f1f5f9; text-align: center;">
+          Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer cet email en toute sécurité.
+        </p>
+      </div>
+
+      <div style="background-color: #f1f5f9; padding: 18px; text-align: center; border-top: 1px solid #e2e8f0;">
+        <p style="color: #64748b; font-size: 12px; margin: 0 0 4px 0;">
+          Halil Académie Scientifique • Excellence & Rigueur
+        </p>
+        <p style="color: #94a3b8; font-size: 11px; margin: 0;">
+          Portail officiel de gestion des enseignements
+        </p>
+      </div>
+    </div>
+  `;
+
+  return sendTransactionalEmail({
+    toEmail: email,
+    toName: profName,
+    subject,
+    htmlContent,
+  });
+}
+

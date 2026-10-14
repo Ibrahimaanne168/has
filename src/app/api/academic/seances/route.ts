@@ -109,7 +109,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Données invalides" }, { status: 400 });
     }
 
-    // Sécurité stricte : seuls les administrateurs officiels ont le droit de modifier les cours ou liens Meet
     const emailNorm = (adminEmail || "").toLowerCase();
     const isAuthorizedAdmin =
       emailNorm.includes("admin") ||
@@ -119,9 +118,18 @@ export async function POST(request: NextRequest) {
       emailNorm.endsWith("@has-internal.local") ||
       emailNorm.endsWith("@has-academie.online");
 
-    if (!isAuthorizedAdmin) {
+    // Sécurité : autoriser les administrateurs et les enseignants à synchroniser les séances et liens Meet
+    const isProfAction = Boolean(body.isProfAction) || body.role === "professeur" || Boolean(body.profEmail);
+    const isAuthorized =
+      isAuthorizedAdmin ||
+      isProfAction ||
+      emailNorm.includes("prof") ||
+      emailNorm.includes("@has.sn") ||
+      emailNorm.includes("@halil-academie.com");
+
+    if (!isAuthorized) {
       return NextResponse.json(
-        { error: "Accès interdit : Seuls les administrateurs de HAS peuvent modifier les liens Meet et emplois du temps." },
+        { error: "Accès non autorisé : Vous devez être administrateur ou enseignant pour modifier l'emploi du temps." },
         { status: 403 }
       );
     }

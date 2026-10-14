@@ -1801,31 +1801,28 @@ export default function AdminEDTPage() {
                   </div>
                 </div>
 
-                {/* 6. Lien Google Meet (généré puis copié) */}
-                <div>
+                {/* 6. Lien Google Meet (Géré directement par les professeurs) */}
+                <div className="p-3.5 rounded-xl bg-blue-50/70 dark:bg-blue-950/30 border border-blue-200/80 dark:border-blue-900/40">
                   <div className="flex items-center justify-between mb-1.5">
                     <label className="block text-xs font-bold text-slate-700 dark:text-[#F5F7FA]">
-                      Lien Google Meet (visio) :
+                      Lien Google Meet (Géré par l&apos;enseignant) :
                     </label>
-                    <a
-                      href="https://meet.google.com/new"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-1 rounded-lg border border-emerald-200 dark:border-emerald-800"
-                    >
-                      <Video className="w-3.5 h-3.5" />
-                      1. Créer la réunion sur Meet (meet.new)
-                      <ExternalLink className="w-2.5 h-2.5" />
-                    </a>
+                    <span className="text-[10px] font-bold text-blue-600 dark:text-cyan-400 bg-white dark:bg-[#111821] px-2 py-0.5 rounded border border-blue-200 dark:border-blue-800">
+                      Optionnel pour l&apos;admin
+                    </span>
                   </div>
+
+                  <p className="text-[11px] text-slate-600 dark:text-[#AAB4C0] mb-2 leading-relaxed">
+                    Vous planifiez uniquement les cours de l&apos;EDT. L&apos;enseignant responsable reçoit un <strong>email de rappel 1h avant son cours</strong> pour créer sa réunion Google Meet et entrer son lien lui-même depuis son espace.
+                  </p>
 
                   <div className="flex gap-2">
                     <input
                       type="url"
-                      placeholder="2. Collez ici le lien copié (ex: https://meet.google.com/abc-defg-hij)..."
+                      placeholder="Lien Meet (optionnel — l'enseignant le renseignera lui-même)..."
                       value={formMeetUrl}
                       onChange={(e) => setFormMeetUrl(e.target.value)}
-                      className="flex-1 h-10 px-3 rounded-xl border border-slate-200 dark:border-[#263241] bg-white dark:bg-[#151D27] text-slate-900 dark:text-[#F5F7FA] text-xs font-mono"
+                      className="flex-1 h-9 px-3 rounded-lg border border-slate-200 dark:border-[#263241] bg-white dark:bg-[#151D27] text-slate-900 dark:text-[#F5F7FA] text-xs font-mono"
                     />
                     <button
                       type="button"
@@ -1841,15 +1838,12 @@ export default function AdminEDTPage() {
                         }
                       }}
                       title="Coller le lien copié depuis Google Meet"
-                      className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#151D27] dark:hover:bg-[#263241] border border-slate-200 dark:border-[#263241] text-xs font-bold text-slate-700 dark:text-[#AAB4C0] flex items-center gap-1 shrink-0 cursor-pointer"
+                      className="px-2.5 py-1.5 rounded-lg bg-white hover:bg-slate-100 dark:bg-[#151D27] dark:hover:bg-[#263241] border border-slate-200 dark:border-[#263241] text-xs font-bold text-slate-700 dark:text-[#AAB4C0] flex items-center gap-1 shrink-0 cursor-pointer"
                     >
                       <Copy className="w-3.5 h-3.5 text-slate-500" />
                       Coller
                     </button>
                   </div>
-                  <p className="text-[11px] text-slate-400 mt-1">
-                    Les liens Meet ne sont pas statiques : cliquez sur <em>Créer la réunion</em>, copiez le lien généré par Google Meet puis collez-le ici.
-                  </p>
                 </div>
 
                 <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-[#263241] flex-wrap gap-2">

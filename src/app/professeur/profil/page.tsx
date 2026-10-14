@@ -24,6 +24,10 @@ import { useCurrentProfesseur } from "@/lib/useCurrentProfesseur";
 import { passwordRegex, passwordRequirementsMessage } from "@/lib/validators";
 import { createClient } from "@/lib/supabase/client";
 import { compressImage } from "@/lib/imageCompression";
+import {
+  ProfEmailVerificationBanner,
+  isProfEmailVerified,
+} from "@/components/professeur/ProfEmailVerificationBanner";
 
 export default function ProfesseurProfilPage() {
   const { prof, updateProfProfile } = useCurrentProfesseur();
@@ -134,6 +138,8 @@ export default function ProfesseurProfilPage() {
       matriculeOrTitle={prof.matricule || "PROF001"}
     >
       <div className="space-y-6 max-w-4xl">
+        {/* Bannière de certification de l'adresse email */}
+        <ProfEmailVerificationBanner />
 
         {photoSuccess && (
           <div className="p-3.5 rounded-lg bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-2">
@@ -311,6 +317,40 @@ export default function ProfesseurProfilPage() {
               </form>
             </div>
           )}
+        </div>
+
+        {/* === ADRESSE EMAIL & RAPPELS GOOGLE MEET 1H === */}
+        <div className="bg-white dark:bg-[#111821] rounded-xl border border-slate-200/90 dark:border-[#263241] shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] dark:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.4)] overflow-hidden transition-colors">
+          <div className="p-5 flex items-start justify-between gap-4">
+            <div className="flex items-start gap-3.5">
+              <div className="w-9 h-9 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200/60 dark:border-emerald-800/40 flex items-center justify-center shrink-0">
+                <Mail className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <p className="text-sm font-bold text-slate-900 dark:text-[#F5F7FA]">
+                    Adresse Email Officielle & Rappels 1h
+                  </p>
+                  {isProfEmailVerified(prof) ? (
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700 flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3" />
+                      Certifiée • Rappels 1h actifs
+                    </span>
+                  ) : (
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-300 dark:border-amber-700">
+                      ⚠️ Adresse temporaire non vérifiée
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">
+                  {prof.email || "Aucune adresse enregistrée"}
+                </p>
+                <p className="text-xs text-slate-500 dark:text-[#AAB4C0] max-w-xl leading-relaxed pt-1">
+                  L&apos;administration planifie les cours de l&apos;EDT. C&apos;est à cette adresse email que vous recevez automatiquement un rappel <strong>1 heure avant votre cours</strong> pour vous connecter sur la plateforme HAS et créer votre réunion Google Meet.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* === SÉCURITÉ === */}

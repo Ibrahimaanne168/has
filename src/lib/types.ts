@@ -192,6 +192,8 @@ export interface Professeur {
   matieres: MatiereAssignee[];
   niveaux: string[]; // e.g. ["L1", "L2"]
   classes: string[]; // e.g. ["L1 MPI", "L2 MPI"]
+  is_email_verified?: boolean;
+  email_verified_at?: string | null;
   created_at?: string;
   updated_at?: string;
 }

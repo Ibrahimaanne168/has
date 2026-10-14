@@ -15,9 +15,9 @@ export async function GET(request: NextRequest) {
     // Si un secret CRON est configuré sur l'hébergement, le respecter
   }
 
-  return await handleReminderNotification({ mode: "auto_40min" });
+  return await handleReminderNotification({ mode: "auto_all" });
 }
 
 export async function POST() {
-  return await handleReminderNotification({ mode: "auto_40min" });
+  return await handleReminderNotification({ mode: "auto_all" });
 }

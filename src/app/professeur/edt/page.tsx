@@ -3,12 +3,14 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Calendar, Clock, Video, CheckCircle2, ExternalLink, Copy,
-  Layers, Table as TableIcon, BookOpen, User,
+  Layers, Table as TableIcon, BookOpen, User, Edit2, Plus, Sparkles,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { useCurrentProfesseur } from "@/lib/useCurrentProfesseur";
 import { getStoredSeancesEDT, syncSeancesWithServer } from "@/lib/academicStorage";
 import { SeanceEDT, JourSemaine } from "@/lib/types";
+import { ProfEmailVerificationBanner } from "@/components/professeur/ProfEmailVerificationBanner";
+import { ProfMeetModal } from "@/components/professeur/ProfMeetModal";
 
 const JOURS: JourSemaine[] = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
 
@@ -65,6 +67,7 @@ export default function ProfesseurEDTPage() {
   const [filterScope, setFilterScope] = useState<"ALL" | "MINE">("ALL");
   const [filiereFilter, setFiliereFilter] = useState<string>("ALL");
   const [copiedLink, setCopiedLink] = useState<string | null>(null);
+  const [editingMeetSeance, setEditingMeetSeance] = useState<SeanceEDT | null>(null);
 
   const reload = useCallback(() => setSeances(getStoredSeancesEDT()), []);
 
@@ -155,6 +158,9 @@ export default function ProfesseurEDTPage() {
       matriculeOrTitle={prof.matricule || "PROF001"}
     >
       <div className="space-y-6">
+        {/* Bannière de vérification de l'adresse email */}
+        <ProfEmailVerificationBanner />
+
         {/* En-tête */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -359,35 +365,83 @@ export default function ProfesseurEDTPage() {
                           </div>
 
                           <div className="pt-3 border-t border-slate-100 dark:border-[#263241]">
-                            {s.meet_url ? (
-                              <div className="flex items-center gap-2">
-                                <a
-                                  href={s.meet_url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="flex-1 inline-flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-bold text-xs shadow-xs transition-all"
-                                >
-                                  <Video className="w-4 h-4" />
-                                  <span>Rejoindre Meet</span>
-                                  <ExternalLink className="w-3 h-3 opacity-70" />
-                                </a>
+                            {isMine ? (
+                              s.meet_url ? (
+                                <div className="space-y-2">
+                                  <div className="flex items-center gap-2">
+                                    <a
+                                      href={s.meet_url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="flex-1 inline-flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-bold text-xs shadow-xs transition-all"
+                                    >
+                                      <Video className="w-4 h-4" />
+                                      <span>Lancer mon Meet</span>
+                                      <ExternalLink className="w-3 h-3 opacity-70" />
+                                    </a>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleCopy(s.meet_url!)}
+                                      title="Copier le lien Meet"
+                                      className="p-2 rounded-xl border border-slate-200 dark:border-[#263241] bg-slate-50 dark:bg-[#111821] hover:bg-slate-100 dark:hover:bg-[#151D27] text-slate-600 dark:text-slate-300 cursor-pointer"
+                                    >
+                                      {copiedLink === s.meet_url ? (
+                                        <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                                      ) : (
+                                        <Copy className="w-4 h-4" />
+                                      )}
+                                    </button>
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => setEditingMeetSeance(s)}
+                                    className="w-full py-1.5 px-3 rounded-xl border border-orange-200 dark:border-orange-800 bg-orange-50/70 hover:bg-orange-100 dark:bg-orange-950/40 text-[#e0521c] font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer"
+                                  >
+                                    <Edit2 className="w-3.5 h-3.5" />
+                                    <span>Modifier mon lien Meet</span>
+                                  </button>
+                                </div>
+                              ) : (
                                 <button
                                   type="button"
-                                  onClick={() => handleCopy(s.meet_url!)}
-                                  title="Copier le lien Meet"
-                                  className="p-2 rounded-xl border border-slate-200 dark:border-[#263241] bg-slate-50 dark:bg-[#111821] hover:bg-slate-100 dark:hover:bg-[#151D27] text-slate-600 dark:text-slate-300 cursor-pointer"
+                                  onClick={() => setEditingMeetSeance(s)}
+                                  className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-[#e0521c] to-[#f07040] hover:brightness-110 active:scale-98 text-white font-bold text-xs shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer animate-pulse"
                                 >
-                                  {copiedLink === s.meet_url ? (
-                                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                                  ) : (
-                                    <Copy className="w-4 h-4" />
-                                  )}
+                                  <Video className="w-4 h-4" />
+                                  <span>+ Créer / Ajouter mon Meet</span>
                                 </button>
-                              </div>
+                              )
                             ) : (
-                              <div className="text-center py-2 px-3 rounded-xl bg-slate-50 dark:bg-[#111821] border border-slate-100 dark:border-[#263241]">
-                                <span className="text-xs text-slate-400 italic">🎥 Lien Meet à définir</span>
-                              </div>
+                              s.meet_url ? (
+                                <div className="flex items-center gap-2">
+                                  <a
+                                    href={s.meet_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex-1 inline-flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-bold text-xs shadow-xs transition-all"
+                                  >
+                                    <Video className="w-4 h-4" />
+                                    <span>Rejoindre Meet</span>
+                                    <ExternalLink className="w-3 h-3 opacity-70" />
+                                  </a>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleCopy(s.meet_url!)}
+                                    title="Copier le lien Meet"
+                                    className="p-2 rounded-xl border border-slate-200 dark:border-[#263241] bg-slate-50 dark:bg-[#111821] hover:bg-slate-100 dark:hover:bg-[#151D27] text-slate-600 dark:text-slate-300 cursor-pointer"
+                                  >
+                                    {copiedLink === s.meet_url ? (
+                                      <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                                    ) : (
+                                      <Copy className="w-4 h-4" />
+                                    )}
+                                  </button>
+                                </div>
+                              ) : (
+                                <div className="text-center py-2 px-3 rounded-xl bg-slate-50 dark:bg-[#111821] border border-slate-100 dark:border-[#263241]">
+                                  <span className="text-xs text-slate-400 italic">🎥 Lien Meet à définir par l&apos;enseignant</span>
+                                </div>
+                              )
                             )}
                           </div>
                         </div>
@@ -467,29 +521,71 @@ export default function ProfesseurEDTPage() {
                               </td>
 
                               <td className="py-3.5 px-4 text-center">
-                                {s.meet_url ? (
-                                  <div className="flex items-center justify-center gap-1.5">
-                                    <a
-                                      href={s.meet_url}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold shadow-xs transition-colors"
-                                    >
-                                      <Video className="w-3.5 h-3.5" />
-                                      Lancer Meet
-                                      <ExternalLink className="w-2.5 h-2.5" />
-                                    </a>
+                                {isMine ? (
+                                  s.meet_url ? (
+                                    <div className="flex items-center justify-center gap-1.5">
+                                      <a
+                                        href={s.meet_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold shadow-xs transition-colors"
+                                      >
+                                        <Video className="w-3.5 h-3.5" />
+                                        Lancer Meet
+                                        <ExternalLink className="w-2.5 h-2.5" />
+                                      </a>
+                                      <button
+                                        type="button"
+                                        onClick={() => handleCopy(s.meet_url!)}
+                                        title="Copier le lien"
+                                        className="p-1.5 rounded-lg border border-slate-200 dark:border-[#263241] hover:bg-slate-100 dark:hover:bg-[#151D27] text-slate-500 cursor-pointer"
+                                      >
+                                        {copiedLink === s.meet_url ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => setEditingMeetSeance(s)}
+                                        title="Modifier mon lien Meet"
+                                        className="px-2 py-1.5 rounded-lg bg-orange-50 hover:bg-orange-100 dark:bg-orange-950/40 border border-orange-200 dark:border-orange-800 text-[#e0521c] text-[11px] font-bold transition-colors cursor-pointer"
+                                      >
+                                        Modifier
+                                      </button>
+                                    </div>
+                                  ) : (
                                     <button
                                       type="button"
-                                      onClick={() => handleCopy(s.meet_url!)}
-                                      title="Copier le lien"
-                                      className="p-1.5 rounded-lg border border-slate-200 dark:border-[#263241] hover:bg-slate-100 dark:hover:bg-[#151D27] text-slate-500 cursor-pointer"
+                                      onClick={() => setEditingMeetSeance(s)}
+                                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-[#e0521c] to-[#f07040] hover:brightness-110 active:scale-98 text-white text-[11px] font-bold shadow-sm transition-all cursor-pointer animate-pulse"
                                     >
-                                      {copiedLink === s.meet_url ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                                      <Video className="w-3.5 h-3.5" />
+                                      + Ajouter mon Meet
                                     </button>
-                                  </div>
+                                  )
                                 ) : (
-                                  <span className="text-[11px] text-slate-400 italic">Lien Meet à définir</span>
+                                  s.meet_url ? (
+                                    <div className="flex items-center justify-center gap-1.5">
+                                      <a
+                                        href={s.meet_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold shadow-xs transition-colors"
+                                      >
+                                        <Video className="w-3.5 h-3.5" />
+                                        Rejoindre Meet
+                                        <ExternalLink className="w-2.5 h-2.5" />
+                                      </a>
+                                      <button
+                                        type="button"
+                                        onClick={() => handleCopy(s.meet_url!)}
+                                        title="Copier le lien"
+                                        className="p-1.5 rounded-lg border border-slate-200 dark:border-[#263241] hover:bg-slate-100 dark:hover:bg-[#151D27] text-slate-500 cursor-pointer"
+                                      >
+                                        {copiedLink === s.meet_url ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                                      </button>
+                                    </div>
+                                  ) : (
+                                    <span className="text-[11px] text-slate-400 italic">En attente de l&apos;enseignant</span>
+                                  )
                                 )}
                               </td>
                             </tr>
@@ -593,7 +689,7 @@ export default function ProfesseurEDTPage() {
                                               👤 {s.professeur_nom || "Mister Halil"}
                                             </p>
                                           </div>
-                                          {s.meet_url && (
+                                          {s.meet_url ? (
                                             <div className="flex items-center gap-1 mt-2 pt-1.5 border-t border-current/10">
                                               <a
                                                 href={s.meet_url}
@@ -604,14 +700,34 @@ export default function ProfesseurEDTPage() {
                                                 <Video className="w-3 h-3" />
                                                 Lancer Meet
                                               </a>
+                                              {isMine && (
+                                                <button
+                                                  type="button"
+                                                  onClick={() => setEditingMeetSeance(s)}
+                                                  title="Modifier mon Meet"
+                                                  className="p-1 text-[#e0521c] border border-orange-200 dark:border-orange-800 rounded-md hover:bg-orange-100 transition-colors cursor-pointer"
+                                                >
+                                                  <Edit2 className="w-3 h-3" />
+                                                </button>
+                                              )}
                                               <button
+                                                type="button"
                                                 onClick={() => handleCopy(s.meet_url!)}
-                                                className="p-1 text-slate-500 hover:text-slate-800 border border-slate-200 dark:border-[#263241] rounded-md hover:bg-white transition-colors"
+                                                className="p-1 text-slate-500 hover:text-slate-800 border border-slate-200 dark:border-[#263241] rounded-md hover:bg-white transition-colors cursor-pointer"
                                               >
                                                 {copiedLink === s.meet_url ? <CheckCircle2 className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
                                               </button>
                                             </div>
-                                          )}
+                                          ) : isMine ? (
+                                            <button
+                                              type="button"
+                                              onClick={() => setEditingMeetSeance(s)}
+                                              className="w-full mt-2 py-1 px-2 rounded-md text-[10px] font-bold bg-gradient-to-r from-[#e0521c] to-[#f07040] text-white flex items-center justify-center gap-1 transition-all cursor-pointer animate-pulse"
+                                            >
+                                              <Video className="w-3 h-3" />
+                                              + Ajouter Meet
+                                            </button>
+                                          ) : null}
                                         </div>
                                       );
                                     })}
@@ -629,6 +745,18 @@ export default function ProfesseurEDTPage() {
             )}
           </div>
         )}
+
+        {/* Modal de création / modification du lien Google Meet */}
+        <ProfMeetModal
+          seance={editingMeetSeance}
+          isOpen={Boolean(editingMeetSeance)}
+          onClose={() => setEditingMeetSeance(null)}
+          onSaved={(updated) => {
+            setSeances((prev) => prev.map((x) => (x.id === updated.id ? updated : x)));
+            setEditingMeetSeance(null);
+          }}
+          userEmail={prof.email}
+        />
       </div>
     </DashboardLayout>
   );

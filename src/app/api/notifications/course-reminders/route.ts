@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/service-role";
-import { sendCourseReminderEmail } from "@/lib/resend";
+import { sendCourseReminderEmail, sendProfesseurMeetReminderEmail } from "@/lib/resend";
 import { DEFAULT_SEANCES_EDT } from "@/lib/academicStorage";
+import { MOCK_PROFESSEURS } from "@/lib/data/mock-data";
 import { SeanceEDT } from "@/lib/types";
 
 const JOURS_FR = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
@@ -24,7 +25,7 @@ export async function GET(request: NextRequest) {
   const seanceId = searchParams.get("seanceId") || undefined;
   const jour = searchParams.get("jour") || undefined;
   const niveau = searchParams.get("niveau") || undefined;
-  const mode = (searchParams.get("mode") as "auto_40min" | "manual") || undefined;
+  const mode = (searchParams.get("mode") as "auto_all" | "auto_40min" | "prof_1h" | "manual") || undefined;
 
   return await handleReminderNotification({ seanceId, jour, niveau, mode });
 }
@@ -33,7 +34,7 @@ export async function handleReminderNotification(params: {
   seanceId?: string;
   jour?: string;
   niveau?: string;
-  mode?: "auto_40min" | "manual";
+  mode?: "auto_all" | "auto_40min" | "prof_1h" | "manual";
   seances?: SeanceEDT[];
 }) {
   const now = new Date();
@@ -43,6 +44,8 @@ export async function handleReminderNotification(params: {
   const currentMinutesUTC = now.getUTCHours() * 60 + now.getUTCMinutes();
   const currentClock = `${String(now.getUTCHours()).padStart(2, "0")}:${String(now.getUTCMinutes()).padStart(2, "0")}`;
 
+  const supabaseAdmin = createAdminClient();
+
   // Répertoire des séances (priorité aux séances passées en payload ou aux séances enregistrées dans Supabase)
   let allSeances: SeanceEDT[] =
     params.seances && params.seances.length > 0
@@ -51,7 +54,6 @@ export async function handleReminderNotification(params: {
 
   if (allSeances.length === 0) {
     try {
-      const supabaseAdmin = createAdminClient();
       const { data: syncData } = await supabaseAdmin
         .from("audit_logs")
         .select("details")
@@ -67,212 +69,309 @@ export async function handleReminderNotification(params: {
     }
   }
 
-  let targetSeances: SeanceEDT[] = [];
-  const isAuto40Min = params.mode === "auto_40min" || (!params.seanceId && !params.jour);
+  // Charger les correspondances des vrais emails professeurs vérifiés depuis Supabase
+  const verifiedProfEmails = new Map<string, string>(); // profKey (id, nom ou username) -> vrai email certifié
+  try {
+    const { data: profLogs } = await supabaseAdmin
+      .from("logs")
+      .select("action, description")
+      .like("action", "PROF_EMAIL_VERIFIED:%");
 
-  if (params.seanceId) {
-    // Mode unitaire manuel : ciblage d'un cours précis
-    targetSeances = allSeances.filter((s) => s.id === params.seanceId);
-  } else if (!isAuto40Min && params.jour) {
-    // Mode manuel journée : tous les cours du jour choisi
-    targetSeances = allSeances.filter((s) => s.jour === params.jour);
-    if (params.niveau) {
-      targetSeances = targetSeances.filter((s) => s.niveau === params.niveau);
-    }
-  } else {
-    // Mode AUTOMATIQUE 40 MINUTES AVANT LE COURS :
-    // Filtre les cours du jour actuel dont le début se situe dans une fenêtre de ~40 minutes (30 à 50 minutes)
-    const todayCourses = allSeances.filter((s) => s.jour === dakarDayFr);
-
-    targetSeances = todayCourses.filter((s) => {
-      const parts = s.heure_debut.split(":");
-      const courseH = parseInt(parts[0], 10);
-      const courseM = parseInt(parts[1] || "0", 10);
-      if (isNaN(courseH)) return false;
-      const courseMinutes = courseH * 60 + courseM;
-      const delta = courseMinutes - currentMinutesUTC;
-      // Fenêtre cible de 30 à 50 minutes avant le début (couvre parfaitement le passage cron toutes les 10 min)
-      return delta >= 30 && delta <= 50;
-    });
-
-    if (params.niveau) {
-      targetSeances = targetSeances.filter((s) => s.niveau === params.niveau);
-    }
-  }
-
-  if (targetSeances.length === 0) {
-    return NextResponse.json({
-      success: true,
-      message: isAuto40Min
-        ? `Aucun cours ne débute dans ~40 minutes aujourd'hui (${dakarDayFr} à ${currentClock} GMT).`
-        : `Aucun cours programmé pour les filtres sélectionnés.`,
-      dakarTime: `${currentClock} GMT`,
-      day: dakarDayFr,
-      sentCount: 0,
-    });
-  }
-
-  // Connexion Supabase pour récupérer les étudiants inscrits & l'historique d'envoi
-  const supabaseAdmin = createAdminClient();
-
-  // Filtrer les séances qui ont déjà reçu leur rappel aujourd'hui (déduplication stricte)
-  const dedupedSeances: SeanceEDT[] = [];
-
-  for (const seance of targetSeances) {
-    const dedupKey = `${todayStr}_${seance.id}`;
-    if (inMemorySentToday.has(dedupKey) && isAuto40Min) {
-      continue;
+    if (profLogs && Array.isArray(profLogs)) {
+      profLogs.forEach((l) => {
+        try {
+          const parsed = JSON.parse(l.description);
+          if (parsed && parsed.email) {
+            const clean = parsed.email.toLowerCase().trim();
+            if (parsed.profId) verifiedProfEmails.set(parsed.profId.toLowerCase(), clean);
+            const key = l.action.replace("PROF_EMAIL_VERIFIED:", "").toLowerCase();
+            verifiedProfEmails.set(key, clean);
+          }
+        } catch {}
+      });
     }
 
-    if (isAuto40Min) {
-      try {
-        const { data: existingAudit } = await supabaseAdmin
-          .from("audit_logs")
-          .select("id")
-          .eq("action", "RAPPEL_COURS_40MIN")
-          .filter("details->>seance_id", "eq", seance.id)
-          .filter("details->>date", "eq", todayStr)
-          .limit(1);
+    const { data: profProfiles } = await supabaseAdmin
+      .from("profiles")
+      .select("id, email, full_name, username")
+      .eq("role", "professeur");
 
-        if (existingAudit && existingAudit.length > 0) {
-          inMemorySentToday.add(dedupKey);
-          continue;
+    if (profProfiles && Array.isArray(profProfiles)) {
+      profProfiles.forEach((p) => {
+        if (p.email && !p.email.includes("@halil-academie.com") && !p.email.includes("@has.sn")) {
+          if (p.id) verifiedProfEmails.set(p.id.toLowerCase(), p.email.toLowerCase());
+          if (p.full_name) verifiedProfEmails.set(p.full_name.toLowerCase(), p.email.toLowerCase());
+          if (p.username) verifiedProfEmails.set(p.username.toLowerCase(), p.email.toLowerCase());
         }
-      } catch {
-        // En cas d'indisponibilité temporaire de la table audit_logs, on continue
+      });
+    }
+  } catch {}
+
+  const findProfEmail = (seance: SeanceEDT): { email: string | null; isVerified: boolean; profName: string } => {
+    const profName = seance.professeur_nom || "Enseignant";
+    const profNameLower = profName.toLowerCase();
+    const profIdLower = (seance.professeur_id || "").toLowerCase();
+
+    // 1. Chercher dans les emails certifiés
+    let certified = verifiedProfEmails.get(profIdLower) || verifiedProfEmails.get(profNameLower);
+    if (!certified) {
+      for (const [k, v] of verifiedProfEmails.entries()) {
+        if (profNameLower.includes(k) || k.includes(profNameLower)) {
+          certified = v;
+          break;
+        }
       }
     }
 
-    dedupedSeances.push(seance);
-  }
+    if (certified) {
+      return { email: certified, isVerified: true, profName };
+    }
 
-  if (dedupedSeances.length === 0) {
-    return NextResponse.json({
-      success: true,
-      message: `Tous les rappels de 40 minutes pour les cours actuels ont déjà été envoyés aujourd'hui (${dakarDayFr}).`,
-      dakarTime: `${currentClock} GMT`,
-      day: dakarDayFr,
-      sentCount: 0,
+    // 2. Chercher dans MOCK_PROFESSEURS
+    const mock = MOCK_PROFESSEURS.find(
+      (p) =>
+        (p.id && p.id.toLowerCase() === profIdLower) ||
+        (p.full_name && p.full_name.toLowerCase().includes(profNameLower)) ||
+        (profNameLower.includes(p.nom?.toLowerCase() || "___"))
+    );
+
+    if (mock && mock.email) {
+      const isFake =
+        mock.email.includes("@halil-academie.com") ||
+        mock.email.includes("@has.sn") ||
+        mock.is_email_verified === false;
+      return {
+        email: mock.email,
+        isVerified: !isFake,
+        profName: mock.full_name || profName,
+      };
+    }
+
+    return { email: null, isVerified: false, profName };
+  };
+
+  const todayCourses = allSeances.filter((s) => s.jour === dakarDayFr);
+
+  // =========================================================================
+  // 1. VOLET ENSEIGNANTS : RAPPEL 1 HEURE AVANT LE COURS POUR LE LIEN MEET
+  // =========================================================================
+  const shouldProcessProfs = params.mode === "prof_1h" || params.mode === "auto_all" || !params.mode || params.mode === "manual";
+  const profResults: Array<{ course: string; prof: string; email: string; status: string }> = [];
+
+  if (shouldProcessProfs) {
+    const profTargetCourses = todayCourses.filter((s) => {
+      if (params.seanceId && s.id !== params.seanceId) return false;
+      if (params.jour && s.jour !== params.jour) return false;
+      if (params.niveau && s.niveau !== params.niveau) return false;
+
+      // En mode automatique 1h : fenêtre de 45 à 75 minutes avant le début du cours
+      if (!params.seanceId && params.mode !== "manual") {
+        const parts = s.heure_debut.split(":");
+        const courseH = parseInt(parts[0], 10);
+        const courseM = parseInt(parts[1] || "0", 10);
+        if (isNaN(courseH)) return false;
+        const delta = (courseH * 60 + courseM) - currentMinutesUTC;
+        return delta >= 45 && delta <= 75;
+      }
+      return true;
     });
-  }
 
-  // Récupérer les étudiants réels inscrits depuis Supabase
-  const { data: usersData, error: usersError } = await supabaseAdmin.auth.admin.listUsers({
-    perPage: 1000,
-  });
+    for (const seance of profTargetCourses) {
+      const { email: profEmail, isVerified, profName } = findProfEmail(seance);
+      const dedupKey = `prof_1h_${todayStr}_${seance.id}_${profEmail || "unknown"}`;
 
-  if (usersError) {
-    return NextResponse.json({ error: usersError.message }, { status: 500 });
-  }
-
-  // Filtrer les étudiants actifs et validés
-  const students = (usersData?.users || []).filter((u) => {
-    const meta = u.user_metadata || {};
-    const role = meta.role || (u.email?.includes("admin") ? "admin" : "etudiant");
-    if (role !== "etudiant") return false;
-    const isValide = meta.is_active === true || meta.statut_inscription === "valide";
-    return isValide && u.email;
-  });
-
-  const sendResults: Array<{
-    course: string;
-    student: string;
-    email: string;
-    status: string;
-  }> = [];
-
-  for (const seance of dedupedSeances) {
-    const seanceNiveau = seance.niveau || (seance.classe_nom?.includes("Licence 2") ? "L2" : "L1");
-    const seanceFilieres = seance.filieres || [];
-
-    // Sélectionner les étudiants concernés par la promotion et la filière du cours
-    const targetedStudents = students.filter((stu) => {
-      const meta = stu.user_metadata || {};
-      const stuNiveau = meta.niveau || (meta.classe?.includes("L2") ? "L2" : "L1");
-      const stuFiliere = (meta.filiere || meta.classe || "").toUpperCase();
-
-      if (stuNiveau !== seanceNiveau) return false;
-
-      // Si cours en tronc commun (aucune filière restreinte ou >= 3)
-      if (seanceFilieres.length === 0 || seanceFilieres.length >= 3) {
-        return true;
+      if (inMemorySentToday.has(dedupKey) && params.mode !== "manual") {
+        continue;
       }
 
-      // Si filière spécifique (MPI, SML, MIASS)
-      return seanceFilieres.some((f) => stuFiliere.includes(f));
-    });
+      if (!profEmail) {
+        profResults.push({
+          course: seance.matiere_nom,
+          prof: profName,
+          email: "non_renseigne",
+          status: "aucun_email",
+        });
+        continue;
+      }
 
-    for (const student of targetedStudents) {
-      const studentEmail = student.email!;
-      const studentName = student.user_metadata?.full_name || student.email?.split("@")[0] || "Étudiant";
-      const studentFiliere = student.user_metadata?.filiere || "";
+      // Si l'enseignant n'a pas encore validé son vrai email
+      if (!isVerified) {
+        profResults.push({
+          course: seance.matiere_nom,
+          prof: profName,
+          email: profEmail,
+          status: "email_temporaire_en_attente_de_verification",
+        });
+        continue;
+      }
 
       try {
-        await sendCourseReminderEmail({
-          email: studentEmail,
-          fullName: studentName,
+        await sendProfesseurMeetReminderEmail({
+          email: profEmail,
+          profName,
           matiereNom: seance.matiere_nom,
           jour: seance.jour,
           horaireDebut: seance.heure_debut,
           horaireFin: seance.heure_fin,
-          enseignantNom: seance.professeur_nom,
+          niveau: seance.niveau,
+          filieres: seance.filieres,
           meetUrl: seance.meet_url,
-          filiere: studentFiliere || seanceFilieres.join(" / "),
-          niveau: seanceNiveau,
-          delai: "40 minutes",
         });
 
-        sendResults.push({
+        inMemorySentToday.add(dedupKey);
+
+        try {
+          await supabaseAdmin.from("audit_logs").insert({
+            action: "RAPPEL_PROF_MEET_1H",
+            user_email: profEmail,
+            details: {
+              seance_id: seance.id,
+              matiere: seance.matiere_nom,
+              jour: seance.jour,
+              horaire: `${seance.heure_debut} - ${seance.heure_fin}`,
+              date: todayStr,
+              has_meet: Boolean(seance.meet_url),
+            },
+          });
+        } catch {}
+
+        profResults.push({
           course: seance.matiere_nom,
-          student: studentName,
-          email: studentEmail,
-          status: "envoye",
+          prof: profName,
+          email: profEmail,
+          status: "envoye_1h",
         });
-      } catch (err: unknown) {
-        sendResults.push({
+      } catch {
+        profResults.push({
           course: seance.matiere_nom,
-          student: studentName,
-          email: studentEmail,
-          status: "erreur",
+          prof: profName,
+          email: profEmail,
+          status: "erreur_envoi",
         });
       }
     }
+  }
 
-    // Enregistrer l'envoi dans la déduplication en mémoire et Supabase audit_logs
-    const dedupKey = `${todayStr}_${seance.id}`;
-    inMemorySentToday.add(dedupKey);
+  // =========================================================================
+  // 2. VOLET ÉTUDIANTS : RAPPEL 40 MINUTES AVANT LE COURS
+  // =========================================================================
+  const shouldProcessStudents = params.mode === "auto_40min" || params.mode === "auto_all" || !params.mode || params.mode === "manual";
+  const studentResults: Array<{ course: string; student: string; email: string; status: string }> = [];
 
-    try {
-      await supabaseAdmin.from("audit_logs").insert({
-        action: "RAPPEL_COURS_40MIN",
-        user_email: "system@halil-academie.com",
-        details: {
-          seance_id: seance.id,
-          matiere: seance.matiere_nom,
-          jour: seance.jour,
-          horaire: `${seance.heure_debut} - ${seance.heure_fin}`,
-          date: todayStr,
-          destinataires_count: targetedStudents.length,
-          niveau: seanceNiveau,
-        },
+  let studentTargetCourses: SeanceEDT[] = [];
+  if (shouldProcessStudents) {
+    if (params.seanceId) {
+      studentTargetCourses = allSeances.filter((s) => s.id === params.seanceId);
+    } else if (params.jour && params.mode === "manual") {
+      studentTargetCourses = allSeances.filter((s) => s.jour === params.jour);
+      if (params.niveau) {
+        studentTargetCourses = studentTargetCourses.filter((s) => s.niveau === params.niveau);
+      }
+    } else {
+      // Automatique : 30 à 50 minutes avant
+      studentTargetCourses = todayCourses.filter((s) => {
+        const parts = s.heure_debut.split(":");
+        const courseH = parseInt(parts[0], 10);
+        const courseM = parseInt(parts[1] || "0", 10);
+        if (isNaN(courseH)) return false;
+        const delta = (courseH * 60 + courseM) - currentMinutesUTC;
+        return delta >= 30 && delta <= 50;
       });
-    } catch {
-      // Ignorer l'erreur d'audit log si table inexistante
+      if (params.niveau) {
+        studentTargetCourses = studentTargetCourses.filter((s) => s.niveau === params.niveau);
+      }
+    }
+  }
+
+  if (studentTargetCourses.length > 0) {
+    const { data: usersData } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 }).catch(() => ({ data: { users: [] } }));
+    const students = (usersData?.users || []).filter((u) => {
+      const meta = u.user_metadata || {};
+      const role = meta.role || (u.email?.includes("admin") ? "admin" : "etudiant");
+      if (role !== "etudiant") return false;
+      const isValide = meta.is_active === true || meta.statut_inscription === "valide";
+      return isValide && u.email;
+    });
+
+    for (const seance of studentTargetCourses) {
+      const dedupKey = `student_40m_${todayStr}_${seance.id}`;
+      if (inMemorySentToday.has(dedupKey) && params.mode !== "manual") {
+        continue;
+      }
+
+      const seanceNiveau = seance.niveau || (seance.classe_nom?.includes("Licence 2") ? "L2" : "L1");
+      const seanceFilieres = seance.filieres || [];
+
+      const targetedStudents = students.filter((stu) => {
+        const meta = stu.user_metadata || {};
+        const stuNiveau = meta.niveau || (meta.classe?.includes("L2") ? "L2" : "L1");
+        const stuFiliere = (meta.filiere || meta.classe || "").toUpperCase();
+        if (stuNiveau !== seanceNiveau) return false;
+        if (seanceFilieres.length === 0 || seanceFilieres.length >= 3) return true;
+        return seanceFilieres.some((f) => stuFiliere.includes(f));
+      });
+
+      for (const student of targetedStudents) {
+        const studentEmail = student.email!;
+        const studentName = student.user_metadata?.full_name || student.email?.split("@")[0] || "Étudiant";
+        const studentFiliere = student.user_metadata?.filiere || "";
+
+        try {
+          await sendCourseReminderEmail({
+            email: studentEmail,
+            fullName: studentName,
+            matiereNom: seance.matiere_nom,
+            jour: seance.jour,
+            horaireDebut: seance.heure_debut,
+            horaireFin: seance.heure_fin,
+            enseignantNom: seance.professeur_nom,
+            meetUrl: seance.meet_url,
+            filiere: studentFiliere || seanceFilieres.join(" / "),
+            niveau: seanceNiveau,
+            delai: "40 minutes",
+          });
+
+          studentResults.push({
+            course: seance.matiere_nom,
+            student: studentName,
+            email: studentEmail,
+            status: "envoye_40min",
+          });
+        } catch {
+          studentResults.push({
+            course: seance.matiere_nom,
+            student: studentName,
+            email: studentEmail,
+            status: "erreur",
+          });
+        }
+      }
+
+      inMemorySentToday.add(dedupKey);
+
+      try {
+        await supabaseAdmin.from("audit_logs").insert({
+          action: "RAPPEL_COURS_40MIN",
+          user_email: "system@halil-academie.com",
+          details: {
+            seance_id: seance.id,
+            matiere: seance.matiere_nom,
+            jour: seance.jour,
+            horaire: `${seance.heure_debut} - ${seance.heure_fin}`,
+            date: todayStr,
+            destinataires_count: targetedStudents.length,
+          },
+        });
+      } catch {}
     }
   }
 
   return NextResponse.json({
     success: true,
-    message: `Rappels 40min envoyés pour ${dedupedSeances.length} séance(s) (${sendResults.length} notification(s) envoyée(s)).`,
+    message: `Traitement terminé. ${profResults.filter((r) => r.status === "envoye_1h").length} rappel(s) enseignant (1h) et ${studentResults.filter((r) => r.status === "envoye_40min").length} rappel(s) étudiants envoyés.`,
     dakarTime: `${currentClock} GMT`,
     day: dakarDayFr,
-    coursesProcessed: dedupedSeances.map((s) => ({
-      matiere: s.matiere_nom,
-      jour: s.jour,
-      horaires: `${s.heure_debut} - ${s.heure_fin}`,
-      filieres: s.filieres,
-    })),
-    sentCount: sendResults.length,
-    results: sendResults,
+    profResults,
+    studentResults,
   });
 }
