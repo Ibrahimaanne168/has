@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { X, Download, ExternalLink, FileText, Loader2, Maximize2 } from "lucide-react";
-import { dataUrlToBlob, isIOSDevice } from "@/lib/fileDownload";
+import { dataUrlToBlob, isIOSDevice, downloadOrOpenDocument } from "@/lib/fileDownload";
 
 interface PdfViewerModalProps {
   isOpen: boolean;
@@ -88,14 +88,9 @@ export function PdfViewerModal({
   };
 
   const handleDownload = () => {
-    if (!blobUrl) return;
-    const a = document.createElement("a");
-    a.href = blobUrl;
-    a.download = downloadName;
-    a.target = "_blank";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    const targetUrl = blobUrl || fileUrl;
+    if (!targetUrl) return;
+    downloadOrOpenDocument(targetUrl, downloadName);
   };
 
   return (

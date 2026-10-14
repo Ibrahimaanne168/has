@@ -117,7 +117,10 @@ export default function AdminCoursPage() {
         classe_id: primaryClasse?.id || editingCourse.classe_id,
         classes: targetClasses.length > 0 ? targetClasses : (editingCourse.classes || []),
         professeur_id: formProfId,
-        file_url: formFileUrl || editingCourse.file_url || "/documents/cours.pdf",
+        file_url:
+          formFileUrl ||
+          editingCourse.file_url ||
+          "https://dcjfjhwdfnyiwfagfcwx.supabase.co/storage/v1/object/public/cours-supports/default-cours.pdf",
         file_name: resolvedPdfName || null,
         file_type: "application/pdf",
         external_url: null,
@@ -137,7 +140,9 @@ export default function AdminCoursPage() {
         classe_id: primaryClasse?.id || "",
         classes: targetClasses,
         professeur_id: formProfId,
-        file_url: formFileUrl || "/documents/cours.pdf",
+        file_url:
+          formFileUrl ||
+          "https://dcjfjhwdfnyiwfagfcwx.supabase.co/storage/v1/object/public/cours-supports/default-cours.pdf",
         file_name: resolvedPdfName || null,
         file_type: "application/pdf",
         file_size_bytes: null,

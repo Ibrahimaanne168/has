@@ -135,6 +135,12 @@ export default function ProfesseurCoursPage() {
       targetClasses.some((tc) => tc.replace(/[\s-_]/g, "").toUpperCase() === c.code.replace(/[\s-_]/g, "").toUpperCase())
     ) || classes[0];
 
+    const matiereLevel = matiere?.niveau || (matiere?.code?.includes("2") ? "L2" : "L1");
+    const completeMatiere = matiere ? { ...matiere, niveau: matiereLevel, classes: targetClasses } : undefined;
+
+    const defaultSupportUrl =
+      "https://dcjfjhwdfnyiwfagfcwx.supabase.co/storage/v1/object/public/cours-supports/default-cours.pdf";
+
     if (editingCourse) {
       const updated: Cours = {
         ...editingCourse,
@@ -143,11 +149,11 @@ export default function ProfesseurCoursPage() {
         matiere_id: matiere?.id || formMatiereId,
         classe_id: primaryClasse?.id,
         classes: targetClasses,
-        file_url: formPdfUrl || editingCourse.file_url || "/documents/cours.pdf",
+        file_url: formPdfUrl || editingCourse.file_url || defaultSupportUrl,
         file_name: resolvedPdfName,
         file_type: "application/pdf",
         external_url: null,
-        matiere,
+        matiere: completeMatiere,
         classe: primaryClasse,
         updated_at: new Date().toISOString(),
       };
@@ -162,16 +168,20 @@ export default function ProfesseurCoursPage() {
         classe_id: primaryClasse?.id,
         classes: targetClasses,
         professeur_id: prof.id,
-        file_url: formPdfUrl || "/documents/cours.pdf",
+        file_url: formPdfUrl || defaultSupportUrl,
         file_name: resolvedPdfName,
         file_type: "application/pdf",
         file_size_bytes: 1024 * 1024 * 2,
         external_url: null,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        matiere,
+        matiere: completeMatiere,
         classe: primaryClasse,
-        professeur: { ...prof, role: "professeur" as const, classe_id: null } as import("@/lib/types").Profile,
+        professeur: {
+          ...prof,
+          role: "professeur" as const,
+          classe_id: null,
+        } as import("@/lib/types").Profile,
         is_favorite: false,
       };
       saveCourse(newCourse);
@@ -196,13 +206,36 @@ export default function ProfesseurCoursPage() {
 
   // Fonction infaillible pour déterminer si un cours appartient au professeur connecté
   const isMyCourse = (c: Cours): boolean => {
-    const profIdMatch = c.professeur_id === prof.id || c.professeur?.id === prof.id;
-    const profMatriculeMatch = prof.matricule && (c.professeur?.matricule === prof.matricule || c.professeur_id === prof.matricule);
-    const profEmailMatch = prof.email && c.professeur?.email?.toLowerCase() === prof.email.toLowerCase();
-    const profUsernameMatch = prof.username && (c.professeur?.username === prof.username || (c.professeur?.email && c.professeur.email.toLowerCase().includes(prof.username.toLowerCase())));
-    const profNameMatch = prof.nom && c.professeur?.full_name?.toLowerCase().includes(prof.nom.toLowerCase());
-    const profMatiereMatch = prof.matieres?.some(
-      (pm) => pm.code === c.matiere?.code || String(pm.id) === String(c.matiere_id) || pm.nom.toLowerCase() === c.matiere?.name?.toLowerCase()
+    if (!c) return false;
+    const profIdMatch = Boolean(prof.id && (c.professeur_id === prof.id || c.professeur?.id === prof.id));
+    const profMatriculeMatch = Boolean(
+      prof.matricule &&
+      (c.professeur?.matricule?.toLowerCase() === prof.matricule.toLowerCase() ||
+       c.professeur_id?.toLowerCase() === prof.matricule.toLowerCase())
+    );
+    const profEmailMatch = Boolean(
+      prof.email &&
+      c.professeur?.email &&
+      c.professeur.email.toLowerCase() === prof.email.toLowerCase()
+    );
+    const profUsernameMatch = Boolean(
+      prof.username &&
+      c.professeur?.username &&
+      c.professeur.username.toLowerCase() === prof.username.toLowerCase()
+    );
+    const profNameMatch = Boolean(
+      (prof.full_name && c.professeur?.full_name && c.professeur.full_name.toLowerCase().includes(prof.full_name.toLowerCase())) ||
+      (prof.nom && c.professeur?.full_name && c.professeur.full_name.toLowerCase().includes(prof.nom.toLowerCase()))
+    );
+    const profMatiereMatch = Boolean(
+      prof.matieres &&
+      prof.matieres.length > 0 &&
+      prof.matieres.some(
+        (pm) =>
+          (pm.code && c.matiere?.code && pm.code.toUpperCase() === c.matiere.code.toUpperCase()) ||
+          (pm.id && c.matiere_id && String(pm.id) === String(c.matiere_id)) ||
+          (pm.nom && c.matiere?.name && pm.nom.toLowerCase() === c.matiere.name.toLowerCase())
+      )
     );
     return Boolean(profIdMatch || profMatriculeMatch || profEmailMatch || profUsernameMatch || profNameMatch || profMatiereMatch);
   };
@@ -604,11 +637,32 @@ export default function ProfesseurCoursPage() {
                     onChange={(e) => setFormMatiereId(e.target.value)}
                     className="w-full text-xs sm:text-sm border border-slate-200/90 dark:border-[#263241] rounded-lg px-3 py-2.5 bg-white dark:bg-[#151D27] text-slate-800 dark:text-[#F5F7FA] focus:outline-none focus:ring-1 focus:ring-[#0f2744] dark:focus:ring-[#e0521c]"
                   >
-                    {profMatieres.map((m) => (
-                      <option key={m.id} value={m.id}>
-                        {m.code} — {m.name} ({m.niveau || "L1/L2"})
-                      </option>
-                    ))}
+                    {profMatieres.length > 0 && profMatieres.length < matieres.length ? (
+                      <>
+                        <optgroup label="Vos matières principales">
+                          {profMatieres.map((m) => (
+                            <option key={m.id} value={m.id}>
+                              {m.code} — {m.name} ({m.niveau || "L1/L2"})
+                            </option>
+                          ))}
+                        </optgroup>
+                        <optgroup label="Toutes les autres matières HAS">
+                          {matieres
+                            .filter((m) => !profMatieres.some((pm) => pm.id === m.id))
+                            .map((m) => (
+                              <option key={m.id} value={m.id}>
+                                {m.code} — {m.name} ({m.niveau || "L1/L2"})
+                              </option>
+                            ))}
+                        </optgroup>
+                      </>
+                    ) : (
+                      matieres.map((m) => (
+                        <option key={m.id} value={m.id}>
+                          {m.code} — {m.name} ({m.niveau || "L1/L2"})
+                        </option>
+                      ))
+                    )}
                   </select>
 
                   {/* Affichage automatique des classes concernées par cette matière */}

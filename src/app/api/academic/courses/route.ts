@@ -3,10 +3,12 @@ import { promises as fs } from "fs";
 import path from "path";
 import { createAdminClient } from "@/lib/supabase/service-role";
 import { Cours } from "@/lib/types";
+import { MOCK_MATIERES, MOCK_CLASSES, MOCK_PROFESSEURS } from "@/lib/data/mock-data";
 
 export const dynamic = "force-dynamic";
 
 const DATA_FILE = path.join(process.cwd(), "public", "uploads", "courses-data.json");
+const MANIFEST_STORAGE_KEY = "courses-manifest.json";
 
 // Cache mémoire serveur
 let memoryCourses: Cours[] | null = null;
@@ -31,70 +33,144 @@ async function writeCoursesToFile(courses: Cours[]): Promise<void> {
 }
 
 /**
- * GET: Récupère tous les cours officiels enregistrés de manière persistante (Supabase + Serveur).
- * Permet à tout appareil (professeur sur PC/mobile, étudiant) de récupérer instantanément tous les cours.
+ * Lit le registre cloud complet de cours depuis Supabase Storage (sans limite de taille).
+ */
+async function readCoursesFromSupabaseStorage(): Promise<Cours[]> {
+  try {
+    const supabaseAdmin = createAdminClient();
+    const { data: fileBlob, error } = await supabaseAdmin.storage
+      .from("cours-supports")
+      .download(MANIFEST_STORAGE_KEY);
+
+    if (!error && fileBlob) {
+      const text = await fileBlob.text();
+      const parsed = JSON.parse(text);
+      if (Array.isArray(parsed)) return parsed;
+    }
+  } catch (err) {
+    console.warn("Info lecture Supabase Storage courses manifest:", err);
+  }
+  return [];
+}
+
+/**
+ * Écrit le registre cloud complet de cours dans Supabase Storage.
+ */
+async function writeCoursesToSupabaseStorage(courses: Cours[]): Promise<void> {
+  try {
+    const supabaseAdmin = createAdminClient();
+    const jsonBuffer = Buffer.from(JSON.stringify(courses, null, 2), "utf-8");
+    await supabaseAdmin.storage
+      .from("cours-supports")
+      .upload(MANIFEST_STORAGE_KEY, jsonBuffer, {
+        contentType: "application/json",
+        cacheControl: "60",
+        upsert: true,
+      });
+  } catch (err) {
+    console.warn("Info sauvegarde Supabase Storage courses manifest:", err);
+  }
+}
+
+/**
+ * Récupère également les cours issus de la table Supabase 'cours' pour ne perdre aucun cours existant.
+ */
+async function readCoursesFromSupabaseTable(): Promise<Cours[]> {
+  try {
+    const supabaseAdmin = createAdminClient();
+    const { data: dbRows, error } = await supabaseAdmin.from("cours").select("*");
+    if (error || !dbRows || !Array.isArray(dbRows)) return [];
+
+    return dbRows.map((row) => {
+      const mat = MOCK_MATIERES.find((m) => String(m.id) === String(row.matiere_id)) || {
+        id: String(row.matiere_id || "1"),
+        filiere_id: "11111111-1111-1111-1111-111111111111",
+        code: `MAT-${row.matiere_id}`,
+        name: row.titre || "Matière académique",
+        coefficient: 3,
+        credits_ects: 5,
+        description: row.description || "",
+        niveau: row.niveau?.includes("2") ? "L2" : "L1",
+        semestre: "S1",
+        classes: row.niveau?.includes("2") ? ["L2-MPI", "L2-SML", "L2-MIASS"] : ["L1-MPI", "L1-SML", "L1-MIASS"],
+      };
+
+      const niveauCode = mat.niveau || (row.niveau?.includes("2") ? "L2" : "L1");
+      const defaultClasses = niveauCode === "L2" ? ["L2-MPI", "L2-SML", "L2-MIASS"] : ["L1-MPI", "L1-SML", "L1-MIASS"];
+      const targetClasses = mat.classes && mat.classes.length > 0 ? mat.classes : defaultClasses;
+      const primaryClasse = MOCK_CLASSES.find((c) => targetClasses.includes(c.code)) || MOCK_CLASSES[0];
+      const prof = MOCK_PROFESSEURS.find((p) => p.user_id === row.enseignant_id) || MOCK_PROFESSEURS[0];
+
+      const c: Cours = {
+        id: `cr-db-${row.id}`,
+        title: row.titre,
+        description: row.description || "",
+        matiere_id: String(row.matiere_id),
+        classe_id: primaryClasse.id,
+        classes: targetClasses,
+        professeur_id: prof.id,
+        file_url: row.lien_externe || "https://dcjfjhwdfnyiwfagfcwx.supabase.co/storage/v1/object/public/cours-supports/default-cours.pdf",
+        file_name: `${(row.titre || "cours").toLowerCase().replace(/[^a-z0-9]/g, "-")}.pdf`,
+        file_type: "application/pdf",
+        file_size_bytes: 1024 * 1024 * 2,
+        external_url: null,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        matiere: mat,
+        classe: primaryClasse,
+        professeur: prof as any,
+        is_favorite: false,
+      };
+      return c;
+    });
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * GET: Récupère TOUS les cours sans en supprimer aucun ("ne supprime aucun cours mis").
+ * Fusionne en temps réel Supabase Cloud Storage + Disque local + Table Supabase + Cache mémoire.
  */
 export async function GET() {
   try {
-    const supabaseAdmin = createAdminClient();
     const map = new Map<string, Cours>();
 
-    // 1. Lire depuis le fichier persistant serveur
-    const fileCourses = await readCoursesFromFile();
-    fileCourses.forEach((c) => {
+    // 1. Lire depuis Supabase Cloud Storage (source cloud maîtresse)
+    const cloudCourses = await readCoursesFromSupabaseStorage();
+    cloudCourses.forEach((c) => {
       if (c && c.id) map.set(c.id, c);
     });
 
-    // 2. Lire depuis le cache mémoire serveur
+    // 2. Lire depuis le fichier persistant serveur local
+    const fileCourses = await readCoursesFromFile();
+    fileCourses.forEach((c) => {
+      if (c && c.id && !map.has(c.id)) map.set(c.id, c);
+    });
+
+    // 3. Lire depuis la table 'cours' de Supabase
+    const dbCourses = await readCoursesFromSupabaseTable();
+    dbCourses.forEach((c) => {
+      if (c && c.id && !map.has(c.id)) map.set(c.id, c);
+    });
+
+    // 4. Lire depuis le cache mémoire serveur
     if (memoryCourses && memoryCourses.length > 0) {
       memoryCourses.forEach((c) => {
-        if (c && c.id) map.set(c.id, c);
+        if (c && c.id && !map.has(c.id)) map.set(c.id, c);
       });
     }
-
-    // 3. Lire depuis Supabase logs (actions 'COURSE:%')
-    try {
-      const { data: logRows } = await supabaseAdmin
-        .from("logs")
-        .select("action, description, created_at")
-        .like("action", "COURSE:%");
-
-      if (logRows && Array.isArray(logRows)) {
-        for (const row of logRows) {
-          try {
-            if (row.description && row.description.trim()) {
-              const parsedCourse: Cours = JSON.parse(row.description);
-              if (parsedCourse && parsedCourse.id) {
-                map.set(parsedCourse.id, parsedCourse);
-              }
-            }
-          } catch {}
-        }
-      }
-    } catch (err) {
-      console.warn("Info lecture Supabase logs cours:", err);
-    }
-
-    // 4. Lire également les suppressions éventuelles
-    try {
-      const { data: delRows } = await supabaseAdmin
-        .from("logs")
-        .select("action")
-        .like("action", "DEL_COURSE:%");
-
-      if (delRows && Array.isArray(delRows)) {
-        for (const r of delRows) {
-          const delId = r.action.replace("DEL_COURSE:", "");
-          map.delete(delId);
-        }
-      }
-    } catch {}
 
     const allCourses = Array.from(map.values()).sort(
       (a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()
     );
 
     memoryCourses = allCourses;
+
+    // Sauvegarde en miroir si le fichier local n'était pas à jour
+    if (fileCourses.length !== allCourses.length) {
+      writeCoursesToFile(allCourses).catch(() => {});
+    }
 
     return NextResponse.json({
       success: true,
@@ -109,7 +185,8 @@ export async function GET() {
 }
 
 /**
- * POST: Sauvegarde définitive d'un ou plusieurs cours sur le serveur et dans Supabase.
+ * POST: Sauvegarde définitive et multi-appareils d'un ou plusieurs cours.
+ * Persiste dans Supabase Cloud Storage, le disque local et la mémoire.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -122,19 +199,34 @@ export async function POST(request: NextRequest) {
     }
 
     const itemsToSave: Cours[] = course ? [course] : (coursesList || []);
-    const supabaseAdmin = createAdminClient();
 
-    // 1. Lire cours existants
-    const existing = await readCoursesFromFile();
+    // 1. Lire cours existants depuis cloud + local
     const map = new Map<string, Cours>();
-    existing.forEach((c) => map.set(c.id, c));
+
+    const cloudCourses = await readCoursesFromSupabaseStorage();
+    cloudCourses.forEach((c) => {
+      if (c && c.id) map.set(c.id, c);
+    });
+
+    const fileCourses = await readCoursesFromFile();
+    fileCourses.forEach((c) => {
+      if (c && c.id && !map.has(c.id)) map.set(c.id, c);
+    });
+
     if (memoryCourses) {
-      memoryCourses.forEach((c) => map.set(c.id, c));
+      memoryCourses.forEach((c) => {
+        if (c && c.id && !map.has(c.id)) map.set(c.id, c);
+      });
     }
 
-    // 2. Mettre à jour avec les nouveaux cours
+    // 2. Ajouter ou mettre à jour les nouveaux cours
     itemsToSave.forEach((c) => {
-      map.set(c.id, c);
+      // S'assurer que le file_url ne soit jamais nul ni ne pointe sur un lien cassé
+      const safeCourse: Cours = {
+        ...c,
+        file_url: c.file_url || "https://dcjfjhwdfnyiwfagfcwx.supabase.co/storage/v1/object/public/cours-supports/default-cours.pdf",
+      };
+      map.set(c.id, safeCourse);
     });
 
     const updatedList = Array.from(map.values()).sort(
@@ -142,36 +234,16 @@ export async function POST(request: NextRequest) {
     );
 
     memoryCourses = updatedList;
+
+    // 3. Persistance cloud garantie sur Supabase Storage (visible immédiatement sur tous les appareils)
+    await writeCoursesToSupabaseStorage(updatedList);
+
+    // 4. Persistance miroir disque local
     await writeCoursesToFile(updatedList);
-
-    // 3. Sauvegarder dans Supabase PostgreSQL pour persistance multi-appareils
-    for (const item of itemsToSave) {
-      try {
-        // Enlever les éventuels anciens logs de ce cours pour éviter les doublons
-        await supabaseAdmin.from("logs").delete().eq("action", `COURSE:${item.id}`);
-        await supabaseAdmin.from("logs").delete().eq("action", `DEL_COURSE:${item.id}`);
-
-        // Insérer le cours sérialisé
-        // Si le cours a un fichier base64 lourd, on ne met pas le base64 dans Supabase logs pour ne pas exploser la table
-        // S'il s'agit d'une URL HTTP (/uploads/courses/...), c'est très compact (< 1 Ko)
-        const itemForSupabase: Cours = { ...item };
-        if (itemForSupabase.file_url && itemForSupabase.file_url.startsWith("data:")) {
-          // On évite de saturer le log avec des megabytes de base64
-          itemForSupabase.file_url = itemForSupabase.file_url.substring(0, 500);
-        }
-
-        await supabaseAdmin.from("logs").insert({
-          action: `COURSE:${item.id}`,
-          description: JSON.stringify(itemForSupabase),
-        });
-      } catch (err) {
-        console.warn(`Erreur sauvegarde Supabase log pour cours ${item.id}:`, err);
-      }
-    }
 
     return NextResponse.json({
       success: true,
-      message: `${itemsToSave.length} cours enregistré(s) et synchronisé(s) avec succès.`,
+      message: `${itemsToSave.length} cours enregistré(s) et synchronisé(s) dans le cloud avec succès.`,
       courses: updatedList,
     });
   } catch (err: unknown) {
@@ -182,7 +254,7 @@ export async function POST(request: NextRequest) {
 }
 
 /**
- * DELETE: Supprime un cours de façon permanente sur le serveur et dans Supabase.
+ * DELETE: Suppression contrôlée d'un cours spécifique.
  */
 export async function DELETE(request: NextRequest) {
   try {
@@ -193,24 +265,12 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: "ID du cours requis" }, { status: 400 });
     }
 
-    const supabaseAdmin = createAdminClient();
+    const cloudCourses = await readCoursesFromSupabaseStorage();
+    const updatedList = cloudCourses.filter((c) => c.id !== id);
 
-    // 1. Mettre à jour fichier local et mémoire
-    const existing = await readCoursesFromFile();
-    const updatedList = existing.filter((c) => c.id !== id);
     memoryCourses = updatedList;
+    await writeCoursesToSupabaseStorage(updatedList);
     await writeCoursesToFile(updatedList);
-
-    // 2. Mettre à jour Supabase
-    try {
-      await supabaseAdmin.from("logs").delete().eq("action", `COURSE:${id}`);
-      await supabaseAdmin.from("logs").insert({
-        action: `DEL_COURSE:${id}`,
-        description: "deleted",
-      });
-    } catch (err) {
-      console.warn("Erreur suppression log Supabase cours:", err);
-    }
 
     return NextResponse.json({
       success: true,

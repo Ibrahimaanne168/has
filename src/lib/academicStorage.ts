@@ -174,7 +174,11 @@ export async function syncCoursesWithServer(): Promise<Cours[]> {
         // En cas de dépassement de quota (par exemple anciens gros fichiers base64)
         const cleaned = merged.map((c) => {
           if (c.file_url && c.file_url.startsWith("data:")) {
-            return { ...c, file_url: "/documents/cours.pdf" };
+            return {
+              ...c,
+              file_url:
+                "https://dcjfjhwdfnyiwfagfcwx.supabase.co/storage/v1/object/public/cours-supports/default-cours.pdf",
+            };
           }
           return c;
         });
@@ -864,6 +868,17 @@ export function isCourseConcernedForStudent(
 
   const targetCodeNorm = normalizeClasseCode(userClasseCode);
   const targetNiveau = (userNiveau || (targetCodeNorm.startsWith("L2") ? "L2" : "L1")).toUpperCase();
+
+  // Déterminer le niveau du cours (L1 ou L2)
+  const courseLevel = (
+    course.matiere?.niveau ||
+    (course.classes && course.classes.some((cls) => cls.toUpperCase().includes("L2")) ? "L2" : "L1")
+  ).toUpperCase();
+
+  // Si le cours est du même niveau d'études (L1 ou L2) que l'étudiant : visibilité garantie
+  if (courseLevel === targetNiveau) {
+    return true;
+  }
 
   // 1. Classes spécifiées sur le cours ou sur sa matière
   const rawClasses = [

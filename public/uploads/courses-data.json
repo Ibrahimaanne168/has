@@ -1,1 +1,207 @@
-[]
+[
+  {
+    "id": "cr-db-1",
+    "title": "Introduction à la Programmation Python & Algorithmique",
+    "description": "Cours fondamental sur les bases du langage Python, les structures conditionnelles, boucles et fonctions.",
+    "matiere_id": "11",
+    "classe_id": "cls-l1-mpi",
+    "classes": [
+      "L1-MPI",
+      "L1-MIASS",
+      "L1-SML"
+    ],
+    "professeur_id": "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
+    "file_url": "https://dcjfjhwdfnyiwfagfcwx.supabase.co/storage/v1/object/public/cours-supports/default-cours.pdf",
+    "file_name": "introduction-programmation-python-algorithmique.pdf",
+    "file_type": "application/pdf",
+    "file_size_bytes": 2097152,
+    "external_url": null,
+    "created_at": "2026-09-01T08:00:00.000Z",
+    "updated_at": "2026-09-01T08:00:00.000Z",
+    "matiere": {
+      "id": "11",
+      "filiere_id": "11111111-1111-1111-1111-111111111111",
+      "code": "MAT011",
+      "name": "Programmation Python",
+      "coefficient": 3,
+      "credits_ects": 5,
+      "description": "Syntaxe fondamentale, structures de données, boucles et fonctions.",
+      "niveau": "L1",
+      "semestre": "S1",
+      "classes": [
+        "L1-MPI",
+        "L1-MIASS"
+      ]
+    },
+    "classe": {
+      "id": "cls-l1-mpi",
+      "filiere_id": "11111111-1111-1111-1111-111111111111",
+      "code": "L1-MPI",
+      "name": "Licence 1 — MPI",
+      "niveau": "L1",
+      "annee_scolaire": "2024-2025"
+    },
+    "professeur": {
+      "id": "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
+      "full_name": "Pape Ibrahima Samb",
+      "email": "halilsamb@halil-academie.com",
+      "matricule": "PROF001",
+      "specialite": "Mathématiques & Informatique"
+    },
+    "is_favorite": false
+  },
+  {
+    "id": "cr-db-2",
+    "title": "Analyse 1 : Suites numériques et Continuité",
+    "description": "Définition des limites, théorèmes de comparaison, fonctions continues et dérivabilité.",
+    "matiere_id": "9",
+    "classe_id": "cls-l1-mpi",
+    "classes": [
+      "L1-MPI",
+      "L1-SML",
+      "L1-MIASS"
+    ],
+    "professeur_id": "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
+    "file_url": "https://dcjfjhwdfnyiwfagfcwx.supabase.co/storage/v1/object/public/cours-supports/default-cours.pdf",
+    "file_name": "analyse-1-suites-numeriques-et-continuite.pdf",
+    "file_type": "application/pdf",
+    "file_size_bytes": 2097152,
+    "external_url": null,
+    "created_at": "2026-09-02T08:00:00.000Z",
+    "updated_at": "2026-09-02T08:00:00.000Z",
+    "matiere": {
+      "id": "9",
+      "filiere_id": "11111111-1111-1111-1111-111111111111",
+      "code": "MAT009",
+      "name": "Analyse 1",
+      "coefficient": 4,
+      "credits_ects": 6,
+      "description": "Suites réelles, limites, continuité et fonctions dérivables.",
+      "niveau": "L1",
+      "semestre": "S1",
+      "classes": [
+        "L1-MPI",
+        "L1-SML",
+        "L1-MIASS"
+      ]
+    },
+    "classe": {
+      "id": "cls-l1-mpi",
+      "filiere_id": "11111111-1111-1111-1111-111111111111",
+      "code": "L1-MPI",
+      "name": "Licence 1 — MPI",
+      "niveau": "L1",
+      "annee_scolaire": "2024-2025"
+    },
+    "professeur": {
+      "id": "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
+      "full_name": "Pape Ibrahima Samb",
+      "email": "halilsamb@halil-academie.com",
+      "matricule": "PROF001",
+      "specialite": "Mathématiques"
+    },
+    "is_favorite": false
+  },
+  {
+    "id": "cr-db-3",
+    "title": "Mécanique du Point Matériel",
+    "description": "Cinématique, lois de Newton, oscillateurs harmoniques et travail-énergie.",
+    "matiere_id": "12",
+    "classe_id": "cls-l1-mpi",
+    "classes": [
+      "L1-MPI",
+      "L1-SML"
+    ],
+    "professeur_id": "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
+    "file_url": "https://dcjfjhwdfnyiwfagfcwx.supabase.co/storage/v1/object/public/cours-supports/default-cours.pdf",
+    "file_name": "mecanique-du-point-materiel.pdf",
+    "file_type": "application/pdf",
+    "file_size_bytes": 2097152,
+    "external_url": null,
+    "created_at": "2026-09-03T08:00:00.000Z",
+    "updated_at": "2026-09-03T08:00:00.000Z",
+    "matiere": {
+      "id": "12",
+      "filiere_id": "11111111-1111-1111-1111-111111111111",
+      "code": "MAT012",
+      "name": "Mécanique du point",
+      "coefficient": 3,
+      "credits_ects": 5,
+      "description": "Cinématique du point matériel et lois fondamentales de Newton.",
+      "niveau": "L1",
+      "semestre": "S1",
+      "classes": [
+        "L1-MPI",
+        "L1-SML"
+      ]
+    },
+    "classe": {
+      "id": "cls-l1-mpi",
+      "filiere_id": "11111111-1111-1111-1111-111111111111",
+      "code": "L1-MPI",
+      "name": "Licence 1 — MPI",
+      "niveau": "L1",
+      "annee_scolaire": "2024-2025"
+    },
+    "professeur": {
+      "id": "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
+      "full_name": "Pape Ibrahima Samb",
+      "email": "halilsamb@halil-academie.com",
+      "matricule": "PROF001",
+      "specialite": "Physique"
+    },
+    "is_favorite": false
+  },
+  {
+    "id": "cr-db-4",
+    "title": "Algèbre Linéaire 1 : Espaces Vectoriels",
+    "description": "Sous-espaces vectoriels, familles génératrices, bases et dimensions.",
+    "matiere_id": "10",
+    "classe_id": "cls-l1-mpi",
+    "classes": [
+      "L1-MPI",
+      "L1-SML",
+      "L1-MIASS"
+    ],
+    "professeur_id": "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
+    "file_url": "https://dcjfjhwdfnyiwfagfcwx.supabase.co/storage/v1/object/public/cours-supports/default-cours.pdf",
+    "file_name": "algebre-lineaire-1-espaces-vectoriels.pdf",
+    "file_type": "application/pdf",
+    "file_size_bytes": 2097152,
+    "external_url": null,
+    "created_at": "2026-09-04T08:00:00.000Z",
+    "updated_at": "2026-09-04T08:00:00.000Z",
+    "matiere": {
+      "id": "10",
+      "filiere_id": "11111111-1111-1111-1111-111111111111",
+      "code": "MAT010",
+      "name": "Algèbre 1",
+      "coefficient": 4,
+      "credits_ects": 6,
+      "description": "Espaces vectoriels, applications linéaires et calcul matriciel.",
+      "niveau": "L1",
+      "semestre": "S1",
+      "classes": [
+        "L1-MPI",
+        "L1-SML",
+        "L1-MIASS"
+      ]
+    },
+    "classe": {
+      "id": "cls-l1-mpi",
+      "filiere_id": "11111111-1111-1111-1111-111111111111",
+      "code": "L1-MPI",
+      "name": "Licence 1 — MPI",
+      "niveau": "L1",
+      "annee_scolaire": "2024-2025"
+    },
+    "professeur": {
+      "id": "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
+      "full_name": "Pape Ibrahima Samb",
+      "email": "halilsamb@halil-academie.com",
+      "matricule": "PROF001",
+      "specialite": "Mathématiques"
+    },
+    "is_favorite": false
+  }
+]
