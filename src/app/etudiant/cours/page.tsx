@@ -114,6 +114,7 @@ export default function EtudiantCoursPage() {
       userName={user.full_name}
       userEmail={user.email}
       matriculeOrTitle={user.matricule || "ETU001"}
+      userNiveau={userNiveau}
     >
       <div className="space-y-6">
         {/* En-tête de page */}
@@ -165,10 +166,10 @@ export default function EtudiantCoursPage() {
           </div>
         </div>
 
-        {/* Vidéothèque & Enregistrements des cours en ligne sur Google Drive */}
+        {/* Vidéothèque & Enregistrements des cours en ligne sur Google Drive (cloisonné à la promotion de l'étudiant) */}
         <DriveRecordingsBanner
           role="etudiant"
-          userNiveau={activeNiveauTab === "all" ? userNiveau : activeNiveauTab}
+          userNiveau={userNiveau}
           variant="card"
         />
 

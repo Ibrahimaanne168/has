@@ -82,6 +82,7 @@ export default function EtudiantDashboard() {
       userName={user.full_name}
       userEmail={user.email}
       matriculeOrTitle={user.matricule || "ETU001"}
+      userNiveau={userNiveau}
     >
       <div className="space-y-7">
         {/* ============================================================================== */}

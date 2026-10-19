@@ -5,12 +5,8 @@ import {
   ExternalLink,
   Copy,
   CheckCircle2,
-  Video,
   FolderOpen,
-  Sparkles,
-  Info,
   Film,
-  UploadCloud,
 } from "lucide-react";
 import { DRIVE_RECORDINGS, getDriveLinkForNiveau } from "@/lib/driveLinks";
 import { GoogleDriveIcon, DriveRecordingsModal } from "./DriveRecordingsModal";
@@ -32,10 +28,9 @@ export function DriveRecordingsBanner({
   const [modalOpen, setModalOpen] = useState(false);
 
   const isProf = role === "professeur" || role === "admin";
-  const preferredNiveau = userNiveau?.toUpperCase().includes("2") ? "L2" : "L1";
-  const userDrive = getDriveLinkForNiveau(userNiveau);
-  const otherNiveau = preferredNiveau === "L1" ? "L2" : "L1";
-  const otherDrive = DRIVE_RECORDINGS[otherNiveau];
+  // Strict cloisonnement étudiant : L1 ne voit QUE L1, L2 ne voit QUE L2
+  const preferredNiveau: "L1" | "L2" = userNiveau?.toUpperCase().includes("2") ? "L2" : "L1";
+  const userDrive = getDriveLinkForNiveau(preferredNiveau);
 
   const handleCopy = (key: string, url: string, e: React.MouseEvent) => {
     e.preventDefault();
@@ -65,7 +60,7 @@ export function DriveRecordingsBanner({
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#0f2744] dark:text-cyan-400">
-                  {isProf ? "Dépôt des Cours Enregistrés" : "Replays & Absences"}
+                  {isProf ? "Dépôt des Cours Enregistrés" : `Replays & Absences — ${userDrive.badge}`}
                 </span>
                 <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold">
                   Google Drive
@@ -74,18 +69,19 @@ export function DriveRecordingsBanner({
               <h4 className="font-serif text-sm font-bold text-slate-900 dark:text-[#F5F7FA] truncate mt-0.5">
                 {isProf
                   ? "Enregistrements vidéo des cours en direct"
-                  : `Vidéos des cours en ligne — ${userDrive.label}`}
+                  : `Vidéothèque officielle — ${userDrive.label}`}
               </h4>
               <p className="text-[11px] text-slate-500 dark:text-[#AAB4C0] line-clamp-1">
                 {isProf
                   ? "Déposez vos enregistrements Meet pour les étudiants absents (L1 & L2)."
-                  : "Retrouvez l'intégralité des séances enregistrées pour réviser ou rattraper."}
+                  : `Accédez à l'intégralité des enregistrements vidéo de ${userDrive.label} pour réviser ou rattraper un cours manqué.`}
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto">
             {isProf ? (
+              // Le professeur enseigne aux deux promotions : accès L1 et L2
               <>
                 <a
                   href={DRIVE_RECORDINGS.L1.url}
@@ -109,42 +105,35 @@ export function DriveRecordingsBanner({
                 </a>
               </>
             ) : (
-              <>
-                <a
-                  href={userDrive.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#0f2744] dark:bg-[#1e3a63] hover:bg-[#183a62] dark:hover:bg-[#284c7f] text-white text-xs font-bold transition-all shadow-xs"
-                >
-                  <GoogleDriveIcon className="w-3.5 h-3.5" />
-                  <span>Ouvrir Drive {userDrive.niveau}</span>
-                  <ExternalLink className="w-3 h-3 opacity-70" />
-                </a>
-                <button
-                  type="button"
-                  onClick={() => setModalOpen(true)}
-                  className="px-2.5 py-2 rounded-lg border border-slate-300 dark:border-[#263241] bg-white dark:bg-[#151D27] text-slate-700 dark:text-[#AAB4C0] hover:bg-slate-50 dark:hover:bg-[#1e293b] text-xs font-semibold cursor-pointer"
-                  title="Voir les deux promotions"
-                >
-                  L1 &amp; L2
-                </button>
-              </>
+              // L'étudiant ne voit STRICTEMENT que le lien de sa promotion
+              <a
+                href={userDrive.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#0f2744] dark:bg-[#1e3a63] hover:bg-[#183a62] dark:hover:bg-[#284c7f] text-white text-xs font-bold transition-all shadow-xs"
+              >
+                <GoogleDriveIcon className="w-3.5 h-3.5" />
+                <span>Ouvrir le Drive {userDrive.niveau}</span>
+                <ExternalLink className="w-3 h-3 opacity-70" />
+              </a>
             )}
           </div>
         </div>
 
-        <DriveRecordingsModal
-          isOpen={modalOpen}
-          onClose={() => setModalOpen(false)}
-          role={role}
-          userNiveau={userNiveau}
-        />
+        {isProf && (
+          <DriveRecordingsModal
+            isOpen={modalOpen}
+            onClose={() => setModalOpen(false)}
+            role={role}
+            userNiveau={userNiveau}
+          />
+        )}
       </>
     );
   }
 
   // -------------------------------------------------------------
-  // VARIANT CARD (DÉTAILLÉE, RICHE ET MODERNE)
+  // VARIANT CARD (DÉTAILLÉE, RICHE ET STRICTEMENT CLOISONNÉE)
   // -------------------------------------------------------------
   return (
     <>
@@ -173,8 +162,8 @@ export function DriveRecordingsBanner({
                   Espace Dépôt Professeur
                 </span>
               ) : (
-                <span className="text-[11px] font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30 px-2 py-0.5 rounded-md border border-blue-200 dark:border-blue-800/40">
-                  Rattrapage &amp; Révisions
+                <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 px-2.5 py-0.5 rounded-md border border-emerald-200 dark:border-emerald-800/40">
+                  {userDrive.badge} uniquement
                 </span>
               )}
             </div>
@@ -182,13 +171,13 @@ export function DriveRecordingsBanner({
             <h3 className="font-serif text-lg sm:text-xl font-bold text-[#0f2744] dark:text-[#F5F7FA] leading-snug">
               {isProf
                 ? "Dépôt des Enregistrements Vidéo des Cours en Ligne"
-                : "Vidéothèque & Enregistrements des Cours en Ligne"}
+                : `Vidéothèque & Enregistrements — ${userDrive.label}`}
             </h3>
 
             <p className="text-xs sm:text-sm text-slate-600 dark:text-[#AAB4C0] leading-relaxed">
               {isProf
                 ? "Certains étudiants sont parfois absents lors des séances en direct. Enregistrez vos cours Google Meet et déposez les vidéos dans les dossiers Drive L1 ou L2 correspondants."
-                : `Vous avez été absent ou souhaitez réécouter une explication ? Tous les enregistrements des cours en ligne réalisés par vos professeurs sont archivés sur Google Drive.`}
+                : `Vous étiez absent ou souhaitez réécouter une explication ? Tous les enregistrements des cours en ligne de votre promotion (${userDrive.label}) sont archivés sur ce dossier Google Drive officiel.`}
             </p>
           </div>
 
@@ -248,65 +237,48 @@ export function DriveRecordingsBanner({
                 </div>
               </>
             ) : (
-              // Actions ÉTUDIANT : priorité à son niveau + accès à l'autre promotion
-              <>
-                <div className="flex items-center gap-2">
-                  <a
-                    href={userDrive.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#0f2744] dark:bg-[#183a62] hover:bg-[#183a62] dark:hover:bg-[#20497b] text-white font-bold text-xs shadow-xs transition-all cursor-pointer"
-                  >
-                    <GoogleDriveIcon className="w-4 h-4" />
-                    <span>Visionner les cours ({userDrive.niveau})</span>
-                    <ExternalLink className="w-3.5 h-3.5 opacity-70" />
-                  </a>
-                  <button
-                    type="button"
-                    onClick={(e) => handleCopy(userDrive.niveau, userDrive.url, e)}
-                    title={`Copier le lien Drive ${userDrive.niveau}`}
-                    className="p-2.5 rounded-xl border border-slate-200 dark:border-[#263241] bg-slate-50 dark:bg-[#151D27] hover:bg-slate-100 text-slate-600 dark:text-[#AAB4C0] cursor-pointer"
-                  >
-                    {copiedKey === userDrive.niveau ? (
-                      <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                    ) : (
-                      <Copy className="w-4 h-4" />
-                    )}
-                  </button>
-                </div>
-
-                <div className="flex items-center justify-between gap-2">
-                  <a
-                    href={otherDrive.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[11px] font-semibold text-slate-500 dark:text-[#AAB4C0] hover:text-[#e0521c] dark:hover:text-[#e0521c] inline-flex items-center gap-1 transition-colors"
-                  >
-                    <FolderOpen className="w-3 h-3" />
-                    <span>Accéder aussi aux cours de {otherDrive.label}</span>
-                    <ExternalLink className="w-2.5 h-2.5 opacity-60" />
-                  </a>
-
-                  <button
-                    type="button"
-                    onClick={() => setModalOpen(true)}
-                    className="text-[11px] font-bold text-[#0f2744] dark:text-cyan-400 hover:underline cursor-pointer"
-                  >
-                    Détails
-                  </button>
-                </div>
-              </>
+              // Actions ÉTUDIANT : STRICTEMENT LE DRIVE DE SA PROMOTION (aucun lien vers l'autre promotion)
+              <div className="flex items-center gap-2">
+                <a
+                  href={userDrive.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs shadow-xs transition-all cursor-pointer ${
+                    userDrive.niveau === "L2"
+                      ? "bg-[#e0521c] hover:bg-[#c84418] text-white"
+                      : "bg-[#0f2744] hover:bg-[#183a62] text-white"
+                  }`}
+                >
+                  <GoogleDriveIcon className="w-4 h-4" />
+                  <span>Visionner les cours ({userDrive.niveau})</span>
+                  <ExternalLink className="w-3.5 h-3.5 opacity-70" />
+                </a>
+                <button
+                  type="button"
+                  onClick={(e) => handleCopy(userDrive.niveau, userDrive.url, e)}
+                  title={`Copier le lien Drive ${userDrive.niveau}`}
+                  className="p-2.5 rounded-xl border border-slate-200 dark:border-[#263241] bg-slate-50 dark:bg-[#151D27] hover:bg-slate-100 text-slate-600 dark:text-[#AAB4C0] cursor-pointer"
+                >
+                  {copiedKey === userDrive.niveau ? (
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                  ) : (
+                    <Copy className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
             )}
           </div>
         </div>
       </div>
 
-      <DriveRecordingsModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        role={role}
-        userNiveau={userNiveau}
-      />
+      {isProf && (
+        <DriveRecordingsModal
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          role={role}
+          userNiveau={userNiveau}
+        />
+      )}
     </>
   );
 }

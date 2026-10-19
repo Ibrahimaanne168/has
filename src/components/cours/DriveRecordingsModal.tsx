@@ -58,7 +58,9 @@ export function DriveRecordingsModal({
     }
   };
 
-  const folders: DriveFolderInfo[] = [DRIVE_RECORDINGS.L1, DRIVE_RECORDINGS.L2];
+  const folders: DriveFolderInfo[] = isProf
+    ? [DRIVE_RECORDINGS.L1, DRIVE_RECORDINGS.L2]
+    : [DRIVE_RECORDINGS[preferredNiveau]];
 
   return (
     <div
@@ -79,12 +81,12 @@ export function DriveRecordingsModal({
             <h2 className="font-serif text-xl sm:text-2xl font-bold">
               {isProf
                 ? "Dépôt des Enregistrements de Cours"
-                : "Enregistrements & Replays des Cours"}
+                : `Enregistrements & Replays — Licence ${preferredNiveau === "L2" ? "2" : "1"}`}
             </h2>
             <p className="text-xs sm:text-sm text-slate-200 max-w-xl">
               {isProf
                 ? "Déposez vos enregistrements vidéo des cours en ligne pour permettre aux étudiants absents de rattraper leurs séances."
-                : "Vous étiez absent ou souhaitez réviser ? Visionnez l'intégralité des cours en ligne enregistrés par vos professeurs."}
+                : `Retrouvez tous les enregistrements vidéo des cours en ligne de votre promotion (${DRIVE_RECORDINGS[preferredNiveau].label}) sur Google Drive.`}
             </p>
           </div>
 
@@ -106,12 +108,12 @@ export function DriveRecordingsModal({
               <p className="font-semibold">
                 {isProf
                   ? "Consigne de dépôt pour les enseignants :"
-                  : "Accès libre pour tous les étudiants de HAS :"}
+                  : `Accès promotionnel réservé (${DRIVE_RECORDINGS[preferredNiveau].label}) :`}
               </p>
               <p className="text-amber-800/90 dark:text-amber-300/80 text-[11px] leading-relaxed">
                 {isProf
                   ? "Après chaque cours sur Google Meet, téléchargez l'enregistrement ou importez-le directement dans le dossier Drive de la promotion (L1 ou L2). Nommez idéalement le fichier : DATE_MATIERE_TITRE.mp4 (ex: 2026-10-19_Analyse_Chapitre1.mp4)."
-                  : "Les vidéos sont classées par promotion. Cliquez sur le dossier de votre classe pour ouvrir Google Drive et visionner les séances passées en streaming ou les télécharger."}
+                  : `Ce dossier contient exclusivement les cours enregistrés de votre promotion (${DRIVE_RECORDINGS[preferredNiveau].label}). Cliquez sur le bouton ci-dessous pour ouvrir Google Drive et visionner les séances passées.`}
               </p>
             </div>
           </div>
