@@ -11,6 +11,8 @@ import {
   Save,
   Clock,
   BookOpen,
+  Film,
+  FolderOpen,
 } from "lucide-react";
 import { SeanceEDT } from "@/lib/types";
 import {
@@ -19,6 +21,8 @@ import {
   syncSeanceMeetToServer,
 } from "@/lib/academicStorage";
 import { Button } from "@/components/ui/Button";
+import { DRIVE_RECORDINGS } from "@/lib/driveLinks";
+import { GoogleDriveIcon } from "@/components/cours/DriveRecordingsModal";
 
 interface ProfMeetModalProps {
   seance: SeanceEDT | null;
@@ -214,6 +218,41 @@ export function ProfMeetModal({
             <p className="text-[11px] text-slate-400 dark:text-[#687585] mt-1.5">
               Ce lien sera immédiatement affiché aux étudiants dans leur emploi du temps et leur permettra de rejoindre votre cours.
             </p>
+          </div>
+
+          {/* Rappel Enregistrement Vidéo pour les Absents */}
+          <div className="p-3.5 rounded-xl bg-blue-50/80 dark:bg-blue-950/30 border border-blue-200/80 dark:border-blue-800/40 space-y-2">
+            <div className="flex items-center gap-2">
+              <GoogleDriveIcon className="w-3.5 h-3.5" />
+              <span className="text-xs font-bold text-[#0f2744] dark:text-cyan-300">
+                Enregistrement de la séance (Google Drive)
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-600 dark:text-[#AAB4C0] leading-relaxed">
+              Pour permettre aux étudiants absents de rattraper ce cours, pensez à lancer l&apos;enregistrement dans Google Meet. Déposez ensuite le fichier vidéo dans le dossier Drive de la promotion :
+            </p>
+            <div className="flex items-center gap-2 pt-0.5">
+              <a
+                href={DRIVE_RECORDINGS.L1.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-[#111821] border border-blue-200 dark:border-blue-900 text-[#0f2744] dark:text-cyan-300 hover:bg-blue-50 text-[11px] font-bold shadow-2xs"
+              >
+                <FolderOpen className="w-3.5 h-3.5 text-[#0f2744] dark:text-cyan-300" />
+                <span>Drive L1 (Licence 1)</span>
+                <ExternalLink className="w-3 h-3 opacity-70" />
+              </a>
+              <a
+                href={DRIVE_RECORDINGS.L2.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-[#111821] border border-orange-200 dark:border-orange-900 text-[#e0521c] hover:bg-orange-50 text-[11px] font-bold shadow-2xs"
+              >
+                <FolderOpen className="w-3.5 h-3.5 text-[#e0521c]" />
+                <span>Drive L2 (Licence 2)</span>
+                <ExternalLink className="w-3 h-3 opacity-70" />
+              </a>
+            </div>
           </div>
 
           {/* Boutons d'action */}

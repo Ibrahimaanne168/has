@@ -26,12 +26,16 @@ import { getStoredCourses, getStoredEDTs, syncCoursesWithServer, isCourseConcern
 import { Cours, EmploiDuTemps } from "@/lib/types";
 import { downloadOrOpenDocument } from "@/lib/fileDownload";
 import { PdfViewerModal } from "@/components/ui/PdfViewerModal";
+import { DriveRecordingsBanner } from "@/components/cours/DriveRecordingsBanner";
 
 export default function EtudiantDashboard() {
   const { user } = useCurrentUser();
   const [courses, setCourses] = useState<Cours[]>([]);
   const [viewingCourse, setViewingCourse] = useState<Cours | null>(null);
   const [hasEDT, setHasEDT] = useState(false);
+
+  const userClasseCode = user.classe?.code || "";
+  const userNiveau = (user.classe?.niveau || (normalizeClasseCode(userClasseCode).startsWith("L2") ? "L2" : "L1")) as "L1" | "L2";
 
   useEffect(() => {
     const userClasseCode = user.classe?.code || "";
@@ -134,6 +138,11 @@ export default function EtudiantDashboard() {
             </Link>
           </div>
         </div>
+
+        {/* ============================================================================== */}
+        {/* ENREGISTREMENTS & REPLAYS GOOGLE DRIVE (L1 & L2) */}
+        {/* ============================================================================== */}
+        <DriveRecordingsBanner role="etudiant" userNiveau={userNiveau} variant="card" />
 
         {/* ============================================================================== */}
         {/* DERNIERS COURS PUBLIÉS (Cartes géométriques strictes) */}

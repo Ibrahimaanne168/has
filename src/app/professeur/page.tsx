@@ -34,6 +34,7 @@ import {
 import { Cours, Message, SeanceEDT } from "@/lib/types";
 import { ProfEmailVerificationBanner } from "@/components/professeur/ProfEmailVerificationBanner";
 import { ProfMeetModal } from "@/components/professeur/ProfMeetModal";
+import { DriveRecordingsBanner } from "@/components/cours/DriveRecordingsBanner";
 
 export default function ProfesseurDashboard() {
   const { prof } = useCurrentProfesseur();
@@ -223,6 +224,11 @@ export default function ProfesseurDashboard() {
             </Button>
           </Link>
         </div>
+
+        {/* ============================================================================== */}
+        {/* ENREGISTREMENTS VIDÉO DES COURS EN LIGNE (GOOGLE DRIVE L1 & L2) */}
+        {/* ============================================================================== */}
+        <DriveRecordingsBanner role="professeur" variant="card" />
 
         {/* Mes derniers cours publiés */}
         <div className="space-y-4">

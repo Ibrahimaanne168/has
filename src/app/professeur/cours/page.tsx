@@ -34,6 +34,7 @@ import {
   fileToDataUrl,
 } from "@/lib/academicStorage";
 import { PdfViewerModal } from "@/components/ui/PdfViewerModal";
+import { DriveRecordingsBanner } from "@/components/cours/DriveRecordingsBanner";
 
 export default function ProfesseurCoursPage() {
   const { prof } = useCurrentProfesseur();
@@ -311,6 +312,9 @@ export default function ProfesseurCoursPage() {
             <p className="text-xs sm:text-sm font-medium text-emerald-800 dark:text-emerald-300">{successMsg}</p>
           </div>
         )}
+
+        {/* Espace Dépôt des Enregistrements Vidéo des cours en direct (Google Drive L1 & L2) */}
+        <DriveRecordingsBanner role="professeur" variant="card" />
 
         {/* Barre de filtres : Vue Tous vs Mes cours, Recherche et Matières */}
         <div className="bg-white dark:bg-[#111821] p-4 rounded-xl border border-slate-200/90 dark:border-[#263241] shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] flex flex-col md:flex-row gap-3 items-center justify-between">

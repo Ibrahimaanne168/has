@@ -24,10 +24,12 @@ import {
   Sliders,
   LifeBuoy,
   UserCheck,
+  Film,
 } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { NotificationBanner } from "@/components/ui/NotificationBanner";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { DriveRecordingsModal, GoogleDriveIcon } from "@/components/cours/DriveRecordingsModal";
 import { UserRole } from "@/lib/types";
 
 interface NavItem {
@@ -57,6 +59,7 @@ export function DashboardLayout({
   const pathname = usePathname();
   const router = useRouter();
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [driveModalOpen, setDriveModalOpen] = useState(false);
 
   // Navigation par rôle
   const etudiantNav: NavItem[] = [
@@ -338,7 +341,35 @@ export function DashboardLayout({
               })}
             </nav>
 
-            <div className="mt-6 pt-4 border-t border-slate-100 dark:border-[#263241]">
+            {/* Widget Enregistrements Drive L1 & L2 (Professeurs & Étudiants) */}
+            <div className="mt-3 p-3 rounded-xl bg-gradient-to-br from-blue-50/80 via-white to-orange-50/60 dark:from-[#151D27] dark:via-[#151D27] dark:to-[#1e293b] border border-blue-200/70 dark:border-[#263241] shadow-2xs">
+              <div className="flex items-center justify-between gap-1 mb-1">
+                <div className="flex items-center gap-1.5">
+                  <GoogleDriveIcon className="w-3.5 h-3.5" />
+                  <span className="text-xs font-bold text-[#0f2744] dark:text-[#F5F7FA]">
+                    Drive Replays
+                  </span>
+                </div>
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300">
+                  L1 &amp; L2
+                </span>
+              </div>
+              <p className="text-[10.5px] text-slate-500 dark:text-[#AAB4C0] leading-tight mb-2">
+                {role === "professeur"
+                  ? "Déposez vos vidéos de cours pour les étudiants absents."
+                  : "Visionnez les replays et cours enregistrés."}
+              </p>
+              <button
+                type="button"
+                onClick={() => setDriveModalOpen(true)}
+                className="w-full py-1.5 px-2.5 rounded-lg bg-[#0f2744] hover:bg-[#183a62] dark:bg-[#e0521c] dark:hover:bg-[#c84418] text-white text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+              >
+                <Film className="w-3 h-3" />
+                <span>{role === "professeur" ? "Déposer sur le Drive" : "Ouvrir les replays"}</span>
+              </button>
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-slate-100 dark:border-[#263241]">
               <Link
                 href="/#contact"
                 className="flex items-center gap-2 px-3 py-2 text-xs text-slate-500 dark:text-[#AAB4C0] hover:text-slate-900 dark:hover:text-[#F5F7FA] transition-colors"
@@ -392,6 +423,37 @@ export function DashboardLayout({
                     );
                   })}
                 </nav>
+
+                {/* Widget Drive Replays Mobile */}
+                <div className="mt-3 p-3 rounded-xl bg-gradient-to-br from-blue-50 via-white to-orange-50 dark:from-[#151D27] dark:to-[#1e293b] border border-blue-200/70 dark:border-[#263241]">
+                  <div className="flex items-center justify-between gap-1 mb-1">
+                    <div className="flex items-center gap-1.5">
+                      <GoogleDriveIcon className="w-3.5 h-3.5" />
+                      <span className="text-xs font-bold text-[#0f2744] dark:text-[#F5F7FA]">
+                        Drive Replays
+                      </span>
+                    </div>
+                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300">
+                      L1 &amp; L2
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-500 dark:text-[#AAB4C0] mb-2 leading-tight">
+                    {role === "professeur"
+                      ? "Déposez vos enregistrements de cours."
+                      : "Accédez aux replays des cours en ligne."}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileSidebarOpen(false);
+                      setDriveModalOpen(true);
+                    }}
+                    className="w-full py-1.5 px-2 rounded-lg bg-[#0f2744] dark:bg-[#e0521c] text-white text-xs font-bold flex items-center justify-center gap-1.5"
+                  >
+                    <Film className="w-3.5 h-3.5" />
+                    <span>{role === "professeur" ? "Déposer sur le Drive" : "Ouvrir les replays"}</span>
+                  </button>
+                </div>
               </div>
 
               <div className="pt-4 border-t border-slate-200 dark:border-[#263241]">
@@ -410,6 +472,12 @@ export function DashboardLayout({
         {/* Main Content Area */}
         <main className="flex-1 min-w-0">{children}</main>
       </div>
+
+      <DriveRecordingsModal
+        isOpen={driveModalOpen}
+        onClose={() => setDriveModalOpen(false)}
+        role={role}
+      />
     </div>
   );
 }

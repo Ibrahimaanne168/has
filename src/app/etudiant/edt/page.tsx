@@ -22,6 +22,7 @@ import {
 } from "@/lib/academicStorage";
 import { SeanceEDT, JourSemaine, EmploiDuTemps } from "@/lib/types";
 import { downloadOrOpenDocument } from "@/lib/fileDownload";
+import { DriveRecordingsBanner } from "@/components/cours/DriveRecordingsBanner";
 
 const JOURS: JourSemaine[] = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
 
@@ -216,6 +217,9 @@ export default function EtudiantEDTPage() {
             ))}
           </div>
         </div>
+
+        {/* ── BANNIÈRE ENREGISTREMENTS DRIVE POUR ÉTUDIANTS ABSENTS ── */}
+        <DriveRecordingsBanner role="etudiant" userNiveau={userNiveau} variant="compact" />
 
         {/* ── EMPLOI DU TEMPS ÉTUDIANT (TABLEAU SUR PC, CARRÉS PLEINS SUR MOBILE) ── */}
         <div className="bg-white dark:bg-[#111821] rounded-2xl border border-slate-200/90 dark:border-[#263241] shadow-xs overflow-hidden">

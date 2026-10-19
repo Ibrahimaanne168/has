@@ -11,6 +11,7 @@ import { getStoredSeancesEDT, syncSeancesWithServer } from "@/lib/academicStorag
 import { SeanceEDT, JourSemaine } from "@/lib/types";
 import { ProfEmailVerificationBanner } from "@/components/professeur/ProfEmailVerificationBanner";
 import { ProfMeetModal } from "@/components/professeur/ProfMeetModal";
+import { DriveRecordingsBanner } from "@/components/cours/DriveRecordingsBanner";
 
 const JOURS: JourSemaine[] = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
 
@@ -285,6 +286,9 @@ export default function ProfesseurEDTPage() {
             ))}
           </div>
         </div>
+
+        {/* ── BANNIÈRE DÉPÔT ENREGISTREMENTS GOOGLE DRIVE (L1 & L2) ── */}
+        <DriveRecordingsBanner role="professeur" variant="compact" />
 
         {/* ── 1. FORMAT TABLEAU ENSEIGNANT (AFFICHAGE DE TOUS LES EDTS) ── */}
         {viewMode === "tableau" && (

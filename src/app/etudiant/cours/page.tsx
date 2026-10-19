@@ -21,6 +21,7 @@ import { getStoredCourses, syncCoursesWithServer, getStoredMatieres, isCourseCon
 import { Cours, Matiere } from "@/lib/types";
 import { downloadOrOpenDocument } from "@/lib/fileDownload";
 import { PdfViewerModal } from "@/components/ui/PdfViewerModal";
+import { DriveRecordingsBanner } from "@/components/cours/DriveRecordingsBanner";
 
 export default function EtudiantCoursPage() {
   const { user } = useCurrentUser();
@@ -163,6 +164,13 @@ export default function EtudiantCoursPage() {
             </button>
           </div>
         </div>
+
+        {/* Vidéothèque & Enregistrements des cours en ligne sur Google Drive */}
+        <DriveRecordingsBanner
+          role="etudiant"
+          userNiveau={activeNiveauTab === "all" ? userNiveau : activeNiveauTab}
+          variant="card"
+        />
 
         {/* Barre de Recherche & Filtres géométrique */}
         <div className="bg-white dark:bg-[#111821] p-4 rounded-xl border border-slate-200/90 dark:border-[#263241] shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] dark:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.4)] flex flex-col md:flex-row gap-3 items-center justify-between">
