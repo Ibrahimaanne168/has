@@ -132,6 +132,7 @@ export interface SeanceEDT {
   semaine?: string;
   type_seance?: "CM" | "TD" | "TP" | "COURS";
   created_at: string;
+  updated_at?: string;
   // Niveau et filières concernées
   niveau?: "L1" | "L2" | "L3" | "Master";
   filieres?: ("MPI" | "SML" | "MIASS")[];       // [] ou undefined = toutes les filières du niveau

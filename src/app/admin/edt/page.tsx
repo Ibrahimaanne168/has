@@ -14,6 +14,7 @@ import {
   getStoredSeancesEDT, saveSeanceEDT, deleteSeanceEDT,
   getStoredProfesseurs, getStoredMatieres, resetDefaultSeancesEDT,
   syncSeancesWithServer, DEFAULT_SEANCES_EDT, clearAllMeetLinks,
+  pushSeancesToServer,
 } from "@/lib/academicStorage";
 import { recordAuditLog } from "@/lib/auditLogger";
 
@@ -536,8 +537,10 @@ export default function AdminEDTPage() {
       return;
     }
     const next = [...current, slotStr];
-    setSlotsMap((prev) => ({ ...prev, [activeNiveau]: next }));
+    const newSlotsMap = { ...slotsMap, [activeNiveau]: next };
+    setSlotsMap(newSlotsMap);
     savePromoSlots(activeNiveau, next);
+    pushSeancesToServer(seances, "direction@halil-academie.com", newSlotsMap);
     flash(`✓ Ligne horaire « ${slotStr} » ajoutée à l'EDT Licence ${activeNiveau === "L2" ? "2" : "1"}`);
     setAddLineModalOpen(false);
   };
@@ -553,7 +556,7 @@ export default function AdminEDTPage() {
       );
       if (!ok) return;
       inSlot.forEach((s) => {
-        deleteSeanceEDT(s.id);
+        deleteSeanceEDT(s.id, "direction@halil-academie.com");
         recordAuditLog({
           action: "SUPPRESSION_EDT",
           details: {
@@ -574,8 +577,10 @@ export default function AdminEDTPage() {
 
     const current = slotsMap[activeNiveau] || DEFAULT_SLOTS;
     const next = current.filter((x) => x !== slotStr);
-    setSlotsMap((prev) => ({ ...prev, [activeNiveau]: next }));
+    const newSlotsMap = { ...slotsMap, [activeNiveau]: next };
+    setSlotsMap(newSlotsMap);
     savePromoSlots(activeNiveau, next);
+    pushSeancesToServer(seances, "direction@halil-academie.com", newSlotsMap);
     reloadData();
     flash(`Ligne « ${slotStr} » supprimée.`);
   };
@@ -583,12 +588,14 @@ export default function AdminEDTPage() {
   // Dupliquer une séance
   const handleDuplicate = (s: SeanceEDT, e?: React.MouseEvent) => {
     e?.stopPropagation();
+    const nowIso = new Date().toISOString();
     const newSeance: SeanceEDT = {
       ...s,
       id: `seance-${Date.now()}-${Math.random().toString(36).substring(2, 5)}`,
-      created_at: new Date().toISOString(),
+      created_at: nowIso,
+      updated_at: nowIso,
     };
-    saveSeanceEDT(newSeance);
+    saveSeanceEDT(newSeance, "direction@halil-academie.com");
     recordAuditLog({
       action: "PUBLICATION_EDT",
       details: {
@@ -607,7 +614,7 @@ export default function AdminEDTPage() {
   const handleDelete = (id: string, matiere: string, e?: React.MouseEvent) => {
     e?.stopPropagation();
     if (confirm(`Confirmez-vous la suppression du cours « ${matiere} » ?`)) {
-      deleteSeanceEDT(id);
+      deleteSeanceEDT(id, "direction@halil-academie.com");
       recordAuditLog({
         action: "SUPPRESSION_EDT",
         details: { matiere, seance_id: id },
@@ -631,6 +638,7 @@ export default function AdminEDTPage() {
       return;
     }
 
+    const nowIso = new Date().toISOString();
     const seanceData: SeanceEDT = {
       id: editingSeance?.id || `seance-${Date.now()}-${Math.random().toString(36).substring(2, 5)}`,
       classe_id: `promo-${activeNiveau.toLowerCase()}`,
@@ -646,10 +654,11 @@ export default function AdminEDTPage() {
       type_seance: "COURS",
       niveau: activeNiveau,
       filieres: formFilieres.length === 3 ? [] : formFilieres,
-      created_at: editingSeance?.created_at || new Date().toISOString(),
+      created_at: editingSeance?.created_at || nowIso,
+      updated_at: nowIso,
     };
 
-    saveSeanceEDT(seanceData);
+    saveSeanceEDT(seanceData, "direction@halil-academie.com");
     reloadData();
 
     recordAuditLog({

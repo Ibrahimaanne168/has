@@ -54,16 +54,32 @@ export async function handleReminderNotification(params: {
 
   if (allSeances.length === 0) {
     try {
-      const { data: syncData } = await supabaseAdmin
-        .from("audit_logs")
-        .select("details")
-        .eq("action", "EDT_SEANCES_SYNC")
-        .order("created_at", { ascending: false })
-        .limit(1);
-      if (syncData && syncData.length > 0 && Array.isArray(syncData[0].details?.seances) && syncData[0].details.seances.length > 0) {
-        allSeances = syncData[0].details.seances;
+      // 1. Essai de lecture depuis Supabase Storage (emplois-du-temps ou cours-supports)
+      const { data: fileBlob } = await supabaseAdmin.storage
+        .from("emplois-du-temps")
+        .download("seances-manifest.json");
+      if (fileBlob) {
+        const text = await fileBlob.text();
+        const parsed = JSON.parse(text);
+        if (Array.isArray(parsed) && parsed.length > 0) allSeances = parsed;
+        else if (parsed && Array.isArray(parsed.seances) && parsed.seances.length > 0) allSeances = parsed.seances;
       }
     } catch {}
+
+    if (allSeances.length === 0) {
+      try {
+        const { data: backupBlob } = await supabaseAdmin.storage
+          .from("cours-supports")
+          .download("seances-manifest.json");
+        if (backupBlob) {
+          const text = await backupBlob.text();
+          const parsed = JSON.parse(text);
+          if (Array.isArray(parsed) && parsed.length > 0) allSeances = parsed;
+          else if (parsed && Array.isArray(parsed.seances) && parsed.seances.length > 0) allSeances = parsed.seances;
+        }
+      } catch {}
+    }
+
     if (allSeances.length === 0) {
       allSeances = DEFAULT_SEANCES_EDT;
     }

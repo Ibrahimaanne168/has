@@ -1318,7 +1318,11 @@ export function saveSeanceEDT(seance: SeanceEDT, adminEmail?: string): void {
   if (cleanMeet && !cleanMeet.startsWith("http://") && !cleanMeet.startsWith("https://")) {
     cleanMeet = `https://${cleanMeet}`;
   }
-  const cleanSeance: SeanceEDT = { ...seance, meet_url: cleanMeet };
+  const cleanSeance: SeanceEDT = {
+    ...seance,
+    meet_url: cleanMeet,
+    updated_at: seance.updated_at || new Date().toISOString(),
+  };
 
   // Mémoriser de façon persistante dans le stockage protégé des liens Meet
   saveMeetLink(cleanSeance.id, cleanMeet);
@@ -1356,20 +1360,42 @@ export async function pushDeletionToServer(deletedId: string, adminEmail?: strin
 /**
  * Envoie la liste des séances au serveur pour partage instantané avec tous les comptes
  */
-export async function pushSeancesToServer(seances: SeanceEDT[], adminEmail?: string): Promise<void> {
+export async function pushSeancesToServer(
+  seances: SeanceEDT[],
+  adminEmail?: string,
+  slots?: Record<"L1" | "L2", string[]>
+): Promise<void> {
   if (typeof window === "undefined") return;
   try {
+    let slotsToSend = slots;
+    if (!slotsToSend) {
+      try {
+        const rawL1 = localStorage.getItem("has_edt_slots_L1");
+        const rawL2 = localStorage.getItem("has_edt_slots_L2");
+        slotsToSend = {
+          L1: rawL1 ? JSON.parse(rawL1) : ["21:00–23:00"],
+          L2: rawL2 ? JSON.parse(rawL2) : ["21:00–23:00"],
+        };
+      } catch {}
+    }
+
     await fetch("/api/academic/seances", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ seances, adminEmail: adminEmail || "direction@halil-academie.com" }),
+      body: JSON.stringify({
+        seances,
+        slots: slotsToSend,
+        adminEmail: adminEmail || "direction@halil-academie.com",
+      }),
     });
-  } catch {}
+  } catch (err) {
+    console.warn("Info pushSeancesToServer:", err);
+  }
 }
 
 /**
  * Récupère les séances enregistrées sur le serveur Supabase et fusionne les liens Meet
- * sans JAMAIS écraser un lien Meet existant par null.
+ * et modifications récentes sans JAMAIS écraser une modification locale par d'anciennes valeurs.
  */
 export async function syncSeancesWithServer(): Promise<SeanceEDT[]> {
   if (typeof window === "undefined") return DEFAULT_SEANCES_EDT;
@@ -1382,13 +1408,14 @@ export async function syncSeancesWithServer(): Promise<SeanceEDT[]> {
       const deletedSet = new Set(getDeletedSeanceIds());
       const meetLinks = getStoredMeetLinks();
       const map = new Map<string, SeanceEDT>();
+      let hasLocalChangesToPush = false;
 
-      // Initialiser avec local
+      // 1. Initialiser avec les séances locales
       local.forEach((s) => {
         if (!deletedSet.has(s.id)) map.set(s.id, s);
       });
 
-      // Mettre à jour avec les données serveur distantes
+      // 2. Fusion intelligente avec les séances distantes
       data.seances.forEach((serverSeance: SeanceEDT) => {
         if (!deletedSet.has(serverSeance.id)) {
           const existing = map.get(serverSeance.id);
@@ -1397,16 +1424,32 @@ export async function syncSeancesWithServer(): Promise<SeanceEDT[]> {
 
           if (finalMeet) {
             meetLinks[serverSeance.id] = finalMeet;
+          } else if (existing?.meet_url) {
+            // Préserver le lien existant
           } else {
             delete meetLinks[serverSeance.id];
           }
 
           if (existing) {
-            map.set(serverSeance.id, {
-              ...existing,
-              ...serverSeance,
-              meet_url: finalMeet,
-            });
+            const localTime = new Date(existing.updated_at || existing.created_at || 0).getTime();
+            const serverTime = new Date(serverSeance.updated_at || serverSeance.created_at || 0).getTime();
+
+            if (localTime > serverTime) {
+              // Modification locale PLUS RÉCENTE : préserver absolument la version locale
+              map.set(serverSeance.id, {
+                ...serverSeance,
+                ...existing,
+                meet_url: existing.meet_url || finalMeet,
+              });
+              hasLocalChangesToPush = true;
+            } else {
+              // Données serveur plus récentes ou identiques
+              map.set(serverSeance.id, {
+                ...existing,
+                ...serverSeance,
+                meet_url: finalMeet || existing.meet_url,
+              });
+            }
           } else {
             map.set(serverSeance.id, {
               ...serverSeance,
@@ -1416,14 +1459,40 @@ export async function syncSeancesWithServer(): Promise<SeanceEDT[]> {
         }
       });
 
+      // 3. Détecter si le cache local a des séances non encore synchronisées sur le serveur
+      local.forEach((lc) => {
+        if (!deletedSet.has(lc.id) && !data.seances.some((s: SeanceEDT) => s.id === lc.id)) {
+          hasLocalChangesToPush = true;
+        }
+      });
+
+      // Synchroniser les créneaux slots reçus du serveur
+      if (data.slots && typeof window !== "undefined") {
+        try {
+          if (Array.isArray(data.slots.L1) && data.slots.L1.length > 0) {
+            localStorage.setItem("has_edt_slots_L1", JSON.stringify(data.slots.L1));
+          }
+          if (Array.isArray(data.slots.L2) && data.slots.L2.length > 0) {
+            localStorage.setItem("has_edt_slots_L2", JSON.stringify(data.slots.L2));
+          }
+        } catch {}
+      }
+
       const merged = Array.from(map.values());
       setStorageItem(STORAGE_KEYS.SEANCES_EDT, merged);
       setStorageItem(STORAGE_KEYS.MEET_LINKS, meetLinks);
 
+      // Si le local avait des modifications plus récentes, les pousser immédiatement au serveur
+      if (hasLocalChangesToPush) {
+        pushSeancesToServer(merged);
+      }
+
       window.dispatchEvent(new CustomEvent("has_academic_storage_updated"));
       return merged;
     }
-  } catch {}
+  } catch (err) {
+    console.warn("Info syncSeancesWithServer:", err);
+  }
   return getStoredSeancesEDT();
 }
 
