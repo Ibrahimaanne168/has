@@ -75,8 +75,8 @@ export default function EtudiantEDTPage() {
   const [copiedLink, setCopiedLink] = useState<string | null>(null);
 
   // Niveau et filière de l'étudiant (strictement cloisonné : L1 ne voit que L1, L2 que L2)
-  const userNiveau = (user.classe?.niveau || "L1") as "L1" | "L2";
-  const userFiliere = (user.filiere?.code || "MIASS") as "MPI" | "SML" | "MIASS";
+  const userNiveau = (user.classe?.niveau || (user.classe?.code?.startsWith("L2") ? "L2" : "L1")) as "L1" | "L2";
+  const userFiliere = (user.filiere?.code || (user.classe?.code?.includes("MPI") ? "MPI" : user.classe?.code?.includes("SML") ? "SML" : "MIASS")) as "MPI" | "SML" | "MIASS";
 
   // Filtre d'affichage : "MINE" (ses cours), "ALL" (tous les cours de sa promotion), ou par filière
   const [filterMode, setFilterMode] = useState<string>("MINE");
@@ -88,8 +88,17 @@ export default function EtudiantEDTPage() {
 
   useEffect(() => {
     reload();
-    // Synchroniser avec la base Supabase pour obtenir immédiatement les liens Google Meet enregistrés par l'admin
-    syncSeancesWithServer().then(() => reload()).catch(() => {});
+    // Synchroniser avec Supabase pour obtenir instantanément l'EDT officiel mis à jour
+    syncSeancesWithServer()
+      .then((synced) => {
+        if (synced && Array.isArray(synced) && synced.length > 0) {
+          setSeances(synced);
+        } else {
+          reload();
+        }
+      })
+      .catch(() => reload());
+
     window.addEventListener("has_academic_storage_updated", reload);
     return () => window.removeEventListener("has_academic_storage_updated", reload);
   }, []);

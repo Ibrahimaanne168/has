@@ -114,10 +114,10 @@ async function writeSeancesToSupabaseStorage(
     };
     const jsonBuffer = Buffer.from(JSON.stringify(payload, null, 2), "utf-8");
 
-    // Écriture sur 'emplois-du-temps'
+    // Écriture sur 'emplois-du-temps' avec cache-control 0 pour réactivité immédiate
     await supabaseAdmin.storage.from(BUCKET_PRIMARY).upload(MANIFEST_STORAGE_KEY, jsonBuffer, {
       contentType: "application/json",
-      cacheControl: "60",
+      cacheControl: "0",
       upsert: true,
     });
 
@@ -126,7 +126,7 @@ async function writeSeancesToSupabaseStorage(
       .from(BUCKET_BACKUP)
       .upload(MANIFEST_STORAGE_KEY, jsonBuffer, {
         contentType: "application/json",
-        cacheControl: "60",
+        cacheControl: "0",
         upsert: true,
       })
       .catch(() => {});
@@ -136,77 +136,37 @@ async function writeSeancesToSupabaseStorage(
 }
 
 /**
- * GET: Récupère les séances officielles persistées (Cloud Storage + Fichier disque + Logs).
- * Garantit que TOUTES les modifications faites pour la semaine sont conservées à tout jamais.
+ * GET: Récupère les séances officielles persistées (Cloud Storage + Fichier disque).
+ * Garantit que TOUTES les modifications faites sont universellement visibles sur tous les appareils.
  */
 export async function GET() {
+  const noCacheHeaders = {
+    "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+    "Pragma": "no-cache",
+    "Expires": "0",
+  };
+
   try {
-    const supabaseAdmin = createAdminClient();
+    const obsoleteIds = new Set([
+      "seance-has-l1-partage-info",
+      "seance-has-l2-partage-info",
+      "seance-has-l2-magneto",
+      "seance-has-l2-analyse3",
+      "seance-has-l1-electricite",
+      "seance-has-l1-economie",
+    ]);
 
-    // 0. Vérifier s'il y a eu un reset global de tous les liens Meet
-    const { data: resetRows } = await supabaseAdmin
-      .from("logs")
-      .select("created_at")
-      .eq("action", "MEETS_RESET_ALL")
-      .order("created_at", { ascending: false })
-      .limit(1);
-
-    const resetTimestamp = resetRows && resetRows[0] ? new Date(resetRows[0].created_at).getTime() : 0;
-
-    // 1. Récupérer tous les liens Meet enregistrés dans public.logs
-    const { data: meetRows } = await supabaseAdmin
-      .from("logs")
-      .select("action, description, created_at")
-      .like("action", "MEET:%")
-      .order("created_at", { ascending: true });
-
-    const meetMap: Record<string, string> = {};
-    if (meetRows && Array.isArray(meetRows)) {
-      meetRows.forEach((r) => {
-        const rowTime = r.created_at ? new Date(r.created_at).getTime() : 0;
-        if (rowTime > resetTimestamp) {
-          const sId = r.action.replace("MEET:", "");
-          if (r.description && r.description.trim()) {
-            meetMap[sId] = r.description.trim();
-            memoryMeetLinks[sId] = r.description.trim();
-          }
-        }
-      });
-    }
-
-    // 2. Récupérer les séances supprimées (DEL_SEANCE:id)
-    const { data: delRows } = await supabaseAdmin
-      .from("logs")
-      .select("action")
-      .like("action", "DEL_SEANCE:%");
-
-    const deletedIds = new Set<string>();
-    if (delRows && Array.isArray(delRows)) {
-      delRows.forEach((r) => {
-        deletedIds.add(r.action.replace("DEL_SEANCE:", ""));
-      });
-    }
-
-    // 3. Charger les séances depuis les différentes couches de persistance
+    // 1. Lire directement depuis Supabase Cloud Storage (source cloud maîtresse multi-appareils)
     let loadedSeances: SeanceEDT[] = [];
     let loadedSlots: Record<"L1" | "L2", string[]> | undefined = undefined;
 
-    // A. Depuis le cache mémoire si disponible
-    if (memorySeancesStore && memorySeancesStore.length > 0) {
-      loadedSeances = memorySeancesStore;
-      loadedSlots = memorySlotsStore || undefined;
+    const cloudData = await readSeancesFromSupabaseStorage();
+    if (cloudData.seances && cloudData.seances.length > 0) {
+      loadedSeances = cloudData.seances;
+      loadedSlots = cloudData.slots;
     }
 
-    // B. Si pas en mémoire, lire depuis Supabase Cloud Storage
-    if (loadedSeances.length === 0) {
-      const cloudData = await readSeancesFromSupabaseStorage();
-      if (cloudData.seances && cloudData.seances.length > 0) {
-        loadedSeances = cloudData.seances;
-        loadedSlots = cloudData.slots;
-      }
-    }
-
-    // C. Si pas dans le cloud, lire depuis le fichier disque local
+    // 2. Si non trouvé dans le cloud, lire depuis le fichier disque local
     if (loadedSeances.length === 0) {
       const fileData = await readSeancesFromFile();
       if (fileData.seances && fileData.seances.length > 0) {
@@ -215,53 +175,38 @@ export async function GET() {
       }
     }
 
-    // D. Si toujours aucune donnée sauvegardée, initialiser avec DEFAULT_SEANCES_EDT
+    // 3. Si toujours aucune donnée sauvegardée, initialiser avec DEFAULT_SEANCES_EDT
     const isFirstInit = loadedSeances.length === 0;
     const baseList: SeanceEDT[] = isFirstInit ? DEFAULT_SEANCES_EDT : loadedSeances;
 
-    const map = new Map<string, SeanceEDT>();
-    baseList.forEach((s) => {
-      if (s && s.id && !deletedIds.has(s.id)) {
-        map.set(s.id, { ...s });
-      }
-    });
+    const cleanedList = baseList.filter((s) => s && s.id && !obsoleteIds.has(s.id));
 
-    // Si première initialisation, persister immédiatement dans le cloud et sur disque
-    if (isFirstInit) {
-      const initialList = Array.from(map.values());
-      memorySeancesStore = initialList;
-      writeSeancesToSupabaseStorage(initialList).catch(() => {});
-      writeSeancesToFile(initialList).catch(() => {});
-    } else {
-      memorySeancesStore = Array.from(map.values());
-      if (loadedSlots) memorySlotsStore = loadedSlots;
-    }
+    // Mettre à jour le cache mémoire serveur
+    memorySeancesStore = cleanedList;
+    if (loadedSlots) memorySlotsStore = loadedSlots;
 
-    // 4. Injecter les liens Google Meet persistés
-    const finalSeances = Array.from(map.values()).map((s) => {
-      const persistedMeet = meetMap[s.id] || memoryMeetLinks[s.id] || s.meet_url;
-      return {
-        ...s,
-        meet_url: persistedMeet && persistedMeet.trim() ? persistedMeet.trim() : null,
-      };
-    });
-
-    return NextResponse.json({
-      success: true,
-      hasSavedData: !isFirstInit,
-      seances: finalSeances,
-      slots: memorySlotsStore || loadedSlots || undefined,
-      meetLinksCount: Object.keys(meetMap).length,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        hasSavedData: !isFirstInit,
+        seances: cleanedList,
+        slots: memorySlotsStore || loadedSlots || undefined,
+        count: cleanedList.length,
+      },
+      { headers: noCacheHeaders }
+    );
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : "Erreur interne";
-    return NextResponse.json({
-      success: true,
-      hasSavedData: false,
-      source: "fallback",
-      seances: DEFAULT_SEANCES_EDT,
-      warning: msg,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        hasSavedData: false,
+        source: "fallback",
+        seances: DEFAULT_SEANCES_EDT,
+        warning: msg,
+      },
+      { headers: noCacheHeaders }
+    );
   }
 }
 

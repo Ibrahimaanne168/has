@@ -927,137 +927,28 @@ export function isCourseConcernedForStudent(
 }
 
 
-// Emploi du temps de référence HAS (Un seul EDT par promotion L1 et L2, filières différenciées)
+// Emploi du temps officiel HAS (Un seul EDT par promotion L1 et L2, filières différenciées)
 // Tous les cours officiels de HAS sont dispensés en soirée sur le créneau 21h00 - 23h00
 export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [
-  // --- PROMOTION LICENCE 2 (Semestre 4 - Cours Officiels en Ligne) ---
-  {
-    id: "seance-has-l2-analyse4",
-    classe_id: "promo-l2",
-    classe_nom: "Licence 2",
-    semestre: "Semestre 4",
-    jour: "Mardi",
-    heure_debut: "21:00",
-    heure_fin: "23:00",
-    matiere_nom: "Analyse 4",
-    matiere_code: "MAT021",
-    professeur_nom: "Pape Ibrahima Samb",
-    professeur_id: "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
-    type_seance: "COURS",
-    meet_url: null,
-    niveau: "L2",
-    filieres: ["MIASS", "MPI"],
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: "seance-has-l2-proba",
-    classe_id: "promo-l2",
-    classe_nom: "Licence 2",
-    semestre: "Semestre 4",
-    jour: "Jeudi",
-    heure_debut: "21:00",
-    heure_fin: "23:00",
-    matiere_nom: "Probabilité",
-    matiere_code: "MAT020",
-    professeur_nom: "Pape Ibrahima Samb",
-    professeur_id: "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
-    type_seance: "COURS",
-    meet_url: null,
-    niveau: "L2",
-    filieres: ["MIASS", "MPI"],
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: "seance-has-l2-chimie-org",
-    classe_id: "promo-l2",
-    classe_nom: "Licence 2",
-    semestre: "Semestre 4",
-    jour: "Jeudi",
-    heure_debut: "21:00",
-    heure_fin: "23:00",
-    matiere_nom: "Chimie Organique",
-    matiere_code: "MAT023",
-    professeur_nom: "Ndiogou Ndiaye",
-    professeur_id: "25013b47-9a78-4f97-8552-977450abdad2",
-    type_seance: "COURS",
-    meet_url: null,
-    niveau: "L2",
-    filieres: ["SML"],
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: "seance-has-l2-chimie-inorg",
-    classe_id: "promo-l2",
-    classe_nom: "Licence 2",
-    semestre: "Semestre 4",
-    jour: "Samedi",
-    heure_debut: "21:00",
-    heure_fin: "23:00",
-    matiere_nom: "Chimie Inorganique",
-    matiere_code: "MAT024",
-    professeur_nom: "Ndiogou Ndiaye",
-    professeur_id: "25013b47-9a78-4f97-8552-977450abdad2",
-    type_seance: "COURS",
-    meet_url: null,
-    niveau: "L2",
-    filieres: ["SML"],
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: "seance-has-l2-electromag",
-    classe_id: "promo-l2",
-    classe_nom: "Licence 2",
-    semestre: "Semestre 4",
-    jour: "Dimanche",
-    heure_debut: "21:00",
-    heure_fin: "23:00",
-    matiere_nom: "Électromagnétismes",
-    matiere_code: "MAT022",
-    professeur_nom: "Ndiogou Ndiaye",
-    professeur_id: "25013b47-9a78-4f97-8552-977450abdad2",
-    type_seance: "COURS",
-    meet_url: null,
-    niveau: "L2",
-    filieres: ["MPI"],
-    created_at: new Date().toISOString(),
-  },
-  {
-    id: "seance-has-l2-partage-info",
-    classe_id: "promo-l2",
-    classe_nom: "Licence 2",
-    semestre: "Semestre 4",
-    jour: "Lundi",
-    heure_debut: "22:00",
-    heure_fin: "23:00",
-    matiere_nom: "Séance de partage d'informations",
-    matiere_code: "HAS002",
-    professeur_nom: "Administration HAS",
-    professeur_id: "admin-has",
-    type_seance: "COURS",
-    meet_url: null,
-    niveau: "L2",
-    filieres: ["MPI", "SML", "MIASS"],
-    created_at: new Date().toISOString(),
-  },
-
   // --- PROMOTION LICENCE 1 (Semestre 2 - Cours Officiels en Ligne) ---
   {
-    id: "seance-has-l1-partage-info",
+    id: "seance-has-l1-analyse2-lundi",
     classe_id: "promo-l1",
     classe_nom: "Licence 1",
     semestre: "Semestre 2",
     jour: "Lundi",
     heure_debut: "21:00",
-    heure_fin: "22:00",
-    matiere_nom: "Séance de partage d'informations",
-    matiere_code: "HAS001",
-    professeur_nom: "Administration HAS",
-    professeur_id: "admin-has",
+    heure_fin: "23:00",
+    matiere_nom: "Analyse 2",
+    matiere_code: "MAT015",
+    professeur_nom: "Pape Ibrahima Samb",
+    professeur_id: "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
     type_seance: "COURS",
     meet_url: null,
     niveau: "L1",
     filieres: ["MPI", "SML", "MIASS"],
-    created_at: new Date().toISOString(),
+    created_at: "2026-10-19T17:00:00.000Z",
+    updated_at: "2026-10-19T17:00:00.000Z",
   },
   {
     id: "seance-has-l1-magneto",
@@ -1075,7 +966,8 @@ export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [
     meet_url: null,
     niveau: "L1",
     filieres: ["MPI", "SML"],
-    created_at: new Date().toISOString(),
+    created_at: "2026-10-19T17:00:00.000Z",
+    updated_at: "2026-10-19T17:00:00.000Z",
   },
   {
     id: "seance-has-l1-langage-c",
@@ -1093,7 +985,8 @@ export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [
     meet_url: null,
     niveau: "L1",
     filieres: ["MPI"],
-    created_at: new Date().toISOString(),
+    created_at: "2026-10-19T17:00:00.000Z",
+    updated_at: "2026-10-19T17:00:00.000Z",
   },
   {
     id: "seance-has-l1-finance",
@@ -1111,25 +1004,143 @@ export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [
     meet_url: null,
     niveau: "L1",
     filieres: ["MIASS"],
-    created_at: new Date().toISOString(),
+    created_at: "2026-10-19T17:00:00.000Z",
+    updated_at: "2026-10-19T17:00:00.000Z",
   },
   {
-    id: "seance-has-l1-analyse2",
+    id: "seance-has-l1-algebre2-vendredi",
     classe_id: "promo-l1",
     classe_nom: "Licence 1",
     semestre: "Semestre 2",
     jour: "Vendredi",
     heure_debut: "21:00",
     heure_fin: "23:00",
-    matiere_nom: "Analyse 2",
-    matiere_code: "MAT015",
+    matiere_nom: "Algèbre 2",
+    matiere_code: "MAT016",
     professeur_nom: "Pape Ibrahima Samb",
     professeur_id: "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
     type_seance: "COURS",
     meet_url: null,
     niveau: "L1",
     filieres: ["MPI", "SML", "MIASS"],
-    created_at: new Date().toISOString(),
+    created_at: "2026-10-19T17:00:00.000Z",
+    updated_at: "2026-10-19T17:00:00.000Z",
+  },
+
+  // --- PROMOTION LICENCE 2 (Semestre 4 - Cours Officiels en Ligne) ---
+  {
+    id: "seance-has-l2-compta-lundi",
+    classe_id: "promo-l2",
+    classe_nom: "Licence 2",
+    semestre: "Semestre 4",
+    jour: "Lundi",
+    heure_debut: "21:00",
+    heure_fin: "23:00",
+    matiere_nom: "Comptabilité Financière",
+    matiere_code: "MAT027",
+    professeur_nom: "El Hadji Mamour Seynabou Diop",
+    professeur_id: "prof-mamour",
+    type_seance: "COURS",
+    meet_url: null,
+    niveau: "L2",
+    filieres: ["MIASS"],
+    created_at: "2026-10-19T17:00:00.000Z",
+    updated_at: "2026-10-19T17:00:00.000Z",
+  },
+  {
+    id: "seance-has-l2-analyse4",
+    classe_id: "promo-l2",
+    classe_nom: "Licence 2",
+    semestre: "Semestre 4",
+    jour: "Mardi",
+    heure_debut: "21:00",
+    heure_fin: "23:00",
+    matiere_nom: "Analyse 4",
+    matiere_code: "MAT021",
+    professeur_nom: "Pape Ibrahima Samb",
+    professeur_id: "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
+    type_seance: "COURS",
+    meet_url: null,
+    niveau: "L2",
+    filieres: ["MIASS", "MPI"],
+    created_at: "2026-10-19T17:00:00.000Z",
+    updated_at: "2026-10-19T17:00:00.000Z",
+  },
+  {
+    id: "seance-has-l2-proba",
+    classe_id: "promo-l2",
+    classe_nom: "Licence 2",
+    semestre: "Semestre 4",
+    jour: "Jeudi",
+    heure_debut: "21:00",
+    heure_fin: "23:00",
+    matiere_nom: "Probabilité",
+    matiere_code: "MAT020",
+    professeur_nom: "Pape Ibrahima Samb",
+    professeur_id: "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
+    type_seance: "COURS",
+    meet_url: null,
+    niveau: "L2",
+    filieres: ["MIASS", "MPI"],
+    created_at: "2026-10-19T17:00:00.000Z",
+    updated_at: "2026-10-19T17:00:00.000Z",
+  },
+  {
+    id: "seance-has-l2-chimie-org",
+    classe_id: "promo-l2",
+    classe_nom: "Licence 2",
+    semestre: "Semestre 4",
+    jour: "Jeudi",
+    heure_debut: "21:00",
+    heure_fin: "23:00",
+    matiere_nom: "Chimie Organique",
+    matiere_code: "MAT023",
+    professeur_nom: "Ndiogou Ndiaye",
+    professeur_id: "25013b47-9a78-4f97-8552-977450abdad2",
+    type_seance: "COURS",
+    meet_url: null,
+    niveau: "L2",
+    filieres: ["SML"],
+    created_at: "2026-10-19T17:00:00.000Z",
+    updated_at: "2026-10-19T17:00:00.000Z",
+  },
+  {
+    id: "seance-has-l2-chimie-inorg",
+    classe_id: "promo-l2",
+    classe_nom: "Licence 2",
+    semestre: "Semestre 4",
+    jour: "Samedi",
+    heure_debut: "21:00",
+    heure_fin: "23:00",
+    matiere_nom: "Chimie Inorganique",
+    matiere_code: "MAT024",
+    professeur_nom: "Ndiogou Ndiaye",
+    professeur_id: "25013b47-9a78-4f97-8552-977450abdad2",
+    type_seance: "COURS",
+    meet_url: null,
+    niveau: "L2",
+    filieres: ["SML"],
+    created_at: "2026-10-19T17:00:00.000Z",
+    updated_at: "2026-10-19T17:00:00.000Z",
+  },
+  {
+    id: "seance-has-l2-electromag",
+    classe_id: "promo-l2",
+    classe_nom: "Licence 2",
+    semestre: "Semestre 4",
+    jour: "Dimanche",
+    heure_debut: "21:00",
+    heure_fin: "23:00",
+    matiere_nom: "Électromagnétismes",
+    matiere_code: "MAT022",
+    professeur_nom: "Ndiogou Ndiaye",
+    professeur_id: "25013b47-9a78-4f97-8552-977450abdad2",
+    type_seance: "COURS",
+    meet_url: null,
+    niveau: "L2",
+    filieres: ["MPI"],
+    created_at: "2026-10-19T17:00:00.000Z",
+    updated_at: "2026-10-19T17:00:00.000Z",
   },
 ];
 
@@ -1236,26 +1247,24 @@ export async function clearAllMeetLinks(adminEmail?: string): Promise<void> {
   }
 }
 
-// Purge automatique pour réinitialiser tous les anciens liens Meet sur tous les navigateurs
+// Purge automatique pour réinitialiser le cache EDT obsolète sur tous les navigateurs étudiants & profs
 if (typeof window !== "undefined") {
   try {
-    const PURGE_FLAG = "has_all_meets_cleared_v5";
+    const PURGE_FLAG = "has_edt_sync_v7_clean";
     if (!localStorage.getItem(PURGE_FLAG)) {
       localStorage.setItem(PURGE_FLAG, "true");
       localStorage.removeItem(STORAGE_KEYS.MEET_LINKS);
       localStorage.setItem(STORAGE_KEYS.MEET_LINKS, "{}");
-      const localSeances = getStorageItem<SeanceEDT[]>(STORAGE_KEYS.SEANCES_EDT, []);
-      if (Array.isArray(localSeances) && localSeances.length > 0) {
-        const cleaned = localSeances.map((s) => ({ ...s, meet_url: null }));
-        localStorage.setItem(STORAGE_KEYS.SEANCES_EDT, JSON.stringify(cleaned));
-      }
+      localStorage.removeItem(STORAGE_KEYS.DELETED_SEANCES);
+      localStorage.setItem(STORAGE_KEYS.DELETED_SEANCES, "[]");
+      localStorage.setItem(STORAGE_KEYS.SEANCES_EDT, JSON.stringify(DEFAULT_SEANCES_EDT));
     }
   } catch {}
 }
 
 export function getStoredSeancesEDT(): SeanceEDT[] {
   const deletedSet = new Set(getDeletedSeanceIds());
-  const list = getStorageItem<SeanceEDT[]>(STORAGE_KEYS.SEANCES_EDT, DEFAULT_SEANCES_EDT);
+  const list = getStorageItem<SeanceEDT[]>(STORAGE_KEYS.SEANCES_EDT, []);
   const meetLinks = getStoredMeetLinks();
   
   const baseList = list && Array.isArray(list) && list.length > 0 ? list : DEFAULT_SEANCES_EDT;
@@ -1266,19 +1275,13 @@ export function getStoredSeancesEDT(): SeanceEDT[] {
     "seance-has-l2-analyse3",
     "seance-has-l1-electricite",
     "seance-has-l1-economie",
+    "seance-has-l1-partage-info",
+    "seance-has-l2-partage-info",
   ]);
 
   const filtered = baseList.filter((s) => !obsoleteIds.has(s.id) && !deletedSet.has(s.id));
 
-  // S'assurer que les séances officielles par défaut (notamment séances de partage d'informations L1 & L2)
-  // sont automatiquement présentes si elles ne figurent pas encore dans le cache et n'ont pas été supprimées
-  for (const def of DEFAULT_SEANCES_EDT) {
-    if (!filtered.some((s) => s.id === def.id) && !deletedSet.has(def.id)) {
-      filtered.push(def);
-    }
-  }
-
-  // Migrer M. Diop et préserver uniquement les liens explicitement configurés
+  // Migrer M. Diop et préserver les liens Meet configurés
   for (const s of filtered) {
     if (
       s.professeur_nom?.toLowerCase() === "m. diop" ||
@@ -1289,12 +1292,9 @@ export function getStoredSeancesEDT(): SeanceEDT[] {
       s.professeur_id = "prof-mamour";
     }
 
-    // Le lien Meet ne provient QUE d'un lien explicitement configuré par l'enseignant
     const saved = meetLinks[s.id];
     if (saved && typeof saved === "string" && saved.trim()) {
       s.meet_url = saved.trim();
-    } else {
-      s.meet_url = null;
     }
   }
 
@@ -1394,77 +1394,40 @@ export async function pushSeancesToServer(
 }
 
 /**
- * Récupère les séances enregistrées sur le serveur Supabase et fusionne les liens Meet
- * et modifications récentes sans JAMAIS écraser une modification locale par d'anciennes valeurs.
+ * Récupère les séances officielles enregistrées sur le serveur Supabase Cloud Storage.
+ * La base Supabase est la source de vérité absolue et universelle pour TOUS les appareils
+ * (étudiants, professeurs et administration).
  */
 export async function syncSeancesWithServer(): Promise<SeanceEDT[]> {
   if (typeof window === "undefined") return DEFAULT_SEANCES_EDT;
   try {
-    const res = await fetch("/api/academic/seances", { cache: "no-store" });
+    const res = await fetch("/api/academic/seances", {
+      cache: "no-store",
+      headers: { "Cache-Control": "no-cache" },
+    });
     if (!res.ok) return getStoredSeancesEDT();
     const data = await res.json();
     if (data.success && Array.isArray(data.seances) && data.seances.length > 0) {
-      const local = getStoredSeancesEDT();
-      const deletedSet = new Set(getDeletedSeanceIds());
-      const meetLinks = getStoredMeetLinks();
-      const map = new Map<string, SeanceEDT>();
-      let hasLocalChangesToPush = false;
+      const serverSeances: SeanceEDT[] = data.seances;
 
-      // 1. Initialiser avec les séances locales
-      local.forEach((s) => {
-        if (!deletedSet.has(s.id)) map.set(s.id, s);
-      });
+      const obsoleteIds = new Set([
+        "seance-has-l1-partage-info",
+        "seance-has-l2-partage-info",
+        "seance-has-l2-magneto",
+        "seance-has-l2-analyse3",
+        "seance-has-l1-electricite",
+        "seance-has-l1-economie",
+      ]);
+      const cleaned = serverSeances.filter((s) => !obsoleteIds.has(s.id));
 
-      // 2. Fusion intelligente avec les séances distantes
-      data.seances.forEach((serverSeance: SeanceEDT) => {
-        if (!deletedSet.has(serverSeance.id)) {
-          const existing = map.get(serverSeance.id);
-          const serverMeet = serverSeance.meet_url && serverSeance.meet_url.trim() ? serverSeance.meet_url.trim() : null;
-          const finalMeet = serverMeet || null;
-
-          if (finalMeet) {
-            meetLinks[serverSeance.id] = finalMeet;
-          } else if (existing?.meet_url) {
-            // Préserver le lien existant
-          } else {
-            delete meetLinks[serverSeance.id];
-          }
-
-          if (existing) {
-            const localTime = new Date(existing.updated_at || existing.created_at || 0).getTime();
-            const serverTime = new Date(serverSeance.updated_at || serverSeance.created_at || 0).getTime();
-
-            if (localTime > serverTime) {
-              // Modification locale PLUS RÉCENTE : préserver absolument la version locale
-              map.set(serverSeance.id, {
-                ...serverSeance,
-                ...existing,
-                meet_url: existing.meet_url || finalMeet,
-              });
-              hasLocalChangesToPush = true;
-            } else {
-              // Données serveur plus récentes ou identiques
-              map.set(serverSeance.id, {
-                ...existing,
-                ...serverSeance,
-                meet_url: finalMeet || existing.meet_url,
-              });
-            }
-          } else {
-            map.set(serverSeance.id, {
-              ...serverSeance,
-              meet_url: finalMeet,
-            });
-          }
+      // Mémoriser les liens Meet renvoyés par le serveur
+      const meetLinks: Record<string, string> = {};
+      cleaned.forEach((s) => {
+        if (s.meet_url && typeof s.meet_url === "string" && s.meet_url.trim()) {
+          meetLinks[s.id] = s.meet_url.trim();
         }
       });
-
-      // 3. Détecter si le cache local a des séances non encore synchronisées sur le serveur
-      local.forEach((lc) => {
-        if (!deletedSet.has(lc.id) && !data.seances.some((s: SeanceEDT) => s.id === lc.id)) {
-          hasLocalChangesToPush = true;
-        }
-      });
+      setStorageItem(STORAGE_KEYS.MEET_LINKS, meetLinks);
 
       // Synchroniser les créneaux slots reçus du serveur
       if (data.slots && typeof window !== "undefined") {
@@ -1478,17 +1441,10 @@ export async function syncSeancesWithServer(): Promise<SeanceEDT[]> {
         } catch {}
       }
 
-      const merged = Array.from(map.values());
-      setStorageItem(STORAGE_KEYS.SEANCES_EDT, merged);
-      setStorageItem(STORAGE_KEYS.MEET_LINKS, meetLinks);
-
-      // Si le local avait des modifications plus récentes, les pousser immédiatement au serveur
-      if (hasLocalChangesToPush) {
-        pushSeancesToServer(merged);
-      }
-
+      // La source de vérité absolue multi-appareils est le serveur Supabase
+      setStorageItem(STORAGE_KEYS.SEANCES_EDT, cleaned);
       window.dispatchEvent(new CustomEvent("has_academic_storage_updated"));
-      return merged;
+      return cleaned;
     }
   } catch (err) {
     console.warn("Info syncSeancesWithServer:", err);
