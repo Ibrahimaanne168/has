@@ -52,7 +52,7 @@ export default function EtudiantCoursPage() {
     return () => window.removeEventListener("has_academic_storage_updated", handleUpdate);
   }, []);
 
-  const [activeNiveauTab, setActiveNiveauTab] = useState<"all" | "L1" | "L2">("all");
+  const [activeNiveauTab, setActiveNiveauTab] = useState<"all" | "NB" | "L1" | "L2">("all");
 
   const toggleFavorite = (courseId: string) => {
     setCourses((prev) =>
@@ -61,20 +61,28 @@ export default function EtudiantCoursPage() {
   };
 
   const userClasseCode = user.classe?.code || "";
-  const userNiveau = user.classe?.niveau || (normalizeClasseCode(userClasseCode).startsWith("L2") ? "L2" : "L1");
+  const userNiveau = user.classe?.niveau || (normalizeClasseCode(userClasseCode).startsWith("NB") ? "NB" : normalizeClasseCode(userClasseCode).startsWith("L2") ? "L2" : "L1");
 
   const filteredCourses = courses.filter((c) => {
     // 1. Filtrage souple par classe / niveau de l'étudiant
     const matchesClasse = isCourseConcernedForStudent(c, userClasseCode, userNiveau);
 
-    // 2. Filtre par onglet (Tous / Matières L1 / Matières L2)
+    // 2. Filtre par onglet (Tous / Matières NB / Matières L1 / Matières L2)
     const courseLevel = (
       c.matiere?.niveau ||
-      (c.classes && c.classes.some((cls) => cls.toUpperCase().includes("L2")) ? "L2" : "L1")
+      (c.classes && c.classes.some((cls) => cls.toUpperCase().includes("NB"))
+        ? "NB"
+        : c.classes && c.classes.some((cls) => cls.toUpperCase().includes("L2"))
+        ? "L2"
+        : "L1")
     ).toUpperCase();
 
     const matchesNiveauTab =
-      activeNiveauTab === "all" ? true : courseLevel === activeNiveauTab;
+      activeNiveauTab === "all"
+        ? true
+        : activeNiveauTab === "NB"
+        ? courseLevel === "NB" || (c.classes && c.classes.some((cls) => cls.toUpperCase().includes("NB")))
+        : courseLevel === activeNiveauTab;
 
     // 3. Recherche textuelle
     const query = searchQuery.trim().toLowerCase();
@@ -96,7 +104,7 @@ export default function EtudiantCoursPage() {
     const matchesFavorites = !onlyFavorites || c.is_favorite;
 
     // Si l'étudiant est sur l'onglet Tous, on affiche les cours qui concernent sa promotion/niveau
-    // S'il clique expressément sur un onglet L1 ou L2, on affiche les cours de ce niveau
+    // S'il clique expressément sur un onglet NB, L1 ou L2, on affiche les cours de ce niveau
     const accessCondition = activeNiveauTab === "all" ? matchesClasse : matchesNiveauTab;
 
     return accessCondition && matchesSearch && matchesMatiere && matchesFavorites;
@@ -131,7 +139,7 @@ export default function EtudiantCoursPage() {
             </p>
           </div>
 
-          {/* Onglets 2 Espaces : Matières L1 / Matières L2 */}
+          {/* Onglets Espaces : Matières NB / Matières L1 / Matières L2 */}
           <div className="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-[#151D27] rounded-xl border border-slate-200/80 dark:border-[#263241] w-fit shrink-0">
             <button
               onClick={() => { setActiveNiveauTab("all"); setSelectedMatiere("all"); }}
@@ -142,6 +150,16 @@ export default function EtudiantCoursPage() {
               }`}
             >
               Tous
+            </button>
+            <button
+              onClick={() => { setActiveNiveauTab("NB"); setSelectedMatiere("all"); }}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+                activeNiveauTab === "NB"
+                  ? "bg-[#0f2744] dark:bg-[#1a385c] text-white shadow-xs dark:border dark:border-[#2b4c73]"
+                  : "text-slate-600 dark:text-[#AAB4C0] hover:text-slate-900 dark:hover:text-[#F5F7FA]"
+              }`}
+            >
+              <span>Matières NB</span>
             </button>
             <button
               onClick={() => { setActiveNiveauTab("L1"); setSelectedMatiere("all"); }}

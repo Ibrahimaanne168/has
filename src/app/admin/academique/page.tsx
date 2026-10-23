@@ -51,7 +51,7 @@ export default function AdminAcademiquePage() {
 
   const [classeCode, setClasseCode] = useState("");
   const [classeName, setClasseName] = useState("");
-  const [classeNiveau, setClasseNiveau] = useState<"L1" | "L2">("L1");
+  const [classeNiveau, setClasseNiveau] = useState<"L1" | "L2" | "NB">("L1");
   const [classeFiliereId, setClasseFiliereId] = useState("");
 
   // Matière : nom, niveau (L1 ou L2), semestre, professeur assigné et classes concernées
@@ -406,7 +406,14 @@ export default function AdminAcademiquePage() {
                           <td className="px-4 py-3">
                             <div className="flex flex-wrap gap-1 max-w-xs">
                               {displayClasses.map((cCode) => (
-                                <span key={cCode} className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold text-white bg-[#0f2744] dark:bg-[#1E4976]">
+                                <span
+                                  key={cCode}
+                                  className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold text-white ${
+                                    cCode.startsWith("NB")
+                                      ? "bg-emerald-600 dark:bg-emerald-700 shadow-xs"
+                                      : "bg-[#0f2744] dark:bg-[#1E4976]"
+                                  }`}
+                                >
                                   {cCode}
                                 </span>
                               ))}
@@ -533,6 +540,7 @@ export default function AdminAcademiquePage() {
                   <div className="space-y-1.5">
                     <label className="block text-sm font-medium text-slate-700 dark:text-[#F5F7FA]">Niveau</label>
                     <select value={classeNiveau} onChange={(e) => setClasseNiveau(e.target.value as any)} className="w-full text-sm border border-slate-200 dark:border-[#263241] bg-white dark:bg-[#151D27] text-slate-800 dark:text-[#F5F7FA] rounded-lg p-2.5">
+                      <option value="NB">Nouveaux Bacheliers (NB)</option>
                       <option value="L1">Licence 1 (L1)</option>
                       <option value="L2">Licence 2 (L2)</option>
                     </select>
@@ -706,7 +714,7 @@ export default function AdminAcademiquePage() {
 
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-3 bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] rounded-xl">
                     {classes
-                      .filter((cls) => cls.niveau === matiereNiveau)
+                      .filter((cls) => (matiereNiveau === "L1" ? cls.niveau === "L1" || cls.niveau === "NB" : cls.niveau === "L2"))
                       .map((cls) => {
                         const checked = matiereClasses.includes(cls.code);
                         return (
@@ -922,7 +930,7 @@ export default function AdminAcademiquePage() {
 
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-3 bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] rounded-xl">
                     {classes
-                      .filter((cls) => cls.niveau === matiereNiveau)
+                      .filter((cls) => (matiereNiveau === "L1" ? cls.niveau === "L1" || cls.niveau === "NB" : cls.niveau === "L2"))
                       .map((cls) => {
                         const checked = matiereClasses.includes(cls.code);
                         return (

@@ -45,7 +45,7 @@ import {
 } from "@/lib/academicStorage";
 import { MOCK_FILIERES, MOCK_CLASSES } from "@/lib/data/mock-data";
 
-type NiveauType = "L1" | "L2";
+type NiveauType = "L1" | "L2" | "NB";
 type FiliereFilter = "ALL" | "MPI" | "SML" | "MIASS";
 type SortOption = "name-asc" | "name-desc" | "matricule" | "recent";
 type ViewMode = "table" | "grid";
@@ -128,7 +128,9 @@ export default function AdminEtudiantsPage() {
     // Détection Niveau
     let niveau: NiveauType = "L1";
     const rawNiv = String(raw.niveau || meta.niveau || raw.classe?.niveau || raw.classe_id || "").toUpperCase();
-    if (rawNiv.includes("L2") || rawNiv.includes("LICENCE 2")) {
+    if (rawNiv.includes("NB") || rawNiv.includes("BACHELIER")) {
+      niveau = "NB";
+    } else if (rawNiv.includes("L2") || rawNiv.includes("LICENCE 2")) {
       niveau = "L2";
     }
 
@@ -183,7 +185,7 @@ export default function AdminEtudiantsPage() {
       niveau,
       filiere,
       filiere_nom: FILIERE_META[filiere].nom,
-      classe_nom: `Licence ${niveau === "L1" ? "1" : "2"} — ${filiere}`,
+      classe_nom: `${niveau === "NB" ? "Nouveaux Bacheliers" : `Licence ${niveau === "L1" ? "1" : "2"}`} — ${filiere}`,
       is_active: raw.is_active ?? true,
       statut_inscription: statut,
       created_at: raw.created_at || new Date().toISOString(),
@@ -307,13 +309,20 @@ export default function AdminEtudiantsPage() {
       });
   }, [students, selectedNiveau, selectedFiliere, search, sortBy]);
 
-  // Compteurs dynamiques pour Licence 1 et Licence 2
+  // Compteurs dynamiques pour NB, Licence 1 et Licence 2
   const stats = useMemo(() => {
+    const nb = students.filter((s) => s.niveau === "NB");
     const l1 = students.filter((s) => s.niveau === "L1");
     const l2 = students.filter((s) => s.niveau === "L2");
 
     return {
       total: students.length,
+      nb: {
+        total: nb.length,
+        mpi: nb.filter((s) => s.filiere === "MPI").length,
+        sml: nb.filter((s) => s.filiere === "SML").length,
+        miass: nb.filter((s) => s.filiere === "MIASS").length,
+      },
       l1: {
         total: l1.length,
         mpi: l1.filter((s) => s.filiere === "MPI").length,
@@ -334,7 +343,11 @@ export default function AdminEtudiantsPage() {
     if (filteredStudents.length === 0) return;
 
     const currentListName = `LISTE OFFICIELLE DES ÉTUDIANTS — ${
-      selectedNiveau === "L1" ? "LICENCE 1 (L1)" : "LICENCE 2 (L2)"
+      selectedNiveau === "NB"
+        ? "NOUVEAUX BACHELIERS (NB)"
+        : selectedNiveau === "L1"
+        ? "LICENCE 1 (L1)"
+        : "LICENCE 2 (L2)"
     } — ${
       selectedFiliere === "ALL" ? "TOUTES FILIÈRES (COMPLÈTE)" : selectedFiliere
     } (${filteredStudents.length} étudiants)`;
@@ -607,9 +620,75 @@ export default function AdminEtudiantsPage() {
         )}
 
         {/* ========================================================================= */}
-        {/* GRANDE SÉLECTION DU NIVEAU : LISTE L1 VS LISTE L2                         */}
+        {/* GRANDE SÉLECTION DU NIVEAU : NB, L1 VS L2                                 */}
         {/* ========================================================================= */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* CARTE NOUVEAUX BACHELIERS (NB) */}
+          <button
+            onClick={() => setSelectedNiveau("NB")}
+            className={`p-5 rounded-2xl border text-left transition-all duration-200 cursor-pointer relative overflow-hidden group ${
+              selectedNiveau === "NB"
+                ? "bg-white dark:bg-[#111821] border-[#0f2744] dark:border-[#e0521c] ring-2 ring-[#0f2744]/20 dark:ring-[#e0521c]/30 shadow-md"
+                : "bg-white/60 dark:bg-[#111821]/60 border-slate-200 dark:border-[#263241] hover:border-slate-300 dark:hover:border-slate-600 hover:bg-white dark:hover:bg-[#111821]"
+            }`}
+          >
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-3">
+                <div
+                  className={`w-12 h-12 rounded-xl flex items-center justify-center font-serif text-lg font-bold transition-colors ${
+                    selectedNiveau === "NB"
+                      ? "bg-emerald-600 text-white dark:bg-emerald-700"
+                      : "bg-slate-100 text-slate-700 dark:bg-[#182330] dark:text-[#AAB4C0]"
+                  }`}
+                >
+                  NB
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-serif text-lg font-bold text-slate-900 dark:text-[#F5F7FA]">
+                      Nouveaux Bacheliers (NB)
+                    </span>
+                    {selectedNiveau === "NB" && (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-600 text-white">
+                        Active
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-slate-500 dark:text-[#AAB4C0] mt-0.5">
+                    Nouvelle cohorte entrante — MPI, SML &amp; MIASS
+                  </p>
+                </div>
+              </div>
+
+              <div className="text-right">
+                <span className="font-serif text-2xl font-black text-slate-900 dark:text-[#F5F7FA]">
+                  {stats.nb.total}
+                </span>
+                <span className="block text-[10px] text-slate-500 dark:text-[#AAB4C0] uppercase font-bold tracking-wider">
+                  Étudiants
+                </span>
+              </div>
+            </div>
+
+            {/* Répartition par filière NB */}
+            <div className="mt-4 pt-3 border-t border-slate-100 dark:border-[#263241] flex items-center justify-between text-xs">
+              <div className="flex items-center gap-3 text-slate-600 dark:text-[#AAB4C0]">
+                <span className="flex items-center gap-1 font-semibold text-blue-700 dark:text-cyan-400">
+                  <span className="w-2 h-2 rounded-full bg-blue-600"></span> MPI : {stats.nb.mpi}
+                </span>
+                <span className="flex items-center gap-1 font-semibold text-emerald-700 dark:text-emerald-400">
+                  <span className="w-2 h-2 rounded-full bg-emerald-600"></span> SML : {stats.nb.sml}
+                </span>
+                <span className="flex items-center gap-1 font-semibold text-purple-700 dark:text-purple-400">
+                  <span className="w-2 h-2 rounded-full bg-purple-600"></span> MIASS : {stats.nb.miass}
+                </span>
+              </div>
+              <span className="text-[11px] font-medium text-slate-400 group-hover:text-[#0f2744] dark:group-hover:text-[#e0521c] transition-colors flex items-center gap-1">
+                Afficher <ChevronRight className="w-3.5 h-3.5" />
+              </span>
+            </div>
+          </button>
+
           {/* CARTE LICENCE 1 (L1) */}
           <button
             onClick={() => setSelectedNiveau("L1")}
@@ -1468,11 +1547,22 @@ export default function AdminEtudiantsPage() {
                   <label className="block text-xs font-bold text-slate-700 dark:text-[#AAB4C0] mb-1">
                     Niveau / Promotion *
                   </label>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-3 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setFormNiveau("NB")}
+                      className={`p-2 rounded-xl border text-xs font-bold transition-all ${
+                        formNiveau === "NB"
+                          ? "bg-emerald-600 text-white border-emerald-600"
+                          : "bg-slate-50 dark:bg-[#182330] text-slate-700 dark:text-slate-300 border-slate-200 dark:border-[#263241]"
+                      }`}
+                    >
+                      NB (Bacheliers)
+                    </button>
                     <button
                       type="button"
                       onClick={() => setFormNiveau("L1")}
-                      className={`p-2.5 rounded-xl border text-xs font-bold transition-all ${
+                      className={`p-2 rounded-xl border text-xs font-bold transition-all ${
                         formNiveau === "L1"
                           ? "bg-[#0f2744] text-white border-[#0f2744] dark:bg-[#e0521c] dark:border-[#e0521c]"
                           : "bg-slate-50 dark:bg-[#182330] text-slate-700 dark:text-slate-300 border-slate-200 dark:border-[#263241]"
@@ -1483,7 +1573,7 @@ export default function AdminEtudiantsPage() {
                     <button
                       type="button"
                       onClick={() => setFormNiveau("L2")}
-                      className={`p-2.5 rounded-xl border text-xs font-bold transition-all ${
+                      className={`p-2 rounded-xl border text-xs font-bold transition-all ${
                         formNiveau === "L2"
                           ? "bg-[#0f2744] text-white border-[#0f2744] dark:bg-[#e0521c] dark:border-[#e0521c]"
                           : "bg-slate-50 dark:bg-[#182330] text-slate-700 dark:text-slate-300 border-slate-200 dark:border-[#263241]"

@@ -17,10 +17,12 @@ import { ChatSalon } from "@/lib/types";
 
 export default function EtudiantChatPage() {
   const { user } = useCurrentUser();
-  const niveau = user.classe?.niveau || "L1";
+  const userClasseCode = user.classe?.code || "";
+  const niveau = user.classe?.niveau || (userClasseCode.toUpperCase().startsWith("NB") ? "NB" : userClasseCode.toUpperCase().startsWith("L2") ? "L2" : "L1");
+  const defaultSalonId = niveau === "NB" ? "salon-nb" : niveau === "L2" ? "salon-l2" : "salon-l1";
 
   const [salons, setSalons] = useState<ChatSalon[]>([]);
-  const [activeSalonId, setActiveSalonId] = useState<string>("salon-l1");
+  const [activeSalonId, setActiveSalonId] = useState<string>(defaultSalonId);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   useEffect(() => {
@@ -40,9 +42,9 @@ export default function EtudiantChatPage() {
   const activeSalon =
     salons.find((s) => s.id === activeSalonId) ||
     salons[0] || {
-      id: "salon-l1",
-      titre: "Salon Licence 1 (L1)",
-      description: "Échanges et discussions réservés au niveau Licence 1 (L1)",
+      id: defaultSalonId,
+      titre: niveau === "NB" ? "Salon Nouveaux Bacheliers (NB)" : niveau === "L2" ? "Salon Licence 2 (L2)" : "Salon Licence 1 (L1)",
+      description: `Échanges et discussions réservés au niveau ${niveau === "NB" ? "Nouveaux Bacheliers (NB)" : niveau}`,
       type: "niveau",
       created_at: "",
     };
@@ -84,9 +86,10 @@ export default function EtudiantChatPage() {
           </div>
         </div>
 
-        {/* Grille des Salons : L'utilisateur clique sur une room pour afficher le popup WhatsApp */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {/* Grille des Salons */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {salons.map((salon) => {
+            const isNB = salon.id.includes("nb");
             const isL1 = salon.id.includes("l1");
             const isSelected = activeSalonId === salon.id;
 
@@ -103,7 +106,9 @@ export default function EtudiantChatPage() {
                 {/* Liseré haut coloré */}
                 <div
                   className={`absolute top-0 left-0 right-0 h-1.5 ${
-                    isL1
+                    isNB
+                      ? "bg-gradient-to-r from-[#10b981] via-[#0f2744] to-[#e0521c]"
+                      : isL1
                       ? "bg-gradient-to-r from-[#0f2744] via-[#2563eb] to-[#e0521c]"
                       : "bg-gradient-to-r from-[#e0521c] via-[#ea580c] to-[#0f2744]"
                   }`}
@@ -115,7 +120,11 @@ export default function EtudiantChatPage() {
                     <div className="relative">
                       <div
                         className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-md transition-transform group-hover:scale-105 ${
-                          isL1 ? "bg-[#0f2744] dark:bg-[#1a385c]" : "bg-[#e0521c]"
+                          isNB
+                            ? "bg-emerald-600 dark:bg-emerald-700"
+                            : isL1
+                            ? "bg-[#0f2744] dark:bg-[#1a385c]"
+                            : "bg-[#e0521c]"
                         }`}
                       >
                         <Users className="w-7 h-7" />

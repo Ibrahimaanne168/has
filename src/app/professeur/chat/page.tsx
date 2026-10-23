@@ -79,8 +79,9 @@ export default function ProfesseurChatPage() {
         </div>
 
         {/* Grille des salons pour professeurs */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {salons.map((salon) => {
+            const isNB = salon.id.includes("nb");
             const isL1 = salon.id.includes("l1");
             const isSelected = activeSalonId === salon.id;
 
@@ -96,7 +97,9 @@ export default function ProfesseurChatPage() {
               >
                 <div
                   className={`absolute top-0 left-0 right-0 h-1.5 ${
-                    isL1
+                    isNB
+                      ? "bg-gradient-to-r from-[#10b981] via-[#0f2744] to-[#e0521c]"
+                      : isL1
                       ? "bg-gradient-to-r from-[#0f2744] via-[#2563eb] to-[#e0521c]"
                       : "bg-gradient-to-r from-[#e0521c] via-[#ea580c] to-[#0f2744]"
                   }`}
@@ -107,7 +110,11 @@ export default function ProfesseurChatPage() {
                     <div className="relative">
                       <div
                         className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-md transition-transform group-hover:scale-105 ${
-                          isL1 ? "bg-[#0f2744] dark:bg-[#1a385c]" : "bg-[#e0521c]"
+                          isNB
+                            ? "bg-emerald-600 dark:bg-emerald-700"
+                            : isL1
+                            ? "bg-[#0f2744] dark:bg-[#1a385c]"
+                            : "bg-[#e0521c]"
                         }`}
                       >
                         <GraduationCap className="w-7 h-7" />

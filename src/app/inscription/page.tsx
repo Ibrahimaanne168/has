@@ -36,7 +36,7 @@ export default function InscriptionPage() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [filiere, setFiliere] = useState<"MPI" | "SML" | "MIASS">("MPI");
-  const [niveau, setNiveau] = useState<"L1" | "L2">("L1");
+  const [niveau, setNiveau] = useState<"L1" | "L2" | "NB">("L1");
   const [code2FA, setCode2FA] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -432,11 +432,12 @@ export default function InscriptionPage() {
                   </label>
                   <select
                     value={niveau}
-                    onChange={(e) => setNiveau(e.target.value as "L1" | "L2")}
+                    onChange={(e) => setNiveau(e.target.value as "L1" | "L2" | "NB")}
                     className="w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-[#263241] bg-white dark:bg-[#151D27] text-xs font-medium text-slate-900 dark:text-[#F5F7FA] focus:outline-none focus:ring-2 focus:ring-[#0f2744] dark:focus:ring-[#e0521c]"
                   >
                     <option value="L1">Licence 1 (L1)</option>
                     <option value="L2">Licence 2 (L2)</option>
+                    <option value="NB">Nouveaux Bacheliers (NB)</option>
                   </select>
                 </div>
               </div>

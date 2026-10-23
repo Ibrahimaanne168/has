@@ -35,11 +35,11 @@ export default function EtudiantDashboard() {
   const [hasEDT, setHasEDT] = useState(false);
 
   const userClasseCode = user.classe?.code || "";
-  const userNiveau = (user.classe?.niveau || (normalizeClasseCode(userClasseCode).startsWith("L2") ? "L2" : "L1")) as "L1" | "L2";
+  const userNiveau = (user.classe?.niveau || (normalizeClasseCode(userClasseCode).startsWith("NB") ? "NB" : normalizeClasseCode(userClasseCode).startsWith("L2") ? "L2" : "L1")) as "L1" | "L2" | "NB";
 
   useEffect(() => {
     const userClasseCode = user.classe?.code || "";
-    const userNiveau = user.classe?.niveau || (normalizeClasseCode(userClasseCode).startsWith("L2") ? "L2" : "L1");
+    const userNiveau = user.classe?.niveau || (normalizeClasseCode(userClasseCode).startsWith("NB") ? "NB" : normalizeClasseCode(userClasseCode).startsWith("L2") ? "L2" : "L1");
 
     const loadData = () => {
       const storedCourses = getStoredCourses();

@@ -35,6 +35,16 @@ const STORAGE_KEYS = {
 
 export const DEFAULT_SALONS: ChatSalon[] = [
   {
+    id: "salon-nb",
+    titre: "Salon Nouveaux Bacheliers (NB)",
+    description: "Échanges et intégration réservés aux Nouveaux Bacheliers (NB)",
+    type: "niveau",
+    niveau: "NB",
+    classe: null,
+    cree_par: "Administration HAS",
+    created_at: "2026-09-01T08:00:00Z",
+  },
+  {
     id: "salon-l1",
     titre: "Salon Licence 1 (L1)",
     description: "Échanges et discussions réservés au niveau Licence 1 (L1)",
@@ -867,15 +877,22 @@ export function isCourseConcernedForStudent(
   if (!userClasseCode && !userNiveau) return true;
 
   const targetCodeNorm = normalizeClasseCode(userClasseCode);
-  const targetNiveau = (userNiveau || (targetCodeNorm.startsWith("L2") ? "L2" : "L1")).toUpperCase();
-
-  // Déterminer le niveau du cours (L1 ou L2)
-  const courseLevel = (
-    course.matiere?.niveau ||
-    (course.classes && course.classes.some((cls) => cls.toUpperCase().includes("L2")) ? "L2" : "L1")
+  const targetNiveau = (
+    userNiveau ||
+    (targetCodeNorm.startsWith("NB") ? "NB" : targetCodeNorm.startsWith("L2") ? "L2" : "L1")
   ).toUpperCase();
 
-  // Si le cours est du même niveau d'études (L1 ou L2) que l'étudiant : visibilité garantie
+  // Déterminer le niveau du cours (NB, L1 ou L2)
+  const courseLevel = (
+    course.matiere?.niveau ||
+    (course.classes && course.classes.some((cls) => cls.toUpperCase().includes("NB"))
+      ? "NB"
+      : course.classes && course.classes.some((cls) => cls.toUpperCase().includes("L2"))
+      ? "L2"
+      : "L1")
+  ).toUpperCase();
+
+  // Si le cours est du même niveau d'études (NB, L1 ou L2) que l'étudiant : visibilité garantie
   if (courseLevel === targetNiveau) {
     return true;
   }

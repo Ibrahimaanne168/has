@@ -32,7 +32,7 @@ export default function AdminChatPage() {
   const [formTitre, setFormTitre] = useState("");
   const [formDesc, setFormDesc] = useState("");
   const [formType, setFormType] = useState<"general" | "niveau" | "classe">("niveau");
-  const [formNiveau, setFormNiveau] = useState<"L1" | "L2">("L1");
+  const [formNiveau, setFormNiveau] = useState<"L1" | "L2" | "NB">("L1");
   const [formClasse, setFormClasse] = useState("L1 MPI");
 
   const loadSalons = () => {
@@ -85,7 +85,7 @@ export default function AdminChatPage() {
   };
 
   const handleDeleteSalon = (id: string, titre: string) => {
-    if (id === "salon-l1" || id === "salon-l2" || id === "general") {
+    if (id === "salon-l1" || id === "salon-l2" || id === "salon-nb" || id === "general") {
       alert("Ce salon principal ne peut pas être supprimé.");
       return;
     }
@@ -290,6 +290,7 @@ export default function AdminChatPage() {
                       onChange={(e) => setFormNiveau(e.target.value as any)}
                       className="w-full text-sm border border-slate-200 dark:border-[#263241] rounded-lg p-2.5 bg-white dark:bg-[#151D27] text-slate-800 dark:text-[#F5F7FA] focus:outline-none focus:ring-2 focus:ring-[#0f2744]/20 dark:focus:ring-[#e0521c]/30"
                     >
+                      <option value="NB">Nouveaux Bacheliers (NB) uniquement</option>
                       <option value="L1">Licence 1 (L1) uniquement</option>
                       <option value="L2">Licence 2 (L2) uniquement</option>
                     </select>
@@ -306,6 +307,9 @@ export default function AdminChatPage() {
                       onChange={(e) => setFormClasse(e.target.value)}
                       className="w-full text-sm border border-slate-200 dark:border-[#263241] rounded-lg p-2.5 bg-white dark:bg-[#151D27] text-slate-800 dark:text-[#F5F7FA] focus:outline-none focus:ring-2 focus:ring-[#0f2744]/20 dark:focus:ring-[#e0521c]/30"
                     >
+                      <option value="NB MPI">NB MPI (Nouveaux Bacheliers — MPI)</option>
+                      <option value="NB SML">NB SML (Nouveaux Bacheliers — SML)</option>
+                      <option value="NB MIASS">NB MIASS (Nouveaux Bacheliers — MIASS)</option>
                       <option value="L1 MPI">L1 MPI (Mathématiques, Physique et Informatique)</option>
                       <option value="L2 MPI">L2 MPI (Mathématiques, Physique et Informatique)</option>
                       <option value="L1 SML">L1 SML (Science de la mer et du littoral)</option>

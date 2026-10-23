@@ -45,7 +45,7 @@ export const signupStep2Schema = z
     password: z.string().regex(passwordRegex, passwordRequirementsMessage),
     confirmPassword: z.string(),
     filiere: z.enum(["MPI", "SML", "MIASS"]).optional(),
-    niveau: z.enum(["L1", "L2"]).optional(),
+    niveau: z.enum(["L1", "L2", "NB"]).optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Les mots de passe ne correspondent pas",
