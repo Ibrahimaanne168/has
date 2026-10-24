@@ -37,6 +37,7 @@ const FILIERES_OPTIONS: Array<"MPI" | "SML" | "MIASS"> = ["MPI", "SML", "MIASS"]
 const ENSEIGNANTS_PRESETS = [
   "Administration HAS",
   "Pape Ibrahima Samb",
+  "Papa Kady Ba",
   "Ibrahima Anne",
   "Ndiogou Ndiaye",
   "El Hadji Mamour Seynabou Diop",
@@ -471,7 +472,7 @@ export default function AdminEDTPage() {
         const lower = matiereNom.toLowerCase();
         if (lower.includes("analyse") || lower.includes("algèbre") || lower.includes("math") || lower.includes("proba")) {
           setFormFilieres(["MPI", "SML", "MIASS"]);
-          setFormEnseignant("Pape Ibrahima Samb");
+          setFormEnseignant(activeNiveau === "NB" ? "Papa Kady Ba" : "Pape Ibrahima Samb");
         } else if (lower.includes("élec")) {
           setFormFilieres(["MPI", "SML"]);
           setFormEnseignant("Kalidou Ba");

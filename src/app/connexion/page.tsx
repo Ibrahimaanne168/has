@@ -110,6 +110,7 @@ function ConnexionForm() {
             matchedProf &&
             (matchedProf.password === password ||
               (cleanInput === "mamour" && (password === "professeur" || password.toLowerCase() === "professeur")) ||
+              (cleanInput === "kady" && (password === "professeur" || password.toLowerCase() === "professeur")) ||
               password === "professeur" ||
               password === "admin123");
 

@@ -352,7 +352,8 @@ INSERT INTO users (id, role_id, login, password_hash, nom, prenom, telephone, em
 (5, 2, 'diopsow', '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im', 'Sow', 'El Hadji Ibrahima Diop', '776689777', 'diop.sow@has.sn', 'uploads/profs/photo_2026-07-20_16-29-37.jpg', FALSE),
 (6, 2, 'papethiam', '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im', 'Thiam', 'Pape', '787318427', 'pape.thiam@has.sn', NULL, FALSE),
 (7, 2, 'kalidou', '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im', 'Ba', 'Kalidou', '782718397', 'kalidou.ba@has.sn', NULL, FALSE),
-(14, 2, 'mamour', '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im', 'Diop', 'El Hadji Mamour Seynabou', '776689777', 'mamour@has.sn', NULL, FALSE)
+(14, 2, 'mamour', '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im', 'Diop', 'El Hadji Mamour Seynabou', '776689777', 'mamour@has.sn', NULL, FALSE),
+(15, 2, 'kady', '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im', 'Ba', 'Papa Kady', '770000000', 'kady.ba@has-academie.online', NULL, FALSE)
 ON CONFLICT (id) DO UPDATE SET password_hash = EXCLUDED.password_hash;
 
 -- Enseignants
@@ -363,7 +364,8 @@ INSERT INTO enseignants (id, user_id, filiere_id, biographie) VALUES
 (4, 5, 1, 'Enseignant en Physique Appliquée et Ondes'),
 (5, 6, 3, 'Ingénieur Informatique, architectures Web et Systèmes'),
 (6, 7, 1, 'Professeur de Sciences Physiques et Électromagnétisme'),
-(7, 14, 3, 'Enseignant-chercheur en Économie, Finance des entreprises et Gestion financière pour la filière MIASS.')
+(7, 14, 3, 'Enseignant-chercheur en Économie, Finance des entreprises et Gestion financière pour la filière MIASS.'),
+(8, 15, 1, 'Professeur de Mathématiques - Spécialiste Nouveaux Bacheliers (NB) en Analyse et Algèbre')
 ON CONFLICT (id) DO NOTHING;
 
 -- Enseignant <-> Filières
@@ -374,7 +376,8 @@ INSERT INTO enseignant_filiere (enseignant_id, filiere_id) VALUES
 (3, 1), (3, 2),
 (4, 1), (4, 2),
 (5, 1), (5, 2), (5, 3),
-(6, 1), (6, 2)
+(6, 1), (6, 2),
+(8, 1), (8, 2), (8, 3)
 ON CONFLICT DO NOTHING;
 
 -- Enseignant <-> Matières
@@ -384,7 +387,8 @@ INSERT INTO enseignant_matiere (enseignant_id, matiere_id) VALUES
 (3, 6), (3, 12), (3, 17), (3, 18),
 (4, 3),
 (5, 11), (5, 19),
-(6, 12), (6, 13), (6, 17), (6, 18)
+(6, 12), (6, 13), (6, 17), (6, 18),
+(8, 9), (8, 10)
 ON CONFLICT DO NOTHING;
 
 

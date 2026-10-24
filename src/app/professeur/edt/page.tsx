@@ -84,7 +84,11 @@ export default function ProfesseurEDTPage() {
       (prof.id && s.professeur_id === prof.id) ||
       (prof.matricule && s.professeur_id === prof.matricule) ||
       (prof.full_name && s.professeur_nom && s.professeur_nom.toLowerCase().includes(prof.full_name.toLowerCase())) ||
-      (prof.nom && s.professeur_nom && s.professeur_nom.toLowerCase().includes(prof.nom.toLowerCase())) ||
+      (prof.nom && prof.nom.toLowerCase() !== "ba" && s.professeur_nom && s.professeur_nom.toLowerCase().includes(prof.nom.toLowerCase())) ||
+      ((prof.username === "kady" || (prof.full_name && prof.full_name.toLowerCase().includes("kady"))) &&
+        s.professeur_nom && (s.professeur_nom.toLowerCase().includes("kady") || s.professeur_nom.toLowerCase().includes("papa kady"))) ||
+      ((prof.username === "kalidou" || (prof.full_name && prof.full_name.toLowerCase().includes("kalidou"))) &&
+        s.professeur_nom && s.professeur_nom.toLowerCase().includes("kalidou")) ||
       ((prof.username === "halilsamb" || (prof.nom && prof.nom.toLowerCase().includes("samb"))) &&
         s.professeur_nom && s.professeur_nom.toLowerCase().includes("halil")) ||
       (prof.nom && prof.nom.toLowerCase().includes("thiam") && s.professeur_nom && s.professeur_nom.toLowerCase().includes("thiam")) ||

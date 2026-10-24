@@ -345,6 +345,33 @@ export const MOCK_PROFESSEURS: ProfesseurProfile[] = [
       { id: 18, nom: "Optique Géométrique", code: "MAT018", niveau: "L1", classes: ["L1 MPI", "L1 SML"] },
     ],
   },
+  {
+    id: "6a53bd85-9094-49dd-8806-c084a1690ceb",
+    user_id: 15,
+    email: "kady.ba@has-academie.online",
+    username: "kady",
+    prenom: "Papa Kady",
+    nom: "Ba",
+    full_name: "Papa Kady Ba",
+    role: "professeur",
+    phone: "+221 77 000 00 00",
+    matricule: "PROF007",
+    filiere_id: "11111111-1111-1111-1111-111111111111",
+    classe_id: null,
+    bio: "Professeur de Mathématiques, chargé principalement des cours et encadrements des Nouveaux Bacheliers (NB) en Mathématiques (Analyse & Algèbre).",
+    specialite: "Math",
+    avatar_url: null,
+    photo: null,
+    is_active: true,
+    created_at: "2024-01-15T08:00:00Z",
+    updated_at: "2026-09-01T08:00:00Z",
+    niveaux: ["NB", "L1"],
+    classes: ["NB MPI", "NB SML", "NB MIASS"],
+    matieres: [
+      { id: 9, nom: "Analyse 1", code: "MAT009", niveau: "NB", classes: ["NB MPI", "NB SML", "NB MIASS"] },
+      { id: 10, nom: "Algèbre 1", code: "MAT010", niveau: "NB", classes: ["NB MPI", "NB SML", "NB MIASS"] },
+    ],
+  },
 ];
 
 export const MOCK_STUDENT: Profile = {
