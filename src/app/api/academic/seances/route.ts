@@ -12,9 +12,11 @@ const MANIFEST_STORAGE_KEY = "seances-manifest.json";
 const BUCKET_PRIMARY = "emplois-du-temps";
 const BUCKET_BACKUP = "cours-supports";
 
-// Cache mémoire serveur pour réponses instantanées
+// Cache mémoire serveur pour réponses instantanées et réduction Drastique de l'Egress Supabase
 let memorySeancesStore: SeanceEDT[] | null = null;
 let memorySlotsStore: Record<"L1" | "L2", string[]> | null = null;
+let lastSeancesFetchTime = 0;
+const SEANCES_CACHE_TTL_MS = 3 * 60 * 1000; // 3 minutes de mise en cache serveur
 const memoryMeetLinks: Record<string, string> = {};
 
 interface SeancePayload {
@@ -147,6 +149,24 @@ export async function GET() {
   };
 
   try {
+    // Si déjà en mémoire vive récente, servir immédiatement sans re-télécharger depuis Supabase Storage
+    if (
+      memorySeancesStore &&
+      memorySeancesStore.length > 0 &&
+      Date.now() - lastSeancesFetchTime < SEANCES_CACHE_TTL_MS
+    ) {
+      return NextResponse.json(
+        {
+          success: true,
+          hasSavedData: true,
+          seances: memorySeancesStore,
+          slots: memorySlotsStore || undefined,
+          count: memorySeancesStore.length,
+        },
+        { headers: noCacheHeaders }
+      );
+    }
+
     const obsoleteIds = new Set([
       "seance-has-l1-partage-info",
       "seance-has-l2-partage-info",
@@ -184,6 +204,7 @@ export async function GET() {
     // Mettre à jour le cache mémoire serveur
     memorySeancesStore = cleanedList;
     if (loadedSlots) memorySlotsStore = loadedSlots;
+    lastSeancesFetchTime = Date.now();
 
     return NextResponse.json(
       {
@@ -302,6 +323,7 @@ export async function POST(request: NextRequest) {
         memorySeancesStore = memorySeancesStore.map((s) =>
           s.id === seanceId ? { ...s, meet_url: cleanMeet, updated_at: new Date().toISOString() } : s
         );
+        lastSeancesFetchTime = Date.now();
         await writeSeancesToSupabaseStorage(memorySeancesStore, memorySlotsStore || undefined);
         await writeSeancesToFile(memorySeancesStore, memorySlotsStore || undefined);
       }
@@ -335,6 +357,7 @@ export async function POST(request: NextRequest) {
       }
       const updatedList = currentList.filter((s) => s.id !== deletedId);
       memorySeancesStore = updatedList;
+      lastSeancesFetchTime = Date.now();
 
       await writeSeancesToSupabaseStorage(updatedList, memorySlotsStore || undefined);
       await writeSeancesToFile(updatedList, memorySlotsStore || undefined);
@@ -352,6 +375,7 @@ export async function POST(request: NextRequest) {
 
     memorySeancesStore = cleanSeances;
     if (slots) memorySlotsStore = slots;
+    lastSeancesFetchTime = Date.now();
 
     // A. Persistance Cloud Storage (source maîtresse cross-devices et Vercel serverless)
     await writeSeancesToSupabaseStorage(cleanSeances, slots);

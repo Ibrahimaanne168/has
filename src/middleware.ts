@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import { getStudentPaymentStatus } from "@/lib/paymentValidation";
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({
@@ -95,6 +96,7 @@ export async function middleware(request: NextRequest) {
   // Récupération du rôle : vérification profiles si possible, avec fallback robuste sur user_metadata et email
   let userRole = (user.user_metadata?.role as string) || null;
   const meta = user.user_metadata || {};
+  let profileData: any = null;
   let isActive = true;
 
   if (userRole === "etudiant") {
@@ -109,6 +111,7 @@ export async function middleware(request: NextRequest) {
       .maybeSingle();
 
     if (profile) {
+      profileData = profile;
       if (profile.role) userRole = profile.role;
       if (profile.role === "etudiant") {
         isActive = profile.is_active === true && profile.statut_inscription === "valide";
@@ -117,19 +120,7 @@ export async function middleware(request: NextRequest) {
       }
     }
   } catch {
-    // Si la table profiles n'est pas encore initialisée en base
-  }
-
-  // Si le compte est en attente de validation ou inactif
-  if (!isActive) {
-    const loginUrl = new URL("/connexion", request.url);
-    loginUrl.searchParams.set(
-      "error",
-      "Votre inscription est actuellement en attente de validation par l'administration de HAS."
-    );
-    const redirectRes = NextResponse.redirect(loginUrl);
-    response.cookies.getAll().forEach((c) => redirectRes.cookies.set(c.name, c.value));
-    return redirectRes;
+    // Si la table profiles n'est pas accessible
   }
 
   // Déduction stricte et prioritaire du rôle administrateur (El Hadji / Halil / Direction)
@@ -156,6 +147,39 @@ export async function middleware(request: NextRequest) {
       userRole = "professeur";
     } else {
       userRole = "etudiant";
+    }
+  }
+
+  // Si c'est un étudiant régulier : vérification de l'activation et du paiement mensuel
+  if (userRole === "etudiant" && !isAdmin) {
+    // 1. Inscription en attente ou refusée
+    if (!isActive) {
+      const loginUrl = new URL("/connexion", request.url);
+      loginUrl.searchParams.set(
+        "error",
+        "Votre inscription est actuellement en attente de validation par l'administration de HAS."
+      );
+      const redirectRes = NextResponse.redirect(loginUrl);
+      response.cookies.getAll().forEach((c) => redirectRes.cookies.set(c.name, c.value));
+      return redirectRes;
+    }
+
+    // 2. Vérification de l'échéance mensuelle de paiement (1 mois révolu)
+    const paymentCheck = getStudentPaymentStatus({
+      created_at: user.created_at,
+      ...meta,
+      ...profileData,
+    });
+
+    if (paymentCheck.isExpired) {
+      const loginUrl = new URL("/connexion", request.url);
+      loginUrl.searchParams.set(
+        "error",
+        `Votre accès a expiré le ${paymentCheck.formattedExpirationDate} (échéance mensuelle de paiement). Veuillez renouveler votre paiement auprès de l'administration pour que l'administrateur valide votre réactivation.`
+      );
+      const redirectRes = NextResponse.redirect(loginUrl);
+      response.cookies.getAll().forEach((c) => redirectRes.cookies.set(c.name, c.value));
+      return redirectRes;
     }
   }
 

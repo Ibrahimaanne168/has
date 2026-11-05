@@ -27,6 +27,7 @@ import { Cours, EmploiDuTemps } from "@/lib/types";
 import { downloadOrOpenDocument } from "@/lib/fileDownload";
 import { PdfViewerModal } from "@/components/ui/PdfViewerModal";
 import { DriveRecordingsBanner } from "@/components/cours/DriveRecordingsBanner";
+import { PaymentReminderBanner } from "@/components/ui/PaymentReminderBanner";
 
 export default function EtudiantDashboard() {
   const { user } = useCurrentUser();
@@ -84,7 +85,12 @@ export default function EtudiantDashboard() {
       matriculeOrTitle={user.matricule || "ETU001"}
       userNiveau={userNiveau}
     >
-      <div className="space-y-7">
+      <div className="space-y-6">
+        {/* ============================================================================== */}
+        {/* PETITE BANDE DE RAPPEL DE RENOUVELLEMENT DE PAIEMENT */}
+        {/* ============================================================================== */}
+        <PaymentReminderBanner />
+
         {/* ============================================================================== */}
         {/* BANNIÈRE DE BIENVENUE ÉTUDIANT */}
         {/* ============================================================================== */}

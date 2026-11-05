@@ -5,6 +5,11 @@ import {
   sendRegistrationAcceptedEmail,
   sendRegistrationRejectedEmail,
 } from "@/lib/resend";
+import {
+  getStudentPaymentStatus,
+  calculateNextRenewalExpiration,
+  formatPaymentDateFull,
+} from "@/lib/paymentValidation";
 
 async function verifyAdminCaller(): Promise<{ authorized: boolean; error?: string; status?: number }> {
   const isPlaceholder = process.env.NEXT_PUBLIC_SUPABASE_URL?.includes("placeholder");
@@ -87,6 +92,9 @@ export async function GET(request: NextRequest) {
               niveau: meta.niveau || "L1",
               is_active: isActive,
               statut_inscription: statut,
+              date_validation_paiement: meta.date_validation_paiement || (isActive ? u.created_at : null),
+              date_expiration_paiement: meta.date_expiration_paiement || null,
+              statut_paiement: meta.statut_paiement || null,
               created_at: u.created_at,
             });
           }
@@ -111,24 +119,50 @@ export async function GET(request: NextRequest) {
             ...p,
             username: p.username || existing.username || null,
             statut_inscription: p.statut_inscription || (p.is_active ? "valide" : "en_attente"),
+            date_validation_paiement: p.date_validation_paiement || existing.date_validation_paiement || null,
+            date_expiration_paiement: p.date_expiration_paiement || existing.date_expiration_paiement || null,
+            statut_paiement: p.statut_paiement || existing.statut_paiement || null,
           });
         }
       }
     } catch {}
 
-    const studentsList = Array.from(studentsMap.values()).sort(
+    const studentsList = Array.from(studentsMap.values()).map((s) => {
+      const pStat = getStudentPaymentStatus(s);
+      return {
+        ...s,
+        date_validation_paiement: s.date_validation_paiement || (pStat.validationDate ? pStat.validationDate.toISOString() : null),
+        date_expiration_paiement: pStat.expirationDate.toISOString(),
+        statut_paiement: pStat.isExpired ? "expire" : "a_jour",
+        payment_info: pStat,
+      };
+    }).sort(
       (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     );
 
+    // Candidatures en attente initiale
     const pendingList = studentsList.filter(
       (s) =>
         (s.statut_inscription === "en_attente" || (!s.statut_inscription && !s.is_active)) &&
         s.statut_inscription !== "refuse" &&
         s.statut_inscription !== "valide"
     );
-    const validatedList = studentsList.filter(
-      (s) => s.statut_inscription === "valide" || (s.is_active === true && s.statut_inscription !== "refuse")
+
+    // Paiements expirés nécessitant une ré-validation par l'administrateur (+ 1 mois écoulé)
+    const expiredPaymentList = studentsList.filter(
+      (s) =>
+        s.statut_inscription === "valide" &&
+        s.payment_info?.isExpired === true
     );
+
+    // Étudiants actifs à jour de paiement
+    const validatedList = studentsList.filter(
+      (s) =>
+        (s.statut_inscription === "valide" || (s.is_active === true && s.statut_inscription !== "refuse")) &&
+        s.payment_info?.isExpired !== true
+    );
+
+    // Candidatures refusées
     const rejectedList = studentsList.filter(
       (s) => s.statut_inscription === "refuse"
     );
@@ -136,15 +170,18 @@ export async function GET(request: NextRequest) {
     let filtered = pendingList;
     if (statusParam === "all") filtered = studentsList;
     else if (statusParam === "valide" || statusParam === "validated") filtered = validatedList;
+    else if (statusParam === "expired" || statusParam === "expire") filtered = expiredPaymentList;
     else if (statusParam === "refuse" || statusParam === "rejected") filtered = rejectedList;
 
     return NextResponse.json({
       success: true,
       pendingStudents: pendingList,
+      expiredStudents: expiredPaymentList,
       students: filtered,
       counts: {
         pending: pendingList.length,
         validated: validatedList.length,
+        expired: expiredPaymentList.length,
         rejected: rejectedList.length,
         total: studentsList.length,
       },
@@ -302,9 +339,9 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    if (!studentId || (action !== "accept" && action !== "reject" && action !== "pending")) {
+    if (!studentId || (action !== "accept" && action !== "renew_payment" && action !== "reject" && action !== "pending")) {
       return NextResponse.json(
-        { error: "Paramètres invalides (studentId et action 'accept' | 'reject' | 'pending' | 'delete' requis)." },
+        { error: "Paramètres invalides (studentId et action 'accept' | 'renew_payment' | 'reject' | 'pending' | 'delete' requis)." },
         { status: 400 }
       );
     }
@@ -315,7 +352,8 @@ export async function POST(request: NextRequest) {
     const loginUrl = `${origin}/connexion`;
     const siteUrl = origin;
 
-    const isAccepting = action === "accept";
+    const isRenewing = action === "renew_payment";
+    const isAccepting = action === "accept" || isRenewing;
     const isPending = action === "pending";
     const newStatus = isAccepting ? "valide" : isPending ? "en_attente" : "refuse";
     const newActive = isAccepting;
@@ -323,6 +361,7 @@ export async function POST(request: NextRequest) {
     let targetEmail: string | null = null;
     let targetFullName: string = "Étudiant";
     let targetMatricule: string | null = null;
+    let finalExpirationDate: string | null = null;
 
     // 1. Mettre à jour les métadonnées dans Supabase Auth (garanti de persister)
     try {
@@ -335,16 +374,25 @@ export async function POST(request: NextRequest) {
         statut_inscription: newStatus,
       };
 
-      if (action === "reject") {
+      if (isAccepting) {
+        // Renouvellement ou attribution de 1 mois de validité
+        const newExpiration = calculateNextRenewalExpiration(currentMeta.date_expiration_paiement);
+        const newValidationDate = new Date().toISOString();
+        updatedMeta.date_validation_paiement = newValidationDate;
+        updatedMeta.date_expiration_paiement = newExpiration;
+        updatedMeta.statut_paiement = "a_jour";
+        finalExpirationDate = newExpiration;
+
+        if (currentMeta.original_username && !currentMeta.username) {
+          updatedMeta.username = currentMeta.original_username;
+        }
+      } else if (action === "reject") {
         // Libérer le login (username) pour qu'il puisse être immédiatement réutilisé
         if (currentMeta.username) {
           updatedMeta.original_username = currentMeta.username;
           updatedMeta.username = null;
         }
-      } else if (action === "accept") {
-        if (currentMeta.original_username && !currentMeta.username) {
-          updatedMeta.username = currentMeta.original_username;
-        }
+        updatedMeta.statut_paiement = "expire";
       }
 
       const { data: updatedAuthUser, error: authUpErr } = await supabaseAdmin.auth.admin.updateUserById(studentId, {
@@ -361,7 +409,7 @@ export async function POST(request: NextRequest) {
       console.warn("[AUTH-UPDATE-ERR]", authErr);
     }
 
-    // 2. Mettre à jour dans la table profiles si elle existe
+    // 2. Mettre à jour dans la table profiles (colonnes existantes uniquement)
     try {
       const profileUpdates: Record<string, any> = {
         is_active: isAccepting,
@@ -389,8 +437,17 @@ export async function POST(request: NextRequest) {
     // 3. Log d'audit
     try {
       await supabaseAdmin.from("audit_logs").insert({
-        action: isAccepting ? "VALIDATION_INSCRIPTION_ACCEPTEE" : "VALIDATION_INSCRIPTION_REFUSEE",
-        details: { student_id: studentId, email: targetEmail, matricule: targetMatricule },
+        action: isRenewing
+          ? "RENOUVELLEMENT_PAIEMENT_ACCEPTE"
+          : isAccepting
+          ? "VALIDATION_INSCRIPTION_ACCEPTEE"
+          : "VALIDATION_INSCRIPTION_REFUSEE",
+        details: {
+          student_id: studentId,
+          email: targetEmail,
+          matricule: targetMatricule,
+          date_expiration_paiement: finalExpirationDate,
+        },
         ip_address: request.headers.get("x-forwarded-for") || "admin",
       });
     } catch {}
@@ -417,11 +474,16 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    const expText = finalExpirationDate ? ` (valide jusqu'au ${formatPaymentDateFull(finalExpirationDate)})` : "";
+
     return NextResponse.json({
       success: true,
-      action: isAccepting ? "accepted" : isPending ? "pending" : "rejected",
-      message: isAccepting
-        ? `L'inscription de ${targetFullName} a été validée avec succès. Un email de confirmation lui a été envoyé.`
+      action: isRenewing ? "renewed" : isAccepting ? "accepted" : isPending ? "pending" : "rejected",
+      expirationDate: finalExpirationDate,
+      message: isRenewing
+        ? `Le paiement de ${targetFullName} a été validé avec succès${expText}. Son accès a été prolongé d'un mois.`
+        : isAccepting
+        ? `L'accès de ${targetFullName} a été validé avec succès${expText}.`
         : isPending
         ? `Le dossier de ${targetFullName} a été replacé en attente de décision.`
         : `L'inscription de ${targetFullName} a été refusée. Un email explicatif lui a été envoyé.`,

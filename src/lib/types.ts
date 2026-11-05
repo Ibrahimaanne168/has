@@ -22,6 +22,9 @@ export interface Profile {
   is_active: boolean;
   has_paid?: boolean;
   payment_status?: string;
+  date_validation_paiement?: string | null;
+  date_expiration_paiement?: string | null;
+  statut_paiement?: "a_jour" | "en_attente_renouvellement" | "expire";
   created_at: string;
   updated_at: string;
   // Relations jointes optionnelles

@@ -15,6 +15,9 @@ import {
   Camera,
   Trash2,
   Upload,
+  Calendar,
+  Clock,
+  ShieldCheck,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/Button";
@@ -23,9 +26,11 @@ import { useCurrentUser } from "@/lib/useCurrentUser";
 import { passwordRegex, passwordRequirementsMessage } from "@/lib/validators";
 import { createClient } from "@/lib/supabase/client";
 import { compressImage } from "@/lib/imageCompression";
+import { getStudentPaymentStatus } from "@/lib/paymentValidation";
 
 export default function EtudiantProfilPage() {
   const { user, updateProfile } = useCurrentUser();
+  const paymentStatus = getStudentPaymentStatus(user);
 
   const [phone, setPhone] = useState("");
   const [filiere, setFiliere] = useState<"MPI" | "SML" | "MIASS">("MPI");
@@ -331,6 +336,73 @@ export default function EtudiantProfilPage() {
               </form>
             </div>
           )}
+        </div>
+
+        {/* === ABONNEMENT & PAIEMENT MENSUEL === */}
+        <div className="bg-white dark:bg-[#111821] rounded-xl border border-slate-200/90 dark:border-[#263241] shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] dark:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.4)] overflow-hidden transition-colors">
+          <div className="p-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-lg bg-[#0f2744]/10 dark:bg-[#151D27] border border-transparent dark:border-[#263241] flex items-center justify-center">
+                  <ShieldCheck className="w-4.5 h-4.5 text-[#0f2744] dark:text-cyan-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-slate-900 dark:text-[#F5F7FA]">Cotisation & Abonnement Mensuel</p>
+                  <p className="text-xs text-slate-500 dark:text-[#AAB4C0]">Validation administrative mensuelle obligatoire</p>
+                </div>
+              </div>
+
+              <div>
+                {paymentStatus.isExpired ? (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-700 dark:bg-rose-950/40 dark:text-rose-400 border border-rose-200 dark:border-rose-800">
+                    Expiré — Révalidation requise
+                  </span>
+                ) : paymentStatus.isReminderActive ? (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                    <Clock className="w-3.5 h-3.5 animate-pulse" />
+                    Paiement à renouveler
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    À jour de cotisation
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-100 dark:border-[#263241]">
+              <div className="flex items-center gap-2.5">
+                <Calendar className="w-4 h-4 text-[#e0521c] shrink-0" />
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-slate-400 dark:text-[#687585] block">
+                    Échéance de blocage
+                  </span>
+                  <span className="text-xs font-semibold text-slate-800 dark:text-[#F5F7FA]">
+                    {paymentStatus.formattedExpirationDate}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2.5">
+                <Clock className="w-4 h-4 text-blue-500 shrink-0" />
+                <div>
+                  <span className="text-[10px] uppercase font-bold text-slate-400 dark:text-[#687585] block">
+                    Statut du délai
+                  </span>
+                  <span className="text-xs font-semibold text-slate-800 dark:text-[#F5F7FA]">
+                    {paymentStatus.isExpired
+                      ? "Délai mensuel dépassé"
+                      : `${paymentStatus.daysRemaining} jour${paymentStatus.daysRemaining > 1 ? "s" : ""} restant${paymentStatus.daysRemaining > 1 ? "s" : ""}`}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <p className="text-[11px] text-slate-500 dark:text-[#AAB4C0] mt-3 leading-relaxed">
+              💡 <span className="font-semibold">{paymentStatus.reminderMessage}</span>. L&apos;administration valide chaque mois l&apos;accès à votre espace dès confirmation de votre paiement.
+            </p>
+          </div>
         </div>
 
         {/* === CONTACT === */}

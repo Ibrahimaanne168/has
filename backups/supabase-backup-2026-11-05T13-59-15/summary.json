@@ -1,0 +1,123 @@
+{
+  "date": "2026-11-05T13:59:15.551Z",
+  "supabaseUrl": "https://dcjfjhwdfnyiwfagfcwx.supabase.co",
+  "totalAuthUsers": 201,
+  "totalStorageFiles": 23,
+  "tables": [
+    {
+      "name": "etudiants",
+      "count": 0,
+      "exists": true
+    },
+    {
+      "name": "matieres",
+      "count": 20,
+      "exists": true
+    },
+    {
+      "name": "cours",
+      "count": 4,
+      "exists": true
+    },
+    {
+      "name": "chat_messages",
+      "count": 8,
+      "exists": true
+    },
+    {
+      "name": "classes",
+      "count": 6,
+      "exists": true
+    },
+    {
+      "name": "edt_filiere",
+      "count": 0,
+      "exists": true
+    },
+    {
+      "name": "cours_classe",
+      "count": 0,
+      "exists": true
+    },
+    {
+      "name": "favoris",
+      "count": 0,
+      "exists": true
+    },
+    {
+      "name": "enseignants",
+      "count": 8,
+      "exists": true
+    },
+    {
+      "name": "enseignant_matiere",
+      "count": 25,
+      "exists": true
+    },
+    {
+      "name": "verification_codes",
+      "count": 424,
+      "exists": true
+    },
+    {
+      "name": "fichiers_cours",
+      "count": 3,
+      "exists": true
+    },
+    {
+      "name": "emplois_du_temps",
+      "count": 1,
+      "exists": true
+    },
+    {
+      "name": "messages_contact",
+      "count": 0,
+      "exists": true
+    },
+    {
+      "name": "logs",
+      "count": 75,
+      "exists": true
+    },
+    {
+      "name": "communiques",
+      "count": 2,
+      "exists": true
+    },
+    {
+      "name": "matiere_classe",
+      "count": 44,
+      "exists": true
+    },
+    {
+      "name": "enseignant_filiere",
+      "count": 19,
+      "exists": true
+    },
+    {
+      "name": "users",
+      "count": 12,
+      "exists": true
+    },
+    {
+      "name": "edt_classe",
+      "count": 0,
+      "exists": true
+    },
+    {
+      "name": "roles",
+      "count": 3,
+      "exists": true
+    },
+    {
+      "name": "notifications",
+      "count": 0,
+      "exists": true
+    },
+    {
+      "name": "filieres",
+      "count": 3,
+      "exists": true
+    }
+  ]
+}

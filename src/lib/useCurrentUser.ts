@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { MOCK_STUDENT, MOCK_CLASSES, MOCK_FILIERES } from "@/lib/data/mock-data";
 import { Profile } from "@/lib/types";
+import { getStudentPaymentStatus } from "@/lib/paymentValidation";
 
 const LOCAL_STORAGE_KEY = "has_current_student_profile_v2";
 
@@ -116,6 +117,9 @@ export function useCurrentUser() {
             is_active: true,
             has_paid: dbProfile?.has_paid !== undefined ? dbProfile.has_paid : true,
             payment_status: dbProfile?.payment_status || "paid",
+            date_validation_paiement: dbProfile?.date_validation_paiement || meta.date_validation_paiement || null,
+            date_expiration_paiement: (dbProfile as any)?.date_expiration_paiement || meta.date_expiration_paiement || null,
+            statut_paiement: (dbProfile as any)?.statut_paiement || meta.statut_paiement || "a_jour",
             created_at: authUser.created_at,
             updated_at: new Date().toISOString(),
             classe: foundClasse,

@@ -1,13 +1,30 @@
--- ============================================================
--- Plateforme HAS (Halil Académie Scientifique)
--- Schéma Complet Unique + RLS (Row Level Security) pour Supabase
--- Compatible exécution directe dans le "SQL Editor" de Supabase
--- Fichier Unique Consolidé (Tables, Relations, Matières, Seeds, RLS, Storage)
--- ============================================================
+-- ==============================================================================
+-- HALIL ACADÉMIE SCIENTIFIQUE (HAS) — SCHÉMA COMPLET UNIQUE DE BASE DE DONNÉES
+-- À EXÉCUTER EN 1 SEUL CLIC DANS LE "SQL EDITOR" DE VOTRE NOUVEAU PROJET SUPABASE
+-- ==============================================================================
+-- Ce fichier contient TOUT :
+-- 1. Extensions requises (pgcrypto, uuid-ossp)
+-- 2. Création de TOUTES les tables relationnelles
+-- 3. Table des profils Supabase Auth (profiles) avec index et triggers automatiques
+-- 4. Table des logs d'audit (audit_logs)
+-- 5. Table des codes 2FA (verification_codes)
+-- 6. Configuration des Buckets de Stockage Supabase (cours-supports, emplois-du-temps, avatars, communiques, public-gallery)
+-- 7. Toutes les politiques de sécurité Row Level Security (RLS)
+-- 8. Synchronisation temps réel Supabase Realtime (chat_messages)
+-- 9. Données initiales essentielles (rôles, filières, classes, matières, liaisons)
+-- ==============================================================================
 
--- ============================================================
--- 1. NETTOYAGE DES ANCIENNES TABLES (Idempotent)
--- ============================================================
+-- ==============================================================================
+-- 1. EXTENSIONS POSTGRESQL
+-- ==============================================================================
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+-- ==============================================================================
+-- 2. NETTOYAGE IDEMPOTENT DES ANCIENNES TABLES
+-- ==============================================================================
+DROP TABLE IF EXISTS audit_logs CASCADE;
+DROP TABLE IF EXISTS profiles CASCADE;
 DROP TABLE IF EXISTS chat_messages CASCADE;
 DROP TABLE IF EXISTS logs CASCADE;
 DROP TABLE IF EXISTS favoris CASCADE;
@@ -30,26 +47,11 @@ DROP TABLE IF EXISTS classes CASCADE;
 DROP TABLE IF EXISTS filieres CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS roles CASCADE;
+DROP TABLE IF EXISTS verification_codes CASCADE;
 
--- ⚠️ ATTENTION : NE PAS EXÉCUTER CE FICHIER SUR UNE BASE ACTIVE SUPABASE AUTH !
--- Ce fichier contient un schéma relationnel hérité autonome (avec table users séparée).
--- Pour la plateforme HAS connectée à Supabase Auth, utilisez :
--- 1. database/profiles.sql
--- 2. database/verification_codes.sql
--- ============================================================
-
--- Nettoyage des tables d'anciens schémas (compatibilité totale)
--- Note de sécurité : conservation des tables profiles, verification_codes et audit_logs
--- DROP TABLE IF EXISTS profiles CASCADE;
--- DROP TABLE IF EXISTS verification_codes CASCADE;
--- DROP TABLE IF EXISTS audit_logs CASCADE;
-DROP TABLE IF EXISTS favoris_cours CASCADE;
-DROP TABLE IF EXISTS messages CASCADE;
-DROP TABLE IF EXISTS contact_messages CASCADE;
-
--- ============================================================
--- 2. CRÉATION DES TABLES ET CONTRAINTES
--- ============================================================
+-- ==============================================================================
+-- 3. CRÉATION DES TABLES PRINCIPALES
+-- ==============================================================================
 
 -- RÔLES (1: admin, 2: enseignant, 3: etudiant)
 CREATE TABLE roles (
@@ -57,7 +59,7 @@ CREATE TABLE roles (
     nom VARCHAR(30) NOT NULL UNIQUE
 );
 
--- UTILISATEURS
+-- UTILISATEURS DU SYSTÈME LOCAL (compatibilité historique et administration)
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     role_id INT NOT NULL REFERENCES roles(id) ON DELETE RESTRICT,
@@ -264,13 +266,63 @@ CREATE TABLE verification_codes (
 
 CREATE INDEX IF NOT EXISTS idx_verification_codes_email ON verification_codes(email);
 CREATE INDEX IF NOT EXISTS idx_verification_codes_created ON verification_codes(created_at DESC);
-ALTER TABLE verification_codes ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Verification codes access" ON verification_codes FOR ALL TO anon, authenticated, service_role USING (true) WITH CHECK (true);
 
+-- ==============================================================================
+-- 4. TABLE PROFILES ET AUDIT (LIÉES DIRECTEMENT À SUPABASE AUTH)
+-- ==============================================================================
 
--- ============================================================
--- 3. DONNÉES INITIALES (SEED DATA RÉEL)
--- ============================================================
+-- Table des profils d'utilisateurs connectés à auth.users
+CREATE TABLE profiles (
+    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    username VARCHAR(50) UNIQUE,
+    full_name VARCHAR(150),
+    role VARCHAR(30) NOT NULL DEFAULT 'etudiant' CHECK (role IN ('admin', 'professeur', 'etudiant')),
+    matricule VARCHAR(50),
+    telephone VARCHAR(30),
+    avatar_url TEXT,
+    bio TEXT,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_profiles_username ON profiles(username);
+CREATE INDEX IF NOT EXISTS idx_profiles_email ON profiles(email);
+CREATE INDEX IF NOT EXISTS idx_profiles_role ON profiles(role);
+
+-- Déclencheur pour updated_at automatique sur profiles
+CREATE OR REPLACE FUNCTION update_profiles_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS profiles_updated_at ON profiles;
+CREATE TRIGGER profiles_updated_at
+    BEFORE UPDATE ON profiles
+    FOR EACH ROW EXECUTE FUNCTION update_profiles_updated_at();
+
+-- Table des journaux d'audit de sécurité
+CREATE TABLE audit_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    user_email VARCHAR(255),
+    action VARCHAR(100) NOT NULL,
+    details JSONB DEFAULT '{}'::jsonb,
+    ip_address VARCHAR(100) DEFAULT 'local',
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_audit_logs_action ON audit_logs(action);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_user_id ON audit_logs(user_id);
+
+-- ==============================================================================
+-- 5. DONNÉES DE BASE INITIALES (SEEDS)
+-- ==============================================================================
 
 -- Rôles
 INSERT INTO roles (id, nom) VALUES 
@@ -342,8 +394,7 @@ INSERT INTO matiere_classe (matiere_id, classe_id) VALUES
 (19, 1), (19, 3), (19, 5)
 ON CONFLICT DO NOTHING;
 
--- UTILISATEURS DU SYSTÈME (Mot de passe par défaut: admin123 pour tous les comptes initiaux)
--- Hash bcrypt vérifié: $2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im
+-- Utilisateurs initiaux (administrateur et professeurs)
 INSERT INTO users (id, role_id, login, password_hash, nom, prenom, telephone, email, photo, two_factor_enabled) VALUES
 (1, 1, 'admin', '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im', 'Samb', 'Pape Ibrahima', '756502017', 'admin@has.sn', 'uploads/profils/directeur.jpg', FALSE),
 (2, 2, 'papa', '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im', 'Samb', 'Pape Ibrahima', '756502017', 'papa.samb@has.sn', 'uploads/profs/photo_2026-07-20_16-18-59_2.jpg', FALSE),
@@ -391,9 +442,6 @@ INSERT INTO enseignant_matiere (enseignant_id, matiere_id) VALUES
 (8, 9), (8, 10)
 ON CONFLICT DO NOTHING;
 
-
--- (Les cours, fichiers de cours, emplois du temps et communiqués sont gérés et publiés exclusivement par l'administration via la plateforme)
-
 -- Réalignement des séquences d'identifiants (auto-increment)
 SELECT setval(pg_get_serial_sequence('roles', 'id'), COALESCE((SELECT MAX(id) FROM roles), 1));
 SELECT setval(pg_get_serial_sequence('filieres', 'id'), COALESCE((SELECT MAX(id) FROM filieres), 1));
@@ -413,10 +461,9 @@ SELECT setval(pg_get_serial_sequence('favoris', 'id'), COALESCE((SELECT MAX(id) 
 SELECT setval(pg_get_serial_sequence('chat_messages', 'id'), COALESCE((SELECT MAX(id) FROM chat_messages), 1));
 SELECT setval(pg_get_serial_sequence('logs', 'id'), COALESCE((SELECT MAX(id) FROM logs), 1));
 
--- ============================================================
--- 4. ACTIVATION DU ROW LEVEL SECURITY (RLS)
--- ============================================================
-
+-- ==============================================================================
+-- 6. ROW LEVEL SECURITY (RLS) SUR TOUTES LES TABLES
+-- ==============================================================================
 ALTER TABLE roles                ENABLE ROW LEVEL SECURITY;
 ALTER TABLE users                ENABLE ROW LEVEL SECURITY;
 ALTER TABLE filieres             ENABLE ROW LEVEL SECURITY;
@@ -439,12 +486,11 @@ ALTER TABLE notifications        ENABLE ROW LEVEL SECURITY;
 ALTER TABLE favoris              ENABLE ROW LEVEL SECURITY;
 ALTER TABLE chat_messages        ENABLE ROW LEVEL SECURITY;
 ALTER TABLE logs                 ENABLE ROW LEVEL SECURITY;
+ALTER TABLE verification_codes   ENABLE ROW LEVEL SECURITY;
+ALTER TABLE profiles             ENABLE ROW LEVEL SECURITY;
+ALTER TABLE audit_logs           ENABLE ROW LEVEL SECURITY;
 
--- ============================================================
--- 5. POLITIQUES RLS (Supabase service_role, anon & authenticated)
--- ============================================================
-
--- RÔLE SERVICE_ROLE : Accès total
+-- Accès complet pour le rôle backend sécurisé (service_role)
 CREATE POLICY "service_role_all_roles"              ON roles              FOR ALL TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "service_role_all_users"              ON users              FOR ALL TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "service_role_all_filieres"          ON filieres          FOR ALL TO service_role USING (true) WITH CHECK (true);
@@ -467,8 +513,11 @@ CREATE POLICY "service_role_all_notifications"     ON notifications     FOR ALL 
 CREATE POLICY "service_role_all_favoris"           ON favoris           FOR ALL TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "service_role_all_chat_messages"     ON chat_messages     FOR ALL TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "service_role_all_logs"              ON logs              FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "service_role_all_verification_codes" ON verification_codes FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "service_role_all_profiles"           ON profiles           FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "service_role_all_audit"              ON audit_logs         FOR ALL TO service_role USING (true) WITH CHECK (true);
 
--- LECTURE PUBLIQUE POUR LA NAVIGATION
+-- Politiques de lecture publique nécessaires pour la plateforme
 CREATE POLICY "public_read_roles"              ON roles              FOR SELECT USING (true);
 CREATE POLICY "public_read_filieres"          ON filieres          FOR SELECT USING (true);
 CREATE POLICY "public_read_classes"           ON classes           FOR SELECT USING (true);
@@ -484,33 +533,28 @@ CREATE POLICY "public_read_fichiers_cours"    ON fichiers_cours    FOR SELECT US
 CREATE POLICY "public_read_emplois_du_temps"  ON emplois_du_temps  FOR SELECT USING (actif = TRUE);
 CREATE POLICY "public_read_edt_classe"        ON edt_classe        FOR SELECT USING (true);
 CREATE POLICY "public_read_edt_filiere"       ON edt_filiere       FOR SELECT USING (true);
-
--- UTILISATEURS & AUTH
 CREATE POLICY "public_read_users"             ON users             FOR SELECT USING (true);
 CREATE POLICY "public_update_users"           ON users             FOR UPDATE USING (true) WITH CHECK (true);
-
--- ÉTUDIANTS
 CREATE POLICY "public_read_etudiants"         ON etudiants         FOR SELECT USING (true);
-
--- CONTACT
 CREATE POLICY "anon_insert_messages_contact"  ON messages_contact  FOR INSERT WITH CHECK (true);
 CREATE POLICY "admin_read_messages_contact"   ON messages_contact  FOR SELECT USING (true);
-
--- NOTIFICATIONS & FAVORIS
 CREATE POLICY "public_all_notifications"      ON notifications     FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "public_all_favoris"            ON favoris           FOR ALL USING (true) WITH CHECK (true);
-
--- CHAT GÉNÉRAL (Accessible à tous les utilisateurs connectés)
 CREATE POLICY "public_read_chat_messages"     ON chat_messages     FOR SELECT USING (true);
 CREATE POLICY "public_insert_chat_messages"   ON chat_messages     FOR INSERT WITH CHECK (true);
 CREATE POLICY "public_delete_chat_messages"   ON chat_messages     FOR DELETE USING (true);
-
--- LOGS
 CREATE POLICY "public_all_logs"               ON logs              FOR ALL USING (true) WITH CHECK (true);
 
--- ============================================================
--- 6. CONFIGURATION DU STOCKAGE SUPABASE (STORAGE BUCKETS)
--- ============================================================
+-- Politiques de profiles et audit_logs
+CREATE POLICY "authenticated_read_profiles"   ON profiles          FOR SELECT TO authenticated USING (true);
+CREATE POLICY "users_update_own_profile"      ON profiles          FOR UPDATE TO authenticated USING (auth.uid() = id) WITH CHECK (auth.uid() = id);
+CREATE POLICY "admin_read_audit"              ON audit_logs        FOR SELECT TO authenticated USING (
+    EXISTS (SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND profiles.role = 'admin')
+);
+
+-- ==============================================================================
+-- 7. BUCKETS DE STOCKAGE SUPABASE STORAGE ET POLITIQUES
+-- ==============================================================================
 INSERT INTO storage.buckets (id, name, public) VALUES 
 ('cours-supports', 'cours-supports', true),
 ('emplois-du-temps', 'emplois-du-temps', true),
@@ -519,7 +563,6 @@ INSERT INTO storage.buckets (id, name, public) VALUES
 ('public-gallery', 'public-gallery', true)
 ON CONFLICT (id) DO NOTHING;
 
--- Politiques RLS Storage
 DO $$ BEGIN
     DROP POLICY IF EXISTS "Public Access Supports" ON storage.objects;
     DROP POLICY IF EXISTS "Auth Upload Supports" ON storage.objects;
@@ -541,12 +584,18 @@ CREATE POLICY "Auth Upload Avatars" ON storage.objects FOR INSERT TO authenticat
 CREATE POLICY "Public Access Communiques" ON storage.objects FOR SELECT USING (bucket_id = 'communiques');
 CREATE POLICY "Public Access Gallery" ON storage.objects FOR SELECT USING (bucket_id = 'public-gallery');
 
--- ============================================================
--- 7. TEMPS RÉEL (SUPABASE REALTIME)
--- ============================================================
+-- ==============================================================================
+-- 8. PUBLICATION TEMPS RÉEL (SUPABASE REALTIME)
+-- ==============================================================================
 DO $$ BEGIN
     ALTER PUBLICATION supabase_realtime ADD TABLE chat_messages;
 EXCEPTION
     WHEN duplicate_object THEN null;
     WHEN OTHERS THEN null;
+END $$;
+
+-- Fin du schéma
+DO $$
+BEGIN
+    RAISE NOTICE '✓ Schéma complet HAS déployé avec succès sur Supabase !';
 END $$;

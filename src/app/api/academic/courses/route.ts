@@ -10,8 +10,10 @@ export const dynamic = "force-dynamic";
 const DATA_FILE = path.join(process.cwd(), "public", "uploads", "courses-data.json");
 const MANIFEST_STORAGE_KEY = "courses-manifest.json";
 
-// Cache mémoire serveur
+// Cache mémoire serveur haute performance (évite la saturation de la bande passante Supabase Egress)
 let memoryCourses: Cours[] | null = null;
+let lastCoursesFetchTime = 0;
+const COURSES_CACHE_TTL_MS = 3 * 60 * 1000; // 3 minutes de mise en cache serveur
 
 async function readCoursesFromFile(): Promise<Cours[]> {
   try {
@@ -134,6 +136,15 @@ async function readCoursesFromSupabaseTable(): Promise<Cours[]> {
  */
 export async function GET() {
   try {
+    // Si déjà en mémoire vive récente, servir immédiatement sans re-télécharger depuis Supabase Storage
+    if (memoryCourses && (Date.now() - lastCoursesFetchTime < COURSES_CACHE_TTL_MS)) {
+      return NextResponse.json({
+        success: true,
+        courses: memoryCourses,
+        count: memoryCourses.length,
+      });
+    }
+
     const map = new Map<string, Cours>();
 
     // 1. Lire depuis Supabase Cloud Storage (source cloud maîtresse)
@@ -166,6 +177,7 @@ export async function GET() {
     );
 
     memoryCourses = allCourses;
+    lastCoursesFetchTime = Date.now();
 
     // Sauvegarde en miroir si le fichier local n'était pas à jour
     if (fileCourses.length !== allCourses.length) {

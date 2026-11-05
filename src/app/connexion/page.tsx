@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { createClient } from "@/lib/supabase/client";
 import { getStoredProfesseurs } from "@/lib/academicStorage";
+import { getStudentPaymentStatus } from "@/lib/paymentValidation";
 
 function ConnexionForm() {
   const router = useRouter();
@@ -138,6 +139,7 @@ function ConnexionForm() {
         let isAccepted = meta.is_active === true && meta.statut_inscription === "valide";
         let isRejected = meta.statut_inscription === "refuse";
 
+        let fetchedProfile: any = null;
         try {
           const { data: profile } = await supabase
             .from("profiles")
@@ -146,6 +148,7 @@ function ConnexionForm() {
             .maybeSingle();
 
           if (profile) {
+            fetchedProfile = profile;
             if (profile.role) {
               role = profile.role;
               isEtudiant = profile.role === "etudiant";
@@ -171,6 +174,24 @@ function ConnexionForm() {
           );
           setIsLoading(false);
           return;
+        }
+
+        // Si c'est un étudiant validé mais dont le paiement mensuel a expiré (1 mois écoulé)
+        if (isEtudiant) {
+          const paymentCheck = getStudentPaymentStatus({
+            created_at: data.user.created_at,
+            ...meta,
+            ...fetchedProfile,
+          });
+
+          if (paymentCheck.isExpired) {
+            await supabase.auth.signOut();
+            setErrorMsg(
+              `Votre accès a expiré le ${paymentCheck.formattedExpirationDate} (échéance mensuelle de paiement). Veuillez renouveler votre paiement auprès de l'administration pour débloquer votre espace.`
+            );
+            setIsLoading(false);
+            return;
+          }
         }
 
         if (typeof window !== "undefined") {

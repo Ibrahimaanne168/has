@@ -26,6 +26,7 @@ import {
   Trash2,
   CheckCircle2,
   AlertCircle,
+  Clock,
   FileSpreadsheet,
   Layers,
   ChevronRight,
@@ -45,6 +46,12 @@ import {
 } from "@/lib/academicStorage";
 import { MOCK_FILIERES, MOCK_CLASSES } from "@/lib/data/mock-data";
 
+import {
+  getStudentPaymentStatus,
+  StudentPaymentStatus,
+  formatPaymentDateFull,
+} from "@/lib/paymentValidation";
+
 type NiveauType = "L1" | "L2" | "NB";
 type FiliereFilter = "ALL" | "MPI" | "SML" | "MIASS";
 type SortOption = "name-asc" | "name-desc" | "matricule" | "recent";
@@ -63,6 +70,9 @@ interface StudentItem {
   classe_nom: string;
   is_active: boolean;
   statut_inscription: "valide" | "en_attente" | "refuse";
+  date_validation_paiement?: string | null;
+  date_expiration_paiement?: string | null;
+  payment_info?: StudentPaymentStatus;
   created_at: string;
   avatar_url?: string | null;
 }
@@ -175,6 +185,14 @@ export default function AdminEtudiantsPage() {
       meta.statut_inscription ||
       (raw.is_active ? "valide" : "en_attente");
 
+    const payment_info = getStudentPaymentStatus({
+      created_at: raw.created_at || meta.created_at,
+      date_validation_paiement: raw.date_validation_paiement || meta.date_validation_paiement,
+      date_expiration_paiement: raw.date_expiration_paiement || meta.date_expiration_paiement,
+      statut_inscription: statut,
+      is_active: raw.is_active ?? true,
+    });
+
     return {
       id: String(raw.id || `stu-${Math.random()}`),
       full_name: fullName,
@@ -188,6 +206,9 @@ export default function AdminEtudiantsPage() {
       classe_nom: `${niveau === "NB" ? "Nouveaux Bacheliers" : `Licence ${niveau === "L1" ? "1" : "2"}`} — ${filiere}`,
       is_active: raw.is_active ?? true,
       statut_inscription: statut,
+      date_validation_paiement: raw.date_validation_paiement || meta.date_validation_paiement || (payment_info.validationDate ? payment_info.validationDate.toISOString() : null),
+      date_expiration_paiement: raw.date_expiration_paiement || meta.date_expiration_paiement || payment_info.expirationDate.toISOString(),
+      payment_info,
       created_at: raw.created_at || new Date().toISOString(),
       avatar_url: raw.avatar_url || null,
     };
@@ -406,6 +427,43 @@ export default function AdminEtudiantsPage() {
       message: "L'étudiant a été retiré de la liste avec succès.",
     });
     setTimeout(() => setNotification(null), 4000);
+  };
+
+  // Valider / renouveler le paiement d'un étudiant pour 1 mois
+  const [renewingId, setRenewingId] = useState<string | null>(null);
+  const handleRenewPayment = async (studentId: string, studentName: string) => {
+    setRenewingId(studentId);
+    try {
+      const res = await fetch("/api/admin/validation-inscriptions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ studentId, action: "renew_payment" }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setNotification({
+          type: "success",
+          message: data.message || `Le paiement de ${studentName} a été validé (+1 mois).`,
+        });
+        loadAllStudents();
+        if (studentDetailsModal && studentDetailsModal.id === studentId) {
+          setStudentDetailsModal(null);
+        }
+      } else {
+        setNotification({
+          type: "error",
+          message: data.error || "Erreur lors de la validation du paiement.",
+        });
+      }
+    } catch {
+      setNotification({
+        type: "error",
+        message: "Erreur réseau lors de la communication avec le serveur.",
+      });
+    } finally {
+      setRenewingId(null);
+      setTimeout(() => setNotification(null), 4000);
+    }
   };
 
   // Ouvrir modal d'ajout ou modification
@@ -1113,12 +1171,28 @@ export default function AdminEtudiantsPage() {
                           </span>
                         </td>
 
-                        {/* STATUT */}
+                        {/* STATUT & PAIEMENT */}
                         <td className="py-3 px-4 text-center">
                           {st.statut_inscription === "valide" ? (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800">
-                              <CheckCircle2 className="w-3 h-3" /> Validé
-                            </span>
+                            st.payment_info?.isExpired ? (
+                              <span
+                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-50 text-[#e0521c] border border-orange-200 dark:bg-orange-950/40 dark:text-orange-300 dark:border-orange-800"
+                                title="Paiement expiré : l'étudiant ne peut plus accéder à son espace"
+                              >
+                                <AlertCircle className="w-3 h-3" /> Expiré ({st.payment_info?.shortExpirationDate})
+                              </span>
+                            ) : st.payment_info?.isReminderActive ? (
+                              <span
+                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800"
+                                title="Échéance proche (7 jours ou moins)"
+                              >
+                                <Clock className="w-3 h-3 animate-pulse" /> Échéance : {st.payment_info?.shortExpirationDate}
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800">
+                                <CheckCircle2 className="w-3 h-3" /> Valide ({st.payment_info?.shortExpirationDate})
+                              </span>
+                            )
                           ) : st.statut_inscription === "refuse" ? (
                             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-50 text-red-700 border border-red-200 dark:bg-red-950/40 dark:text-red-400 dark:border-red-800">
                               Refusé
@@ -1133,24 +1207,38 @@ export default function AdminEtudiantsPage() {
                         {/* ACTIONS */}
                         <td className="py-3 px-4 text-right">
                           <div className="flex items-center justify-end gap-1">
+                            {st.statut_inscription === "valide" && (
+                              <button
+                                disabled={renewingId === st.id}
+                                onClick={() => handleRenewPayment(st.id, st.full_name)}
+                                title={st.payment_info?.isExpired ? "Valider le paiement pour 1 mois" : "Renouveler le paiement (+1 mois)"}
+                                className={`p-1.5 rounded-md transition-all active:scale-95 cursor-pointer ${
+                                  st.payment_info?.isExpired
+                                    ? "bg-emerald-600 text-white hover:bg-emerald-700 shadow-xs"
+                                    : "hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-slate-500 hover:text-emerald-600"
+                                }`}
+                              >
+                                <Check className="w-3.5 h-3.5" />
+                              </button>
+                            )}
                             <button
                               onClick={() => setStudentDetailsModal(st)}
                               title="Voir détails"
-                              className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-[#182330] text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
+                              className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-[#182330] text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
                             >
                               <Eye className="w-3.5 h-3.5" />
                             </button>
                             <button
                               onClick={() => handleOpenCreateModal(st)}
                               title="Modifier la filière ou les infos"
-                              className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-[#182330] text-slate-500 hover:text-blue-600 dark:hover:text-cyan-400 transition-colors"
+                              className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-[#182330] text-slate-500 hover:text-blue-600 dark:hover:text-cyan-400 transition-colors cursor-pointer"
                             >
                               <Edit2 className="w-3.5 h-3.5" />
                             </button>
                             <button
                               onClick={() => setDeleteConfirmId(st.id)}
                               title="Retirer cet étudiant"
-                              className="p-1.5 rounded-md hover:bg-red-50 dark:hover:bg-red-950/40 text-slate-400 hover:text-red-600 transition-colors"
+                              className="p-1.5 rounded-md hover:bg-red-50 dark:hover:bg-red-950/40 text-slate-400 hover:text-red-600 transition-colors cursor-pointer"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
@@ -1246,6 +1334,18 @@ export default function AdminEtudiantsPage() {
                         <GraduationCap className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                         <span>Licence {st.niveau === "L1" ? "1" : "2"} — {filMeta.nom}</span>
                       </div>
+                      <div className="flex items-center justify-between p-2 rounded-lg bg-slate-50 dark:bg-[#151D27] border border-slate-100 dark:border-[#263241] text-[11px]">
+                        <span className="text-slate-400 font-medium">Cotisation :</span>
+                        {st.payment_info?.isExpired ? (
+                          <span className="font-bold text-[#e0521c] flex items-center gap-1">
+                            <AlertCircle className="w-3 h-3" /> Expiré ({st.payment_info?.shortExpirationDate})
+                          </span>
+                        ) : (
+                          <span className="font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                            <CheckCircle2 className="w-3 h-3" /> Jusqu&apos;au {st.payment_info?.shortExpirationDate}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
 
@@ -1256,6 +1356,20 @@ export default function AdminEtudiantsPage() {
                     </span>
 
                     <div className="flex items-center gap-1">
+                      {st.statut_inscription === "valide" && (
+                        <button
+                          disabled={renewingId === st.id}
+                          onClick={() => handleRenewPayment(st.id, st.full_name)}
+                          title={st.payment_info?.isExpired ? "Valider le paiement pour 1 mois" : "Renouveler le paiement (+1 mois)"}
+                          className={`p-1.5 rounded transition-all active:scale-95 cursor-pointer ${
+                            st.payment_info?.isExpired
+                              ? "bg-emerald-600 text-white hover:bg-emerald-700 shadow-xs"
+                              : "text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/40"
+                          }`}
+                        >
+                          <Check className="w-3.5 h-3.5" />
+                        </button>
+                      )}
                       <Button
                         variant="ghost"
                         size="sm"
@@ -1441,12 +1555,52 @@ export default function AdminEtudiantsPage() {
                       {studentDetailsModal.statut_inscription === "valide" ? "Validé & Actif" : studentDetailsModal.statut_inscription}
                     </span>
                   </div>
-                  <div className="col-span-2">
+                  <div>
+                    <span className="text-[11px] text-slate-400 block font-medium">Cotisation mensuelle</span>
+                    <span className={`font-bold ${studentDetailsModal.payment_info?.isExpired ? "text-[#e0521c]" : "text-emerald-600 dark:text-emerald-400"}`}>
+                      {studentDetailsModal.payment_info?.isExpired ? "Expiré (accès bloqué)" : "À jour (+ 1 mois)"}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-[11px] text-slate-400 block font-medium">Échéance de paiement</span>
+                    <span className="font-semibold text-slate-800 dark:text-[#F5F7FA]">
+                      {studentDetailsModal.payment_info?.formattedExpirationDate || "--"}
+                    </span>
+                  </div>
+                  <div>
                     <span className="text-[11px] text-slate-400 block font-medium">Date d'inscription</span>
                     <span className="text-slate-700 dark:text-slate-300">
                       {new Date(studentDetailsModal.created_at).toLocaleDateString("fr-FR")}
                     </span>
                   </div>
+                </div>
+
+                {/* Validation du paiement mensuel par l'administrateur */}
+                <div className="p-3.5 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/60 space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-bold text-emerald-900 dark:text-emerald-200">
+                      Renouvellement mensuel
+                    </span>
+                    <span className="text-[11px] text-emerald-700 dark:text-emerald-300">
+                      {studentDetailsModal.payment_info?.isExpired
+                        ? "Bloqué (à révalider)"
+                        : `Reste ${studentDetailsModal.payment_info?.daysRemaining ?? 0} jour(s)`}
+                    </span>
+                  </div>
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    className="w-full text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
+                    disabled={renewingId === studentDetailsModal.id}
+                    onClick={() => handleRenewPayment(studentDetailsModal.id, studentDetailsModal.full_name)}
+                    leftIcon={<Check className="w-3.5 h-3.5" />}
+                  >
+                    {renewingId === studentDetailsModal.id
+                      ? "Validation en cours..."
+                      : studentDetailsModal.payment_info?.isExpired
+                      ? "Valider le paiement & débloquer (+1 mois)"
+                      : "Prolonger le paiement (+1 mois)"}
+                  </Button>
                 </div>
 
                 <div className="flex items-center gap-2 pt-2">

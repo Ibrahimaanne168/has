@@ -5,6 +5,7 @@ import {
   sendRegistrationAcceptedEmail,
   sendRegistrationRejectedEmail,
 } from "@/lib/resend";
+import { calculateNextRenewalExpiration } from "@/lib/paymentValidation";
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -76,45 +77,28 @@ export async function GET(request: NextRequest) {
       }
     } catch {}
 
-    // 2. Mise à jour résiliente dans profiles
+    // 2. Mise à jour dans profiles (colonnes existantes uniquement)
     const isAccepting = action === "accept";
     let updateSuccess = false;
+    const nowIso = new Date().toISOString();
+    const newExpiration = isAccepting ? calculateNextRenewalExpiration() : nowIso;
 
-    // Tentative 1 : avec statut_inscription et is_active
-    const { data: up1, error: err1 } = await supabaseAdmin
+    const { data: upProfile } = await supabaseAdmin
       .from("profiles")
       .update({
         is_active: isAccepting,
         statut_inscription: isAccepting ? "valide" : "refuse",
-        updated_at: new Date().toISOString(),
+        updated_at: nowIso,
       })
       .eq("id", studentId)
       .select()
       .maybeSingle();
 
-    if (up1) {
+    if (upProfile) {
       updateSuccess = true;
-      if (up1.email) targetEmail = up1.email;
-      if (up1.full_name) targetFullName = up1.full_name;
-      if (up1.matricule) targetMatricule = up1.matricule;
-    } else if (err1) {
-      console.warn("[RETRY-UPDATE-CORE-ONLY]", err1.message);
-      // Tentative 2 : avec is_active uniquement (si statut_inscription n'existe pas dans le schéma)
-      const { data: up2, error: err2 } = await supabaseAdmin
-        .from("profiles")
-        .update({
-          is_active: isAccepting,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", studentId)
-        .select()
-        .maybeSingle();
-
-      if (up2) {
-        updateSuccess = true;
-        if (up2.email) targetEmail = up2.email;
-        if (up2.full_name) targetFullName = up2.full_name;
-      }
+      if (upProfile.email) targetEmail = upProfile.email;
+      if (upProfile.full_name) targetFullName = upProfile.full_name;
+      if (upProfile.matricule) targetMatricule = upProfile.matricule;
     }
 
     // 3. Synchronisation obligatoire dans les métadonnées auth.users (libération du username si refusé)
@@ -126,6 +110,9 @@ export async function GET(request: NextRequest) {
         ...currentMeta,
         is_active: isAccepting,
         statut_inscription: isAccepting ? "valide" : "refuse",
+        date_validation_paiement: isAccepting ? nowIso : currentMeta.date_validation_paiement,
+        date_expiration_paiement: newExpiration,
+        statut_paiement: isAccepting ? "a_jour" : "expire",
       };
 
       if (!isAccepting) {

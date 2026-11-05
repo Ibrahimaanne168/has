@@ -25,6 +25,7 @@ import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { markAccountAsDeleted, isAccountDeleted } from "@/lib/academicStorage";
+import { StudentPaymentStatus } from "@/lib/paymentValidation";
 import { Card } from "@/components/ui/Card";
 
 interface StudentCandidate {
@@ -36,6 +37,10 @@ interface StudentCandidate {
   matricule: string | null;
   is_active: boolean;
   statut_inscription: "en_attente" | "valide" | "refuse" | null;
+  date_validation_paiement?: string | null;
+  date_expiration_paiement?: string | null;
+  statut_paiement?: string | null;
+  payment_info?: StudentPaymentStatus;
   created_at: string;
   updated_at?: string;
   user_metadata?: {
@@ -46,8 +51,8 @@ interface StudentCandidate {
 
 export default function AdminInscriptionsPage() {
   const [candidates, setCandidates] = useState<StudentCandidate[]>([]);
-  const [counts, setCounts] = useState({ pending: 0, validated: 0, rejected: 0, total: 0 });
-  const [statusFilter, setStatusFilter] = useState<"pending" | "valide" | "refuse" | "all">("pending");
+  const [counts, setCounts] = useState({ pending: 0, validated: 0, expired: 0, rejected: 0, total: 0 });
+  const [statusFilter, setStatusFilter] = useState<"pending" | "valide" | "expired" | "refuse" | "all">("pending");
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
@@ -76,7 +81,7 @@ export default function AdminInscriptionsPage() {
 
   const handleAction = async (
     studentId: string,
-    action: "accept" | "reject" | "pending" | "delete",
+    action: "accept" | "renew_payment" | "reject" | "pending" | "delete",
     email?: string | null
   ) => {
     setActionLoading(studentId);
@@ -190,7 +195,7 @@ export default function AdminInscriptionsPage() {
         )}
 
         {/* Compteurs statistiques */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5">
           <div
             onClick={() => setStatusFilter("pending")}
             className={`p-4 rounded-xl border transition-all cursor-pointer ${
@@ -208,7 +213,27 @@ export default function AdminInscriptionsPage() {
             <p className="text-2xl font-serif font-bold text-slate-900 dark:text-[#F5F7FA]">
               {counts.pending}
             </p>
-            <p className="text-[11px] text-slate-400 dark:text-[#687585] mt-0.5">Nécessite votre validation</p>
+            <p className="text-[11px] text-slate-400 dark:text-[#687585] mt-0.5">Nouvelles inscriptions</p>
+          </div>
+
+          <div
+            onClick={() => setStatusFilter("expired")}
+            className={`p-4 rounded-xl border transition-all cursor-pointer ${
+              statusFilter === "expired"
+                ? "bg-orange-50/80 dark:bg-orange-950/30 border-orange-300 dark:border-orange-700 shadow-sm ring-2 ring-orange-400/20"
+                : "bg-white dark:bg-[#111821] border-slate-200 dark:border-[#263241] hover:border-orange-300"
+            }`}
+          >
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#e0521c] dark:text-orange-400">
+                Paiement Expiré
+              </span>
+              <AlertCircle className="w-4 h-4 text-[#e0521c]" />
+            </div>
+            <p className="text-2xl font-serif font-bold text-slate-900 dark:text-[#F5F7FA]">
+              {counts.expired}
+            </p>
+            <p className="text-[11px] text-slate-400 dark:text-[#687585] mt-0.5">À révalider (+1 mois)</p>
           </div>
 
           <div
@@ -228,7 +253,7 @@ export default function AdminInscriptionsPage() {
             <p className="text-2xl font-serif font-bold text-slate-900 dark:text-[#F5F7FA]">
               {counts.validated}
             </p>
-            <p className="text-[11px] text-slate-400 dark:text-[#687585] mt-0.5">Accès autorisé au portail</p>
+            <p className="text-[11px] text-slate-400 dark:text-[#687585] mt-0.5">Cotisation à jour</p>
           </div>
 
           <div
@@ -261,14 +286,14 @@ export default function AdminInscriptionsPage() {
           >
             <div className="flex items-center justify-between mb-1.5">
               <span className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-[#AAB4C0]">
-                Total Candidatures
+                Total
               </span>
               <User className="w-4 h-4 text-slate-500" />
             </div>
             <p className="text-2xl font-serif font-bold text-slate-900 dark:text-[#F5F7FA]">
               {counts.total}
             </p>
-            <p className="text-[11px] text-slate-400 dark:text-[#687585] mt-0.5">Historique des demandes</p>
+            <p className="text-[11px] text-slate-400 dark:text-[#687585] mt-0.5">Tous les étudiants</p>
           </div>
         </div>
 
@@ -284,6 +309,16 @@ export default function AdminInscriptionsPage() {
               }`}
             >
               En attente ({counts.pending})
+            </button>
+            <button
+              onClick={() => setStatusFilter("expired")}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer shrink-0 ${
+                statusFilter === "expired"
+                  ? "bg-[#e0521c] text-white"
+                  : "bg-orange-50 dark:bg-orange-950/40 text-[#e0521c] dark:text-orange-300 hover:bg-orange-100"
+              }`}
+            >
+              Paiement expiré ({counts.expired})
             </button>
             <button
               onClick={() => setStatusFilter("valide")}
@@ -418,10 +453,17 @@ export default function AdminInscriptionsPage() {
                           </span>
                         )}
 
-                        {isValidated && (
+                        {isValidated && !c.payment_info?.isExpired && (
                           <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                             <CheckCircle2 className="w-3 h-3" />
-                            Validé &amp; Actif
+                            Validé • Échéance : {c.payment_info?.shortExpirationDate}
+                          </span>
+                        )}
+
+                        {isValidated && c.payment_info?.isExpired && (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-orange-100 dark:bg-orange-950/60 text-[#e0521c] dark:text-orange-300 border border-orange-200 dark:border-orange-800 animate-pulse">
+                            <AlertCircle className="w-3 h-3" />
+                            Paiement expiré le {c.payment_info?.shortExpirationDate}
                           </span>
                         )}
 
@@ -502,6 +544,30 @@ export default function AdminInscriptionsPage() {
                       </>
                     ) : isValidated ? (
                       <>
+                        {c.payment_info?.isExpired ? (
+                          <button
+                            type="button"
+                            disabled={actionLoading === c.id}
+                            onClick={() => handleAction(c.id, "renew_payment")}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+                            title="Valider la cotisation mensuelle pour 1 mois"
+                          >
+                            <Check className="w-3.5 h-3.5" />
+                            <span>{actionLoading === c.id ? "Validation..." : "Valider le paiement (+1 mois)"}</span>
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            disabled={actionLoading === c.id}
+                            onClick={() => handleAction(c.id, "renew_payment")}
+                            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-950/70 border border-emerald-200 dark:border-emerald-800 transition-colors cursor-pointer"
+                            title="Prolonger l'accès d'un mois supplémentaire"
+                          >
+                            <Check className="w-3.5 h-3.5" />
+                            <span>Renouveler (+1 mois)</span>
+                          </button>
+                        )}
+
                         <button
                           type="button"
                           disabled={actionLoading === c.id}

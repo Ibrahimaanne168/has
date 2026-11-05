@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "user_id": 2,
+    "filiere_id": 3,
+    "biographie": "Enseignant-chercheur en Mathématiques et Modélisation stochastique"
+  },
+  {
+    "id": 2,
+    "user_id": 3,
+    "filiere_id": 3,
+    "biographie": "Spécialiste en Génie Logiciel, Algorithmique et Programmation"
+  },
+  {
+    "id": 3,
+    "user_id": 4,
+    "filiere_id": 1,
+    "biographie": "Physicien, spécialiste en Mécanique Analytique et Thermodynamique"
+  },
+  {
+    "id": 4,
+    "user_id": 5,
+    "filiere_id": 1,
+    "biographie": "Enseignant en Physique Appliquée et Ondes"
+  },
+  {
+    "id": 5,
+    "user_id": 6,
+    "filiere_id": 3,
+    "biographie": "Ingénieur Informatique, architectures Web et Systèmes"
+  },
+  {
+    "id": 6,
+    "user_id": 7,
+    "filiere_id": 1,
+    "biographie": "Professeur de Sciences Physiques et Électromagnétisme"
+  },
+  {
+    "id": 7,
+    "user_id": 14,
+    "filiere_id": 3,
+    "biographie": "Enseignant en Finance des entreprises, Gestion financière et Économie pour la filière MIASS."
+  },
+  {
+    "id": 8,
+    "user_id": 15,
+    "filiere_id": 1,
+    "biographie": "Professeur de Mathématiques - Nouveaux Bacheliers (NB)"
+  }
+]

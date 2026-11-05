@@ -1,0 +1,1 @@
+-- Table cours_classe vide

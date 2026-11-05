@@ -472,7 +472,7 @@ export default function AdminEDTPage() {
         const lower = matiereNom.toLowerCase();
         if (lower.includes("analyse") || lower.includes("algèbre") || lower.includes("math") || lower.includes("proba")) {
           setFormFilieres(["MPI", "SML", "MIASS"]);
-          setFormEnseignant(activeNiveau === "NB" ? "Papa Kady Ba" : "Pape Ibrahima Samb");
+          setFormEnseignant((activeNiveau as string) === "NB" ? "Papa Kady Ba" : "Pape Ibrahima Samb");
         } else if (lower.includes("élec")) {
           setFormFilieres(["MPI", "SML"]);
           setFormEnseignant("Kalidou Ba");
