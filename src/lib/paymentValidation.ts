@@ -3,6 +3,13 @@
 // ==============================================================================
 
 /**
+ * Date butoir officielle du premier cycle de cours de l'Académie HAS : 12 novembre 2026.
+ * Demandée par l'administration pour que tous les étudiants inscrits lors de la session
+ * initiale voient la limite fixée au 12 novembre (au lieu du 7 novembre).
+ */
+export const OFFICIAL_FIRST_CYCLE_EXPIRATION_ISO = "2026-11-12T23:59:59.000Z";
+
+/**
  * Ajoute exactement 1 mois à une date en gérant proprement les débordements de fin de mois.
  * Exemples :
  * - 10 octobre -> 10 novembre
@@ -29,7 +36,7 @@ export function addOneMonth(dateInput: Date | string | number): Date {
 }
 
 /**
- * Formate une date en français long (ex: "10 novembre 2026").
+ * Formate une date en français long (ex: "12 novembre 2026").
  */
 export function formatPaymentDateFull(dateInput: Date | string | number | null | undefined): string {
   if (!dateInput) return "Date inconnue";
@@ -40,11 +47,12 @@ export function formatPaymentDateFull(dateInput: Date | string | number | null |
     day: "numeric",
     month: "long",
     year: "numeric",
+    timeZone: "Africa/Dakar",
   });
 }
 
 /**
- * Formate une date en format court JJ/MM/AAAA (ex: "10/11/2026").
+ * Formate une date en format court JJ/MM/AAAA (ex: "12/11/2026").
  */
 export function formatPaymentDateShort(dateInput: Date | string | number | null | undefined): string {
   if (!dateInput) return "--/--/----";
@@ -55,6 +63,7 @@ export function formatPaymentDateShort(dateInput: Date | string | number | null 
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
+    timeZone: "Africa/Dakar",
   });
 }
 
@@ -67,13 +76,16 @@ export function calculateNextRenewalExpiration(
   currentExpiration?: string | Date | null,
   referenceDate: Date = new Date()
 ): string {
+  const minFirstCycle = new Date(OFFICIAL_FIRST_CYCLE_EXPIRATION_ISO);
   if (currentExpiration) {
     const exp = new Date(currentExpiration);
     if (!isNaN(exp.getTime()) && exp.getTime() > referenceDate.getTime()) {
-      return addOneMonth(exp).toISOString();
+      const baseDate = exp.getTime() < minFirstCycle.getTime() ? minFirstCycle : exp;
+      return addOneMonth(baseDate).toISOString();
     }
   }
-  return addOneMonth(referenceDate).toISOString();
+  const base = referenceDate.getTime() < minFirstCycle.getTime() ? minFirstCycle : referenceDate;
+  return addOneMonth(base).toISOString();
 }
 
 export interface StudentPaymentStatus {
@@ -148,9 +160,17 @@ export function getStudentPaymentStatus(
     expDate = addOneMonth(now);
   }
 
-  // 3. Calcul des jours restants
-  const diffMs = expDate.getTime() - now.getTime();
-  const daysRemaining = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+  // Harmonisation de la limite officielle demandée par l'administration : 12 novembre 2026.
+  // Permet à tous les étudiants de la première cohorte d'octobre d'avoir leur échéance au 12 novembre (au lieu du 7 nov).
+  const minOfficialLimit = new Date(OFFICIAL_FIRST_CYCLE_EXPIRATION_ISO);
+  if (expDate.getTime() < minOfficialLimit.getTime()) {
+    expDate = minOfficialLimit;
+  }
+
+  // 3. Calcul des jours calendaires restants (comparaison basée sur les jours calendaires exacts)
+  const utcTarget = Date.UTC(expDate.getFullYear(), expDate.getMonth(), expDate.getDate());
+  const utcNow = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  const daysRemaining = Math.max(0, Math.round((utcTarget - utcNow) / (1000 * 60 * 60 * 24)));
 
   // 4. Calcul de l'expiration stricte (1 mois révolu)
   const isExpired = now.getTime() >= expDate.getTime();
