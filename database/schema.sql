@@ -546,6 +546,7 @@ CREATE POLICY "public_delete_chat_messages"   ON chat_messages     FOR DELETE US
 CREATE POLICY "public_all_logs"               ON logs              FOR ALL USING (true) WITH CHECK (true);
 
 -- Politiques de profiles et audit_logs
+CREATE POLICY "public_read_profiles"          ON profiles          FOR SELECT USING (true);
 CREATE POLICY "authenticated_read_profiles"   ON profiles          FOR SELECT TO authenticated USING (true);
 CREATE POLICY "users_update_own_profile"      ON profiles          FOR UPDATE TO authenticated USING (auth.uid() = id) WITH CHECK (auth.uid() = id);
 CREATE POLICY "admin_read_audit"              ON audit_logs        FOR SELECT TO authenticated USING (
