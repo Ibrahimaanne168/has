@@ -104,7 +104,7 @@ for (const u of authUsers) {
   '${userMeta}'::jsonb,
   '${createdAt}',
   '${updatedAt}',
-  '', '', '', '', '', '', '', '', ''
+  NULL, '', '', '', '', '', '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -113,7 +113,6 @@ for (const u of authUsers) {
   recovery_token = COALESCE(auth.users.recovery_token, ''),
   email_change_token_new = COALESCE(auth.users.email_change_token_new, ''),
   email_change = COALESCE(auth.users.email_change, ''),
-  phone = COALESCE(auth.users.phone, ''),
   phone_change = COALESCE(auth.users.phone_change, ''),
   phone_change_token = COALESCE(auth.users.phone_change_token, ''),
   email_change_token_current = COALESCE(auth.users.email_change_token_current, ''),
@@ -167,14 +166,14 @@ INSERT INTO auth.identities (
 }
 
 restoreSql += `
--- Sécurité GoTrue : s'assurer qu'aucune colonne interne auth.users n'est NULL (évite l'erreur 'Database error querying schema')
+-- Sécurité GoTrue : colonnes token NULL → '' (sauf phone qui a contrainte UNIQUE)
+-- phone reste NULL : plusieurs users sans téléphone = conflits si mis à ''
 UPDATE auth.users 
 SET 
   confirmation_token = COALESCE(confirmation_token, ''),
   recovery_token = COALESCE(recovery_token, ''),
   email_change_token_new = COALESCE(email_change_token_new, ''),
   email_change = COALESCE(email_change, ''),
-  phone = COALESCE(phone, ''),
   phone_change = COALESCE(phone_change, ''),
   phone_change_token = COALESCE(phone_change_token, ''),
   email_change_token_current = COALESCE(email_change_token_current, ''),

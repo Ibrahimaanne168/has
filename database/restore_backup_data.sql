@@ -1,6 +1,6 @@
-﻿-- ==============================================================================
+-- ==============================================================================
 -- RESTAURATION COMPLÈTE DES DONNÉES — HALIL ACADÉMIE SCIENTIFIQUE (HAS)
--- Sauvegarde générée le : 2026-11-12T12:10:16.360Z
+-- Sauvegarde générée le : 2026-11-12T13:23:46.807Z
 -- Total utilisateurs Auth : 201
 -- Compatible exécution directe dans le "SQL Editor" de votre nouveau projet Supabase
 -- ==============================================================================
@@ -13095,8 +13095,8 @@ INSERT INTO public.profiles (
   matricule = EXCLUDED.matricule;
 
 
--- Sécurité GoTrue : s'assurer qu'aucune colonne interne auth.users n'est NULL (évite l'erreur 'Database error querying schema')
--- IMPORTANT : phone n'est PAS mis à '' car il a une contrainte UNIQUE (plusieurs users sans téléphone = conflit)
+-- Sécurité GoTrue : colonnes token NULL → '' (sauf phone qui a contrainte UNIQUE)
+-- phone reste NULL : plusieurs users sans téléphone = conflits si mis à ''
 UPDATE auth.users 
 SET 
   confirmation_token = COALESCE(confirmation_token, ''),
