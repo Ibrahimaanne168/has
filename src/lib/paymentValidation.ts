@@ -164,9 +164,6 @@ export function getStudentPaymentStatus(
     expDate = addOneMonth(now);
   }
 
-  // 3. Calcul des jours restants
-  const diffMs = expDate.getTime() - now.getTime();
-  const daysRemaining = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
   // Harmonisation de la limite officielle demandée par l'administration : 12 novembre 2026.
   // Permet à tous les étudiants de la première cohorte d'octobre d'avoir leur échéance au 12 novembre (au lieu du 7 nov).
   const minOfficialLimit = new Date(OFFICIAL_FIRST_CYCLE_EXPIRATION_ISO);
