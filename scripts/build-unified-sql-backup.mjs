@@ -104,7 +104,7 @@ for (const u of authUsers) {
   '${userMeta}'::jsonb,
   '${createdAt}',
   '${updatedAt}',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,

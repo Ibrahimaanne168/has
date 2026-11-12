@@ -1,6 +1,6 @@
 -- ==============================================================================
 -- RESTAURATION COMPLÈTE DES DONNÉES — HALIL ACADÉMIE SCIENTIFIQUE (HAS)
--- Sauvegarde générée le : 2026-11-12T13:23:46.807Z
+-- Sauvegarde générée le : 2026-11-12T13:48:35.686Z
 -- Total utilisateurs Auth : 201
 -- Compatible exécution directe dans le "SQL Editor" de votre nouveau projet Supabase
 -- ==============================================================================
@@ -46,7 +46,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","date_expiration_paiement":"2027-01-12T23:59:59.000Z","date_validation_paiement":"2026-11-11T19:50:30.128Z","email_verified":true,"filiere":"MPI","full_name":"Mbacke Mbengue","is_active":true,"matricule":"ETU209","niveau":"L2","phone":"+221 77 551 81 96","role":"etudiant","statut_inscription":"valide","statut_paiement":"a_jour","username":"mbacke"}'::jsonb,
   '2026-11-04T10:59:41.700627Z',
   '2026-11-11T20:55:11.511298Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -111,7 +111,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Mame Nasra Tabane ","is_active":true,"matricule":"ETU208","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"mamenasra"}'::jsonb,
   '2026-11-03T21:16:29.018246Z',
   '2026-11-10T19:54:04.076754Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -176,7 +176,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Mamadou Cisse","is_active":true,"matricule":"ETU207","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"mrcisse"}'::jsonb,
   '2026-10-29T18:20:13.424861Z',
   '2026-11-12T03:18:22.868088Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -241,7 +241,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Alioune badara Sy ","is_active":true,"matricule":"ETU206","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"aliounesy"}'::jsonb,
   '2026-10-29T15:05:27.99894Z',
   '2026-11-11T12:57:52.891022Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -306,7 +306,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Alpha Oumarou Ba","is_active":true,"matricule":"ETU205","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"oumaroualpha"}'::jsonb,
   '2026-10-27T21:50:41.216823Z',
   '2026-11-07T01:03:41.76527Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -371,7 +371,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Serigne Saliou Mbacké Ndiaye ","is_active":true,"matricule":"ETU204","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"saliou"}'::jsonb,
   '2026-10-27T18:49:17.495981Z',
   '2026-11-10T18:32:18.900899Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -436,7 +436,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Dieyla Sarr","is_active":false,"matricule":"ETU203","niveau":"L1","phone":null,"role":"etudiant","statut_inscription":"en_attente","username":"dsarr"}'::jsonb,
   '2026-10-26T20:20:59.999165Z',
   '2026-10-26T20:23:12.987734Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -501,7 +501,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-SML","email_verified":true,"filiere":"SML","full_name":"Marie Henriette Katia Mbengue","is_active":false,"matricule":"ETU202","niveau":"L1","phone":null,"role":"etudiant","statut_inscription":"en_attente","username":"ktiaa"}'::jsonb,
   '2026-10-26T17:58:52.918655Z',
   '2026-10-26T17:58:52.961846Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -566,7 +566,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-MPI","email_verified":true,"filiere":"MPI","full_name":"Aminata Nguira Diop ","is_active":false,"matricule":"ETU201","niveau":"NB","phone":null,"role":"etudiant","statut_inscription":"en_attente","username":"mina"}'::jsonb,
   '2026-10-25T13:09:10.356101Z',
   '2026-11-02T10:20:12.855645Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -631,7 +631,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-MPI","email_verified":true,"filiere":"MPI","full_name":"Aïssatou Diao ","is_active":false,"matricule":"ETU200","niveau":"NB","phone":null,"role":"etudiant","statut_inscription":"en_attente","username":"diao"}'::jsonb,
   '2026-10-25T13:03:29.10416Z',
   '2026-10-25T13:03:29.13845Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -696,7 +696,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-SML","email_verified":true,"filiere":"SML","full_name":"Rokhaya Thiam","is_active":false,"matricule":"ETU199","niveau":"NB","phone":null,"role":"etudiant","statut_inscription":"en_attente","username":"n777004282"}'::jsonb,
   '2026-10-25T12:31:18.141536Z',
   '2026-10-25T12:31:18.173245Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -761,7 +761,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Khalipha Thioub","is_active":false,"matricule":"ETU198","niveau":"L1","phone":null,"role":"etudiant","statut_inscription":"en_attente","username":"lifa22"}'::jsonb,
   '2026-10-25T10:45:24.401292Z',
   '2026-10-25T12:49:10.110582Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -826,7 +826,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-MPI","email_verified":true,"filiere":"MPI","full_name":"Aliou LO","is_active":false,"matricule":"ETU197","niveau":"NB","phone":null,"role":"etudiant","statut_inscription":"en_attente","username":"co303482"}'::jsonb,
   '2026-10-25T00:22:36.544657Z',
   '2026-10-31T19:08:46.338688Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -891,7 +891,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Kang Lassana Samaté ","is_active":false,"matricule":"ETU196","niveau":"L1","phone":null,"role":"etudiant","statut_inscription":"en_attente","username":"samate.lassana"}'::jsonb,
   '2026-10-24T23:21:19.140546Z',
   '2026-11-06T22:57:47.465654Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -956,7 +956,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Hamidou Sadio","is_active":false,"matricule":"ETU195","niveau":"L1","phone":null,"role":"etudiant","statut_inscription":"en_attente","username":"sadio"}'::jsonb,
   '2026-10-24T21:28:59.85153Z',
   '2026-10-24T21:28:59.880729Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -1021,7 +1021,7 @@ INSERT INTO auth.users (
   '{"bio":"Professeur de Mathématiques, chargé principalement des cours et encadrements des Nouveaux Bacheliers (NB) en Mathématiques (Algèbre 1).","classes":["NB MPI","NB SML","NB MIASS"],"email_verified":true,"full_name":"Papa Kady Ba","is_active":true,"matricule":"PROF007","niveaux":["NB","L1"],"nom":"Ba","phone":"+221 70 000 00 00","prenom":"Papa Kady","role":"professeur","specialite":"Math","username":"kady"}'::jsonb,
   '2026-10-24T21:13:54.881114Z',
   '2026-11-01T14:05:19.919517Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -1086,7 +1086,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Mamadou Oury Diallo","is_active":false,"matricule":"ETU194","niveau":"NB","phone":null,"role":"etudiant","statut_inscription":"en_attente","username":"m.oury"}'::jsonb,
   '2026-10-24T20:45:27.058227Z',
   '2026-10-25T11:57:40.181739Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -1151,7 +1151,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-MPI","email_verified":true,"filiere":"MPI","full_name":"Ndickou Gueye","is_active":false,"matricule":"ETU194","niveau":"NB","phone":null,"role":"etudiant","statut_inscription":"en_attente","username":"ndickou"}'::jsonb,
   '2026-10-24T20:45:26.808043Z',
   '2026-10-24T20:45:26.821159Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -1216,7 +1216,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-MPI","email_verified":true,"filiere":"MPI","full_name":"Mamadou Madina Ba","is_active":false,"matricule":"ETU193","niveau":"NB","phone":null,"role":"etudiant","statut_inscription":"en_attente","username":"baba"}'::jsonb,
   '2026-10-24T20:43:26.763236Z',
   '2026-10-24T20:43:26.790903Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -1281,7 +1281,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-MPI","email_verified":true,"filiere":"MPI","full_name":"Saliou Seck","is_active":true,"matricule":"ETU192","niveau":"NB","role":"etudiant","statut_inscription":"valide","username":"likhdeug"}'::jsonb,
   '2026-10-24T20:30:00.184897Z',
   '2026-10-24T20:32:50.8507Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -1346,7 +1346,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-MPI","email_verified":true,"filiere":"MPI","full_name":"Mohamed El Habib SAKHO","is_active":true,"matricule":"ETU191","niveau":"NB","role":"etudiant","statut_inscription":"valide","username":"fearless"}'::jsonb,
   '2026-10-24T19:59:13.919292Z',
   '2026-11-11T17:02:36.698877Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -1411,7 +1411,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-MPI","email_verified":true,"filiere":"MPI","full_name":"Mohamet Diop ","is_active":true,"matricule":"ETU190","niveau":"NB","role":"etudiant","statut_inscription":"valide","username":"diop.mohamet1"}'::jsonb,
   '2026-10-24T19:56:57.351707Z',
   '2026-11-06T22:55:29.932663Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -1476,7 +1476,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-MPI","email_verified":true,"filiere":"MPI","full_name":"Awa Cheikh Ba ","is_active":true,"matricule":"ETU189","niveau":"NB","role":"etudiant","statut_inscription":"valide","username":"awa07"}'::jsonb,
   '2026-10-24T19:41:23.109696Z',
   '2026-10-24T21:11:40.128882Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -1541,7 +1541,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-MPI","email_verified":true,"filiere":"MPI","full_name":"Penda Dieng","is_active":true,"matricule":"ETU188","niveau":"NB","role":"etudiant","statut_inscription":"valide","username":"penda."}'::jsonb,
   '2026-10-24T19:13:39.971276Z',
   '2026-10-24T22:58:00.121094Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -1606,7 +1606,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-MPI","email_verified":true,"filiere":"MPI","full_name":"Papa ousmane samb","is_active":true,"matricule":"ETU186","niveau":"NB","role":"etudiant","statut_inscription":"valide","username":"ousmanesamb"}'::jsonb,
   '2026-10-24T18:38:53.18905Z',
   '2026-10-24T20:23:04.817758Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -1671,7 +1671,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-MPI","email_verified":true,"filiere":"MPI","full_name":"Bineta Niane","is_active":true,"matricule":"ETU185","niveau":"NB","role":"etudiant","statut_inscription":"valide","username":"niane"}'::jsonb,
   '2026-10-24T18:37:26.953784Z',
   '2026-10-24T20:58:45.653731Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -1736,7 +1736,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-MPI","email_verified":true,"filiere":"MPI","full_name":"Babacar Ndoye ","is_active":true,"matricule":"ETU184","niveau":"NB","role":"etudiant","statut_inscription":"valide","username":"mndoye"}'::jsonb,
   '2026-10-24T18:34:48.354943Z',
   '2026-10-27T21:04:52.558965Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -1801,7 +1801,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-SML","email_verified":true,"filiere":"SML","full_name":"Seynabou Diop ","is_active":false,"matricule":"ETU183","niveau":"NB","phone":null,"role":"etudiant","statut_inscription":"en_attente","username":"sdiop"}'::jsonb,
   '2026-10-24T18:34:33.646621Z',
   '2026-10-24T20:42:17.233003Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -1866,7 +1866,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-MPI","email_verified":true,"filiere":"MPI","full_name":"Anta Diop","is_active":false,"matricule":"ETU182","niveau":"NB","phone":null,"role":"etudiant","statut_inscription":"en_attente","username":"antadiop635"}'::jsonb,
   '2026-10-24T18:29:13.830043Z',
   '2026-10-24T18:29:13.852614Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -1931,7 +1931,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-MPI","email_verified":true,"filiere":"MPI","full_name":"AWA SECK ","is_active":true,"matricule":"ETU181","niveau":"NB","role":"etudiant","statut_inscription":"valide","username":"dcipyukd"}'::jsonb,
   '2026-10-24T18:17:14.388866Z',
   '2026-11-06T23:49:53.715911Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -1996,7 +1996,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Imam Assane Thiam ","is_active":true,"matricule":"ETU179","niveau":"NB","role":"etudiant","statut_inscription":"valide","username":"imam"}'::jsonb,
   '2026-10-24T18:07:52.662347Z',
   '2026-10-24T20:29:46.945212Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -2061,7 +2061,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-MPI","email_verified":true,"filiere":"MPI","full_name":"Fatoumata Baro ","is_active":true,"matricule":"ETU178","niveau":"NB","role":"etudiant","statut_inscription":"valide","username":"fb0863"}'::jsonb,
   '2026-10-24T17:55:19.768455Z',
   '2026-11-06T22:55:02.774836Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -2126,7 +2126,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-MPI","email_verified":true,"filiere":"MPI","full_name":"Fatou Alle Dieng","is_active":true,"matricule":"ETU177","niveau":"NB","role":"etudiant","statut_inscription":"valide","username":"fatoualledieng"}'::jsonb,
   '2026-10-24T17:54:12.306607Z',
   '2026-10-24T18:20:24.751526Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -2191,7 +2191,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-MPI","email_verified":true,"filiere":"MPI","full_name":"Coumba Faye","is_active":true,"matricule":"ETU176","niveau":"NB","role":"etudiant","statut_inscription":"valide","username":"coumbafaye"}'::jsonb,
   '2026-10-24T17:31:52.714805Z',
   '2026-11-04T21:00:59.443928Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -2256,7 +2256,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-MPI","email_verified":true,"filiere":"MPI","full_name":"Penda Diallo ","is_active":false,"matricule":"ETU175","niveau":"NB","phone":null,"role":"etudiant","statut_inscription":"en_attente","username":"pendisha"}'::jsonb,
   '2026-10-24T17:31:45.977459Z',
   '2026-10-25T00:08:10.620867Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -2321,7 +2321,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Mouhamadou baba Kane ","is_active":false,"matricule":"ETU174","niveau":"NB","phone":null,"role":"etudiant","statut_inscription":"en_attente","username":"mouhamed_"}'::jsonb,
   '2026-10-24T17:31:01.561876Z',
   '2026-10-24T21:23:14.71337Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -2386,7 +2386,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-MPI","email_verified":true,"filiere":"MPI","full_name":"Mouhamed El Moctar Ndiaye ","is_active":true,"matricule":"ETU173","niveau":"NB","role":"etudiant","statut_inscription":"valide","username":"ghostsn"}'::jsonb,
   '2026-10-24T17:10:00.055597Z',
   '2026-10-31T20:21:56.103545Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -2451,7 +2451,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-MPI","email_verified":true,"filiere":"MPI","full_name":"Fatoumata Fanta BAH ","is_active":true,"matricule":"ETU172","niveau":"NB","role":"etudiant","statut_inscription":"valide","username":"bafanta00"}'::jsonb,
   '2026-10-24T17:09:49.73217Z',
   '2026-10-24T17:13:15.527021Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -2516,7 +2516,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-MPI","email_verified":true,"filiere":"MPI","full_name":"Penda Ba","is_active":true,"matricule":"ETU171","niveau":"NB","role":"etudiant","statut_inscription":"valide","username":"mpenda"}'::jsonb,
   '2026-10-24T17:05:59.310006Z',
   '2026-10-24T20:54:09.772517Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -2581,7 +2581,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-MPI","email_verified":true,"filiere":"MPI","full_name":"Amadou Tidiane Mbodji","is_active":true,"matricule":"ETU170","niveau":"NB","role":"etudiant","statut_inscription":"valide","username":"tidiane"}'::jsonb,
   '2026-10-24T17:03:23.070509Z',
   '2026-10-27T23:44:37.383321Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -2646,7 +2646,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-SML","email_verified":true,"filiere":"SML","full_name":"Paul Mendy ","is_active":true,"matricule":"ETU169","niveau":"NB","role":"etudiant","statut_inscription":"valide","username":"pa2007"}'::jsonb,
   '2026-10-24T16:55:59.297328Z',
   '2026-10-24T18:21:59.392421Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -2711,7 +2711,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-SML","email_verified":true,"filiere":"SML","full_name":"Coumba leye","is_active":true,"matricule":"ETU168","niveau":"NB","role":"etudiant","statut_inscription":"valide","username":"coumbaleye"}'::jsonb,
   '2026-10-24T16:52:45.830904Z',
   '2026-10-24T16:54:01.845132Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -2776,7 +2776,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-SML","email_verified":true,"filiere":"SML","full_name":"Aissatou Sabaly Baldé","is_active":true,"matricule":"ETU167","niveau":"NB","role":"etudiant","statut_inscription":"valide","username":"balde.sabaly"}'::jsonb,
   '2026-10-24T16:52:09.321181Z',
   '2026-10-28T19:51:56.945033Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -2841,7 +2841,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-MPI","email_verified":true,"filiere":"MPI","full_name":"Ndeye Penda Bamby Ndieguene ","is_active":true,"matricule":"ETU166","niveau":"NB","role":"etudiant","statut_inscription":"valide","username":"qwerty0503"}'::jsonb,
   '2026-10-24T16:51:10.386468Z',
   '2026-10-24T21:17:35.468201Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -2906,7 +2906,7 @@ INSERT INTO auth.users (
   '{"classe":"NB-SML","email_verified":true,"filiere":"SML","full_name":"Ndeye Fatim Diop ","is_active":true,"matricule":"ETU159","niveau":"NB","role":"etudiant","statut_inscription":"valide","username":"n01725820262"}'::jsonb,
   '2026-10-24T16:18:03.242216Z',
   '2026-11-10T06:27:06.188998Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -2971,7 +2971,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Oumy Dramé ","is_active":true,"matricule":"ETU157","niveau":"L1","phone":"+221 785063015","role":"etudiant","statut_inscription":"valide","username":"oumy"}'::jsonb,
   '2026-10-24T14:07:36.670421Z',
   '2026-11-10T23:48:22.708786Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -3036,7 +3036,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Mame Awa Faye ","is_active":true,"matricule":"ETU156","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"m_hawwa7"}'::jsonb,
   '2026-10-23T19:19:01.229391Z',
   '2026-10-31T08:07:12.657344Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -3101,7 +3101,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Aïssatou Thior ","is_active":true,"matricule":"ETU155","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"sata24"}'::jsonb,
   '2026-10-23T09:59:17.454851Z',
   '2026-11-11T20:58:16.14123Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -3166,7 +3166,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-SML","email_verified":true,"filiere":"SML","full_name":"Marie Henriette Katia Mbengue","is_active":true,"matricule":"ETU154","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"katia"}'::jsonb,
   '2026-10-22T20:35:14.285707Z',
   '2026-11-09T20:03:49.574705Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -3231,7 +3231,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Khadidiatou ba","is_active":true,"matricule":"ETU153","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"603489"}'::jsonb,
   '2026-10-21T13:37:02.487306Z',
   '2026-11-11T13:41:40.28126Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -3296,7 +3296,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Fatimata Mballo ","is_active":true,"matricule":"ETU152","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"faty"}'::jsonb,
   '2026-10-20T21:41:23.886794Z',
   '2026-10-20T23:00:31.846771Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -3361,7 +3361,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Saliou Hanne","is_active":true,"matricule":"ETU151","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"hsaliou"}'::jsonb,
   '2026-10-20T20:46:35.272469Z',
   '2026-11-10T22:18:56.331124Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -3426,7 +3426,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","date_expiration_paiement":"2026-12-12T23:59:59.000Z","date_validation_paiement":"2026-11-11T19:57:43.747Z","email_verified":true,"filiere":"MPI","full_name":"Adjara Sall","is_active":true,"matricule":"ETU150","niveau":"L2","role":"etudiant","statut_inscription":"valide","statut_paiement":"a_jour","username":"adja"}'::jsonb,
   '2026-10-20T15:06:34.402018Z',
   '2026-11-11T19:57:44.137628Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -3491,7 +3491,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Fatim Gaye","is_active":true,"matricule":"ETU148","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"fatimgaye"}'::jsonb,
   '2026-10-19T21:23:38.1668Z',
   '2026-10-30T20:34:36.085922Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -3556,7 +3556,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Khadidiatou DIAW","is_active":true,"matricule":"ETU147","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"705560"}'::jsonb,
   '2026-10-19T20:59:55.016769Z',
   '2026-11-10T12:06:23.704247Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -3621,7 +3621,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Aicha Camara ","is_active":true,"matricule":"ETU146","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"aichabouba"}'::jsonb,
   '2026-10-19T20:48:32.480397Z',
   '2026-11-03T22:48:57.545213Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -3686,7 +3686,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-SML","email_verified":true,"filiere":"SML","full_name":"Marieme Diagne","is_active":true,"matricule":"ETU143","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"meeriam"}'::jsonb,
   '2026-10-17T19:56:00.128217Z',
   '2026-11-12T00:05:26.193935Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -3751,7 +3751,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Papa Saliou Dia","is_active":true,"matricule":"ETU142","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"bayezalle"}'::jsonb,
   '2026-10-17T18:51:26.08766Z',
   '2026-11-12T10:21:41.818296Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -3816,7 +3816,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Xavier Biaye ","is_active":true,"matricule":"ETU141","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"xavier"}'::jsonb,
   '2026-10-17T08:47:07.035727Z',
   '2026-11-10T10:05:35.611378Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -3881,7 +3881,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-SML","email_verified":true,"filiere":"SML","full_name":"Sokhna Diarra Bousso Sarr ","is_active":true,"matricule":"ETU140","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"sokhna.d"}'::jsonb,
   '2026-10-16T23:04:14.448022Z',
   '2026-10-21T09:37:27.457434Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -3946,7 +3946,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Fama Mbaye","is_active":true,"matricule":"ETU139","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"f_mb"}'::jsonb,
   '2026-10-16T21:42:06.940153Z',
   '2026-10-28T21:38:27.494514Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -4011,7 +4011,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Mouhamadou Diop","is_active":true,"matricule":"ETU138","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"momo"}'::jsonb,
   '2026-10-16T21:15:04.795071Z',
   '2026-11-10T19:43:37.082727Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -4076,7 +4076,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Sokhna Maïmouna Gueye ","is_active":true,"matricule":"ETU137","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"smgueye"}'::jsonb,
   '2026-10-16T21:05:53.272052Z',
   '2026-11-10T21:55:17.289665Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -4141,7 +4141,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Anta Diaw","is_active":true,"matricule":"ETU136","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"d77"}'::jsonb,
   '2026-10-16T20:59:11.682092Z',
   '2026-11-06T21:39:53.68248Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -4206,7 +4206,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Sene mbene ","is_active":true,"matricule":"ETU135","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"mbene1"}'::jsonb,
   '2026-10-16T19:54:38.499658Z',
   '2026-11-08T20:45:37.583825Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -4271,7 +4271,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Medoune Mbao","is_active":true,"matricule":"ETU134","niveau":"L1","phone":"+221 76 010 09 00","role":"etudiant","statut_inscription":"valide","username":"medoune"}'::jsonb,
   '2026-10-16T19:08:11.118634Z',
   '2026-11-10T20:09:33.410672Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -4336,7 +4336,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Amy Ndao ","is_active":true,"matricule":"ETU133","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"amy"}'::jsonb,
   '2026-10-16T18:17:43.71732Z',
   '2026-11-09T21:19:08.639724Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -4401,7 +4401,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Ramatoulaye Ly","is_active":true,"matricule":"ETU132","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"ramadou"}'::jsonb,
   '2026-10-16T07:40:45.934845Z',
   '2026-11-11T21:35:36.113671Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -4466,7 +4466,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Lucie Aline Paul Mbaye","is_active":true,"matricule":"ETU131","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"lucie"}'::jsonb,
   '2026-10-16T02:04:49.534613Z',
   '2026-11-11T16:28:02.334956Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -4531,7 +4531,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Fatoumata Wane","is_active":true,"matricule":"ETU129","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"fatimawane"}'::jsonb,
   '2026-10-15T21:04:14.571388Z',
   '2026-10-15T23:38:41.636419Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -4596,7 +4596,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Fatoumata WANE","is_active":true,"matricule":"ETU128","niveau":"L2","phone":"+221 77 551 81 96","role":"etudiant","statut_inscription":"valide","username":"fatoumata"}'::jsonb,
   '2026-10-15T20:53:39.23359Z',
   '2026-11-10T21:03:27.730645Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -4661,7 +4661,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Maleye Gueye","is_active":true,"matricule":"ETU127","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"frankie21"}'::jsonb,
   '2026-10-15T20:40:07.780144Z',
   '2026-11-11T13:32:06.903521Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -4726,7 +4726,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-SML","email_verified":true,"filiere":"SML","full_name":"seydina Alioune Gueye","is_active":true,"matricule":"ETU126","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"seydina"}'::jsonb,
   '2026-10-15T16:12:51.240084Z',
   '2026-11-07T21:52:43.205079Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -4791,7 +4791,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Sokhna Faty Mbacke ","is_active":true,"matricule":"ETU125","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"sfm"}'::jsonb,
   '2026-10-15T16:04:14.110076Z',
   '2026-11-10T21:07:58.970585Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -4856,7 +4856,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Ndeye Diouma Diouf","is_active":true,"matricule":"ETU124","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"nd.diouf"}'::jsonb,
   '2026-10-15T14:38:18.477199Z',
   '2026-11-10T22:57:17.281175Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -4921,7 +4921,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Falilou DIOUF","is_active":true,"matricule":"ETU123","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"falilou"}'::jsonb,
   '2026-10-15T12:32:38.930617Z',
   '2026-11-10T11:01:20.635051Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -4986,7 +4986,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"sadakh NDour ","is_active":true,"matricule":"ETU122","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"z-30"}'::jsonb,
   '2026-10-15T12:19:44.992452Z',
   '2026-11-11T21:45:44.616347Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -5051,7 +5051,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Alima Traoré ","is_active":true,"matricule":"ETU121","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"sadiya"}'::jsonb,
   '2026-10-15T12:12:51.053126Z',
   '2026-11-12T01:48:34.685813Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -5116,7 +5116,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Adama Diouf","is_active":true,"matricule":"ETU120","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"adama00"}'::jsonb,
   '2026-10-14T23:33:57.80968Z',
   '2026-11-11T20:06:53.44012Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -5181,7 +5181,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Fatima Gueye","is_active":true,"matricule":"ETU119","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"luvtima"}'::jsonb,
   '2026-10-14T23:21:29.67755Z',
   '2026-10-21T21:35:25.69945Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -5246,7 +5246,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Mbaye Ndiaye ","is_active":true,"matricule":"ETU118","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"mbayemn"}'::jsonb,
   '2026-10-14T22:27:21.387267Z',
   '2026-11-11T19:24:44.918074Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -5311,7 +5311,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Mariétou Thiam ","is_active":true,"matricule":"ETU117","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"marietou20."}'::jsonb,
   '2026-10-14T21:25:36.275453Z',
   '2026-11-12T10:27:33.412461Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -5376,7 +5376,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Mama Diagne Samb","is_active":true,"matricule":"ETU116","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"704907"}'::jsonb,
   '2026-10-14T21:10:33.209825Z',
   '2026-11-10T19:53:06.547104Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -5441,7 +5441,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Maimouna Diop","is_active":true,"matricule":"ETU115","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"maimounajoop"}'::jsonb,
   '2026-10-14T20:57:46.275382Z',
   '2026-11-11T19:41:14.483708Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -5506,7 +5506,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Nafi Camara","is_active":true,"matricule":"ETU114","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"704905"}'::jsonb,
   '2026-10-14T19:42:26.799147Z',
   '2026-11-10T19:56:34.687508Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -5571,7 +5571,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Birane Dia","is_active":true,"matricule":"ETU113","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"dia205"}'::jsonb,
   '2026-10-14T19:40:39.548342Z',
   '2026-11-11T19:59:59.929683Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -5636,7 +5636,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Marietou dieng ","is_active":true,"matricule":"ETU112","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"zaida_32"}'::jsonb,
   '2026-10-14T17:27:09.35736Z',
   '2026-10-14T17:28:43.456782Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -5701,7 +5701,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Mouhamadou Lamine Diallo","is_active":true,"matricule":"ETU111","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"lamine"}'::jsonb,
   '2026-10-14T16:22:45.793967Z',
   '2026-10-14T16:23:15.776354Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -5766,7 +5766,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Cheikh tidiane fall ","is_active":true,"matricule":"ETU110","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"cfall"}'::jsonb,
   '2026-10-14T16:06:27.695175Z',
   '2026-11-11T12:33:00.520078Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -5831,7 +5831,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Cheikh Fall ","is_active":true,"matricule":"ETU109","niveau":"L1","phone":"+221 77 551 81 96","role":"etudiant","statut_inscription":"valide","username":"soyezfous"}'::jsonb,
   '2026-10-14T16:03:07.2655Z',
   '2026-11-11T12:50:44.345201Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -5896,7 +5896,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Ndeye Khady Thiam ","is_active":true,"matricule":"ETU108","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"soxnakhadijah"}'::jsonb,
   '2026-10-14T12:38:54.292163Z',
   '2026-11-05T21:11:16.722859Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -5961,7 +5961,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MIASS","email_verified":true,"filiere":"MIASS","full_name":"NDIAYE MAHMODANE ","is_active":true,"matricule":"ETU107","niveau":"L1","phone":"+221 76 187 95 55","role":"etudiant","statut_inscription":"valide","username":"al_mahmoud"}'::jsonb,
   '2026-10-13T23:37:00.097485Z',
   '2026-11-11T14:44:42.302513Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -6026,7 +6026,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Mouhamed wade","is_active":true,"matricule":"ETU106","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"mouhamed"}'::jsonb,
   '2026-10-13T23:00:28.315261Z',
   '2026-11-10T20:09:07.818988Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -6091,7 +6091,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Coura Niang Ba","is_active":true,"matricule":"ETU105","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"apecsy76"}'::jsonb,
   '2026-10-13T22:27:47.862946Z',
   '2026-11-11T19:21:32.860375Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -6156,7 +6156,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"ADAM DIARRA","is_active":true,"matricule":"ETU104","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"diarrise"}'::jsonb,
   '2026-10-13T22:02:23.248381Z',
   '2026-10-28T21:05:06.673398Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -6221,7 +6221,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Fatim Gaye ","is_active":true,"matricule":"ETU103","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"fatim-gaye"}'::jsonb,
   '2026-10-13T21:53:24.301335Z',
   '2026-10-19T20:30:17.111406Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -6286,7 +6286,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Adjiratou khemesse Faye","is_active":true,"matricule":"ETU102","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"akfaye"}'::jsonb,
   '2026-10-13T21:17:08.796417Z',
   '2026-11-08T22:54:12.73297Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -6351,7 +6351,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Adama Mariama Mbaye","is_active":true,"matricule":"ETU101","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"mariamasoda"}'::jsonb,
   '2026-10-13T21:15:57.852872Z',
   '2026-11-09T20:13:03.857151Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -6416,7 +6416,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"BA Oumou Awa","is_active":true,"matricule":"ETU100","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"oumouba19"}'::jsonb,
   '2026-10-13T21:14:51.741165Z',
   '2026-11-10T21:08:24.370574Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -6481,7 +6481,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Rokhaya","is_active":true,"matricule":"ETU099","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"dieynaba13"}'::jsonb,
   '2026-10-13T21:11:20.36494Z',
   '2026-11-01T21:10:46.868084Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -6546,7 +6546,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Aliou Konté ","is_active":true,"matricule":"ETU098","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"alioukonte"}'::jsonb,
   '2026-10-13T21:10:09.525433Z',
   '2026-11-11T23:50:23.072021Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -6611,7 +6611,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Thierno Salmana Barry","is_active":true,"matricule":"ETU097","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"thier_salmana"}'::jsonb,
   '2026-10-13T20:54:04.777777Z',
   '2026-10-14T17:02:54.772273Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -6676,7 +6676,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Fatime Mbengue","is_active":true,"matricule":"ETU096","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"fatima"}'::jsonb,
   '2026-10-13T20:52:32.018951Z',
   '2026-11-10T22:55:45.234724Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -6741,7 +6741,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Ndeye khady Thiam ","is_active":true,"matricule":"ETU095","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"ndeyekhady"}'::jsonb,
   '2026-10-13T20:52:10.262312Z',
   '2026-11-11T15:59:32.567249Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -6806,7 +6806,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Anissa binta Diedhiou","is_active":true,"matricule":"ETU094","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"ani"}'::jsonb,
   '2026-10-13T20:26:41.529747Z',
   '2026-10-26T21:54:20.600056Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -6871,7 +6871,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Ndeye Aïcha Diouf ","is_active":true,"matricule":"ETU093","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"aicha12"}'::jsonb,
   '2026-10-13T20:05:54.546358Z',
   '2026-11-10T20:51:52.019313Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -6936,7 +6936,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Amy Ndiaye ","is_active":true,"matricule":"ETU092","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"705286"}'::jsonb,
   '2026-10-13T19:56:32.363611Z',
   '2026-11-10T20:13:50.318818Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -7001,7 +7001,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Alex Mendy","is_active":true,"matricule":"ETU091","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"705291"}'::jsonb,
   '2026-10-13T19:48:50.676202Z',
   '2026-11-11T19:23:39.366833Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -7066,7 +7066,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-SML","email_verified":true,"filiere":"SML","full_name":"Ndeye diogob ndiaye","is_active":true,"matricule":"ETU090","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"-ndeye"}'::jsonb,
   '2026-10-13T19:22:55.909006Z',
   '2026-11-10T20:39:30.918283Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -7131,7 +7131,7 @@ INSERT INTO auth.users (
   '{"bio":"Enseignant-chercheur en Économie, Finance des entreprises et Gestion financière pour la filière MIASS.","email_verified":true,"full_name":"El Hadji Mamour Seynabou Diop","phone":"+221 77 668 89 77","role":"professeur","specialite":"Economie","username":"mamour"}'::jsonb,
   '2026-10-13T19:00:40.683054Z',
   '2026-11-07T15:19:42.974739Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -7196,7 +7196,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Mame Nasra Tabane ","is_active":true,"matricule":"ETU088","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"nasra"}'::jsonb,
   '2026-10-13T18:59:12.968682Z',
   '2026-10-15T21:16:24.447615Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -7261,7 +7261,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Abdou Salam GUEYE ","is_active":true,"matricule":"ETU087","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"salam-gye26"}'::jsonb,
   '2026-10-13T16:49:54.075903Z',
   '2026-11-10T21:10:41.08581Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -7326,7 +7326,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-SML","email_verified":true,"filiere":"SML","full_name":"Mame Diarra Diané","is_active":true,"matricule":"ETU086","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"diarra"}'::jsonb,
   '2026-10-13T16:19:04.506771Z',
   '2026-11-10T23:58:49.120724Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -7391,7 +7391,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Sokhna Aminata Ndoye ","is_active":true,"matricule":"ETU085","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"12345"}'::jsonb,
   '2026-10-13T14:57:35.794825Z',
   '2026-11-10T21:21:00.739137Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -7456,7 +7456,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Ndeye amy Ndour ","is_active":true,"matricule":"ETU084","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"ndour-2"}'::jsonb,
   '2026-10-13T10:20:18.536561Z',
   '2026-11-10T22:13:03.920989Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -7521,7 +7521,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Adama DIALLO ","is_active":true,"matricule":"ETU083","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"705528has"}'::jsonb,
   '2026-10-13T10:17:57.733374Z',
   '2026-11-10T20:31:22.132718Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -7586,7 +7586,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Seynabou Diop ","is_active":true,"matricule":"ETU082","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"seynabou"}'::jsonb,
   '2026-10-13T10:06:22.016333Z',
   '2026-11-09T19:56:51.025187Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -7651,7 +7651,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Mouhamad SECK","is_active":true,"matricule":"ETU081","niveau":"L2","phone":"+221 77 277 90 52","role":"etudiant","statut_inscription":"valide","username":"lelouchvb"}'::jsonb,
   '2026-10-12T23:41:51.006562Z',
   '2026-11-11T18:40:35.493143Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -7716,7 +7716,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Cheikh Ahmadou Bamba Cisse","is_active":true,"matricule":"ETU080","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"bamba2024"}'::jsonb,
   '2026-10-12T23:14:11.17324Z',
   '2026-10-23T19:28:14.522669Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -7781,7 +7781,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-SML","email_verified":true,"filiere":"SML","full_name":"Sokhna Séne Ndiogou ","is_active":true,"matricule":"ETU079","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"sokhna"}'::jsonb,
   '2026-10-12T23:01:32.270811Z',
   '2026-11-06T20:59:38.533166Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -7846,7 +7846,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Mame Diarra DIA","is_active":true,"matricule":"ETU078","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"mdd"}'::jsonb,
   '2026-10-12T22:56:15.71221Z',
   '2026-11-07T10:37:38.926501Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -7911,7 +7911,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Waly Faye","is_active":true,"matricule":"ETU077","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"fayebirame"}'::jsonb,
   '2026-10-12T22:51:19.964576Z',
   '2026-11-10T22:58:18.380581Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -7976,7 +7976,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Baye Ngagne Mboup","is_active":true,"matricule":"ETU076","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"mboup"}'::jsonb,
   '2026-10-12T22:41:48.227995Z',
   '2026-11-10T21:01:32.086068Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -8041,7 +8041,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Cheikhouna Lo","is_active":true,"matricule":"ETU075","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"saatuubaa"}'::jsonb,
   '2026-10-12T22:41:39.264222Z',
   '2026-11-12T11:27:36.162181Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -8106,7 +8106,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Ndeye Mbodji","is_active":true,"matricule":"ETU074","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"ndeye_mbodji"}'::jsonb,
   '2026-10-12T22:40:03.860462Z',
   '2026-11-10T21:05:41.340695Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -8171,7 +8171,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Astou Wade ","is_active":true,"matricule":"ETU073","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"wade.astou"}'::jsonb,
   '2026-10-12T22:40:03.193328Z',
   '2026-11-10T21:01:51.826406Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -8236,7 +8236,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-SML","email_verified":true,"filiere":"SML","full_name":"Habybatou Diallo","is_active":true,"matricule":"ETU072","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"habybatou.d"}'::jsonb,
   '2026-10-12T22:37:32.07526Z',
   '2026-11-07T21:16:57.790608Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -8301,7 +8301,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Amadou Diang DIALLO","is_active":true,"matricule":"ETU071","niveau":"L2","phone":"","role":"etudiant","statut_inscription":"valide","username":"ame"}'::jsonb,
   '2026-10-12T22:33:08.918417Z',
   '2026-11-10T20:52:21.433658Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -8366,7 +8366,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-SML","email_verified":true,"filiere":"SML","full_name":"Mareme Mballo","is_active":true,"matricule":"ETU070","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"603689"}'::jsonb,
   '2026-10-12T22:31:00.102979Z',
   '2026-11-12T10:38:24.83217Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -8431,7 +8431,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-SML","email_verified":true,"filiere":"SML","full_name":"Ndeye Magatte ba","is_active":true,"matricule":"ETU069","niveau":"L2","phone":"+221 77 551 81 96","role":"etudiant","statut_inscription":"valide","username":"magui"}'::jsonb,
   '2026-10-12T22:29:51.986212Z',
   '2026-11-07T20:14:57.4645Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -8496,7 +8496,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Ramatoulaye BODIAN","is_active":true,"matricule":"ETU068","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"rbd"}'::jsonb,
   '2026-10-12T22:28:05.888005Z',
   '2026-11-02T21:13:20.690194Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -8561,7 +8561,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Marie Thérèse Mbengue ","is_active":true,"matricule":"ETU067","niveau":"L2","phone":"+221 785925983","role":"etudiant","statut_inscription":"valide","username":"mmbengue"}'::jsonb,
   '2026-10-12T22:24:33.040103Z',
   '2026-11-10T21:05:54.963043Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -8626,7 +8626,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Mouhamed Dieye","is_active":true,"matricule":"ETU066","niveau":"L1","phone":"+221 78 820 63 38","role":"etudiant","statut_inscription":"valide","username":"dieye_mouhamed.05"}'::jsonb,
   '2026-10-12T22:18:54.511365Z',
   '2026-11-10T20:01:58.004959Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -8691,7 +8691,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Baye Talla Diop","is_active":true,"matricule":"ETU065","niveau":"L1","phone":"+221 77 551 81 96","role":"etudiant","statut_inscription":"valide","username":"bayetalla"}'::jsonb,
   '2026-10-12T22:09:08.684909Z',
   '2026-11-08T19:59:47.781241Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -8756,7 +8756,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Aissata Alhousseynou Dia","is_active":true,"matricule":"ETU064","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"aisha"}'::jsonb,
   '2026-10-12T22:07:26.387832Z',
   '2026-11-10T16:38:31.404971Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -8821,7 +8821,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-SML","email_verified":true,"filiere":"SML","full_name":"Maty Thiongane","is_active":true,"matricule":"ETU063","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"m.thiongane"}'::jsonb,
   '2026-10-12T22:05:21.035869Z',
   '2026-11-11T23:41:39.624424Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -8886,7 +8886,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"AÏSSATOU DIOUF","is_active":true,"matricule":"ETU062","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"kim_95"}'::jsonb,
   '2026-10-12T22:01:49.481035Z',
   '2026-11-08T20:59:15.533297Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -8951,7 +8951,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Papa Amadou Mbaye","is_active":true,"matricule":"ETU061","niveau":"L1","phone":"+221 77 551 81 96","role":"etudiant","statut_inscription":"valide","username":"papambaye"}'::jsonb,
   '2026-10-12T21:59:57.542524Z',
   '2026-11-11T19:28:43.86502Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -9016,7 +9016,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Arona Sy","is_active":true,"matricule":"ETU060","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"sy.arona"}'::jsonb,
   '2026-10-12T21:53:50.483385Z',
   '2026-11-11T21:28:01.538671Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -9081,7 +9081,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Aminata Séne","is_active":true,"matricule":"ETU059","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"aminata"}'::jsonb,
   '2026-10-12T21:53:46.726899Z',
   '2026-11-10T20:29:25.504913Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -9146,7 +9146,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Maïmouna Diagne","is_active":true,"matricule":"ETU058","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"mounass_baby"}'::jsonb,
   '2026-10-12T21:51:47.422502Z',
   '2026-11-12T11:00:28.696135Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -9211,7 +9211,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"ELIMANE NDIAYE","is_active":true,"matricule":"ETU057","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"michael"}'::jsonb,
   '2026-10-12T21:51:36.938914Z',
   '2026-11-06T21:38:17.702139Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -9276,7 +9276,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-SML","email_verified":true,"filiere":"SML","full_name":"Sokhna Fatimatou Ndiaye","is_active":true,"matricule":"ETU056","niveau":"L1","phone":"+221 78 739 67 32","role":"etudiant","statut_inscription":"valide","username":"sokhna_fatimatou"}'::jsonb,
   '2026-10-12T21:51:33.18539Z',
   '2026-11-10T20:04:12.74586Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -9341,7 +9341,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Mouhamadou Lamine Khouma","is_active":true,"matricule":"ETU055","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"khouma"}'::jsonb,
   '2026-10-12T21:50:35.250914Z',
   '2026-11-10T23:12:58.699018Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -9406,7 +9406,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"ndeye sene","is_active":true,"matricule":"ETU054","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"ndeye_sene"}'::jsonb,
   '2026-10-12T21:49:32.041867Z',
   '2026-11-06T21:38:11.985735Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -9471,7 +9471,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Ndeye sokhna","is_active":true,"matricule":"ETU053","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"ndeyesokhnaniang"}'::jsonb,
   '2026-10-12T21:49:08.450521Z',
   '2026-11-10T12:07:31.693235Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -9536,7 +9536,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-SML","email_verified":true,"filiere":"SML","full_name":"Mody Sy","is_active":true,"matricule":"ETU052","niveau":"L1","phone":"+221 78 305 75 11","role":"etudiant","statut_inscription":"valide","username":"mody221"}'::jsonb,
   '2026-10-12T21:49:06.389434Z',
   '2026-11-06T21:34:20.856538Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -9601,7 +9601,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Mouhamadou Lamine Diarra","is_active":true,"matricule":"ETU051","niveau":"L1","phone":"+221 77 551 81 96","role":"etudiant","statut_inscription":"valide","username":"mouhamadoulaminediarra"}'::jsonb,
   '2026-10-12T21:48:57.845293Z',
   '2026-11-01T18:11:37.280838Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -9666,7 +9666,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Ngoné Gueye","is_active":true,"matricule":"ETU050","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"ngonee"}'::jsonb,
   '2026-10-12T21:48:21.230171Z',
   '2026-11-11T00:45:50.863063Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -9731,7 +9731,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Anta NIANG","is_active":true,"matricule":"ETU049","niveau":"L1","phone":"+221 78  732 20 22","role":"etudiant","statut_inscription":"valide","username":"niang.anta"}'::jsonb,
   '2026-10-12T21:46:26.974451Z',
   '2026-11-11T21:27:28.968033Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -9796,7 +9796,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Massaer Dieng","is_active":true,"matricule":"ETU048","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"dieng"}'::jsonb,
   '2026-10-12T21:40:43.440507Z',
   '2026-11-11T20:55:06.502044Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -9861,7 +9861,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Abdoul Razad DIALLO","is_active":true,"matricule":"ETU047","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"abdoulrazaddiallo"}'::jsonb,
   '2026-10-12T21:38:48.283218Z',
   '2026-10-28T20:03:38.941384Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -9926,7 +9926,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"WADE Rokhaya ","is_active":true,"matricule":"ETU046","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"rokhaya"}'::jsonb,
   '2026-10-12T21:37:59.292596Z',
   '2026-11-11T14:46:46.731657Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -9991,7 +9991,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-SML","email_verified":true,"filiere":"SML","full_name":"Daouda THIAM","is_active":true,"matricule":"ETU045","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"d.thiam"}'::jsonb,
   '2026-10-12T21:30:01.156588Z',
   '2026-11-09T20:57:26.248318Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -10056,7 +10056,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-SML","email_verified":true,"filiere":"SML","full_name":"Ibrahima Anne","is_active":true,"matricule":"ETU044","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"ibra"}'::jsonb,
   '2026-10-12T21:05:12.674198Z',
   '2026-10-12T22:08:38.324609Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -10121,7 +10121,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Oumou Salamata Cisse","is_active":true,"matricule":"ETU043","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"sali"}'::jsonb,
   '2026-10-12T21:00:16.9999Z',
   '2026-10-23T22:26:36.264511Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -10186,7 +10186,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MIASS","email_verified":true,"filiere":"MIASS","full_name":"NDEYE MARIE KA ","is_active":true,"matricule":"ETU042","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"1818"}'::jsonb,
   '2026-10-12T10:29:34.204827Z',
   '2026-11-10T21:10:50.744174Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -10251,7 +10251,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Mamadou Diaw","is_active":true,"matricule":"ETU041","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"mamadoudiaw1105"}'::jsonb,
   '2026-10-12T02:04:16.72318Z',
   '2026-11-11T13:53:48.406587Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -10316,7 +10316,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Sokhna faty Sarr","is_active":true,"matricule":"ETU040","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"sfsarr"}'::jsonb,
   '2026-10-11T23:01:15.538578Z',
   '2026-11-09T21:02:05.007206Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -10381,7 +10381,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Dame Sarr","is_active":true,"matricule":"ETU039","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"damesarr"}'::jsonb,
   '2026-10-11T00:08:38.918468Z',
   '2026-11-11T19:53:42.348618Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -10446,7 +10446,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-SML","email_verified":true,"filiere":"SML","full_name":"Marie Astou","is_active":true,"matricule":"ETU038","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"mariesd"}'::jsonb,
   '2026-10-10T19:51:43.983844Z',
   '2026-11-11T22:53:55.782504Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -10511,7 +10511,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Ndeye Guittè Ndongo ","is_active":true,"matricule":"ETU037","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"ladivanoire"}'::jsonb,
   '2026-10-10T19:20:12.278727Z',
   '2026-11-09T22:16:54.943132Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -10576,7 +10576,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Soro BA","is_active":true,"matricule":"ETU036","niveau":"L1","phone":"+221761730723","role":"etudiant","statut_inscription":"valide","username":"sba"}'::jsonb,
   '2026-10-10T19:18:58.711614Z',
   '2026-11-08T21:46:33.961688Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -10641,7 +10641,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Aissata Gangue ","is_active":true,"matricule":"ETU035","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"aissata2026"}'::jsonb,
   '2026-10-10T18:42:30.197405Z',
   '2026-11-09T20:10:34.984541Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -10706,7 +10706,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Mariame Sam","is_active":true,"matricule":"ETU034","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"mariame"}'::jsonb,
   '2026-10-10T11:41:29.890004Z',
   '2026-11-06T21:22:28.981503Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -10771,7 +10771,7 @@ INSERT INTO auth.users (
   '{"email_verified":true,"full_name":"El Hadji","is_active":true,"matricule":"ADM002","role":"admin","username":"ibou"}'::jsonb,
   '2026-10-10T11:40:36.765702Z',
   '2026-10-19T16:13:24.843537Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -10836,7 +10836,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Fatou Gueye Seck","is_active":true,"matricule":"ETU033","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"fa.2007"}'::jsonb,
   '2026-10-10T03:21:43.369955Z',
   '2026-11-02T21:44:03.925025Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -10901,7 +10901,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-SML","email_verified":true,"filiere":"SML","full_name":"Kadja komé","is_active":true,"matricule":"ETU032","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"kasey"}'::jsonb,
   '2026-10-10T01:20:21.141728Z',
   '2026-11-07T23:09:12.177111Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -10966,7 +10966,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Omar Lô","is_active":true,"matricule":"ETU031","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"lo_omar"}'::jsonb,
   '2026-10-09T23:20:13.495956Z',
   '2026-10-22T19:16:50.903321Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -11031,7 +11031,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-SML","email_verified":true,"filiere":"SML","full_name":"Masse Mbengue","is_active":true,"matricule":"ETU030","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"mbengue221"}'::jsonb,
   '2026-10-09T23:12:22.498529Z',
   '2026-10-31T22:30:07.401035Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -11096,7 +11096,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Aminata NDAO","is_active":true,"matricule":"ETU029","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"andao"}'::jsonb,
   '2026-10-09T21:47:01.053481Z',
   '2026-11-11T21:53:58.90814Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -11161,7 +11161,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Mame Diarra Sylla","is_active":true,"matricule":"ETU028","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"toulahiebony"}'::jsonb,
   '2026-10-09T21:41:14.350848Z',
   '2026-11-10T21:10:47.475882Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -11226,7 +11226,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Mouhamed Ndiour ","is_active":true,"matricule":"ETU027","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"shop_123"}'::jsonb,
   '2026-10-09T21:21:05.626056Z',
   '2026-11-11T21:37:47.55851Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -11291,7 +11291,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Khadim rassoul diop","is_active":true,"matricule":"ETU026","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"bamba"}'::jsonb,
   '2026-10-09T21:10:39.327293Z',
   '2026-11-08T14:16:18.164285Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -11356,7 +11356,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Cheikh Diop","is_active":true,"matricule":"ETU025","niveau":"L2","phone":"776809380","role":"etudiant","statut_inscription":"valide","username":"cmd07"}'::jsonb,
   '2026-10-09T21:06:16.933531Z',
   '2026-11-11T10:05:44.372458Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -11421,7 +11421,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Seyni Diop","is_active":true,"matricule":"ETU024","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"2209"}'::jsonb,
   '2026-10-09T17:55:44.127495Z',
   '2026-11-09T19:21:17.45259Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -11486,7 +11486,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"anta Niang","is_active":true,"matricule":"ETU023","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"nianganta852"}'::jsonb,
   '2026-10-09T10:58:14.424793Z',
   '2026-10-19T10:14:28.785755Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -11551,7 +11551,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Khoudia Niang ","is_active":true,"matricule":"ETU022","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"linguere"}'::jsonb,
   '2026-10-08T14:51:02.528573Z',
   '2026-11-10T20:59:46.147449Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -11616,7 +11616,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Fatimata Anne","is_active":true,"matricule":"ETU021","niveau":"L1","phone":"766179112","role":"etudiant","statut_inscription":"valide","username":"tima_sama10"}'::jsonb,
   '2026-10-08T14:39:50.126478Z',
   '2026-11-10T19:57:08.487309Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -11681,7 +11681,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Khoumba Diallo","is_active":true,"matricule":"ETU020","niveau":"L1","phone":"+221 78 265 04 45","role":"etudiant","statut_inscription":"valide","username":"kdiallo"}'::jsonb,
   '2026-10-08T14:38:54.314817Z',
   '2026-11-10T20:07:45.902866Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -11746,7 +11746,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"SOULEYMANE MBAYE ","is_active":true,"matricule":"ETU019","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"ghost"}'::jsonb,
   '2026-10-08T14:32:32.406538Z',
   '2026-11-06T17:29:56.132687Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -11811,7 +11811,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","date_expiration_paiement":"2026-12-12T23:59:59.000Z","date_validation_paiement":"2026-11-11T19:58:17.847Z","email_verified":true,"filiere":"MPI","full_name":"Aminata Diop ","is_active":true,"matricule":"ETU018","niveau":"L2","phone":"","role":"etudiant","statut_inscription":"valide","statut_paiement":"a_jour","username":"bint"}'::jsonb,
   '2026-10-08T14:29:26.385616Z',
   '2026-11-11T19:58:18.124095Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -11876,7 +11876,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Adama Ndiaye","is_active":true,"matricule":"ETU017","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"adama"}'::jsonb,
   '2026-10-08T14:05:35.151081Z',
   '2026-11-10T20:05:03.045796Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -11941,7 +11941,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Adama Thiaré","is_active":true,"matricule":"ETU016","niveau":"L2","phone":"","role":"etudiant","statut_inscription":"valide","username":"adamathiare"}'::jsonb,
   '2026-10-08T14:00:35.311016Z',
   '2026-11-10T22:49:35.187607Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -12006,7 +12006,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","date_expiration_paiement":"2026-12-12T23:59:59.000Z","date_validation_paiement":"2026-11-11T22:25:53.734Z","email_verified":true,"filiere":"MPI","full_name":"Mame diarra Ndiaye ","is_active":true,"matricule":"ETU015","niveau":"L1","original_username":"maryam","role":"etudiant","statut_inscription":"valide","statut_paiement":"a_jour","username":"maryam"}'::jsonb,
   '2026-10-08T13:58:31.159249Z',
   '2026-11-11T22:25:54.003007Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -12071,7 +12071,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"fatou diouf","is_active":true,"matricule":"ETU014","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"fdiouf"}'::jsonb,
   '2026-10-08T13:58:30.705672Z',
   '2026-11-10T22:37:13.325243Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -12136,7 +12136,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Aïssatou sow ba","is_active":true,"matricule":"ETU013","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"aicha"}'::jsonb,
   '2026-10-08T13:52:34.580104Z',
   '2026-11-12T10:47:07.285869Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -12201,7 +12201,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Eugène Ambroise Badji ","is_active":true,"matricule":"ETU012","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"kaiserolise19"}'::jsonb,
   '2026-10-08T13:51:35.737499Z',
   '2026-10-22T19:42:34.139964Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -12266,7 +12266,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"AMADOU BARRO","is_active":true,"matricule":"ETU011","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"amadoubarro"}'::jsonb,
   '2026-10-08T13:50:10.089219Z',
   '2026-11-10T20:06:37.319866Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -12331,7 +12331,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-SML","email_verified":true,"filiere":"SML","full_name":"Fatimata dia","is_active":true,"matricule":"ETU010","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"dia"}'::jsonb,
   '2026-10-08T13:49:56.77502Z',
   '2026-11-11T17:16:52.337917Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -12396,7 +12396,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Amina Soumare","is_active":true,"matricule":"ETU009","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"amina.smr"}'::jsonb,
   '2026-10-08T13:49:09.744861Z',
   '2026-11-05T23:07:12.932958Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -12461,7 +12461,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Ndeye Aïda tall ","is_active":true,"matricule":"ETU008","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"tall2005"}'::jsonb,
   '2026-10-08T13:47:58.584019Z',
   '2026-11-11T10:42:31.181577Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -12526,7 +12526,7 @@ INSERT INTO auth.users (
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Malick Soyibou Niang ","is_active":true,"matricule":"ETU007","niveau":"L2","phone":"+221 77 2944334","role":"etudiant","statut_inscription":"valide","username":"milk"}'::jsonb,
   '2026-10-08T13:47:52.217145Z',
   '2026-11-12T07:03:31.359025Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -12591,7 +12591,7 @@ INSERT INTO auth.users (
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Papa Ibrahima SAMB ","is_active":true,"matricule":"ETU002","niveau":"L1","phone":"+221 75 650 20 17","role":"etudiant","statut_inscription":"valide","username":"pis"}'::jsonb,
   '2026-10-07T04:16:25.453978Z',
   '2026-11-12T10:36:13.15743Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -12656,7 +12656,7 @@ INSERT INTO auth.users (
   '{"email_verified":true,"full_name":"Kalidou Ba","role":"professeur","username":"kalidou"}'::jsonb,
   '2026-10-02T21:16:01.537189Z',
   '2026-10-02T21:18:06.382005Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -12721,7 +12721,7 @@ INSERT INTO auth.users (
   '{"bio":"Ingénieur Informatique, initiation à la programmation Python et Langage C.","email_verified":true,"full_name":"Pape Thiam","phone":"+221 78 731 84 27","role":"professeur","specialite":"Informatique","username":"pape"}'::jsonb,
   '2026-10-02T21:16:01.354729Z',
   '2026-11-09T00:14:18.614336Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -12786,7 +12786,7 @@ INSERT INTO auth.users (
   '{"email_verified":true,"full_name":"El Hadji Ibrahima Diop Sow","role":"professeur","username":"diopsow"}'::jsonb,
   '2026-10-02T21:16:01.160538Z',
   '2026-10-02T21:18:06.167757Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -12851,7 +12851,7 @@ INSERT INTO auth.users (
   '{"bio":"Physicien et chimiste, spécialiste en Mécanique Analytique, thermodynamique, électromagnétisme et chimie.","email_verified":true,"full_name":"Ndiogou Ndiaye","phone":"+221 77 277 27 09","role":"professeur","specialite":"Physique","username":"ndiogou"}'::jsonb,
   '2026-10-02T21:16:00.977982Z',
   '2026-11-11T19:33:34.32679Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -12916,7 +12916,7 @@ INSERT INTO auth.users (
   '{"email_verified":true,"full_name":"Ibrahima Anne","role":"professeur","username":"ibusaki"}'::jsonb,
   '2026-10-02T21:16:00.795039Z',
   '2026-10-19T17:36:27.91026Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -12981,7 +12981,7 @@ INSERT INTO auth.users (
   '{"bio":"Directeur de l''académie et enseignant-chercheur en Mathématiques pures et appliquées. Spécialiste de l''analyse réelle, complexe et modélisation numérique stochastique.","email_verified":true,"full_name":"Pape Ibrahima Samb","phone":"+221 75 650 20 17","role":"professeur","specialite":"Math","username":"halilsamb"}'::jsonb,
   '2026-10-02T21:16:00.564827Z',
   '2026-11-11T16:14:59.363489Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
@@ -13046,7 +13046,7 @@ INSERT INTO auth.users (
   '{"email_verified":true,"full_name":"Administration HAS","is_active":true,"matricule":"ADM001","role":"admin","username":"halil"}'::jsonb,
   '2026-09-29T13:42:28.120492Z',
   '2026-11-12T01:02:15.490992Z',
-  NULL, '', '', '', '', '', '', '', ''
+  '', '', '', '', '', NULL, '', '', ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
   raw_app_meta_data = EXCLUDED.raw_app_meta_data,
