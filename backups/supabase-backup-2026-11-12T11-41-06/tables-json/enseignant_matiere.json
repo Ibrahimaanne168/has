@@ -1,0 +1,102 @@
+[
+  {
+    "enseignant_id": 1,
+    "matiere_id": 4
+  },
+  {
+    "enseignant_id": 1,
+    "matiere_id": 5
+  },
+  {
+    "enseignant_id": 1,
+    "matiere_id": 7
+  },
+  {
+    "enseignant_id": 1,
+    "matiere_id": 9
+  },
+  {
+    "enseignant_id": 1,
+    "matiere_id": 10
+  },
+  {
+    "enseignant_id": 1,
+    "matiere_id": 15
+  },
+  {
+    "enseignant_id": 1,
+    "matiere_id": 16
+  },
+  {
+    "enseignant_id": 2,
+    "matiere_id": 1
+  },
+  {
+    "enseignant_id": 2,
+    "matiere_id": 2
+  },
+  {
+    "enseignant_id": 3,
+    "matiere_id": 6
+  },
+  {
+    "enseignant_id": 3,
+    "matiere_id": 12
+  },
+  {
+    "enseignant_id": 3,
+    "matiere_id": 17
+  },
+  {
+    "enseignant_id": 3,
+    "matiere_id": 18
+  },
+  {
+    "enseignant_id": 4,
+    "matiere_id": 3
+  },
+  {
+    "enseignant_id": 5,
+    "matiere_id": 11
+  },
+  {
+    "enseignant_id": 5,
+    "matiere_id": 19
+  },
+  {
+    "enseignant_id": 6,
+    "matiere_id": 12
+  },
+  {
+    "enseignant_id": 6,
+    "matiere_id": 13
+  },
+  {
+    "enseignant_id": 6,
+    "matiere_id": 17
+  },
+  {
+    "enseignant_id": 6,
+    "matiere_id": 18
+  },
+  {
+    "enseignant_id": 7,
+    "matiere_id": 8
+  },
+  {
+    "enseignant_id": 7,
+    "matiere_id": 14
+  },
+  {
+    "enseignant_id": 7,
+    "matiere_id": 20
+  },
+  {
+    "enseignant_id": 8,
+    "matiere_id": 9
+  },
+  {
+    "enseignant_id": 8,
+    "matiere_id": 10
+  }
+]

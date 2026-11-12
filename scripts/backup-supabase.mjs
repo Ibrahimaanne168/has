@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { execSync } from "child_process";
 import { createClient } from "@supabase/supabase-js";
 
 // 1. Lire .env.local manuellement pour ne pas dépendre de packages externes
@@ -301,6 +302,14 @@ ${tableResults.map((t) => `  - **${t.name}** : ${t.count} ligne(s)`).join("\n")}
 `;
 
   fs.writeFileSync(path.join(backupDir, "README.md"), restoreGuide, "utf-8");
+
+  // Générer automatiquement le fichier SQL unique complet de restauration
+  try {
+    console.log("\n🔨 Génération automatique du fichier SQL unique de restauration...");
+    execSync(`node scripts/build-unified-sql-backup.mjs "${backupDir}"`, { stdio: "inherit" });
+  } catch (sqlBuildErr) {
+    console.warn("⚠️ Avertissement génération restore_all_data.sql:", sqlBuildErr.message);
+  }
 
   console.log("\n============================================================");
   console.log("🎉 SAUVEGARDE TERMINÉE AVEC SUCCÈS !");

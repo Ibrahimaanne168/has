@@ -1,0 +1,1 @@
+-- Table messages_contact vide

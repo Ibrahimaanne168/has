@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1,
+    "nom": "Programmation Orientée Objet Python"
+  },
+  {
+    "id": 2,
+    "nom": "Base de données"
+  },
+  {
+    "id": 3,
+    "nom": "Mécanique Générale"
+  },
+  {
+    "id": 4,
+    "nom": "Analyse 3"
+  },
+  {
+    "id": 5,
+    "nom": "Algèbre 3"
+  },
+  {
+    "id": 6,
+    "nom": "Thermodynamique"
+  },
+  {
+    "id": 7,
+    "nom": "Analyse Numérique Matricielle"
+  },
+  {
+    "id": 8,
+    "nom": "Economie"
+  },
+  {
+    "id": 9,
+    "nom": "Analyse 1"
+  },
+  {
+    "id": 10,
+    "nom": "Algèbre 1"
+  },
+  {
+    "id": 11,
+    "nom": "Programmation Python"
+  },
+  {
+    "id": 12,
+    "nom": "Mécanique du point"
+  },
+  {
+    "id": 13,
+    "nom": "Electricité"
+  },
+  {
+    "id": 14,
+    "nom": "Economie Générale"
+  },
+  {
+    "id": 15,
+    "nom": "Analyse 2"
+  },
+  {
+    "id": 16,
+    "nom": "Algèbre 2"
+  },
+  {
+    "id": 17,
+    "nom": "Magnétostatique et Régime Variable"
+  },
+  {
+    "id": 18,
+    "nom": "Optique Géométrique"
+  },
+  {
+    "id": 19,
+    "nom": "Langage C"
+  },
+  {
+    "id": 20,
+    "nom": "Finance des entreprises"
+  }
+]

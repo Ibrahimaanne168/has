@@ -1,0 +1,178 @@
+[
+  {
+    "matiere_id": 1,
+    "classe_id": 2
+  },
+  {
+    "matiere_id": 1,
+    "classe_id": 4
+  },
+  {
+    "matiere_id": 1,
+    "classe_id": 6
+  },
+  {
+    "matiere_id": 2,
+    "classe_id": 2
+  },
+  {
+    "matiere_id": 3,
+    "classe_id": 2
+  },
+  {
+    "matiere_id": 3,
+    "classe_id": 4
+  },
+  {
+    "matiere_id": 4,
+    "classe_id": 2
+  },
+  {
+    "matiere_id": 4,
+    "classe_id": 4
+  },
+  {
+    "matiere_id": 4,
+    "classe_id": 6
+  },
+  {
+    "matiere_id": 5,
+    "classe_id": 2
+  },
+  {
+    "matiere_id": 5,
+    "classe_id": 4
+  },
+  {
+    "matiere_id": 5,
+    "classe_id": 6
+  },
+  {
+    "matiere_id": 6,
+    "classe_id": 2
+  },
+  {
+    "matiere_id": 6,
+    "classe_id": 4
+  },
+  {
+    "matiere_id": 7,
+    "classe_id": 2
+  },
+  {
+    "matiere_id": 7,
+    "classe_id": 4
+  },
+  {
+    "matiere_id": 8,
+    "classe_id": 6
+  },
+  {
+    "matiere_id": 9,
+    "classe_id": 1
+  },
+  {
+    "matiere_id": 9,
+    "classe_id": 3
+  },
+  {
+    "matiere_id": 9,
+    "classe_id": 5
+  },
+  {
+    "matiere_id": 10,
+    "classe_id": 1
+  },
+  {
+    "matiere_id": 10,
+    "classe_id": 3
+  },
+  {
+    "matiere_id": 10,
+    "classe_id": 5
+  },
+  {
+    "matiere_id": 11,
+    "classe_id": 1
+  },
+  {
+    "matiere_id": 11,
+    "classe_id": 3
+  },
+  {
+    "matiere_id": 11,
+    "classe_id": 5
+  },
+  {
+    "matiere_id": 12,
+    "classe_id": 1
+  },
+  {
+    "matiere_id": 12,
+    "classe_id": 3
+  },
+  {
+    "matiere_id": 13,
+    "classe_id": 1
+  },
+  {
+    "matiere_id": 13,
+    "classe_id": 3
+  },
+  {
+    "matiere_id": 14,
+    "classe_id": 5
+  },
+  {
+    "matiere_id": 15,
+    "classe_id": 1
+  },
+  {
+    "matiere_id": 15,
+    "classe_id": 3
+  },
+  {
+    "matiere_id": 15,
+    "classe_id": 5
+  },
+  {
+    "matiere_id": 16,
+    "classe_id": 1
+  },
+  {
+    "matiere_id": 16,
+    "classe_id": 3
+  },
+  {
+    "matiere_id": 16,
+    "classe_id": 5
+  },
+  {
+    "matiere_id": 17,
+    "classe_id": 1
+  },
+  {
+    "matiere_id": 17,
+    "classe_id": 3
+  },
+  {
+    "matiere_id": 18,
+    "classe_id": 1
+  },
+  {
+    "matiere_id": 18,
+    "classe_id": 3
+  },
+  {
+    "matiere_id": 19,
+    "classe_id": 1
+  },
+  {
+    "matiere_id": 19,
+    "classe_id": 3
+  },
+  {
+    "matiere_id": 19,
+    "classe_id": 5
+  }
+]

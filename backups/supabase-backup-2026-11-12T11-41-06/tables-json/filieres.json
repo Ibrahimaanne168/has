@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "nom": "MPI",
+    "description": "Mathématiques, Physique et Informatique — Formation fondamentale et modélisation scientifique."
+  },
+  {
+    "id": 2,
+    "nom": "SML",
+    "description": "Sciences de la Mer et du Littoral — Océanographie physique, biologie marine et environnement."
+  },
+  {
+    "id": 3,
+    "nom": "MIASS",
+    "description": "Mathématiques et Informatique Appliquées aux Sciences Sociales — Statistiques, analyse de données et économétrie."
+  }
+]

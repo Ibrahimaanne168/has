@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "filiere_id": 1,
+    "nom": "L1 MPI",
+    "niveau": "Licence 1"
+  },
+  {
+    "id": 2,
+    "filiere_id": 1,
+    "nom": "L2 MPI",
+    "niveau": "Licence 2"
+  },
+  {
+    "id": 3,
+    "filiere_id": 2,
+    "nom": "L1 SML",
+    "niveau": "Licence 1"
+  },
+  {
+    "id": 4,
+    "filiere_id": 2,
+    "nom": "L2 SML",
+    "niveau": "Licence 2"
+  },
+  {
+    "id": 5,
+    "filiere_id": 3,
+    "nom": "L1 MIASS",
+    "niveau": "Licence 1"
+  },
+  {
+    "id": 6,
+    "filiere_id": 3,
+    "nom": "L2 MIASS",
+    "niveau": "Licence 2"
+  }
+]

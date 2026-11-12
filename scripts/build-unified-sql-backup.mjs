@@ -1,7 +1,25 @@
 import fs from "fs";
 import path from "path";
 
-const backupDir = path.resolve(process.cwd(), "backups", "supabase-backup-2026-11-05T13-59-15");
+function getBackupDir() {
+  if (process.argv[2]) return path.resolve(process.argv[2]);
+  const backupsRoot = path.resolve(process.cwd(), "backups");
+  if (!fs.existsSync(backupsRoot)) return null;
+  const dirs = fs.readdirSync(backupsRoot)
+    .filter((d) => d.startsWith("supabase-backup-"))
+    .map((d) => path.join(backupsRoot, d))
+    .filter((d) => fs.statSync(d).isDirectory())
+    .sort()
+    .reverse();
+  return dirs[0] || null;
+}
+
+const backupDir = getBackupDir();
+if (!backupDir) {
+  console.error("❌ Aucun dossier de backup trouvé !");
+  process.exit(1);
+}
+console.log(`📁 Dossier source du backup : ${backupDir}`);
 const tablesSqlDir = path.join(backupDir, "tables-sql");
 const authUsersFile = path.join(backupDir, "auth", "users.json");
 const databaseDir = path.resolve(process.cwd(), "database");
@@ -92,8 +110,9 @@ for (const u of authUsers) {
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '${uid}',
   '${uid}',
   '${uid}',
   json_build_object('sub', '${uid}', 'email', '${email}')::jsonb,
@@ -101,8 +120,7 @@ INSERT INTO auth.identities (
   '${confirmedAt}',
   '${createdAt}',
   '${updatedAt}'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 `;
 

@@ -1,0 +1,6455 @@
+[
+  {
+    "id": "d86becf4-e3c2-4389-8734-14aae17a79da",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "mbacmb10@gmail.com",
+    "email_confirmed_at": "2026-11-04T10:59:41.720638Z",
+    "phone": "",
+    "confirmed_at": "2026-11-04T10:59:41.720638Z",
+    "last_sign_in_at": "2026-11-10T20:04:01.343164Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "date_expiration_paiement": "2027-01-12T23:59:59.000Z",
+      "date_validation_paiement": "2026-11-11T19:50:30.128Z",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Mbacke Mbengue",
+      "is_active": true,
+      "matricule": "ETU209",
+      "niveau": "L2",
+      "phone": "+221 77 551 81 96",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "statut_paiement": "a_jour",
+      "username": "mbacke"
+    },
+    "identities": null,
+    "created_at": "2026-11-04T10:59:41.700627Z",
+    "updated_at": "2026-11-11T20:55:11.511298Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "33b3163f-0b5c-46e6-8778-1cda4891e458",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "tabane.nasra@uam.edu.sn",
+    "email_confirmed_at": "2026-11-03T21:16:29.039741Z",
+    "phone": "",
+    "confirmed_at": "2026-11-03T21:16:29.039741Z",
+    "last_sign_in_at": "2026-11-09T20:15:24.782336Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Mame Nasra Tabane ",
+      "is_active": true,
+      "matricule": "ETU208",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "mamenasra"
+    },
+    "identities": null,
+    "created_at": "2026-11-03T21:16:29.018246Z",
+    "updated_at": "2026-11-10T19:54:04.076754Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "6683eb98-ca19-48c6-add7-c37092a6144a",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "cisse.mamadou2@uam.edu.sn",
+    "email_confirmed_at": "2026-10-29T18:20:13.467802Z",
+    "phone": "",
+    "confirmed_at": "2026-10-29T18:20:13.467802Z",
+    "last_sign_in_at": "2026-11-11T18:57:01.598168Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Mamadou Cisse",
+      "is_active": true,
+      "matricule": "ETU207",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "mrcisse"
+    },
+    "identities": null,
+    "created_at": "2026-10-29T18:20:13.424861Z",
+    "updated_at": "2026-11-12T03:18:22.868088Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "ab428aa3-143c-4233-a899-0cf8449d53e8",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "aliounebadarasy103@gmail.com",
+    "email_confirmed_at": "2026-10-29T15:05:28.025931Z",
+    "phone": "",
+    "confirmed_at": "2026-10-29T15:05:28.025931Z",
+    "last_sign_in_at": "2026-10-31T11:49:52.978448Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Alioune badara Sy ",
+      "is_active": true,
+      "matricule": "ETU206",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "aliounesy"
+    },
+    "identities": null,
+    "created_at": "2026-10-29T15:05:27.99894Z",
+    "updated_at": "2026-11-11T12:57:52.891022Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "a4cf6b37-6add-47e5-adb4-2bce52a6a95c",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "alphinhojraob09@gmail.com",
+    "email_confirmed_at": "2026-10-27T21:50:41.2518Z",
+    "phone": "",
+    "confirmed_at": "2026-10-27T21:50:41.2518Z",
+    "last_sign_in_at": "2026-11-05T21:05:13.541851Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Alpha Oumarou Ba",
+      "is_active": true,
+      "matricule": "ETU205",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "oumaroualpha"
+    },
+    "identities": null,
+    "created_at": "2026-10-27T21:50:41.216823Z",
+    "updated_at": "2026-11-07T01:03:41.76527Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "cbd2a9f2-3824-42a3-9931-6da141fcc73d",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "modou3461@gmail.com",
+    "email_confirmed_at": "2026-10-27T18:49:17.528219Z",
+    "phone": "",
+    "confirmed_at": "2026-10-27T18:49:17.528219Z",
+    "last_sign_in_at": "2026-11-10T12:17:41.671355Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Serigne Saliou Mbacké Ndiaye ",
+      "is_active": true,
+      "matricule": "ETU204",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "saliou"
+    },
+    "identities": null,
+    "created_at": "2026-10-27T18:49:17.495981Z",
+    "updated_at": "2026-11-10T18:32:18.900899Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "91e8b585-0495-4ab3-8f26-3911ee65072b",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "sarrdieyla68@gmail.com",
+    "email_confirmed_at": "2026-10-26T20:21:00.025508Z",
+    "phone": "",
+    "confirmed_at": "2026-10-26T20:21:00.025508Z",
+    "last_sign_in_at": "2026-10-26T20:23:12.982103Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Dieyla Sarr",
+      "is_active": false,
+      "matricule": "ETU203",
+      "niveau": "L1",
+      "phone": null,
+      "role": "etudiant",
+      "statut_inscription": "en_attente",
+      "username": "dsarr"
+    },
+    "identities": null,
+    "created_at": "2026-10-26T20:20:59.999165Z",
+    "updated_at": "2026-10-26T20:23:12.987734Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "dc23dee8-4e24-4f92-9496-f11bcf1ad6a9",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "mariehenriettekatiam@gmail.com",
+    "email_confirmed_at": "2026-10-26T17:58:52.956574Z",
+    "phone": "",
+    "confirmed_at": "2026-10-26T17:58:52.956574Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-SML",
+      "email_verified": true,
+      "filiere": "SML",
+      "full_name": "Marie Henriette Katia Mbengue",
+      "is_active": false,
+      "matricule": "ETU202",
+      "niveau": "L1",
+      "phone": null,
+      "role": "etudiant",
+      "statut_inscription": "en_attente",
+      "username": "ktiaa"
+    },
+    "identities": null,
+    "created_at": "2026-10-26T17:58:52.918655Z",
+    "updated_at": "2026-10-26T17:58:52.961846Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "18ace4ad-2e30-4301-bfce-64b0d4b41a8a",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "aminatanguira3@gmail.com",
+    "email_confirmed_at": "2026-10-25T13:09:10.392118Z",
+    "phone": "",
+    "confirmed_at": "2026-10-25T13:09:10.392118Z",
+    "last_sign_in_at": "2026-11-02T10:20:12.779818Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Aminata Nguira Diop ",
+      "is_active": false,
+      "matricule": "ETU201",
+      "niveau": "NB",
+      "phone": null,
+      "role": "etudiant",
+      "statut_inscription": "en_attente",
+      "username": "mina"
+    },
+    "identities": null,
+    "created_at": "2026-10-25T13:09:10.356101Z",
+    "updated_at": "2026-11-02T10:20:12.855645Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "c1a79b72-9e42-469c-bdaf-6a2d593fd29f",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "diao28061@gmail.com",
+    "email_confirmed_at": "2026-10-25T13:03:29.137093Z",
+    "phone": "",
+    "confirmed_at": "2026-10-25T13:03:29.137093Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Aïssatou Diao ",
+      "is_active": false,
+      "matricule": "ETU200",
+      "niveau": "NB",
+      "phone": null,
+      "role": "etudiant",
+      "statut_inscription": "en_attente",
+      "username": "diao"
+    },
+    "identities": null,
+    "created_at": "2026-10-25T13:03:29.10416Z",
+    "updated_at": "2026-10-25T13:03:29.13845Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "7e7f6aae-9bce-414d-9d54-991677c6b272",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "trokhaya684@gmail.com",
+    "email_confirmed_at": "2026-10-25T12:31:18.171865Z",
+    "phone": "",
+    "confirmed_at": "2026-10-25T12:31:18.171865Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-SML",
+      "email_verified": true,
+      "filiere": "SML",
+      "full_name": "Rokhaya Thiam",
+      "is_active": false,
+      "matricule": "ETU199",
+      "niveau": "NB",
+      "phone": null,
+      "role": "etudiant",
+      "statut_inscription": "en_attente",
+      "username": "n777004282"
+    },
+    "identities": null,
+    "created_at": "2026-10-25T12:31:18.141536Z",
+    "updated_at": "2026-10-25T12:31:18.173245Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "023858d7-0627-4dc7-8c26-cbcffae66bcf",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "khaliphathioub4@gmail.com",
+    "email_confirmed_at": "2026-10-25T10:45:24.421869Z",
+    "phone": "",
+    "confirmed_at": "2026-10-25T10:45:24.421869Z",
+    "last_sign_in_at": "2026-10-25T12:49:10.034877Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Khalipha Thioub",
+      "is_active": false,
+      "matricule": "ETU198",
+      "niveau": "L1",
+      "phone": null,
+      "role": "etudiant",
+      "statut_inscription": "en_attente",
+      "username": "lifa22"
+    },
+    "identities": null,
+    "created_at": "2026-10-25T10:45:24.401292Z",
+    "updated_at": "2026-10-25T12:49:10.110582Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "d7f6b93a-4279-467a-ac46-07e0043890b0",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "lamanelo124@gmail.com",
+    "email_confirmed_at": "2026-10-25T00:22:36.576495Z",
+    "phone": "",
+    "confirmed_at": "2026-10-25T00:22:36.576495Z",
+    "last_sign_in_at": "2026-10-31T19:08:46.257933Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Aliou LO",
+      "is_active": false,
+      "matricule": "ETU197",
+      "niveau": "NB",
+      "phone": null,
+      "role": "etudiant",
+      "statut_inscription": "en_attente",
+      "username": "co303482"
+    },
+    "identities": null,
+    "created_at": "2026-10-25T00:22:36.544657Z",
+    "updated_at": "2026-10-31T19:08:46.338688Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "b8d6e7ab-c840-4b19-9e17-4eec1569959d",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "samatekanglassana@gmail.com",
+    "email_confirmed_at": "2026-10-24T23:21:19.189201Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T23:21:19.189201Z",
+    "last_sign_in_at": "2026-11-06T22:57:47.46056Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Kang Lassana Samaté ",
+      "is_active": false,
+      "matricule": "ETU196",
+      "niveau": "L1",
+      "phone": null,
+      "role": "etudiant",
+      "statut_inscription": "en_attente",
+      "username": "samate.lassana"
+    },
+    "identities": null,
+    "created_at": "2026-10-24T23:21:19.140546Z",
+    "updated_at": "2026-11-06T22:57:47.465654Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "2892bc97-5d0f-4282-8476-208df7500734",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "hamidousadio16@gmail.com",
+    "email_confirmed_at": "2026-10-24T21:28:59.879614Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T21:28:59.879614Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Hamidou Sadio",
+      "is_active": false,
+      "matricule": "ETU195",
+      "niveau": "L1",
+      "phone": null,
+      "role": "etudiant",
+      "statut_inscription": "en_attente",
+      "username": "sadio"
+    },
+    "identities": null,
+    "created_at": "2026-10-24T21:28:59.85153Z",
+    "updated_at": "2026-10-24T21:28:59.880729Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "6a53bd85-9094-49dd-8806-c084a1690ceb",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "kady.ba@has-academie.online",
+    "email_confirmed_at": "2026-10-24T21:13:54.911572Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T21:13:54.911572Z",
+    "last_sign_in_at": "2026-11-01T14:04:40.724851Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "bio": "Professeur de Mathématiques, chargé principalement des cours et encadrements des Nouveaux Bacheliers (NB) en Mathématiques (Algèbre 1).",
+      "classes": [
+        "NB MPI",
+        "NB SML",
+        "NB MIASS"
+      ],
+      "email_verified": true,
+      "full_name": "Papa Kady Ba",
+      "is_active": true,
+      "matricule": "PROF007",
+      "niveaux": [
+        "NB",
+        "L1"
+      ],
+      "nom": "Ba",
+      "phone": "+221 70 000 00 00",
+      "prenom": "Papa Kady",
+      "role": "professeur",
+      "specialite": "Math",
+      "username": "kady"
+    },
+    "identities": null,
+    "created_at": "2026-10-24T21:13:54.881114Z",
+    "updated_at": "2026-11-01T14:05:19.919517Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "4e25d586-3323-48f0-9937-37758c57d7cc",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "woury3757@gmail.com",
+    "email_confirmed_at": "2026-10-24T20:45:27.064087Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T20:45:27.064087Z",
+    "last_sign_in_at": "2026-10-25T11:57:40.101199Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-MIASS",
+      "email_verified": true,
+      "filiere": "MIASS",
+      "full_name": "Mamadou Oury Diallo",
+      "is_active": false,
+      "matricule": "ETU194",
+      "niveau": "NB",
+      "phone": null,
+      "role": "etudiant",
+      "statut_inscription": "en_attente",
+      "username": "m.oury"
+    },
+    "identities": null,
+    "created_at": "2026-10-24T20:45:27.058227Z",
+    "updated_at": "2026-10-25T11:57:40.181739Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "71c9e5d2-0bcf-42ee-82e7-2555c174eb37",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "ndickoug87@gmail.com",
+    "email_confirmed_at": "2026-10-24T20:45:26.82027Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T20:45:26.82027Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Ndickou Gueye",
+      "is_active": false,
+      "matricule": "ETU194",
+      "niveau": "NB",
+      "phone": null,
+      "role": "etudiant",
+      "statut_inscription": "en_attente",
+      "username": "ndickou"
+    },
+    "identities": null,
+    "created_at": "2026-10-24T20:45:26.808043Z",
+    "updated_at": "2026-10-24T20:45:26.821159Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "4c6865cc-0fbc-4c74-8f0d-8d78d995d4da",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "madinaba96@gmail.com",
+    "email_confirmed_at": "2026-10-24T20:43:26.789964Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T20:43:26.789964Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Mamadou Madina Ba",
+      "is_active": false,
+      "matricule": "ETU193",
+      "niveau": "NB",
+      "phone": null,
+      "role": "etudiant",
+      "statut_inscription": "en_attente",
+      "username": "baba"
+    },
+    "identities": null,
+    "created_at": "2026-10-24T20:43:26.763236Z",
+    "updated_at": "2026-10-24T20:43:26.790903Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "dce46c7e-0973-4e4b-9a0e-c130e864da00",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "seck280807@gmail.com",
+    "email_confirmed_at": "2026-10-24T20:30:00.20734Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T20:30:00.20734Z",
+    "last_sign_in_at": "2026-10-24T20:32:50.837676Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Saliou Seck",
+      "is_active": true,
+      "matricule": "ETU192",
+      "niveau": "NB",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "likhdeug"
+    },
+    "identities": null,
+    "created_at": "2026-10-24T20:30:00.184897Z",
+    "updated_at": "2026-10-24T20:32:50.8507Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "923c2406-aeb7-44c9-8f02-3f4403e75338",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "habibsakho402@gmail.com",
+    "email_confirmed_at": "2026-10-24T19:59:13.931906Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T19:59:13.931906Z",
+    "last_sign_in_at": "2026-10-24T20:22:25.812583Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Mohamed El Habib SAKHO",
+      "is_active": true,
+      "matricule": "ETU191",
+      "niveau": "NB",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "fearless"
+    },
+    "identities": null,
+    "created_at": "2026-10-24T19:59:13.919292Z",
+    "updated_at": "2026-11-11T17:02:36.698877Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "881b9ef4-f2d8-438d-8a15-e04a0ea5c0ed",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "diopsadikh94@gmail.com",
+    "email_confirmed_at": "2026-10-24T19:56:57.37825Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T19:56:57.37825Z",
+    "last_sign_in_at": "2026-10-28T11:58:25.187189Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Mohamet Diop ",
+      "is_active": true,
+      "matricule": "ETU190",
+      "niveau": "NB",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "diop.mohamet1"
+    },
+    "identities": null,
+    "created_at": "2026-10-24T19:56:57.351707Z",
+    "updated_at": "2026-11-06T22:55:29.932663Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "80f5d08d-7f53-4483-8ded-5e7236f72b09",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "awacheikhba301@gmail.com",
+    "email_confirmed_at": "2026-10-24T19:41:23.173433Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T19:41:23.173433Z",
+    "last_sign_in_at": "2026-10-24T21:11:40.107931Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Awa Cheikh Ba ",
+      "is_active": true,
+      "matricule": "ETU189",
+      "niveau": "NB",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "awa07"
+    },
+    "identities": null,
+    "created_at": "2026-10-24T19:41:23.109696Z",
+    "updated_at": "2026-10-24T21:11:40.128882Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "8249b763-5e5d-4209-ac2a-98007cdd7e48",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "diengpenda098@gmail.com",
+    "email_confirmed_at": "2026-10-24T19:13:40.014629Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T19:13:40.014629Z",
+    "last_sign_in_at": "2026-10-24T22:58:00.072575Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Penda Dieng",
+      "is_active": true,
+      "matricule": "ETU188",
+      "niveau": "NB",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "penda."
+    },
+    "identities": null,
+    "created_at": "2026-10-24T19:13:39.971276Z",
+    "updated_at": "2026-10-24T22:58:00.121094Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "ac376703-ef8a-4400-ace7-7f73d684ef77",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "ousmanesamb267@gmail.com",
+    "email_confirmed_at": "2026-10-24T18:38:53.218273Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T18:38:53.218273Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Papa ousmane samb",
+      "is_active": true,
+      "matricule": "ETU186",
+      "niveau": "NB",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "ousmanesamb"
+    },
+    "identities": null,
+    "created_at": "2026-10-24T18:38:53.18905Z",
+    "updated_at": "2026-10-24T20:23:04.817758Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "2bf8ba17-74d5-45f3-871e-47e78a0e4cdc",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "binetaniane.17@gmail.com",
+    "email_confirmed_at": "2026-10-24T18:37:26.966869Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T18:37:26.966869Z",
+    "last_sign_in_at": "2026-10-24T20:58:45.627615Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Bineta Niane",
+      "is_active": true,
+      "matricule": "ETU185",
+      "niveau": "NB",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "niane"
+    },
+    "identities": null,
+    "created_at": "2026-10-24T18:37:26.953784Z",
+    "updated_at": "2026-10-24T20:58:45.653731Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "38d002ed-9e9e-4f2d-b1d5-bd6952cd7343",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "1ndoyebabacar2023@gmail.com",
+    "email_confirmed_at": "2026-10-24T18:34:48.361484Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T18:34:48.361484Z",
+    "last_sign_in_at": "2026-10-24T20:24:19.102892Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Babacar Ndoye ",
+      "is_active": true,
+      "matricule": "ETU184",
+      "niveau": "NB",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "mndoye"
+    },
+    "identities": null,
+    "created_at": "2026-10-24T18:34:48.354943Z",
+    "updated_at": "2026-10-27T21:04:52.558965Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "d8498fea-2c8d-4862-a53c-91cb5e7e7a50",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "seynaboudiop36912@gmail.com",
+    "email_confirmed_at": "2026-10-24T18:34:33.671638Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T18:34:33.671638Z",
+    "last_sign_in_at": "2026-10-24T20:42:17.103509Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-SML",
+      "email_verified": true,
+      "filiere": "SML",
+      "full_name": "Seynabou Diop ",
+      "is_active": false,
+      "matricule": "ETU183",
+      "niveau": "NB",
+      "phone": null,
+      "role": "etudiant",
+      "statut_inscription": "en_attente",
+      "username": "sdiop"
+    },
+    "identities": null,
+    "created_at": "2026-10-24T18:34:33.646621Z",
+    "updated_at": "2026-10-24T20:42:17.233003Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "b3f24f0d-b240-4bc0-99e2-f75920a63889",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "antadiopbebe3@gmail.com",
+    "email_confirmed_at": "2026-10-24T18:29:13.851365Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T18:29:13.851365Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Anta Diop",
+      "is_active": false,
+      "matricule": "ETU182",
+      "niveau": "NB",
+      "phone": null,
+      "role": "etudiant",
+      "statut_inscription": "en_attente",
+      "username": "antadiop635"
+    },
+    "identities": null,
+    "created_at": "2026-10-24T18:29:13.830043Z",
+    "updated_at": "2026-10-24T18:29:13.852614Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "c92a57fb-9d32-4512-9b47-d0f0538101a9",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "hawaseck01012005@gmail.com",
+    "email_confirmed_at": "2026-10-24T18:17:14.412073Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T18:17:14.412073Z",
+    "last_sign_in_at": "2026-11-06T23:49:53.674682Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "AWA SECK ",
+      "is_active": true,
+      "matricule": "ETU181",
+      "niveau": "NB",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "dcipyukd"
+    },
+    "identities": null,
+    "created_at": "2026-10-24T18:17:14.388866Z",
+    "updated_at": "2026-11-06T23:49:53.715911Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "4462a19b-deea-4914-9aa1-c0ebcda8ee7b",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "imamassanethiam6@gmail.com",
+    "email_confirmed_at": "2026-10-24T18:07:52.680276Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T18:07:52.680276Z",
+    "last_sign_in_at": "2026-10-24T20:29:46.914652Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-MIASS",
+      "email_verified": true,
+      "filiere": "MIASS",
+      "full_name": "Imam Assane Thiam ",
+      "is_active": true,
+      "matricule": "ETU179",
+      "niveau": "NB",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "imam"
+    },
+    "identities": null,
+    "created_at": "2026-10-24T18:07:52.662347Z",
+    "updated_at": "2026-10-24T20:29:46.945212Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "b4752f93-ad49-4e12-be7a-ee332719f57d",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "fatoumatabaro69@gmail.com",
+    "email_confirmed_at": "2026-10-24T17:55:19.794768Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T17:55:19.794768Z",
+    "last_sign_in_at": "2026-11-06T22:55:02.764856Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Fatoumata Baro ",
+      "is_active": true,
+      "matricule": "ETU178",
+      "niveau": "NB",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "fb0863"
+    },
+    "identities": null,
+    "created_at": "2026-10-24T17:55:19.768455Z",
+    "updated_at": "2026-11-06T22:55:02.774836Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "fbd0ef98-9f03-43df-a4dd-c73a61e42ab9",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "fatoualledieng0@gmail.com",
+    "email_confirmed_at": "2026-10-24T17:54:12.362135Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T17:54:12.362135Z",
+    "last_sign_in_at": "2026-10-24T18:20:24.7384Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Fatou Alle Dieng",
+      "is_active": true,
+      "matricule": "ETU177",
+      "niveau": "NB",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "fatoualledieng"
+    },
+    "identities": null,
+    "created_at": "2026-10-24T17:54:12.306607Z",
+    "updated_at": "2026-10-24T18:20:24.751526Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "edd3b2b8-88f4-4d4b-a649-b8363b2aecdd",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "fayec7129@gmail.com",
+    "email_confirmed_at": "2026-10-24T17:31:52.71733Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T17:31:52.71733Z",
+    "last_sign_in_at": "2026-10-24T19:08:52.29448Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Coumba Faye",
+      "is_active": true,
+      "matricule": "ETU176",
+      "niveau": "NB",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "coumbafaye"
+    },
+    "identities": null,
+    "created_at": "2026-10-24T17:31:52.714805Z",
+    "updated_at": "2026-11-04T21:00:59.443928Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "6bb6b477-25ed-4b72-9004-af18894d3416",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "penda0763@gmail.com",
+    "email_confirmed_at": "2026-10-24T17:31:45.982668Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T17:31:45.982668Z",
+    "last_sign_in_at": "2026-10-25T00:08:10.618242Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Penda Diallo ",
+      "is_active": false,
+      "matricule": "ETU175",
+      "niveau": "NB",
+      "phone": null,
+      "role": "etudiant",
+      "statut_inscription": "en_attente",
+      "username": "pendisha"
+    },
+    "identities": null,
+    "created_at": "2026-10-24T17:31:45.977459Z",
+    "updated_at": "2026-10-25T00:08:10.620867Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "ecbdef9f-6b05-4287-8175-40ea79f679ef",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "mouhamadoubabakane@gmail.com",
+    "email_confirmed_at": "2026-10-24T17:31:01.58948Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T17:31:01.58948Z",
+    "last_sign_in_at": "2026-10-24T21:23:14.675308Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-MIASS",
+      "email_verified": true,
+      "filiere": "MIASS",
+      "full_name": "Mouhamadou baba Kane ",
+      "is_active": false,
+      "matricule": "ETU174",
+      "niveau": "NB",
+      "phone": null,
+      "role": "etudiant",
+      "statut_inscription": "en_attente",
+      "username": "mouhamed_"
+    },
+    "identities": null,
+    "created_at": "2026-10-24T17:31:01.561876Z",
+    "updated_at": "2026-10-24T21:23:14.71337Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "1e3bc712-a19d-4216-8e23-a2ce3c522f0d",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "mouhamedrikudo77@gmail.com",
+    "email_confirmed_at": "2026-10-24T17:10:00.058362Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T17:10:00.058362Z",
+    "last_sign_in_at": "2026-10-24T17:21:30.973341Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Mouhamed El Moctar Ndiaye ",
+      "is_active": true,
+      "matricule": "ETU173",
+      "niveau": "NB",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "ghostsn"
+    },
+    "identities": null,
+    "created_at": "2026-10-24T17:10:00.055597Z",
+    "updated_at": "2026-10-31T20:21:56.103545Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "2f6c032a-3726-42a9-985c-4d81902080b8",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "bafanta005@gmail.com",
+    "email_confirmed_at": "2026-10-24T17:09:49.757704Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T17:09:49.757704Z",
+    "last_sign_in_at": "2026-10-24T17:13:15.501761Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Fatoumata Fanta BAH ",
+      "is_active": true,
+      "matricule": "ETU172",
+      "niveau": "NB",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "bafanta00"
+    },
+    "identities": null,
+    "created_at": "2026-10-24T17:09:49.73217Z",
+    "updated_at": "2026-10-24T17:13:15.527021Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "c5768bad-b1e3-48a7-819f-6c1e9b7b9d46",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "bpenda764@gmail.com",
+    "email_confirmed_at": "2026-10-24T17:05:59.326039Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T17:05:59.326039Z",
+    "last_sign_in_at": "2026-10-24T20:54:09.759973Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Penda Ba",
+      "is_active": true,
+      "matricule": "ETU171",
+      "niveau": "NB",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "mpenda"
+    },
+    "identities": null,
+    "created_at": "2026-10-24T17:05:59.310006Z",
+    "updated_at": "2026-10-24T20:54:09.772517Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "d49562d6-9035-4aa5-81a3-5bdc988933a6",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "amadoutidianembodji70@gmail.com",
+    "email_confirmed_at": "2026-10-24T17:03:23.084586Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T17:03:23.084586Z",
+    "last_sign_in_at": "2026-10-27T20:02:55.470342Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Amadou Tidiane Mbodji",
+      "is_active": true,
+      "matricule": "ETU170",
+      "niveau": "NB",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "tidiane"
+    },
+    "identities": null,
+    "created_at": "2026-10-24T17:03:23.070509Z",
+    "updated_at": "2026-10-27T23:44:37.383321Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "9cbea623-8498-49a8-8910-bc52c6fb5e10",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "juni0909.az.099@gmail.com",
+    "email_confirmed_at": "2026-10-24T16:55:59.321475Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T16:55:59.321475Z",
+    "last_sign_in_at": "2026-10-24T18:21:59.377325Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-SML",
+      "email_verified": true,
+      "filiere": "SML",
+      "full_name": "Paul Mendy ",
+      "is_active": true,
+      "matricule": "ETU169",
+      "niveau": "NB",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "pa2007"
+    },
+    "identities": null,
+    "created_at": "2026-10-24T16:55:59.297328Z",
+    "updated_at": "2026-10-24T18:21:59.392421Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "eb1b9eb8-6ba4-4287-9e2d-a554ecce866c",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "coumbaleye535@gmail.com",
+    "email_confirmed_at": "2026-10-24T16:52:45.865909Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T16:52:45.865909Z",
+    "last_sign_in_at": "2026-10-24T16:54:01.838818Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-SML",
+      "email_verified": true,
+      "filiere": "SML",
+      "full_name": "Coumba leye",
+      "is_active": true,
+      "matricule": "ETU168",
+      "niveau": "NB",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "coumbaleye"
+    },
+    "identities": null,
+    "created_at": "2026-10-24T16:52:45.830904Z",
+    "updated_at": "2026-10-24T16:54:01.845132Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "e17f373d-8128-4304-a17d-75c15ccd53fa",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "baldepasha12@gmail.com",
+    "email_confirmed_at": "2026-10-24T16:52:09.37697Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T16:52:09.37697Z",
+    "last_sign_in_at": "2026-10-24T16:55:53.322476Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-SML",
+      "email_verified": true,
+      "filiere": "SML",
+      "full_name": "Aissatou Sabaly Baldé",
+      "is_active": true,
+      "matricule": "ETU167",
+      "niveau": "NB",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "balde.sabaly"
+    },
+    "identities": null,
+    "created_at": "2026-10-24T16:52:09.321181Z",
+    "updated_at": "2026-10-28T19:51:56.945033Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "16372942-5939-47e2-89c6-e83259338e11",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "bambindeyependa@gmail.com",
+    "email_confirmed_at": "2026-10-24T16:51:10.404961Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T16:51:10.404961Z",
+    "last_sign_in_at": "2026-10-24T21:17:35.456795Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Ndeye Penda Bamby Ndieguene ",
+      "is_active": true,
+      "matricule": "ETU166",
+      "niveau": "NB",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "qwerty0503"
+    },
+    "identities": null,
+    "created_at": "2026-10-24T16:51:10.386468Z",
+    "updated_at": "2026-10-24T21:17:35.468201Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "049a2b85-d620-40e2-96be-405db987072b",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "fatimbabadiop7@gmail.com",
+    "email_confirmed_at": "2026-10-24T16:18:03.281097Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T16:18:03.281097Z",
+    "last_sign_in_at": "2026-11-10T06:27:06.157015Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "NB-SML",
+      "email_verified": true,
+      "filiere": "SML",
+      "full_name": "Ndeye Fatim Diop ",
+      "is_active": true,
+      "matricule": "ETU159",
+      "niveau": "NB",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "n01725820262"
+    },
+    "identities": null,
+    "created_at": "2026-10-24T16:18:03.242216Z",
+    "updated_at": "2026-11-10T06:27:06.188998Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "b08134f3-8d5b-4b60-bef1-bca68eabee14",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "drame.oumy@uam.edu.sn",
+    "email_confirmed_at": "2026-10-24T14:07:36.708492Z",
+    "phone": "",
+    "confirmed_at": "2026-10-24T14:07:36.708492Z",
+    "last_sign_in_at": "2026-11-10T23:48:22.673173Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Oumy Dramé ",
+      "is_active": true,
+      "matricule": "ETU157",
+      "niveau": "L1",
+      "phone": "+221 785063015",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "oumy"
+    },
+    "identities": null,
+    "created_at": "2026-10-24T14:07:36.670421Z",
+    "updated_at": "2026-11-10T23:48:22.708786Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "d17ba4e0-20f0-4bf6-8fda-1b777f7f4f04",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "fayemameawa2@gmail.com",
+    "email_confirmed_at": "2026-10-23T19:19:01.26161Z",
+    "phone": "",
+    "confirmed_at": "2026-10-23T19:19:01.26161Z",
+    "last_sign_in_at": "2026-10-31T08:07:12.632705Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Mame Awa Faye ",
+      "is_active": true,
+      "matricule": "ETU156",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "m_hawwa7"
+    },
+    "identities": null,
+    "created_at": "2026-10-23T19:19:01.229391Z",
+    "updated_at": "2026-10-31T08:07:12.657344Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "f61fc6d9-8515-4e36-9407-5269a76d6444",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "thior.aissatou@uam.edu.sn",
+    "email_confirmed_at": "2026-10-23T09:59:17.489143Z",
+    "phone": "",
+    "confirmed_at": "2026-10-23T09:59:17.489143Z",
+    "last_sign_in_at": "2026-10-23T10:24:22.170941Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MIASS",
+      "email_verified": true,
+      "filiere": "MIASS",
+      "full_name": "Aïssatou Thior ",
+      "is_active": true,
+      "matricule": "ETU155",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "sata24"
+    },
+    "identities": null,
+    "created_at": "2026-10-23T09:59:17.454851Z",
+    "updated_at": "2026-11-11T20:58:16.14123Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "7b234e27-2f8c-4a2f-a7e6-e2e0db886364",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "mbengue.katia@uam.edu.sn",
+    "email_confirmed_at": "2026-10-22T20:35:14.314161Z",
+    "phone": "",
+    "confirmed_at": "2026-10-22T20:35:14.314161Z",
+    "last_sign_in_at": "2026-11-09T20:03:49.548907Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-SML",
+      "email_verified": true,
+      "filiere": "SML",
+      "full_name": "Marie Henriette Katia Mbengue",
+      "is_active": true,
+      "matricule": "ETU154",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "katia"
+    },
+    "identities": null,
+    "created_at": "2026-10-22T20:35:14.285707Z",
+    "updated_at": "2026-11-09T20:03:49.574705Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "2f684033-0132-40a4-823b-bda64c83334c",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "ba.khadidiatou@uam.edu.sn",
+    "email_confirmed_at": "2026-10-21T13:37:02.505272Z",
+    "phone": "",
+    "confirmed_at": "2026-10-21T13:37:02.505272Z",
+    "recovery_sent_at": "2026-10-21T20:55:59.541623Z",
+    "last_sign_in_at": "2026-11-11T13:41:40.236351Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Khadidiatou ba",
+      "is_active": true,
+      "matricule": "ETU153",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "603489"
+    },
+    "identities": null,
+    "created_at": "2026-10-21T13:37:02.487306Z",
+    "updated_at": "2026-11-11T13:41:40.28126Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "ce394516-7db5-456b-8b57-880ff5cc28f5",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "mballofaty0@gmail.com",
+    "email_confirmed_at": "2026-10-20T21:41:23.955874Z",
+    "phone": "",
+    "confirmed_at": "2026-10-20T21:41:23.955874Z",
+    "last_sign_in_at": "2026-10-20T23:00:31.821592Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Fatimata Mballo ",
+      "is_active": true,
+      "matricule": "ETU152",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "faty"
+    },
+    "identities": null,
+    "created_at": "2026-10-20T21:41:23.886794Z",
+    "updated_at": "2026-10-20T23:00:31.846771Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "160f9542-f553-475f-bad0-04cae659790e",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "shanne849@gmail.com",
+    "email_confirmed_at": "2026-10-20T20:46:35.303686Z",
+    "phone": "",
+    "confirmed_at": "2026-10-20T20:46:35.303686Z",
+    "last_sign_in_at": "2026-10-20T20:49:48.829644Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Saliou Hanne",
+      "is_active": true,
+      "matricule": "ETU151",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "hsaliou"
+    },
+    "identities": null,
+    "created_at": "2026-10-20T20:46:35.272469Z",
+    "updated_at": "2026-11-10T22:18:56.331124Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "aa60c182-347b-4f38-aea9-5d2cad74ef33",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "adjarasall91@gmail.com",
+    "email_confirmed_at": "2026-10-20T15:06:34.44289Z",
+    "phone": "",
+    "confirmed_at": "2026-10-20T15:06:34.44289Z",
+    "last_sign_in_at": "2026-10-22T19:12:43.612352Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "date_expiration_paiement": "2026-12-12T23:59:59.000Z",
+      "date_validation_paiement": "2026-11-11T19:57:43.747Z",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Adjara Sall",
+      "is_active": true,
+      "matricule": "ETU150",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "statut_paiement": "a_jour",
+      "username": "adja"
+    },
+    "identities": null,
+    "created_at": "2026-10-20T15:06:34.402018Z",
+    "updated_at": "2026-11-11T19:57:44.137628Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "8a68badb-107f-40df-a154-b8a71cd1c3b7",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "fatimg826@gmail.com",
+    "email_confirmed_at": "2026-10-19T21:23:38.218055Z",
+    "phone": "",
+    "confirmed_at": "2026-10-19T21:23:38.218055Z",
+    "last_sign_in_at": "2026-10-20T20:44:06.908781Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Fatim Gaye",
+      "is_active": true,
+      "matricule": "ETU148",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "fatimgaye"
+    },
+    "identities": null,
+    "created_at": "2026-10-19T21:23:38.1668Z",
+    "updated_at": "2026-10-30T20:34:36.085922Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "736cdfb6-4c97-4ca9-8ba7-8ee7564c3be0",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "diaw.khadidiatou@uam.edu.sn",
+    "email_confirmed_at": "2026-10-19T20:59:55.030319Z",
+    "phone": "",
+    "confirmed_at": "2026-10-19T20:59:55.030319Z",
+    "last_sign_in_at": "2026-11-10T12:06:23.671738Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Khadidiatou DIAW",
+      "is_active": true,
+      "matricule": "ETU147",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "705560"
+    },
+    "identities": null,
+    "created_at": "2026-10-19T20:59:55.016769Z",
+    "updated_at": "2026-11-10T12:06:23.704247Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "b64814cb-6315-4fdf-89cb-c2098cc269d1",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "aichadiouma24@gmail.com",
+    "email_confirmed_at": "2026-10-19T20:48:32.503221Z",
+    "phone": "",
+    "confirmed_at": "2026-10-19T20:48:32.503221Z",
+    "last_sign_in_at": "2026-11-03T22:48:57.52407Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Aicha Camara ",
+      "is_active": true,
+      "matricule": "ETU146",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "aichabouba"
+    },
+    "identities": null,
+    "created_at": "2026-10-19T20:48:32.480397Z",
+    "updated_at": "2026-11-03T22:48:57.545213Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "8436f5ff-8415-450a-959e-4b55f61fe78d",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "mamadisgne@gmail.com",
+    "email_confirmed_at": "2026-10-17T19:56:00.147526Z",
+    "phone": "",
+    "confirmed_at": "2026-10-17T19:56:00.147526Z",
+    "last_sign_in_at": "2026-11-12T00:05:26.159024Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-SML",
+      "email_verified": true,
+      "filiere": "SML",
+      "full_name": "Marieme Diagne",
+      "is_active": true,
+      "matricule": "ETU143",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "meeriam"
+    },
+    "identities": null,
+    "created_at": "2026-10-17T19:56:00.128217Z",
+    "updated_at": "2026-11-12T00:05:26.193935Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "db6aa134-77bc-48a3-995a-be19cbe4602d",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "salioudia751@gmail.com",
+    "email_confirmed_at": "2026-10-17T18:51:26.13092Z",
+    "phone": "",
+    "confirmed_at": "2026-10-17T18:51:26.13092Z",
+    "last_sign_in_at": "2026-11-09T18:52:06.203373Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Papa Saliou Dia",
+      "is_active": true,
+      "matricule": "ETU142",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "bayezalle"
+    },
+    "identities": null,
+    "created_at": "2026-10-17T18:51:26.08766Z",
+    "updated_at": "2026-11-12T10:21:41.818296Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "390347e4-91e9-4463-a542-e69074e2b7ad",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "biayexavier08@gmail.com",
+    "email_confirmed_at": "2026-10-17T08:47:07.071251Z",
+    "phone": "",
+    "confirmed_at": "2026-10-17T08:47:07.071251Z",
+    "last_sign_in_at": "2026-11-10T10:05:35.573729Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Xavier Biaye ",
+      "is_active": true,
+      "matricule": "ETU141",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "xavier"
+    },
+    "identities": null,
+    "created_at": "2026-10-17T08:47:07.035727Z",
+    "updated_at": "2026-11-10T10:05:35.611378Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "5306695b-ecbe-4598-91a3-ab1b92fcefe6",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "msarr8502@gmail.com",
+    "email_confirmed_at": "2026-10-16T23:04:14.474039Z",
+    "phone": "",
+    "confirmed_at": "2026-10-16T23:04:14.474039Z",
+    "last_sign_in_at": "2026-10-16T23:07:03.0741Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-SML",
+      "email_verified": true,
+      "filiere": "SML",
+      "full_name": "Sokhna Diarra Bousso Sarr ",
+      "is_active": true,
+      "matricule": "ETU140",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "sokhna.d"
+    },
+    "identities": null,
+    "created_at": "2026-10-16T23:04:14.448022Z",
+    "updated_at": "2026-10-21T09:37:27.457434Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "28575297-db3c-48fe-a83a-55c601bfd063",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "famam0702@gmail.com",
+    "email_confirmed_at": "2026-10-16T21:42:06.964352Z",
+    "phone": "",
+    "confirmed_at": "2026-10-16T21:42:06.964352Z",
+    "last_sign_in_at": "2026-10-16T21:49:05.97221Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Fama Mbaye",
+      "is_active": true,
+      "matricule": "ETU139",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "f_mb"
+    },
+    "identities": null,
+    "created_at": "2026-10-16T21:42:06.940153Z",
+    "updated_at": "2026-10-28T21:38:27.494514Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "5d426167-ba15-4d58-8efc-5debd6455be1",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "mouhamadoudiop911@gmail.com",
+    "email_confirmed_at": "2026-10-16T21:15:04.821104Z",
+    "phone": "",
+    "confirmed_at": "2026-10-16T21:15:04.821104Z",
+    "last_sign_in_at": "2026-10-30T20:13:20.765447Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Mouhamadou Diop",
+      "is_active": true,
+      "matricule": "ETU138",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "momo"
+    },
+    "identities": null,
+    "created_at": "2026-10-16T21:15:04.795071Z",
+    "updated_at": "2026-11-10T19:43:37.082727Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "44a5a9be-459b-49ce-ada1-20a1117af8ad",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "maimounag259@gmail.com",
+    "email_confirmed_at": "2026-10-16T21:05:53.295005Z",
+    "phone": "",
+    "confirmed_at": "2026-10-16T21:05:53.295005Z",
+    "last_sign_in_at": "2026-11-06T20:12:45.744006Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Sokhna Maïmouna Gueye ",
+      "is_active": true,
+      "matricule": "ETU137",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "smgueye"
+    },
+    "identities": null,
+    "created_at": "2026-10-16T21:05:53.272052Z",
+    "updated_at": "2026-11-10T21:55:17.289665Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "38c4b95f-f469-475f-a0cd-3cd1e89a6136",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "diaw.anta1@uam.edu.sn",
+    "email_confirmed_at": "2026-10-16T20:59:11.70263Z",
+    "phone": "",
+    "confirmed_at": "2026-10-16T20:59:11.70263Z",
+    "last_sign_in_at": "2026-11-06T21:39:53.675321Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Anta Diaw",
+      "is_active": true,
+      "matricule": "ETU136",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "d77"
+    },
+    "identities": null,
+    "created_at": "2026-10-16T20:59:11.682092Z",
+    "updated_at": "2026-11-06T21:39:53.68248Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "267929f8-fd69-4fdb-a333-b22228e606e7",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "soxnambenesene@gmail.com",
+    "email_confirmed_at": "2026-10-16T19:54:38.545649Z",
+    "phone": "",
+    "confirmed_at": "2026-10-16T19:54:38.545649Z",
+    "last_sign_in_at": "2026-11-08T20:45:37.567574Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Sene mbene ",
+      "is_active": true,
+      "matricule": "ETU135",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "mbene1"
+    },
+    "identities": null,
+    "created_at": "2026-10-16T19:54:38.499658Z",
+    "updated_at": "2026-11-08T20:45:37.583825Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "e303b8e5-11fa-4284-a2e2-2f3aae06d1c1",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "medounembao935@gmail.com",
+    "email_confirmed_at": "2026-10-16T19:08:11.163899Z",
+    "phone": "",
+    "confirmed_at": "2026-10-16T19:08:11.163899Z",
+    "last_sign_in_at": "2026-11-10T20:09:33.398367Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Medoune Mbao",
+      "is_active": true,
+      "matricule": "ETU134",
+      "niveau": "L1",
+      "phone": "+221 76 010 09 00",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "medoune"
+    },
+    "identities": null,
+    "created_at": "2026-10-16T19:08:11.118634Z",
+    "updated_at": "2026-11-10T20:09:33.410672Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "cb016c2f-a891-45e5-9247-df0d798aa775",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "ndao.amy@uam.edu.sn",
+    "email_confirmed_at": "2026-10-16T18:17:43.75588Z",
+    "phone": "",
+    "confirmed_at": "2026-10-16T18:17:43.75588Z",
+    "last_sign_in_at": "2026-10-26T20:35:16.681974Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Amy Ndao ",
+      "is_active": true,
+      "matricule": "ETU133",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "amy"
+    },
+    "identities": null,
+    "created_at": "2026-10-16T18:17:43.71732Z",
+    "updated_at": "2026-11-09T21:19:08.639724Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "5e75518c-b278-4267-89a6-f03f9f592d30",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "ly.ramatoulaye@uam.edu.sn",
+    "email_confirmed_at": "2026-10-16T07:40:45.999448Z",
+    "phone": "",
+    "confirmed_at": "2026-10-16T07:40:45.999448Z",
+    "last_sign_in_at": "2026-11-11T21:35:36.100124Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Ramatoulaye Ly",
+      "is_active": true,
+      "matricule": "ETU132",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "ramadou"
+    },
+    "identities": null,
+    "created_at": "2026-10-16T07:40:45.934845Z",
+    "updated_at": "2026-11-11T21:35:36.113671Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "eca088ab-fed1-4ef6-90af-a326d5962430",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "mbayelucie0@gmail.com",
+    "email_confirmed_at": "2026-10-16T02:04:49.568536Z",
+    "phone": "",
+    "confirmed_at": "2026-10-16T02:04:49.568536Z",
+    "last_sign_in_at": "2026-11-10T21:09:52.403765Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Lucie Aline Paul Mbaye",
+      "is_active": true,
+      "matricule": "ETU131",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "lucie"
+    },
+    "identities": null,
+    "created_at": "2026-10-16T02:04:49.534613Z",
+    "updated_at": "2026-11-11T16:28:02.334956Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "e9474367-f3be-44f0-94f7-91e9840e3942",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "fatimawane1306@gmail.com",
+    "email_confirmed_at": "2026-10-15T21:04:14.592981Z",
+    "phone": "",
+    "confirmed_at": "2026-10-15T21:04:14.592981Z",
+    "last_sign_in_at": "2026-10-15T21:15:38.161306Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MIASS",
+      "email_verified": true,
+      "filiere": "MIASS",
+      "full_name": "Fatoumata Wane",
+      "is_active": true,
+      "matricule": "ETU129",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "fatimawane"
+    },
+    "identities": null,
+    "created_at": "2026-10-15T21:04:14.571388Z",
+    "updated_at": "2026-10-15T23:38:41.636419Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "9035e168-a828-40fa-98a2-a197a2483674",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "wane.fatoumata@uam.edu.sn",
+    "email_confirmed_at": "2026-10-15T20:53:39.266652Z",
+    "phone": "",
+    "confirmed_at": "2026-10-15T20:53:39.266652Z",
+    "last_sign_in_at": "2026-11-10T21:03:27.674722Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MIASS",
+      "email_verified": true,
+      "filiere": "MIASS",
+      "full_name": "Fatoumata WANE",
+      "is_active": true,
+      "matricule": "ETU128",
+      "niveau": "L2",
+      "phone": "+221 77 551 81 96",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "fatoumata"
+    },
+    "identities": null,
+    "created_at": "2026-10-15T20:53:39.23359Z",
+    "updated_at": "2026-11-10T21:03:27.730645Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "cb1d2c21-e03a-4fe5-80b3-eaa5a1644247",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "maleyegueye21@gmail.com",
+    "email_confirmed_at": "2026-10-15T20:40:07.811292Z",
+    "phone": "",
+    "confirmed_at": "2026-10-15T20:40:07.811292Z",
+    "last_sign_in_at": "2026-11-03T20:59:11.533991Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Maleye Gueye",
+      "is_active": true,
+      "matricule": "ETU127",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "frankie21"
+    },
+    "identities": null,
+    "created_at": "2026-10-15T20:40:07.780144Z",
+    "updated_at": "2026-11-11T13:32:06.903521Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "de622bff-08ad-4a9f-b3e4-bd7cb7e6ba67",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "seydinaps1@gmail.com",
+    "email_confirmed_at": "2026-10-15T16:12:51.264807Z",
+    "phone": "",
+    "confirmed_at": "2026-10-15T16:12:51.264807Z",
+    "last_sign_in_at": "2026-11-07T21:52:43.190814Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-SML",
+      "email_verified": true,
+      "filiere": "SML",
+      "full_name": "seydina Alioune Gueye",
+      "is_active": true,
+      "matricule": "ETU126",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "seydina"
+    },
+    "identities": null,
+    "created_at": "2026-10-15T16:12:51.240084Z",
+    "updated_at": "2026-11-07T21:52:43.205079Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "cf2463a0-9bc4-4c48-a22c-ef8f9e067cb0",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "sokhnafatym93@gmail.com",
+    "email_confirmed_at": "2026-10-15T16:04:14.149781Z",
+    "phone": "",
+    "confirmed_at": "2026-10-15T16:04:14.149781Z",
+    "last_sign_in_at": "2026-11-10T21:07:58.9641Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MIASS",
+      "email_verified": true,
+      "filiere": "MIASS",
+      "full_name": "Sokhna Faty Mbacke ",
+      "is_active": true,
+      "matricule": "ETU125",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "sfm"
+    },
+    "identities": null,
+    "created_at": "2026-10-15T16:04:14.110076Z",
+    "updated_at": "2026-11-10T21:07:58.970585Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "9f9c150c-b72b-4827-8c96-efdd714b8301",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "dioufndeyejuma2611@gmail.com",
+    "email_confirmed_at": "2026-10-15T14:38:18.521888Z",
+    "phone": "",
+    "confirmed_at": "2026-10-15T14:38:18.521888Z",
+    "last_sign_in_at": "2026-11-10T20:23:17.581543Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Ndeye Diouma Diouf",
+      "is_active": true,
+      "matricule": "ETU124",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "nd.diouf"
+    },
+    "identities": null,
+    "created_at": "2026-10-15T14:38:18.477199Z",
+    "updated_at": "2026-11-10T22:57:17.281175Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "dc4eabf5-fc30-4153-bdfa-2ece39766af1",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "diouf.faliloulahi@uam.edu.sn",
+    "email_confirmed_at": "2026-10-15T12:32:38.953413Z",
+    "phone": "",
+    "confirmed_at": "2026-10-15T12:32:38.953413Z",
+    "last_sign_in_at": "2026-10-21T13:56:41.955404Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Falilou DIOUF",
+      "is_active": true,
+      "matricule": "ETU123",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "falilou"
+    },
+    "identities": null,
+    "created_at": "2026-10-15T12:32:38.930617Z",
+    "updated_at": "2026-11-10T11:01:20.635051Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "b644108e-1571-4700-a0b0-b50c41e5a9cd",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "ndour.sadakh@uam.edu.sn",
+    "email_confirmed_at": "2026-10-15T12:19:45.016702Z",
+    "phone": "",
+    "confirmed_at": "2026-10-15T12:19:45.016702Z",
+    "recovery_sent_at": "2026-10-15T12:48:22.456852Z",
+    "last_sign_in_at": "2026-11-11T21:45:44.593261Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "sadakh NDour ",
+      "is_active": true,
+      "matricule": "ETU122",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "z-30"
+    },
+    "identities": null,
+    "created_at": "2026-10-15T12:19:44.992452Z",
+    "updated_at": "2026-11-11T21:45:44.616347Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "dc575fdc-9aa5-4350-bcbd-0134aa582532",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "traore.alima@uam.edu.sn",
+    "email_confirmed_at": "2026-10-15T12:12:51.081895Z",
+    "phone": "",
+    "confirmed_at": "2026-10-15T12:12:51.081895Z",
+    "last_sign_in_at": "2026-11-12T01:48:34.658231Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Alima Traoré ",
+      "is_active": true,
+      "matricule": "ETU121",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "sadiya"
+    },
+    "identities": null,
+    "created_at": "2026-10-15T12:12:51.053126Z",
+    "updated_at": "2026-11-12T01:48:34.685813Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "6c4c60ca-86fc-4523-8839-1ab38f2dd0eb",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "ad5660481@gmail.com",
+    "email_confirmed_at": "2026-10-14T23:33:57.831621Z",
+    "phone": "",
+    "confirmed_at": "2026-10-14T23:33:57.831621Z",
+    "last_sign_in_at": "2026-11-06T21:43:50.60318Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Adama Diouf",
+      "is_active": true,
+      "matricule": "ETU120",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "adama00"
+    },
+    "identities": null,
+    "created_at": "2026-10-14T23:33:57.80968Z",
+    "updated_at": "2026-11-11T20:06:53.44012Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "4fdb86ff-ca45-47f8-bf38-b3e89bb4e1a5",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "fatimagueye101@gmail.com",
+    "email_confirmed_at": "2026-10-14T23:21:29.705447Z",
+    "phone": "",
+    "confirmed_at": "2026-10-14T23:21:29.705447Z",
+    "last_sign_in_at": "2026-10-18T19:22:18.686743Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MIASS",
+      "email_verified": true,
+      "filiere": "MIASS",
+      "full_name": "Fatima Gueye",
+      "is_active": true,
+      "matricule": "ETU119",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "luvtima"
+    },
+    "identities": null,
+    "created_at": "2026-10-14T23:21:29.67755Z",
+    "updated_at": "2026-10-21T21:35:25.69945Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "91cfadd0-4b41-41a1-b91c-c1e1e55f88ab",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "ndiaye.mbaye1@uam.edu.sn",
+    "email_confirmed_at": "2026-10-14T22:27:21.409709Z",
+    "phone": "",
+    "confirmed_at": "2026-10-14T22:27:21.409709Z",
+    "last_sign_in_at": "2026-11-02T21:47:24.79907Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Mbaye Ndiaye ",
+      "is_active": true,
+      "matricule": "ETU118",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "mbayemn"
+    },
+    "identities": null,
+    "created_at": "2026-10-14T22:27:21.387267Z",
+    "updated_at": "2026-11-11T19:24:44.918074Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "94147106-c808-40fa-a242-be5da3750456",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "thiam.marietou@uam.edu.sn",
+    "email_confirmed_at": "2026-10-14T21:25:36.29275Z",
+    "phone": "",
+    "confirmed_at": "2026-10-14T21:25:36.29275Z",
+    "last_sign_in_at": "2026-11-12T10:27:33.391776Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Mariétou Thiam ",
+      "is_active": true,
+      "matricule": "ETU117",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "marietou20."
+    },
+    "identities": null,
+    "created_at": "2026-10-14T21:25:36.275453Z",
+    "updated_at": "2026-11-12T10:27:33.412461Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "b93154dc-074d-4dfa-a6fa-76c527eba59f",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "samb.diagne@uam.edu.sn",
+    "email_confirmed_at": "2026-10-14T21:10:33.232757Z",
+    "phone": "",
+    "confirmed_at": "2026-10-14T21:10:33.232757Z",
+    "last_sign_in_at": "2026-11-10T19:53:06.532129Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Mama Diagne Samb",
+      "is_active": true,
+      "matricule": "ETU116",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "704907"
+    },
+    "identities": null,
+    "created_at": "2026-10-14T21:10:33.209825Z",
+    "updated_at": "2026-11-10T19:53:06.547104Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "5780b613-8d29-45a2-98e4-d5635bda38af",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "maimounahijab@gmail.com",
+    "email_confirmed_at": "2026-10-14T20:57:46.315484Z",
+    "phone": "",
+    "confirmed_at": "2026-10-14T20:57:46.315484Z",
+    "last_sign_in_at": "2026-11-02T23:11:57.467073Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Maimouna Diop",
+      "is_active": true,
+      "matricule": "ETU115",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "maimounajoop"
+    },
+    "identities": null,
+    "created_at": "2026-10-14T20:57:46.275382Z",
+    "updated_at": "2026-11-11T19:41:14.483708Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "4cf8b6ca-0a1f-4ee0-b6f0-637c79edd92b",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "camara.nafi@uam.edu.sn",
+    "email_confirmed_at": "2026-10-14T19:42:26.817384Z",
+    "phone": "",
+    "confirmed_at": "2026-10-14T19:42:26.817384Z",
+    "last_sign_in_at": "2026-11-09T22:36:24.467647Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Nafi Camara",
+      "is_active": true,
+      "matricule": "ETU114",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "704905"
+    },
+    "identities": null,
+    "created_at": "2026-10-14T19:42:26.799147Z",
+    "updated_at": "2026-11-10T19:56:34.687508Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "1bc3438f-c3c7-4374-8a0b-27adb4c637ee",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "diabirane86@gmail.com",
+    "email_confirmed_at": "2026-10-14T19:40:39.581554Z",
+    "phone": "",
+    "confirmed_at": "2026-10-14T19:40:39.581554Z",
+    "last_sign_in_at": "2026-11-11T19:59:59.900304Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Birane Dia",
+      "is_active": true,
+      "matricule": "ETU113",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "dia205"
+    },
+    "identities": null,
+    "created_at": "2026-10-14T19:40:39.548342Z",
+    "updated_at": "2026-11-11T19:59:59.929683Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "e76c4fa1-fb30-43ff-ab77-5d50b6b13431",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "marietoudiengquenrema@gmail.com",
+    "email_confirmed_at": "2026-10-14T17:27:09.389499Z",
+    "phone": "",
+    "confirmed_at": "2026-10-14T17:27:09.389499Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Marietou dieng ",
+      "is_active": true,
+      "matricule": "ETU112",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "zaida_32"
+    },
+    "identities": null,
+    "created_at": "2026-10-14T17:27:09.35736Z",
+    "updated_at": "2026-10-14T17:28:43.456782Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "9a618491-f124-4445-a3c9-dd2c739b03ff",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "diallo.lamine1@uam.edu.sn",
+    "email_confirmed_at": "2026-10-14T16:22:45.812075Z",
+    "phone": "",
+    "confirmed_at": "2026-10-14T16:22:45.812075Z",
+    "last_sign_in_at": "2026-10-14T16:23:15.75741Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Mouhamadou Lamine Diallo",
+      "is_active": true,
+      "matricule": "ETU111",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "lamine"
+    },
+    "identities": null,
+    "created_at": "2026-10-14T16:22:45.793967Z",
+    "updated_at": "2026-10-14T16:23:15.776354Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "dd7741bb-6dfa-4d63-b3c7-7c7104694ae6",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "cheikhtidianefall992@gmail.com",
+    "email_confirmed_at": "2026-10-14T16:06:27.701092Z",
+    "phone": "",
+    "confirmed_at": "2026-10-14T16:06:27.701092Z",
+    "last_sign_in_at": "2026-11-11T12:33:00.489145Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Cheikh tidiane fall ",
+      "is_active": true,
+      "matricule": "ETU110",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "cfall"
+    },
+    "identities": null,
+    "created_at": "2026-10-14T16:06:27.695175Z",
+    "updated_at": "2026-11-11T12:33:00.520078Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "64e8a6b0-974d-40f9-ad36-442b3f2ccbc6",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "fall.cheikh2@uam.edu.sn",
+    "email_confirmed_at": "2026-10-14T16:03:07.308272Z",
+    "phone": "",
+    "confirmed_at": "2026-10-14T16:03:07.308272Z",
+    "last_sign_in_at": "2026-11-11T12:50:44.303256Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Cheikh Fall ",
+      "is_active": true,
+      "matricule": "ETU109",
+      "niveau": "L1",
+      "phone": "+221 77 551 81 96",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "soyezfous"
+    },
+    "identities": null,
+    "created_at": "2026-10-14T16:03:07.2655Z",
+    "updated_at": "2026-11-11T12:50:44.345201Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "9a986e56-48bd-4218-98f1-6f3800c47731",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "thiamndeyekhady230@gmail.com",
+    "email_confirmed_at": "2026-10-14T12:38:54.332311Z",
+    "phone": "",
+    "confirmed_at": "2026-10-14T12:38:54.332311Z",
+    "last_sign_in_at": "2026-11-05T21:11:16.717346Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Ndeye Khady Thiam ",
+      "is_active": true,
+      "matricule": "ETU108",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "soxnakhadijah"
+    },
+    "identities": null,
+    "created_at": "2026-10-14T12:38:54.292163Z",
+    "updated_at": "2026-11-05T21:11:16.722859Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "7d0c0e46-d9cf-4665-b32a-8628eeb79c4b",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "mahmodanendiaye5932@gmail.com",
+    "email_confirmed_at": "2026-10-13T23:37:00.127396Z",
+    "phone": "",
+    "confirmed_at": "2026-10-13T23:37:00.127396Z",
+    "last_sign_in_at": "2026-11-08T18:08:34.259974Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MIASS",
+      "email_verified": true,
+      "filiere": "MIASS",
+      "full_name": "NDIAYE MAHMODANE ",
+      "is_active": true,
+      "matricule": "ETU107",
+      "niveau": "L1",
+      "phone": "+221 76 187 95 55",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "al_mahmoud"
+    },
+    "identities": null,
+    "created_at": "2026-10-13T23:37:00.097485Z",
+    "updated_at": "2026-11-11T14:44:42.302513Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "139dfaa5-7fe4-4ed1-b864-e058affb6333",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "wade.mouhamed@uam.edu.sn",
+    "email_confirmed_at": "2026-10-13T23:00:28.327087Z",
+    "phone": "",
+    "confirmed_at": "2026-10-13T23:00:28.327087Z",
+    "last_sign_in_at": "2026-11-10T20:09:07.808508Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Mouhamed wade",
+      "is_active": true,
+      "matricule": "ETU106",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "mouhamed"
+    },
+    "identities": null,
+    "created_at": "2026-10-13T23:00:28.315261Z",
+    "updated_at": "2026-11-10T20:09:07.818988Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "9e122fa2-f168-41f2-85ae-6b5b0eb96c65",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "bacouraniang2006@gmail.com",
+    "email_confirmed_at": "2026-10-13T22:27:47.902129Z",
+    "phone": "",
+    "confirmed_at": "2026-10-13T22:27:47.902129Z",
+    "last_sign_in_at": "2026-11-11T17:25:17.960273Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Coura Niang Ba",
+      "is_active": true,
+      "matricule": "ETU105",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "apecsy76"
+    },
+    "identities": null,
+    "created_at": "2026-10-13T22:27:47.862946Z",
+    "updated_at": "2026-11-11T19:21:32.860375Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "943bab01-ff76-401d-a62c-3de9b4548b01",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "adamawadiarra@gmail.com",
+    "email_confirmed_at": "2026-10-13T22:02:23.290489Z",
+    "phone": "",
+    "confirmed_at": "2026-10-13T22:02:23.290489Z",
+    "last_sign_in_at": "2026-10-28T21:05:06.549683Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "ADAM DIARRA",
+      "is_active": true,
+      "matricule": "ETU104",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "diarrise"
+    },
+    "identities": null,
+    "created_at": "2026-10-13T22:02:23.248381Z",
+    "updated_at": "2026-10-28T21:05:06.673398Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "8ae02db6-f604-438d-83c7-16a91aad9ced",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "gaye.fatim@uam.edu.sn",
+    "email_confirmed_at": "2026-10-13T21:53:24.340845Z",
+    "phone": "",
+    "confirmed_at": "2026-10-13T21:53:24.340845Z",
+    "recovery_sent_at": "2026-10-19T20:29:54.300861Z",
+    "last_sign_in_at": "2026-10-13T21:54:35.475282Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Fatim Gaye ",
+      "is_active": true,
+      "matricule": "ETU103",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "fatim-gaye"
+    },
+    "identities": null,
+    "created_at": "2026-10-13T21:53:24.301335Z",
+    "updated_at": "2026-10-19T20:30:17.111406Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "e51f229f-192b-4f62-a6e0-a97fbadaff78",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "fayeadjiratoukhemesse@gmail.com",
+    "email_confirmed_at": "2026-10-13T21:17:08.807255Z",
+    "phone": "",
+    "confirmed_at": "2026-10-13T21:17:08.807255Z",
+    "last_sign_in_at": "2026-11-08T22:54:12.704956Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Adjiratou khemesse Faye",
+      "is_active": true,
+      "matricule": "ETU102",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "akfaye"
+    },
+    "identities": null,
+    "created_at": "2026-10-13T21:17:08.796417Z",
+    "updated_at": "2026-11-08T22:54:12.73297Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "4276fce0-ffb6-4ddc-b900-82242127be2b",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "adamamariamambaye@gmail.com",
+    "email_confirmed_at": "2026-10-13T21:15:57.862962Z",
+    "phone": "",
+    "confirmed_at": "2026-10-13T21:15:57.862962Z",
+    "last_sign_in_at": "2026-11-09T20:13:03.844215Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Adama Mariama Mbaye",
+      "is_active": true,
+      "matricule": "ETU101",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "mariamasoda"
+    },
+    "identities": null,
+    "created_at": "2026-10-13T21:15:57.852872Z",
+    "updated_at": "2026-11-09T20:13:03.857151Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "09d5955c-1bfd-4446-b8b7-f1f2737e4df5",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "bahoumouawa195@gmail.com",
+    "email_confirmed_at": "2026-10-13T21:14:51.748316Z",
+    "phone": "",
+    "confirmed_at": "2026-10-13T21:14:51.748316Z",
+    "last_sign_in_at": "2026-11-10T21:08:24.353684Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "BA Oumou Awa",
+      "is_active": true,
+      "matricule": "ETU100",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "oumouba19"
+    },
+    "identities": null,
+    "created_at": "2026-10-13T21:14:51.741165Z",
+    "updated_at": "2026-11-10T21:08:24.370574Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "2b0f75af-30bb-4b6a-93d2-8ef0bb639a09",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "rokhaya132005@gmail.com",
+    "email_confirmed_at": "2026-10-13T21:11:20.400035Z",
+    "phone": "",
+    "confirmed_at": "2026-10-13T21:11:20.400035Z",
+    "last_sign_in_at": "2026-11-01T21:10:46.855677Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Rokhaya",
+      "is_active": true,
+      "matricule": "ETU099",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "dieynaba13"
+    },
+    "identities": null,
+    "created_at": "2026-10-13T21:11:20.36494Z",
+    "updated_at": "2026-11-01T21:10:46.868084Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "e9b17b3c-7f14-4118-b13a-e84a3e6b5b1a",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "alioukonte2006@gmail.com",
+    "email_confirmed_at": "2026-10-13T21:10:09.538895Z",
+    "phone": "",
+    "confirmed_at": "2026-10-13T21:10:09.538895Z",
+    "last_sign_in_at": "2026-11-08T20:53:34.955569Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Aliou Konté ",
+      "is_active": true,
+      "matricule": "ETU098",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "alioukonte"
+    },
+    "identities": null,
+    "created_at": "2026-10-13T21:10:09.525433Z",
+    "updated_at": "2026-11-11T23:50:23.072021Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "fa76db76-e0c3-4d10-96a3-aaa9702841f4",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "thiernosalmanabarry11@gmail.com",
+    "email_confirmed_at": "2026-10-13T20:54:04.784861Z",
+    "phone": "",
+    "confirmed_at": "2026-10-13T20:54:04.784861Z",
+    "last_sign_in_at": "2026-10-13T20:55:09.48214Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Thierno Salmana Barry",
+      "is_active": true,
+      "matricule": "ETU097",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "thier_salmana"
+    },
+    "identities": null,
+    "created_at": "2026-10-13T20:54:04.777777Z",
+    "updated_at": "2026-10-14T17:02:54.772273Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "44dc3d35-1e27-4350-83c9-70209137cbc1",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "fatimembengue501@gmail.com",
+    "email_confirmed_at": "2026-10-13T20:52:32.021518Z",
+    "phone": "",
+    "confirmed_at": "2026-10-13T20:52:32.021518Z",
+    "last_sign_in_at": "2026-11-10T21:04:41.072551Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MIASS",
+      "email_verified": true,
+      "filiere": "MIASS",
+      "full_name": "Fatime Mbengue",
+      "is_active": true,
+      "matricule": "ETU096",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "fatima"
+    },
+    "identities": null,
+    "created_at": "2026-10-13T20:52:32.018951Z",
+    "updated_at": "2026-11-10T22:55:45.234724Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "ab0b66c8-9962-4734-bb8e-69703122177c",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "tndeyekhady35@gmail.com",
+    "email_confirmed_at": "2026-10-13T20:52:10.276649Z",
+    "phone": "",
+    "confirmed_at": "2026-10-13T20:52:10.276649Z",
+    "last_sign_in_at": "2026-11-11T15:59:32.543104Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Ndeye khady Thiam ",
+      "is_active": true,
+      "matricule": "ETU095",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "ndeyekhady"
+    },
+    "identities": null,
+    "created_at": "2026-10-13T20:52:10.262312Z",
+    "updated_at": "2026-11-11T15:59:32.567249Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "6f1f69ac-bc24-40f1-b186-43073f2999d5",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "anissadiedhiou@gmail.com",
+    "email_confirmed_at": "2026-10-13T20:26:41.565001Z",
+    "phone": "",
+    "confirmed_at": "2026-10-13T20:26:41.565001Z",
+    "last_sign_in_at": "2026-10-26T20:55:16.780925Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Anissa binta Diedhiou",
+      "is_active": true,
+      "matricule": "ETU094",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "ani"
+    },
+    "identities": null,
+    "created_at": "2026-10-13T20:26:41.529747Z",
+    "updated_at": "2026-10-26T21:54:20.600056Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "4aa582f3-f29c-480c-aaa7-f75a45238d0b",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "diouf.aicha1@uam.edu.sn",
+    "email_confirmed_at": "2026-10-13T20:05:54.577132Z",
+    "phone": "",
+    "confirmed_at": "2026-10-13T20:05:54.577132Z",
+    "recovery_sent_at": "2026-11-09T10:27:03.443162Z",
+    "last_sign_in_at": "2026-11-09T12:03:17.490241Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Ndeye Aïcha Diouf ",
+      "is_active": true,
+      "matricule": "ETU093",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "aicha12"
+    },
+    "identities": null,
+    "created_at": "2026-10-13T20:05:54.546358Z",
+    "updated_at": "2026-11-10T20:51:52.019313Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "da7d7f4c-e0c0-4f9a-9f5d-2f7e8903acec",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "myachou077@gmail.com",
+    "email_confirmed_at": "2026-10-13T19:56:32.399706Z",
+    "phone": "",
+    "confirmed_at": "2026-10-13T19:56:32.399706Z",
+    "last_sign_in_at": "2026-11-02T10:24:02.671852Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Amy Ndiaye ",
+      "is_active": true,
+      "matricule": "ETU092",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "705286"
+    },
+    "identities": null,
+    "created_at": "2026-10-13T19:56:32.363611Z",
+    "updated_at": "2026-11-10T20:13:50.318818Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "97d036b9-97f4-4089-b9f2-8543ec1899c0",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "mendya434@gmail.com",
+    "email_confirmed_at": "2026-10-13T19:48:50.695975Z",
+    "phone": "",
+    "confirmed_at": "2026-10-13T19:48:50.695975Z",
+    "last_sign_in_at": "2026-10-13T19:54:39.607533Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Alex Mendy",
+      "is_active": true,
+      "matricule": "ETU091",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "705291"
+    },
+    "identities": null,
+    "created_at": "2026-10-13T19:48:50.676202Z",
+    "updated_at": "2026-11-11T19:23:39.366833Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "b6c3a5b9-69c0-427a-8258-c8d2e945d32d",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "ndiaye.diogob@uam.edu.sn",
+    "email_confirmed_at": "2026-10-13T19:22:55.926794Z",
+    "phone": "",
+    "confirmed_at": "2026-10-13T19:22:55.926794Z",
+    "last_sign_in_at": "2026-11-10T20:39:30.904326Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-SML",
+      "email_verified": true,
+      "filiere": "SML",
+      "full_name": "Ndeye diogob ndiaye",
+      "is_active": true,
+      "matricule": "ETU090",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "-ndeye"
+    },
+    "identities": null,
+    "created_at": "2026-10-13T19:22:55.909006Z",
+    "updated_at": "2026-11-10T20:39:30.918283Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "9d739ed7-daa9-457d-bcc0-88595a4692e1",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "mamour@has.sn",
+    "email_confirmed_at": "2026-10-13T19:00:40.689581Z",
+    "phone": "",
+    "confirmed_at": "2026-10-13T19:00:40.689581Z",
+    "last_sign_in_at": "2026-11-06T20:43:59.163725Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "bio": "Enseignant-chercheur en Économie, Finance des entreprises et Gestion financière pour la filière MIASS.",
+      "email_verified": true,
+      "full_name": "El Hadji Mamour Seynabou Diop",
+      "phone": "+221 77 668 89 77",
+      "role": "professeur",
+      "specialite": "Economie",
+      "username": "mamour"
+    },
+    "identities": null,
+    "created_at": "2026-10-13T19:00:40.683054Z",
+    "updated_at": "2026-11-07T15:19:42.974739Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "1fcb760a-9ce5-4c3a-8a30-f89c7a621665",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "mamenasratabane05@gmail.com",
+    "email_confirmed_at": "2026-10-13T18:59:12.990324Z",
+    "phone": "",
+    "confirmed_at": "2026-10-13T18:59:12.990324Z",
+    "last_sign_in_at": "2026-10-13T21:06:09.761565Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Mame Nasra Tabane ",
+      "is_active": true,
+      "matricule": "ETU088",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "nasra"
+    },
+    "identities": null,
+    "created_at": "2026-10-13T18:59:12.968682Z",
+    "updated_at": "2026-10-15T21:16:24.447615Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "42d78047-94c4-4ca8-85d6-47af754d1f12",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "gabdousalam3@gmail.com",
+    "email_confirmed_at": "2026-10-13T16:49:54.090466Z",
+    "phone": "",
+    "confirmed_at": "2026-10-13T16:49:54.090466Z",
+    "last_sign_in_at": "2026-11-10T21:10:41.081301Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Abdou Salam GUEYE ",
+      "is_active": true,
+      "matricule": "ETU087",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "salam-gye26"
+    },
+    "identities": null,
+    "created_at": "2026-10-13T16:49:54.075903Z",
+    "updated_at": "2026-11-10T21:10:41.08581Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "41025b70-26b6-465c-b595-7b62da72347a",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "diarra201204@gmail.com",
+    "email_confirmed_at": "2026-10-13T16:19:04.536378Z",
+    "phone": "",
+    "confirmed_at": "2026-10-13T16:19:04.536378Z",
+    "last_sign_in_at": "2026-11-10T20:04:50.446536Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-SML",
+      "email_verified": true,
+      "filiere": "SML",
+      "full_name": "Mame Diarra Diané",
+      "is_active": true,
+      "matricule": "ETU086",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "diarra"
+    },
+    "identities": null,
+    "created_at": "2026-10-13T16:19:04.506771Z",
+    "updated_at": "2026-11-10T23:58:49.120724Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "8374e7c9-4666-4e8a-a0e3-2c56a18359d2",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "ndoyesokhnaaminata848@gmail.com",
+    "email_confirmed_at": "2026-10-13T14:57:35.819905Z",
+    "phone": "",
+    "confirmed_at": "2026-10-13T14:57:35.819905Z",
+    "last_sign_in_at": "2026-10-15T20:22:10.129523Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MIASS",
+      "email_verified": true,
+      "filiere": "MIASS",
+      "full_name": "Sokhna Aminata Ndoye ",
+      "is_active": true,
+      "matricule": "ETU085",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "12345"
+    },
+    "identities": null,
+    "created_at": "2026-10-13T14:57:35.794825Z",
+    "updated_at": "2026-11-10T21:21:00.739137Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "f260a19f-eb4d-4820-9599-1e635424f4ad",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "ndeyeamytout@gmail.com",
+    "email_confirmed_at": "2026-10-13T10:20:18.556823Z",
+    "phone": "",
+    "confirmed_at": "2026-10-13T10:20:18.556823Z",
+    "last_sign_in_at": "2026-11-09T21:10:50.546727Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MIASS",
+      "email_verified": true,
+      "filiere": "MIASS",
+      "full_name": "Ndeye amy Ndour ",
+      "is_active": true,
+      "matricule": "ETU084",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "ndour-2"
+    },
+    "identities": null,
+    "created_at": "2026-10-13T10:20:18.536561Z",
+    "updated_at": "2026-11-10T22:13:03.920989Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "76b49629-01e3-4854-b0a9-60cc22aebb6a",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "adiallo211204@gmail.com",
+    "email_confirmed_at": "2026-10-13T10:17:57.746018Z",
+    "phone": "",
+    "confirmed_at": "2026-10-13T10:17:57.746018Z",
+    "last_sign_in_at": "2026-11-10T20:31:22.101273Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Adama DIALLO ",
+      "is_active": true,
+      "matricule": "ETU083",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "705528has"
+    },
+    "identities": null,
+    "created_at": "2026-10-13T10:17:57.733374Z",
+    "updated_at": "2026-11-10T20:31:22.132718Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "e5291a48-2e2c-4aa2-8912-fd86460ae9ff",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "diop.seynabou3@uam.edu.sn",
+    "email_confirmed_at": "2026-10-13T10:06:22.04423Z",
+    "phone": "",
+    "confirmed_at": "2026-10-13T10:06:22.04423Z",
+    "last_sign_in_at": "2026-11-09T19:56:50.997332Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Seynabou Diop ",
+      "is_active": true,
+      "matricule": "ETU082",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "seynabou"
+    },
+    "identities": null,
+    "created_at": "2026-10-13T10:06:22.016333Z",
+    "updated_at": "2026-11-09T19:56:51.025187Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "89dc26db-56c2-4f19-910a-cf9980e8ba21",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "mouhakmo97@gmail.com",
+    "email_confirmed_at": "2026-10-12T23:41:51.045909Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T23:41:51.045909Z",
+    "last_sign_in_at": "2026-11-11T18:40:35.44681Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Mouhamad SECK",
+      "is_active": true,
+      "matricule": "ETU081",
+      "niveau": "L2",
+      "phone": "+221 77 277 90 52",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "lelouchvb"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T23:41:51.006562Z",
+    "updated_at": "2026-11-11T18:40:35.493143Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "4290bc22-de02-4303-8afd-40b65ae1bbbf",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "cissecheikhahmadoubamba2024@gmail.com",
+    "email_confirmed_at": "2026-10-12T23:14:11.197302Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T23:14:11.197302Z",
+    "last_sign_in_at": "2026-10-13T21:12:54.512563Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Cheikh Ahmadou Bamba Cisse",
+      "is_active": true,
+      "matricule": "ETU080",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "bamba2024"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T23:14:11.17324Z",
+    "updated_at": "2026-10-23T19:28:14.522669Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "c8ae1ce8-8d86-4f14-a48f-2876e63c56ac",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "sokhnasenendiogou@gmail.com",
+    "email_confirmed_at": "2026-10-12T23:01:32.305925Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T23:01:32.305925Z",
+    "last_sign_in_at": "2026-11-06T20:59:38.529592Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-SML",
+      "email_verified": true,
+      "filiere": "SML",
+      "full_name": "Sokhna Séne Ndiogou ",
+      "is_active": true,
+      "matricule": "ETU079",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "sokhna"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T23:01:32.270811Z",
+    "updated_at": "2026-11-06T20:59:38.533166Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "470faba5-4da2-43dc-aab5-2e29c7b008c8",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "mamediarra051004@gmail.com",
+    "email_confirmed_at": "2026-10-12T22:56:15.748506Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T22:56:15.748506Z",
+    "last_sign_in_at": "2026-10-13T21:07:13.892612Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MIASS",
+      "email_verified": true,
+      "filiere": "MIASS",
+      "full_name": "Mame Diarra DIA",
+      "is_active": true,
+      "matricule": "ETU078",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "mdd"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T22:56:15.71221Z",
+    "updated_at": "2026-11-07T10:37:38.926501Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "a1e13511-8768-4241-be2d-c6c7bdd1a9e6",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "walyf316@gmail.com",
+    "email_confirmed_at": "2026-10-12T22:51:19.98006Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T22:51:19.98006Z",
+    "last_sign_in_at": "2026-11-10T21:07:37.536139Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Waly Faye",
+      "is_active": true,
+      "matricule": "ETU077",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "fayebirame"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T22:51:19.964576Z",
+    "updated_at": "2026-11-10T22:58:18.380581Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "3f6aab15-b401-4f58-aa22-c0d97938569b",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "mboupbayengagne@gmail.com",
+    "email_confirmed_at": "2026-10-12T22:41:48.231273Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T22:41:48.231273Z",
+    "last_sign_in_at": "2026-11-10T21:01:32.072819Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Baye Ngagne Mboup",
+      "is_active": true,
+      "matricule": "ETU076",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "mboup"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T22:41:48.227995Z",
+    "updated_at": "2026-11-10T21:01:32.086068Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "4fc79fc1-4150-4e05-bb23-e764c2a05e9f",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "locheikhouna99@gmail.com",
+    "email_confirmed_at": "2026-10-12T22:41:39.273644Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T22:41:39.273644Z",
+    "last_sign_in_at": "2026-11-10T21:31:24.106661Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MIASS",
+      "email_verified": true,
+      "filiere": "MIASS",
+      "full_name": "Cheikhouna Lo",
+      "is_active": true,
+      "matricule": "ETU075",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "saatuubaa"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T22:41:39.264222Z",
+    "updated_at": "2026-11-12T11:27:36.162181Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "9c0ac362-bf7d-4c62-8e89-9b2a92c26673",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "mbodjindeye80@gmail.com",
+    "email_confirmed_at": "2026-10-12T22:40:03.869152Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T22:40:03.869152Z",
+    "recovery_sent_at": "2026-10-13T21:00:39.182353Z",
+    "last_sign_in_at": "2026-10-20T21:14:36.098174Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Ndeye Mbodji",
+      "is_active": true,
+      "matricule": "ETU074",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "ndeye_mbodji"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T22:40:03.860462Z",
+    "updated_at": "2026-11-10T21:05:41.340695Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "f2edffd2-b649-4075-ab75-28fd59bfaea2",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "astouwade985@gmail.com",
+    "email_confirmed_at": "2026-10-12T22:40:03.201356Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T22:40:03.201356Z",
+    "last_sign_in_at": "2026-10-22T21:53:36.141778Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Astou Wade ",
+      "is_active": true,
+      "matricule": "ETU073",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "wade.astou"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T22:40:03.193328Z",
+    "updated_at": "2026-11-10T21:01:51.826406Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "03b3d532-9fa5-47e4-bdfc-44d06947bfc4",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "diallo.habybatou@uam.edu.sn",
+    "email_confirmed_at": "2026-10-12T22:37:32.096154Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T22:37:32.096154Z",
+    "last_sign_in_at": "2026-11-07T21:16:57.756776Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-SML",
+      "email_verified": true,
+      "filiere": "SML",
+      "full_name": "Habybatou Diallo",
+      "is_active": true,
+      "matricule": "ETU072",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "habybatou.d"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T22:37:32.07526Z",
+    "updated_at": "2026-11-07T21:16:57.790608Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "637b2827-cfb6-4acc-a406-c48ac1a0cddc",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "amadoudd0920@gmail.com",
+    "email_confirmed_at": "2026-10-12T22:33:08.936237Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T22:33:08.936237Z",
+    "last_sign_in_at": "2026-11-10T20:52:21.423884Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Amadou Diang DIALLO",
+      "is_active": true,
+      "matricule": "ETU071",
+      "niveau": "L2",
+      "phone": "",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "ame"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T22:33:08.918417Z",
+    "updated_at": "2026-11-10T20:52:21.433658Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "c9dd657d-8460-42e4-b196-03262e85b07d",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "marememballo03@gmail.com",
+    "email_confirmed_at": "2026-10-12T22:31:00.112429Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T22:31:00.112429Z",
+    "last_sign_in_at": "2026-11-12T10:38:24.826355Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-SML",
+      "email_verified": true,
+      "filiere": "SML",
+      "full_name": "Mareme Mballo",
+      "is_active": true,
+      "matricule": "ETU070",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "603689"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T22:31:00.102979Z",
+    "updated_at": "2026-11-12T10:38:24.83217Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "c6b5526b-773d-4c9e-b0df-c25f005f6146",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "mba386767@gmail.com",
+    "email_confirmed_at": "2026-10-12T22:29:52.00818Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T22:29:52.00818Z",
+    "last_sign_in_at": "2026-11-05T20:46:07.71783Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-SML",
+      "email_verified": true,
+      "filiere": "SML",
+      "full_name": "Ndeye Magatte ba",
+      "is_active": true,
+      "matricule": "ETU069",
+      "niveau": "L2",
+      "phone": "+221 77 551 81 96",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "magui"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T22:29:51.986212Z",
+    "updated_at": "2026-11-07T20:14:57.4645Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "3b8c8056-5671-47a7-9e66-81614a610c51",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "ramsessbodian34@gmail.com",
+    "email_confirmed_at": "2026-10-12T22:28:05.901709Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T22:28:05.901709Z",
+    "last_sign_in_at": "2026-11-02T21:13:20.675078Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MIASS",
+      "email_verified": true,
+      "filiere": "MIASS",
+      "full_name": "Ramatoulaye BODIAN",
+      "is_active": true,
+      "matricule": "ETU068",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "rbd"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T22:28:05.888005Z",
+    "updated_at": "2026-11-02T21:13:20.690194Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "86e61ed2-5c07-4702-8f96-5a833d62fce2",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "marietheresembengue78@gmail.com",
+    "email_confirmed_at": "2026-10-12T22:24:33.060033Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T22:24:33.060033Z",
+    "last_sign_in_at": "2026-11-10T21:05:54.955071Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Marie Thérèse Mbengue ",
+      "is_active": true,
+      "matricule": "ETU067",
+      "niveau": "L2",
+      "phone": "+221 785925983",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "mmbengue"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T22:24:33.040103Z",
+    "updated_at": "2026-11-10T21:05:54.963043Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "8accd962-6ada-40a3-a956-d2c5c5f85931",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "alaminedieye12@gmail.com",
+    "email_confirmed_at": "2026-10-12T22:18:54.549581Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T22:18:54.549581Z",
+    "last_sign_in_at": "2026-11-10T20:01:57.999361Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Mouhamed Dieye",
+      "is_active": true,
+      "matricule": "ETU066",
+      "niveau": "L1",
+      "phone": "+221 78 820 63 38",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "dieye_mouhamed.05"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T22:18:54.511365Z",
+    "updated_at": "2026-11-10T20:01:58.004959Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "04f5eef4-89c1-4a5b-8256-872fd7ce73ea",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "diopbayetalla3@gmail.com",
+    "email_confirmed_at": "2026-10-12T22:09:08.699777Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T22:09:08.699777Z",
+    "last_sign_in_at": "2026-11-07T12:11:54.600771Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Baye Talla Diop",
+      "is_active": true,
+      "matricule": "ETU065",
+      "niveau": "L1",
+      "phone": "+221 77 551 81 96",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "bayetalla"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T22:09:08.684909Z",
+    "updated_at": "2026-11-08T19:59:47.781241Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "005bec73-17d3-419b-aad6-e716d413e918",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "aissataalhousseynoud@gmail.com",
+    "email_confirmed_at": "2026-10-12T22:07:26.402101Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T22:07:26.402101Z",
+    "last_sign_in_at": "2026-11-10T16:38:31.373048Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MIASS",
+      "email_verified": true,
+      "filiere": "MIASS",
+      "full_name": "Aissata Alhousseynou Dia",
+      "is_active": true,
+      "matricule": "ETU064",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "aisha"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T22:07:26.387832Z",
+    "updated_at": "2026-11-10T16:38:31.404971Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "9c7da3cb-7269-4c93-befb-6372eee057d5",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "thiongane.maty@uam.edu.sn",
+    "email_confirmed_at": "2026-10-12T22:05:21.054394Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T22:05:21.054394Z",
+    "last_sign_in_at": "2026-10-26T22:15:14.786191Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-SML",
+      "email_verified": true,
+      "filiere": "SML",
+      "full_name": "Maty Thiongane",
+      "is_active": true,
+      "matricule": "ETU063",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "m.thiongane"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T22:05:21.035869Z",
+    "updated_at": "2026-11-11T23:41:39.624424Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "75937c43-6c73-4289-bb6b-f5eb26e6409d",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "diouf.aissatou3@uam.edu.sn",
+    "email_confirmed_at": "2026-10-12T22:01:49.495968Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T22:01:49.495968Z",
+    "last_sign_in_at": "2026-11-08T20:59:15.527083Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "AÏSSATOU DIOUF",
+      "is_active": true,
+      "matricule": "ETU062",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "kim_95"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T22:01:49.481035Z",
+    "updated_at": "2026-11-08T20:59:15.533297Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "27827d30-0654-4b0d-84fd-10f0452b2a50",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "papaamadoumbaye411@gmail.com",
+    "email_confirmed_at": "2026-10-12T21:59:57.561046Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T21:59:57.561046Z",
+    "last_sign_in_at": "2026-11-11T19:28:43.84602Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Papa Amadou Mbaye",
+      "is_active": true,
+      "matricule": "ETU061",
+      "niveau": "L1",
+      "phone": "+221 77 551 81 96",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "papambaye"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T21:59:57.542524Z",
+    "updated_at": "2026-11-11T19:28:43.86502Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "8191e434-fc2e-41d3-9b4a-fb25c98547cb",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "sy.arona@uam.edu.sn",
+    "email_confirmed_at": "2026-10-12T21:53:50.486082Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T21:53:50.486082Z",
+    "last_sign_in_at": "2026-11-11T21:28:01.522869Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Arona Sy",
+      "is_active": true,
+      "matricule": "ETU060",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "sy.arona"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T21:53:50.483385Z",
+    "updated_at": "2026-11-11T21:28:01.538671Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "40a2332e-81b3-489f-b6fd-3b838b3ff656",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "aminatasene930@gmail.com",
+    "email_confirmed_at": "2026-10-12T21:53:46.734817Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T21:53:46.734817Z",
+    "recovery_sent_at": "2026-10-14T16:08:53.321326Z",
+    "last_sign_in_at": "2026-11-03T21:17:53.406014Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Aminata Séne",
+      "is_active": true,
+      "matricule": "ETU059",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "aminata"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T21:53:46.726899Z",
+    "updated_at": "2026-11-10T20:29:25.504913Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "f02134ae-b1ee-42ff-a9b2-e97572e62359",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "diagne.maimouna1@uam.edu.sn",
+    "email_confirmed_at": "2026-10-12T21:51:47.427097Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T21:51:47.427097Z",
+    "last_sign_in_at": "2026-10-13T12:52:43.975569Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Maïmouna Diagne",
+      "is_active": true,
+      "matricule": "ETU058",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "mounass_baby"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T21:51:47.422502Z",
+    "updated_at": "2026-11-12T11:00:28.696135Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "8e5b655c-e1db-4619-a125-cf8060ccd7b5",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "limzojr21@gmail.com",
+    "email_confirmed_at": "2026-10-12T21:51:36.941427Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T21:51:36.941427Z",
+    "last_sign_in_at": "2026-11-06T21:38:17.692555Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "ELIMANE NDIAYE",
+      "is_active": true,
+      "matricule": "ETU057",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "michael"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T21:51:36.938914Z",
+    "updated_at": "2026-11-06T21:38:17.702139Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "f2f22602-c195-427d-92d7-38c18675d659",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "sokhnafatimatoundiaye@gmail.com",
+    "email_confirmed_at": "2026-10-12T21:51:33.18902Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T21:51:33.18902Z",
+    "last_sign_in_at": "2026-10-13T00:01:34.071512Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-SML",
+      "email_verified": true,
+      "filiere": "SML",
+      "full_name": "Sokhna Fatimatou Ndiaye",
+      "is_active": true,
+      "matricule": "ETU056",
+      "niveau": "L1",
+      "phone": "+221 78 739 67 32",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "sokhna_fatimatou"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T21:51:33.18539Z",
+    "updated_at": "2026-11-10T20:04:12.74586Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "7691fd0e-7341-4b91-94b9-31cb7ec4b9fd",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "laminekhoumajr@gmail.com",
+    "email_confirmed_at": "2026-10-12T21:50:35.253891Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T21:50:35.253891Z",
+    "last_sign_in_at": "2026-11-02T17:05:34.707225Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Mouhamadou Lamine Khouma",
+      "is_active": true,
+      "matricule": "ETU055",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "khouma"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T21:50:35.250914Z",
+    "updated_at": "2026-11-10T23:12:58.699018Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "bd024872-a14e-4783-8d1a-d2c479104dc9",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "senen7090@gmail.com",
+    "email_confirmed_at": "2026-10-12T21:49:32.044514Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T21:49:32.044514Z",
+    "last_sign_in_at": "2026-10-19T18:15:41.530757Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "ndeye sene",
+      "is_active": true,
+      "matricule": "ETU054",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "ndeye_sene"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T21:49:32.041867Z",
+    "updated_at": "2026-11-06T21:38:11.985735Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "6a248d88-3548-4aa4-a273-09a696bacb4e",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "niang.ndeyesokhna95@gmail.com",
+    "email_confirmed_at": "2026-10-12T21:49:08.453021Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T21:49:08.453021Z",
+    "last_sign_in_at": "2026-11-10T12:07:31.666521Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MIASS",
+      "email_verified": true,
+      "filiere": "MIASS",
+      "full_name": "Ndeye sokhna",
+      "is_active": true,
+      "matricule": "ETU053",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "ndeyesokhnaniang"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T21:49:08.450521Z",
+    "updated_at": "2026-11-10T12:07:31.693235Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "370b51ec-ad8e-4c34-9a03-1827a0705253",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "modysy602@gmail.com",
+    "email_confirmed_at": "2026-10-12T21:49:06.393812Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T21:49:06.393812Z",
+    "last_sign_in_at": "2026-11-06T21:34:20.846332Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-SML",
+      "email_verified": true,
+      "filiere": "SML",
+      "full_name": "Mody Sy",
+      "is_active": true,
+      "matricule": "ETU052",
+      "niveau": "L1",
+      "phone": "+221 78 305 75 11",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "mody221"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T21:49:06.389434Z",
+    "updated_at": "2026-11-06T21:34:20.856538Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "67a3c209-52c1-4d97-9b50-1bead0f31586",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "mouhamadoulaminediarra493@gmail.com",
+    "email_confirmed_at": "2026-10-12T21:48:57.861814Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T21:48:57.861814Z",
+    "last_sign_in_at": "2026-10-23T21:22:30.985745Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Mouhamadou Lamine Diarra",
+      "is_active": true,
+      "matricule": "ETU051",
+      "niveau": "L1",
+      "phone": "+221 77 551 81 96",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "mouhamadoulaminediarra"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T21:48:57.845293Z",
+    "updated_at": "2026-11-01T18:11:37.280838Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "655621a9-ef44-4570-8cbb-f4ccf5c9ac12",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "ngomodi1606@gmail.com",
+    "email_confirmed_at": "2026-10-12T21:48:21.238482Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T21:48:21.238482Z",
+    "last_sign_in_at": "2026-10-22T19:38:50.660204Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Ngoné Gueye",
+      "is_active": true,
+      "matricule": "ETU050",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "ngonee"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T21:48:21.230171Z",
+    "updated_at": "2026-11-11T00:45:50.863063Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "3aed59c1-c1ad-441e-8228-c7f0707e8373",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "niang.anta1@uam.edu.sn",
+    "email_confirmed_at": "2026-10-12T21:46:26.986503Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T21:46:26.986503Z",
+    "last_sign_in_at": "2026-10-30T19:14:57.537055Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Anta NIANG",
+      "is_active": true,
+      "matricule": "ETU049",
+      "niveau": "L1",
+      "phone": "+221 78  732 20 22",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "niang.anta"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T21:46:26.974451Z",
+    "updated_at": "2026-11-11T21:27:28.968033Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "d77f08fb-cd01-4251-bd72-acdc03610ea7",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "dieng.massaer@uam.edu.sn",
+    "email_confirmed_at": "2026-10-12T21:40:43.44971Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T21:40:43.44971Z",
+    "last_sign_in_at": "2026-11-11T15:01:18.264352Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Massaer Dieng",
+      "is_active": true,
+      "matricule": "ETU048",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "dieng"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T21:40:43.440507Z",
+    "updated_at": "2026-11-11T20:55:06.502044Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "ef732641-26b5-4111-976a-aeb8eb4ba5bd",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "abdoulrazaddiallo@gmail.com",
+    "email_confirmed_at": "2026-10-12T21:38:48.306387Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T21:38:48.306387Z",
+    "last_sign_in_at": "2026-10-28T20:03:38.930867Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Abdoul Razad DIALLO",
+      "is_active": true,
+      "matricule": "ETU047",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "abdoulrazaddiallo"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T21:38:48.283218Z",
+    "updated_at": "2026-10-28T20:03:38.941384Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "ebc2f28d-a962-43bf-ba05-96e9048d743a",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "rokhaya171206@gmail.com",
+    "email_confirmed_at": "2026-10-12T21:37:59.313859Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T21:37:59.313859Z",
+    "last_sign_in_at": "2026-11-11T13:00:45.28951Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "WADE Rokhaya ",
+      "is_active": true,
+      "matricule": "ETU046",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "rokhaya"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T21:37:59.292596Z",
+    "updated_at": "2026-11-11T14:46:46.731657Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "ec7dd83c-ca56-49b0-a9bc-62388c8087c4",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "d.thiam.sn@gmail.com",
+    "email_confirmed_at": "2026-10-12T21:30:01.176419Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T21:30:01.176419Z",
+    "last_sign_in_at": "2026-11-09T19:15:54.741408Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-SML",
+      "email_verified": true,
+      "filiere": "SML",
+      "full_name": "Daouda THIAM",
+      "is_active": true,
+      "matricule": "ETU045",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "d.thiam"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T21:30:01.156588Z",
+    "updated_at": "2026-11-09T20:57:26.248318Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "c39f69f8-9dab-4c26-b88b-5785beb72f64",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "anneibrahima2005@gmail.com",
+    "email_confirmed_at": "2026-10-12T21:05:12.700958Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T21:05:12.700958Z",
+    "last_sign_in_at": "2026-10-12T22:08:38.319538Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-SML",
+      "email_verified": true,
+      "filiere": "SML",
+      "full_name": "Ibrahima Anne",
+      "is_active": true,
+      "matricule": "ETU044",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "ibra"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T21:05:12.674198Z",
+    "updated_at": "2026-10-12T22:08:38.324609Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "1edede3e-0652-436b-bca2-55c2676925f7",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "salimatacisse2005@gmail.com",
+    "email_confirmed_at": "2026-10-12T21:00:17.041136Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T21:00:17.041136Z",
+    "last_sign_in_at": "2026-10-13T21:01:18.292093Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Oumou Salamata Cisse",
+      "is_active": true,
+      "matricule": "ETU043",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "sali"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T21:00:16.9999Z",
+    "updated_at": "2026-10-23T22:26:36.264511Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "463ffbf8-815b-4de0-b889-c1129e40c88a",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "ka.marie@uam.edu.sn",
+    "email_confirmed_at": "2026-10-12T10:29:34.238689Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T10:29:34.238689Z",
+    "last_sign_in_at": "2026-10-13T21:14:39.653681Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MIASS",
+      "email_verified": true,
+      "filiere": "MIASS",
+      "full_name": "NDEYE MARIE KA ",
+      "is_active": true,
+      "matricule": "ETU042",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "1818"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T10:29:34.204827Z",
+    "updated_at": "2026-11-10T21:10:50.744174Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "ac6691ba-e512-403e-b110-724dac65e285",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "mamadoudiaw1105@gmail.com",
+    "email_confirmed_at": "2026-10-12T02:04:16.770764Z",
+    "phone": "",
+    "confirmed_at": "2026-10-12T02:04:16.770764Z",
+    "last_sign_in_at": "2026-11-06T21:28:25.993146Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Mamadou Diaw",
+      "is_active": true,
+      "matricule": "ETU041",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "mamadoudiaw1105"
+    },
+    "identities": null,
+    "created_at": "2026-10-12T02:04:16.72318Z",
+    "updated_at": "2026-11-11T13:53:48.406587Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "6761074f-7ec8-4422-8d17-852bfea22307",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "sarrsokhnafaty5@gmail.com",
+    "email_confirmed_at": "2026-10-11T23:01:15.60204Z",
+    "phone": "",
+    "confirmed_at": "2026-10-11T23:01:15.60204Z",
+    "last_sign_in_at": "2026-10-19T19:20:18.308255Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Sokhna faty Sarr",
+      "is_active": true,
+      "matricule": "ETU040",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "sfsarr"
+    },
+    "identities": null,
+    "created_at": "2026-10-11T23:01:15.538578Z",
+    "updated_at": "2026-11-09T21:02:05.007206Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "da97cd20-df47-4487-b5ee-4af47b102127",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "sarrdame173@gmail.com",
+    "email_confirmed_at": "2026-10-11T00:08:38.935083Z",
+    "phone": "",
+    "confirmed_at": "2026-10-11T00:08:38.935083Z",
+    "last_sign_in_at": "2026-11-03T21:35:35.215569Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Dame Sarr",
+      "is_active": true,
+      "matricule": "ETU039",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "damesarr"
+    },
+    "identities": null,
+    "created_at": "2026-10-11T00:08:38.918468Z",
+    "updated_at": "2026-11-11T19:53:42.348618Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "985f3a4b-bf6c-48e8-9ac4-21fb8d75347a",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "mariediouf219@gmail.com",
+    "email_confirmed_at": "2026-10-10T19:51:44.003423Z",
+    "phone": "",
+    "confirmed_at": "2026-10-10T19:51:44.003423Z",
+    "last_sign_in_at": "2026-11-10T20:05:06.507769Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-SML",
+      "email_verified": true,
+      "filiere": "SML",
+      "full_name": "Marie Astou",
+      "is_active": true,
+      "matricule": "ETU038",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "mariesd"
+    },
+    "identities": null,
+    "created_at": "2026-10-10T19:51:43.983844Z",
+    "updated_at": "2026-11-11T22:53:55.782504Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "508aae24-828f-43a0-b817-76faa077be97",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "ndeyeguitte05@gmail.com",
+    "email_confirmed_at": "2026-10-10T19:20:12.286612Z",
+    "phone": "",
+    "confirmed_at": "2026-10-10T19:20:12.286612Z",
+    "last_sign_in_at": "2026-11-08T23:51:47.00981Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MIASS",
+      "email_verified": true,
+      "filiere": "MIASS",
+      "full_name": "Ndeye Guittè Ndongo ",
+      "is_active": true,
+      "matricule": "ETU037",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "ladivanoire"
+    },
+    "identities": null,
+    "created_at": "2026-10-10T19:20:12.278727Z",
+    "updated_at": "2026-11-09T22:16:54.943132Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "a0c61bc9-54a8-45c7-84f6-1df18614c798",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "soro21ba@gmail.com",
+    "email_confirmed_at": "2026-10-10T19:18:58.740459Z",
+    "phone": "",
+    "confirmed_at": "2026-10-10T19:18:58.740459Z",
+    "last_sign_in_at": "2026-11-08T21:46:33.94698Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Soro BA",
+      "is_active": true,
+      "matricule": "ETU036",
+      "niveau": "L1",
+      "phone": "+221761730723",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "sba"
+    },
+    "identities": null,
+    "created_at": "2026-10-10T19:18:58.711614Z",
+    "updated_at": "2026-11-08T21:46:33.961688Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "a45ede70-153d-4696-8831-971a5b88fd95",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "aissatagangue283@gmail.com",
+    "email_confirmed_at": "2026-10-10T18:42:30.231326Z",
+    "phone": "",
+    "confirmed_at": "2026-10-10T18:42:30.231326Z",
+    "last_sign_in_at": "2026-11-03T21:59:10.797703Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Aissata Gangue ",
+      "is_active": true,
+      "matricule": "ETU035",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "aissata2026"
+    },
+    "identities": null,
+    "created_at": "2026-10-10T18:42:30.197405Z",
+    "updated_at": "2026-11-09T20:10:34.984541Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "38057638-7577-49ca-bd58-515404fae332",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "sammariame385@gmail.com",
+    "email_confirmed_at": "2026-10-10T11:41:29.896287Z",
+    "phone": "",
+    "confirmed_at": "2026-10-10T11:41:29.896287Z",
+    "last_sign_in_at": "2026-11-06T21:22:28.972167Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Mariame Sam",
+      "is_active": true,
+      "matricule": "ETU034",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "mariame"
+    },
+    "identities": null,
+    "created_at": "2026-10-10T11:41:29.890004Z",
+    "updated_at": "2026-11-06T21:22:28.981503Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "92ce1233-b254-47ce-a0c0-304a4a6dcd94",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "ibou@has-academie.online",
+    "email_confirmed_at": "2026-10-10T11:40:36.80238Z",
+    "phone": "",
+    "confirmed_at": "2026-10-10T11:40:36.80238Z",
+    "last_sign_in_at": "2026-10-19T16:13:24.813209Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "email_verified": true,
+      "full_name": "El Hadji",
+      "is_active": true,
+      "matricule": "ADM002",
+      "role": "admin",
+      "username": "ibou"
+    },
+    "identities": null,
+    "created_at": "2026-10-10T11:40:36.765702Z",
+    "updated_at": "2026-10-19T16:13:24.843537Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "75788cf3-00dc-4e55-b25f-6d49b56fcc33",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "seck.gueye@uam.edu.sn",
+    "email_confirmed_at": "2026-10-10T03:21:43.40849Z",
+    "phone": "",
+    "confirmed_at": "2026-10-10T03:21:43.40849Z",
+    "last_sign_in_at": "2026-11-02T21:44:03.905397Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MIASS",
+      "email_verified": true,
+      "filiere": "MIASS",
+      "full_name": "Fatou Gueye Seck",
+      "is_active": true,
+      "matricule": "ETU033",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "fa.2007"
+    },
+    "identities": null,
+    "created_at": "2026-10-10T03:21:43.369955Z",
+    "updated_at": "2026-11-02T21:44:03.925025Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "7dcef529-4439-4f9b-9601-c25aa6eb2eeb",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "komekadia00@gmail.com",
+    "email_confirmed_at": "2026-10-10T01:20:21.167839Z",
+    "phone": "",
+    "confirmed_at": "2026-10-10T01:20:21.167839Z",
+    "last_sign_in_at": "2026-10-21T19:13:19.463388Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-SML",
+      "email_verified": true,
+      "filiere": "SML",
+      "full_name": "Kadja komé",
+      "is_active": true,
+      "matricule": "ETU032",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "kasey"
+    },
+    "identities": null,
+    "created_at": "2026-10-10T01:20:21.141728Z",
+    "updated_at": "2026-11-07T23:09:12.177111Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "2ef5a0df-0084-4054-b66d-d95ecd49239f",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "loo34982@gmail.com",
+    "email_confirmed_at": "2026-10-09T23:20:13.514305Z",
+    "phone": "",
+    "confirmed_at": "2026-10-09T23:20:13.514305Z",
+    "last_sign_in_at": "2026-10-22T19:16:50.878966Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Omar Lô",
+      "is_active": true,
+      "matricule": "ETU031",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "lo_omar"
+    },
+    "identities": null,
+    "created_at": "2026-10-09T23:20:13.495956Z",
+    "updated_at": "2026-10-22T19:16:50.903321Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "ab092b9a-1acf-478c-91b0-a774cffc944a",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "mbengue.masse@uam.edu.sn",
+    "email_confirmed_at": "2026-10-09T23:12:22.523581Z",
+    "phone": "",
+    "confirmed_at": "2026-10-09T23:12:22.523581Z",
+    "last_sign_in_at": "2026-10-31T21:12:08.534599Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-SML",
+      "email_verified": true,
+      "filiere": "SML",
+      "full_name": "Masse Mbengue",
+      "is_active": true,
+      "matricule": "ETU030",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "mbengue221"
+    },
+    "identities": null,
+    "created_at": "2026-10-09T23:12:22.498529Z",
+    "updated_at": "2026-10-31T22:30:07.401035Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "82ae28d1-28c2-4032-b20d-64f2f617c358",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "ndao.aminata2@uam.edu.sn",
+    "email_confirmed_at": "2026-10-09T21:47:01.088484Z",
+    "phone": "",
+    "confirmed_at": "2026-10-09T21:47:01.088484Z",
+    "last_sign_in_at": "2026-11-10T13:01:18.966177Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MIASS",
+      "email_verified": true,
+      "filiere": "MIASS",
+      "full_name": "Aminata NDAO",
+      "is_active": true,
+      "matricule": "ETU029",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "andao"
+    },
+    "identities": null,
+    "created_at": "2026-10-09T21:47:01.053481Z",
+    "updated_at": "2026-11-11T21:53:58.90814Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "7c3e9856-c287-4487-80f2-902b5e9789a4",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "sylla.diarra@uam.edu.sn",
+    "email_confirmed_at": "2026-10-09T21:41:14.383787Z",
+    "phone": "",
+    "confirmed_at": "2026-10-09T21:41:14.383787Z",
+    "last_sign_in_at": "2026-11-10T21:10:47.46668Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MIASS",
+      "email_verified": true,
+      "filiere": "MIASS",
+      "full_name": "Mame Diarra Sylla",
+      "is_active": true,
+      "matricule": "ETU028",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "toulahiebony"
+    },
+    "identities": null,
+    "created_at": "2026-10-09T21:41:14.350848Z",
+    "updated_at": "2026-11-10T21:10:47.475882Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "95bdb602-d2f5-4896-86ff-25c30a5b9d4b",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "m.ndiour2006@gmail.com",
+    "email_confirmed_at": "2026-10-09T21:21:05.641421Z",
+    "phone": "",
+    "confirmed_at": "2026-10-09T21:21:05.641421Z",
+    "last_sign_in_at": "2026-11-08T21:12:45.397475Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Mouhamed Ndiour ",
+      "is_active": true,
+      "matricule": "ETU027",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "shop_123"
+    },
+    "identities": null,
+    "created_at": "2026-10-09T21:21:05.626056Z",
+    "updated_at": "2026-11-11T21:37:47.55851Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "3f7c32ad-d4ed-49dc-b60e-0bf9066a5072",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "diop.rassoul@uam.edu.sn",
+    "email_confirmed_at": "2026-10-09T21:10:39.351252Z",
+    "phone": "",
+    "confirmed_at": "2026-10-09T21:10:39.351252Z",
+    "last_sign_in_at": "2026-11-08T14:16:18.135751Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Khadim rassoul diop",
+      "is_active": true,
+      "matricule": "ETU026",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "bamba"
+    },
+    "identities": null,
+    "created_at": "2026-10-09T21:10:39.327293Z",
+    "updated_at": "2026-11-08T14:16:18.164285Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "132c4257-dc79-4353-8873-3587178528fc",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "cdiop683@gmail.com",
+    "email_confirmed_at": "2026-10-09T21:06:16.963099Z",
+    "phone": "",
+    "confirmed_at": "2026-10-09T21:06:16.963099Z",
+    "last_sign_in_at": "2026-11-09T20:12:01.489312Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Cheikh Diop",
+      "is_active": true,
+      "matricule": "ETU025",
+      "niveau": "L2",
+      "phone": "776809380",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "cmd07"
+    },
+    "identities": null,
+    "created_at": "2026-10-09T21:06:16.933531Z",
+    "updated_at": "2026-11-11T10:05:44.372458Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "b9e0a565-ba91-4017-b70b-99c837079dd2",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "seyni0379@gmail.com",
+    "email_confirmed_at": "2026-10-09T17:55:44.165536Z",
+    "phone": "",
+    "confirmed_at": "2026-10-09T17:55:44.165536Z",
+    "last_sign_in_at": "2026-11-09T19:21:17.441175Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Seyni Diop",
+      "is_active": true,
+      "matricule": "ETU024",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "2209"
+    },
+    "identities": null,
+    "created_at": "2026-10-09T17:55:44.127495Z",
+    "updated_at": "2026-11-09T19:21:17.45259Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "c2eb757f-3a40-43fb-ba6a-a619d1eb4ebe",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "nianganta852@gmail.com",
+    "email_confirmed_at": "2026-10-09T10:58:14.462978Z",
+    "phone": "",
+    "confirmed_at": "2026-10-09T10:58:14.462978Z",
+    "last_sign_in_at": "2026-10-19T10:14:28.725667Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "anta Niang",
+      "is_active": true,
+      "matricule": "ETU023",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "nianganta852"
+    },
+    "identities": null,
+    "created_at": "2026-10-09T10:58:14.424793Z",
+    "updated_at": "2026-10-19T10:14:28.785755Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "59daff07-1107-4e74-8d78-8a6d9cb7d523",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "niang.khoudia1@uam.edu.sn",
+    "email_confirmed_at": "2026-10-08T14:51:02.539947Z",
+    "phone": "",
+    "confirmed_at": "2026-10-08T14:51:02.539947Z",
+    "last_sign_in_at": "2026-10-18T20:40:44.533836Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MIASS",
+      "email_verified": true,
+      "filiere": "MIASS",
+      "full_name": "Khoudia Niang ",
+      "is_active": true,
+      "matricule": "ETU022",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "linguere"
+    },
+    "identities": null,
+    "created_at": "2026-10-08T14:51:02.528573Z",
+    "updated_at": "2026-11-10T20:59:46.147449Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "546058fa-e39e-4b73-8d9a-8fbc5a71d164",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "fatimataanne18@gmail.com",
+    "email_confirmed_at": "2026-10-08T14:39:50.142839Z",
+    "phone": "",
+    "confirmed_at": "2026-10-08T14:39:50.142839Z",
+    "last_sign_in_at": "2026-11-09T21:08:53.715404Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Fatimata Anne",
+      "is_active": true,
+      "matricule": "ETU021",
+      "niveau": "L1",
+      "phone": "766179112",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "tima_sama10"
+    },
+    "identities": null,
+    "created_at": "2026-10-08T14:39:50.126478Z",
+    "updated_at": "2026-11-10T19:57:08.487309Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "581fa71e-5fd8-4ec4-b75e-f244db773616",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "cd5649829@gmail.com",
+    "email_confirmed_at": "2026-10-08T14:38:54.329845Z",
+    "phone": "",
+    "confirmed_at": "2026-10-08T14:38:54.329845Z",
+    "last_sign_in_at": "2026-11-10T19:20:36.105379Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Khoumba Diallo",
+      "is_active": true,
+      "matricule": "ETU020",
+      "niveau": "L1",
+      "phone": "+221 78 265 04 45",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "kdiallo"
+    },
+    "identities": null,
+    "created_at": "2026-10-08T14:38:54.314817Z",
+    "updated_at": "2026-11-10T20:07:45.902866Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "90d92bc9-dfd0-46e7-99cc-9ddb2239a798",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "mbayesouleymaneofficiel@gmail.com",
+    "email_confirmed_at": "2026-10-08T14:32:32.415094Z",
+    "phone": "",
+    "confirmed_at": "2026-10-08T14:32:32.415094Z",
+    "last_sign_in_at": "2026-11-06T17:29:56.110046Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "SOULEYMANE MBAYE ",
+      "is_active": true,
+      "matricule": "ETU019",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "ghost"
+    },
+    "identities": null,
+    "created_at": "2026-10-08T14:32:32.406538Z",
+    "updated_at": "2026-11-06T17:29:56.132687Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "5e397bd5-8405-488b-a41a-b5d673335f07",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "wahbbint05@gmail.com",
+    "email_confirmed_at": "2026-10-08T14:29:26.436396Z",
+    "phone": "",
+    "confirmed_at": "2026-10-08T14:29:26.436396Z",
+    "last_sign_in_at": "2026-11-01T21:24:34.781689Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "date_expiration_paiement": "2026-12-12T23:59:59.000Z",
+      "date_validation_paiement": "2026-11-11T19:58:17.847Z",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Aminata Diop ",
+      "is_active": true,
+      "matricule": "ETU018",
+      "niveau": "L2",
+      "phone": "",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "statut_paiement": "a_jour",
+      "username": "bint"
+    },
+    "identities": null,
+    "created_at": "2026-10-08T14:29:26.385616Z",
+    "updated_at": "2026-11-11T19:58:18.124095Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "105b430e-e93d-4ae5-a4c7-96f9d560b5bb",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "adamandiaye6002@gmail.com",
+    "email_confirmed_at": "2026-10-08T14:05:35.172888Z",
+    "phone": "",
+    "confirmed_at": "2026-10-08T14:05:35.172888Z",
+    "last_sign_in_at": "2026-11-10T20:05:03.037084Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Adama Ndiaye",
+      "is_active": true,
+      "matricule": "ETU017",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "adama"
+    },
+    "identities": null,
+    "created_at": "2026-10-08T14:05:35.151081Z",
+    "updated_at": "2026-11-10T20:05:03.045796Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "c314adca-3bf8-4ebc-90c7-7a2f1c0de9cc",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "thiareadama2005@gmail.com",
+    "email_confirmed_at": "2026-10-08T14:00:35.353084Z",
+    "phone": "",
+    "confirmed_at": "2026-10-08T14:00:35.353084Z",
+    "last_sign_in_at": "2026-11-10T22:49:35.168398Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MIASS",
+      "email_verified": true,
+      "filiere": "MIASS",
+      "full_name": "Adama Thiaré",
+      "is_active": true,
+      "matricule": "ETU016",
+      "niveau": "L2",
+      "phone": "",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "adamathiare"
+    },
+    "identities": null,
+    "created_at": "2026-10-08T14:00:35.311016Z",
+    "updated_at": "2026-11-10T22:49:35.187607Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "fb3c536f-2e45-47d6-8a16-adc1228fcfda",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "ndiaye.diarra7@uam.edu.sn",
+    "email_confirmed_at": "2026-10-08T13:58:31.162057Z",
+    "phone": "",
+    "confirmed_at": "2026-10-08T13:58:31.162057Z",
+    "last_sign_in_at": "2026-11-10T20:01:05.163506Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "date_expiration_paiement": "2026-12-12T23:59:59.000Z",
+      "date_validation_paiement": "2026-11-11T22:25:53.734Z",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Mame diarra Ndiaye ",
+      "is_active": true,
+      "matricule": "ETU015",
+      "niveau": "L1",
+      "original_username": "maryam",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "statut_paiement": "a_jour",
+      "username": "maryam"
+    },
+    "identities": null,
+    "created_at": "2026-10-08T13:58:31.159249Z",
+    "updated_at": "2026-11-11T22:25:54.003007Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "e05c149c-3177-45e0-8aef-2b9e8c735316",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "fd15122006@gmail.com",
+    "email_confirmed_at": "2026-10-08T13:58:30.721631Z",
+    "phone": "",
+    "confirmed_at": "2026-10-08T13:58:30.721631Z",
+    "last_sign_in_at": "2026-11-10T20:54:58.332503Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "fatou diouf",
+      "is_active": true,
+      "matricule": "ETU014",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "fdiouf"
+    },
+    "identities": null,
+    "created_at": "2026-10-08T13:58:30.705672Z",
+    "updated_at": "2026-11-10T22:37:13.325243Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "c90d8eaf-b2e2-4c72-85a2-7ff1fa5fbad7",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "aichaba221b@gmail.com",
+    "email_confirmed_at": "2026-10-08T13:52:34.58652Z",
+    "phone": "",
+    "confirmed_at": "2026-10-08T13:52:34.58652Z",
+    "last_sign_in_at": "2026-11-12T10:47:07.275568Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Aïssatou sow ba",
+      "is_active": true,
+      "matricule": "ETU013",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "aicha"
+    },
+    "identities": null,
+    "created_at": "2026-10-08T13:52:34.580104Z",
+    "updated_at": "2026-11-12T10:47:07.285869Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "4e6e708e-6f7a-488c-aaaa-6b134d9487e7",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "lilolise19@gmail.com",
+    "email_confirmed_at": "2026-10-08T13:51:35.743729Z",
+    "phone": "",
+    "confirmed_at": "2026-10-08T13:51:35.743729Z",
+    "last_sign_in_at": "2026-10-22T19:42:34.133184Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Eugène Ambroise Badji ",
+      "is_active": true,
+      "matricule": "ETU012",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "kaiserolise19"
+    },
+    "identities": null,
+    "created_at": "2026-10-08T13:51:35.737499Z",
+    "updated_at": "2026-10-22T19:42:34.139964Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "5593c977-dd8a-46d5-998f-a519cec437ef",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "amadoubarro85@gmail.com",
+    "email_confirmed_at": "2026-10-08T13:50:10.092912Z",
+    "phone": "",
+    "confirmed_at": "2026-10-08T13:50:10.092912Z",
+    "last_sign_in_at": "2026-11-10T20:06:37.314107Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "AMADOU BARRO",
+      "is_active": true,
+      "matricule": "ETU011",
+      "niveau": "L1",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "amadoubarro"
+    },
+    "identities": null,
+    "created_at": "2026-10-08T13:50:10.089219Z",
+    "updated_at": "2026-11-10T20:06:37.319866Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "776e3680-4acc-4641-81dc-3e1958e749ee",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "fiafatima346@gmail.com",
+    "email_confirmed_at": "2026-10-08T13:49:56.805655Z",
+    "phone": "",
+    "confirmed_at": "2026-10-08T13:49:56.805655Z",
+    "last_sign_in_at": "2026-11-07T21:56:55.108317Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-SML",
+      "email_verified": true,
+      "filiere": "SML",
+      "full_name": "Fatimata dia",
+      "is_active": true,
+      "matricule": "ETU010",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "dia"
+    },
+    "identities": null,
+    "created_at": "2026-10-08T13:49:56.77502Z",
+    "updated_at": "2026-11-11T17:16:52.337917Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "3b2aca0a-d840-40a8-87aa-9ef6b6c7a59a",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "aminabaye13@gmail.com",
+    "email_confirmed_at": "2026-10-08T13:49:09.748197Z",
+    "phone": "",
+    "confirmed_at": "2026-10-08T13:49:09.748197Z",
+    "last_sign_in_at": "2026-10-20T21:02:30.066555Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Amina Soumare",
+      "is_active": true,
+      "matricule": "ETU009",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "amina.smr"
+    },
+    "identities": null,
+    "created_at": "2026-10-08T13:49:09.744861Z",
+    "updated_at": "2026-11-05T23:07:12.932958Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "56b4b793-b911-43fa-ab9a-5798072bd318",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "ndeyeaidatall61@gmail.com",
+    "email_confirmed_at": "2026-10-08T13:47:58.592306Z",
+    "phone": "",
+    "confirmed_at": "2026-10-08T13:47:58.592306Z",
+    "last_sign_in_at": "2026-11-11T10:42:31.154153Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Ndeye Aïda tall ",
+      "is_active": true,
+      "matricule": "ETU008",
+      "niveau": "L2",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "tall2005"
+    },
+    "identities": null,
+    "created_at": "2026-10-08T13:47:58.584019Z",
+    "updated_at": "2026-11-11T10:42:31.181577Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "eac941ca-892b-4b8b-ac84-a15d41cfd86f",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "malickniang5010@gmail.com",
+    "email_confirmed_at": "2026-10-08T13:47:52.251843Z",
+    "phone": "",
+    "confirmed_at": "2026-10-08T13:47:52.251843Z",
+    "last_sign_in_at": "2026-11-11T22:00:36.602989Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L2-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Malick Soyibou Niang ",
+      "is_active": true,
+      "matricule": "ETU007",
+      "niveau": "L2",
+      "phone": "+221 77 2944334",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "milk"
+    },
+    "identities": null,
+    "created_at": "2026-10-08T13:47:52.217145Z",
+    "updated_at": "2026-11-12T07:03:31.359025Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "e07a4dfb-8c6b-4e32-8746-fdbac02a22a3",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "samb.papa@uam.edu.sn",
+    "email_confirmed_at": "2026-10-07T04:16:25.483667Z",
+    "phone": "",
+    "confirmed_at": "2026-10-07T04:16:25.483667Z",
+    "last_sign_in_at": "2026-11-11T15:12:26.538467Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "classe": "L1-MPI",
+      "email_verified": true,
+      "filiere": "MPI",
+      "full_name": "Papa Ibrahima SAMB ",
+      "is_active": true,
+      "matricule": "ETU002",
+      "niveau": "L1",
+      "phone": "+221 75 650 20 17",
+      "role": "etudiant",
+      "statut_inscription": "valide",
+      "username": "pis"
+    },
+    "identities": null,
+    "created_at": "2026-10-07T04:16:25.453978Z",
+    "updated_at": "2026-11-12T10:36:13.15743Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "b3624bdb-2544-4995-989d-fc38e478d256",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "kalidou.ba@has-academie.online",
+    "email_confirmed_at": "2026-10-02T21:16:01.541604Z",
+    "phone": "",
+    "confirmed_at": "2026-10-02T21:16:01.541604Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "email_verified": true,
+      "full_name": "Kalidou Ba",
+      "role": "professeur",
+      "username": "kalidou"
+    },
+    "identities": null,
+    "created_at": "2026-10-02T21:16:01.537189Z",
+    "updated_at": "2026-10-02T21:18:06.382005Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "5bfff82c-62a6-48d4-801f-9e9ac5421df5",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "pape.thiam@has-academie.online",
+    "email_confirmed_at": "2026-10-02T21:16:01.357554Z",
+    "phone": "",
+    "confirmed_at": "2026-10-02T21:16:01.357554Z",
+    "last_sign_in_at": "2026-11-03T19:53:05.379114Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "bio": "Ingénieur Informatique, initiation à la programmation Python et Langage C.",
+      "email_verified": true,
+      "full_name": "Pape Thiam",
+      "phone": "+221 78 731 84 27",
+      "role": "professeur",
+      "specialite": "Informatique",
+      "username": "pape"
+    },
+    "identities": null,
+    "created_at": "2026-10-02T21:16:01.354729Z",
+    "updated_at": "2026-11-09T00:14:18.614336Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "0ffa8cbd-6c98-409a-948d-0988754c1b32",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "diop.sow@has-academie.online",
+    "email_confirmed_at": "2026-10-02T21:16:01.163387Z",
+    "phone": "",
+    "confirmed_at": "2026-10-02T21:16:01.163387Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "email_verified": true,
+      "full_name": "El Hadji Ibrahima Diop Sow",
+      "role": "professeur",
+      "username": "diopsow"
+    },
+    "identities": null,
+    "created_at": "2026-10-02T21:16:01.160538Z",
+    "updated_at": "2026-10-02T21:18:06.167757Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "25013b47-9a78-4f97-8552-977450abdad2",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "ndiogou.ndiaye@has-academie.online",
+    "email_confirmed_at": "2026-10-02T21:16:00.981498Z",
+    "phone": "",
+    "confirmed_at": "2026-10-02T21:16:00.981498Z",
+    "last_sign_in_at": "2026-11-11T13:12:36.693342Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "bio": "Physicien et chimiste, spécialiste en Mécanique Analytique, thermodynamique, électromagnétisme et chimie.",
+      "email_verified": true,
+      "full_name": "Ndiogou Ndiaye",
+      "phone": "+221 77 277 27 09",
+      "role": "professeur",
+      "specialite": "Physique",
+      "username": "ndiogou"
+    },
+    "identities": null,
+    "created_at": "2026-10-02T21:16:00.977982Z",
+    "updated_at": "2026-11-11T19:33:34.32679Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "32e74ddd-3e79-410a-8a87-4bfdff1fc099",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "ibrahima.anne@has-academie.online",
+    "email_confirmed_at": "2026-10-02T21:16:00.797884Z",
+    "phone": "",
+    "confirmed_at": "2026-10-02T21:16:00.797884Z",
+    "last_sign_in_at": "2026-10-19T17:36:27.851766Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "email_verified": true,
+      "full_name": "Ibrahima Anne",
+      "role": "professeur",
+      "username": "ibusaki"
+    },
+    "identities": null,
+    "created_at": "2026-10-02T21:16:00.795039Z",
+    "updated_at": "2026-10-19T17:36:27.91026Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "pape.samb@has-academie.online",
+    "email_confirmed_at": "2026-10-02T21:16:00.583416Z",
+    "phone": "",
+    "confirmed_at": "2026-10-02T21:16:00.583416Z",
+    "last_sign_in_at": "2026-11-11T16:14:59.335766Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "bio": "Directeur de l'académie et enseignant-chercheur en Mathématiques pures et appliquées. Spécialiste de l'analyse réelle, complexe et modélisation numérique stochastique.",
+      "email_verified": true,
+      "full_name": "Pape Ibrahima Samb",
+      "phone": "+221 75 650 20 17",
+      "role": "professeur",
+      "specialite": "Math",
+      "username": "halilsamb"
+    },
+    "identities": null,
+    "created_at": "2026-10-02T21:16:00.564827Z",
+    "updated_at": "2026-11-11T16:14:59.363489Z",
+    "is_anonymous": false
+  },
+  {
+    "id": "b4f9e070-f403-40eb-97df-9a79f491e999",
+    "aud": "authenticated",
+    "role": "authenticated",
+    "email": "halil@has-academie.online",
+    "email_confirmed_at": "2026-09-29T13:56:58.689628Z",
+    "phone": "",
+    "confirmed_at": "2026-09-29T13:56:58.689628Z",
+    "last_sign_in_at": "2026-11-11T19:49:09.996246Z",
+    "app_metadata": {
+      "provider": "email",
+      "providers": [
+        "email"
+      ]
+    },
+    "user_metadata": {
+      "email_verified": true,
+      "full_name": "Administration HAS",
+      "is_active": true,
+      "matricule": "ADM001",
+      "role": "admin",
+      "username": "halil"
+    },
+    "identities": null,
+    "created_at": "2026-09-29T13:42:28.120492Z",
+    "updated_at": "2026-11-12T01:02:15.490992Z",
+    "is_anonymous": false
+  }
+]

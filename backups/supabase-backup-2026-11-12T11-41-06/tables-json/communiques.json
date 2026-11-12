@@ -1,0 +1,24 @@
+[
+  {
+    "id": 1,
+    "titre": "Bienvenue sur la plateforme académique HAS",
+    "contenu": "Chers étudiants et professeurs, nous sommes ravis de vous accueillir sur votre nouvel espace numérique dédié aux cours, emplois du temps et communiqués officiels.",
+    "image": null,
+    "fichier_pdf": null,
+    "auteur_id": 1,
+    "mis_en_avant": true,
+    "archive": false,
+    "date_publication": "2026-09-28"
+  },
+  {
+    "id": 2,
+    "titre": "Début des sessions de renforcement intensif",
+    "contenu": "Les cours de renforcement en Analyse, Algèbre et Programmation débuteront dès lundi prochain à 09h00 selon le planning affiché dans votre espace.",
+    "image": null,
+    "fichier_pdf": null,
+    "auteur_id": 1,
+    "mis_en_avant": true,
+    "archive": false,
+    "date_publication": "2026-09-28"
+  }
+]

@@ -1,0 +1,1 @@
+-- Table edt_classe vide

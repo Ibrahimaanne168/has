@@ -1,0 +1,46 @@
+[
+  {
+    "id": 1,
+    "titre": "Introduction à la Programmation Python & Algorithmique",
+    "description": "Cours fondamental sur les bases du langage Python, les structures conditionnelles, boucles et fonctions.",
+    "matiere_id": 11,
+    "enseignant_id": 2,
+    "filiere_id": 1,
+    "classe_id": 1,
+    "niveau": "Licence 1",
+    "lien_externe": null
+  },
+  {
+    "id": 2,
+    "titre": "Analyse 1 : Suites numériques et Continuité",
+    "description": "Définition des limites, théorèmes de comparaison, fonctions continues et dérivabilité.",
+    "matiere_id": 9,
+    "enseignant_id": 1,
+    "filiere_id": 1,
+    "classe_id": 1,
+    "niveau": "Licence 1",
+    "lien_externe": null
+  },
+  {
+    "id": 3,
+    "titre": "Mécanique du Point Matériel",
+    "description": "Cinématique, lois de Newton, oscillateurs harmoniques et travail-énergie.",
+    "matiere_id": 12,
+    "enseignant_id": 3,
+    "filiere_id": 1,
+    "classe_id": 1,
+    "niveau": "Licence 1",
+    "lien_externe": null
+  },
+  {
+    "id": 4,
+    "titre": "Algèbre Linéaire 1 : Espaces Vectoriels",
+    "description": "Sous-espaces vectoriels, familles génératrices, bases et dimensions.",
+    "matiere_id": 10,
+    "enseignant_id": 1,
+    "filiere_id": 1,
+    "classe_id": 1,
+    "niveau": "Licence 1",
+    "lien_externe": null
+  }
+]

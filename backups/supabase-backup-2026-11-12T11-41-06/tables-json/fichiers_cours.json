@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "cours_id": 1,
+    "type_fichier": "pdf",
+    "nom_original": "Support_Python_Chapitre1.pdf",
+    "chemin_fichier": "uploads/cours/Support_Python_Chapitre1.pdf"
+  },
+  {
+    "id": 2,
+    "cours_id": 2,
+    "type_fichier": "pdf",
+    "nom_original": "TD_Analyse_1_Suites.pdf",
+    "chemin_fichier": "uploads/cours/TD_Analyse_1_Suites.pdf"
+  },
+  {
+    "id": 3,
+    "cours_id": 3,
+    "type_fichier": "pdf",
+    "nom_original": "Exercices_Mecanique_Point.pdf",
+    "chemin_fichier": "uploads/cours/Exercices_Mecanique_Point.pdf"
+  }
+]

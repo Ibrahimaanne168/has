@@ -1,6 +1,6 @@
 -- ==============================================================================
 -- RESTAURATION COMPLÈTE DES DONNÉES — HALIL ACADÉMIE SCIENTIFIQUE (HAS)
--- Sauvegarde générée le : 2026-11-05T14:13:34.992Z
+-- Sauvegarde générée le : 2026-11-12T11:46:59.799Z
 -- Total utilisateurs Auth : 201
 -- Compatible exécution directe dans le "SQL Editor" de votre nouveau projet Supabase
 -- ==============================================================================
@@ -41,9 +41,9 @@ INSERT INTO auth.users (
   '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im',
   '2026-11-04T10:59:41.720638Z',
   '{"provider":"email","providers":["email"]}'::jsonb,
-  '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Mbacke Mbengue","is_active":true,"matricule":"ETU209","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"mbacke"}'::jsonb,
+  '{"classe":"L2-MPI","date_expiration_paiement":"2027-01-12T23:59:59.000Z","date_validation_paiement":"2026-11-11T19:50:30.128Z","email_verified":true,"filiere":"MPI","full_name":"Mbacke Mbengue","is_active":true,"matricule":"ETU209","niveau":"L2","phone":"+221 77 551 81 96","role":"etudiant","statut_inscription":"valide","statut_paiement":"a_jour","username":"mbacke"}'::jsonb,
   '2026-11-04T10:59:41.700627Z',
-  '2026-11-05T13:46:14.654577Z',
+  '2026-11-11T20:55:11.511298Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -52,17 +52,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'd86becf4-e3c2-4389-8734-14aae17a79da',
   'd86becf4-e3c2-4389-8734-14aae17a79da',
   'd86becf4-e3c2-4389-8734-14aae17a79da',
   json_build_object('sub', 'd86becf4-e3c2-4389-8734-14aae17a79da', 'email', 'mbacmb10@gmail.com')::jsonb,
   'email',
   '2026-11-04T10:59:41.720638Z',
   '2026-11-04T10:59:41.700627Z',
-  '2026-11-05T13:46:14.654577Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T20:55:11.511298Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -76,7 +76,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-11-04T10:59:41.700627Z',
-  '2026-11-05T13:46:14.654577Z'
+  '2026-11-11T20:55:11.511298Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -98,7 +98,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Mame Nasra Tabane ","is_active":true,"matricule":"ETU208","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"mamenasra"}'::jsonb,
   '2026-11-03T21:16:29.018246Z',
-  '2026-11-04T01:28:38.405929Z',
+  '2026-11-10T19:54:04.076754Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -107,17 +107,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '33b3163f-0b5c-46e6-8778-1cda4891e458',
   '33b3163f-0b5c-46e6-8778-1cda4891e458',
   '33b3163f-0b5c-46e6-8778-1cda4891e458',
   json_build_object('sub', '33b3163f-0b5c-46e6-8778-1cda4891e458', 'email', 'tabane.nasra@uam.edu.sn')::jsonb,
   'email',
   '2026-11-03T21:16:29.039741Z',
   '2026-11-03T21:16:29.018246Z',
-  '2026-11-04T01:28:38.405929Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T19:54:04.076754Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -131,7 +131,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-11-03T21:16:29.018246Z',
-  '2026-11-04T01:28:38.405929Z'
+  '2026-11-10T19:54:04.076754Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -153,7 +153,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Mamadou Cisse","is_active":true,"matricule":"ETU207","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"mrcisse"}'::jsonb,
   '2026-10-29T18:20:13.424861Z',
-  '2026-11-03T23:01:14.185936Z',
+  '2026-11-12T03:18:22.868088Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -162,17 +162,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '6683eb98-ca19-48c6-add7-c37092a6144a',
   '6683eb98-ca19-48c6-add7-c37092a6144a',
   '6683eb98-ca19-48c6-add7-c37092a6144a',
   json_build_object('sub', '6683eb98-ca19-48c6-add7-c37092a6144a', 'email', 'cisse.mamadou2@uam.edu.sn')::jsonb,
   'email',
   '2026-10-29T18:20:13.467802Z',
   '2026-10-29T18:20:13.424861Z',
-  '2026-11-03T23:01:14.185936Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-12T03:18:22.868088Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -186,7 +186,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-29T18:20:13.424861Z',
-  '2026-11-03T23:01:14.185936Z'
+  '2026-11-12T03:18:22.868088Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -208,7 +208,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Alioune badara Sy ","is_active":true,"matricule":"ETU206","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"aliounesy"}'::jsonb,
   '2026-10-29T15:05:27.99894Z',
-  '2026-11-04T21:04:12.078125Z',
+  '2026-11-11T12:57:52.891022Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -217,17 +217,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'ab428aa3-143c-4233-a899-0cf8449d53e8',
   'ab428aa3-143c-4233-a899-0cf8449d53e8',
   'ab428aa3-143c-4233-a899-0cf8449d53e8',
   json_build_object('sub', 'ab428aa3-143c-4233-a899-0cf8449d53e8', 'email', 'aliounebadarasy103@gmail.com')::jsonb,
   'email',
   '2026-10-29T15:05:28.025931Z',
   '2026-10-29T15:05:27.99894Z',
-  '2026-11-04T21:04:12.078125Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T12:57:52.891022Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -241,7 +241,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-29T15:05:27.99894Z',
-  '2026-11-04T21:04:12.078125Z'
+  '2026-11-11T12:57:52.891022Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -263,7 +263,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Alpha Oumarou Ba","is_active":true,"matricule":"ETU205","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"oumaroualpha"}'::jsonb,
   '2026-10-27T21:50:41.216823Z',
-  '2026-11-01T21:12:09.49656Z',
+  '2026-11-07T01:03:41.76527Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -272,17 +272,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'a4cf6b37-6add-47e5-adb4-2bce52a6a95c',
   'a4cf6b37-6add-47e5-adb4-2bce52a6a95c',
   'a4cf6b37-6add-47e5-adb4-2bce52a6a95c',
   json_build_object('sub', 'a4cf6b37-6add-47e5-adb4-2bce52a6a95c', 'email', 'alphinhojraob09@gmail.com')::jsonb,
   'email',
   '2026-10-27T21:50:41.2518Z',
   '2026-10-27T21:50:41.216823Z',
-  '2026-11-01T21:12:09.49656Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-07T01:03:41.76527Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -296,7 +296,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-27T21:50:41.216823Z',
-  '2026-11-01T21:12:09.49656Z'
+  '2026-11-07T01:03:41.76527Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -318,7 +318,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Serigne Saliou Mbacké Ndiaye ","is_active":true,"matricule":"ETU204","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"saliou"}'::jsonb,
   '2026-10-27T18:49:17.495981Z',
-  '2026-11-03T18:07:29.049243Z',
+  '2026-11-10T18:32:18.900899Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -327,17 +327,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'cbd2a9f2-3824-42a3-9931-6da141fcc73d',
   'cbd2a9f2-3824-42a3-9931-6da141fcc73d',
   'cbd2a9f2-3824-42a3-9931-6da141fcc73d',
   json_build_object('sub', 'cbd2a9f2-3824-42a3-9931-6da141fcc73d', 'email', 'modou3461@gmail.com')::jsonb,
   'email',
   '2026-10-27T18:49:17.528219Z',
   '2026-10-27T18:49:17.495981Z',
-  '2026-11-03T18:07:29.049243Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T18:32:18.900899Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -351,7 +351,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-27T18:49:17.495981Z',
-  '2026-11-03T18:07:29.049243Z'
+  '2026-11-10T18:32:18.900899Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -382,8 +382,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '91e8b585-0495-4ab3-8f26-3911ee65072b',
   '91e8b585-0495-4ab3-8f26-3911ee65072b',
   '91e8b585-0495-4ab3-8f26-3911ee65072b',
   json_build_object('sub', '91e8b585-0495-4ab3-8f26-3911ee65072b', 'email', 'sarrdieyla68@gmail.com')::jsonb,
@@ -391,8 +392,7 @@ INSERT INTO auth.identities (
   '2026-10-26T20:21:00.025508Z',
   '2026-10-26T20:20:59.999165Z',
   '2026-10-26T20:23:12.987734Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -437,8 +437,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'dc23dee8-4e24-4f92-9496-f11bcf1ad6a9',
   'dc23dee8-4e24-4f92-9496-f11bcf1ad6a9',
   'dc23dee8-4e24-4f92-9496-f11bcf1ad6a9',
   json_build_object('sub', 'dc23dee8-4e24-4f92-9496-f11bcf1ad6a9', 'email', 'mariehenriettekatiam@gmail.com')::jsonb,
@@ -446,8 +447,7 @@ INSERT INTO auth.identities (
   '2026-10-26T17:58:52.956574Z',
   '2026-10-26T17:58:52.918655Z',
   '2026-10-26T17:58:52.961846Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -492,8 +492,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '18ace4ad-2e30-4301-bfce-64b0d4b41a8a',
   '18ace4ad-2e30-4301-bfce-64b0d4b41a8a',
   '18ace4ad-2e30-4301-bfce-64b0d4b41a8a',
   json_build_object('sub', '18ace4ad-2e30-4301-bfce-64b0d4b41a8a', 'email', 'aminatanguira3@gmail.com')::jsonb,
@@ -501,8 +502,7 @@ INSERT INTO auth.identities (
   '2026-10-25T13:09:10.392118Z',
   '2026-10-25T13:09:10.356101Z',
   '2026-11-02T10:20:12.855645Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -547,8 +547,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'c1a79b72-9e42-469c-bdaf-6a2d593fd29f',
   'c1a79b72-9e42-469c-bdaf-6a2d593fd29f',
   'c1a79b72-9e42-469c-bdaf-6a2d593fd29f',
   json_build_object('sub', 'c1a79b72-9e42-469c-bdaf-6a2d593fd29f', 'email', 'diao28061@gmail.com')::jsonb,
@@ -556,8 +557,7 @@ INSERT INTO auth.identities (
   '2026-10-25T13:03:29.137093Z',
   '2026-10-25T13:03:29.10416Z',
   '2026-10-25T13:03:29.13845Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -602,8 +602,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '7e7f6aae-9bce-414d-9d54-991677c6b272',
   '7e7f6aae-9bce-414d-9d54-991677c6b272',
   '7e7f6aae-9bce-414d-9d54-991677c6b272',
   json_build_object('sub', '7e7f6aae-9bce-414d-9d54-991677c6b272', 'email', 'trokhaya684@gmail.com')::jsonb,
@@ -611,8 +612,7 @@ INSERT INTO auth.identities (
   '2026-10-25T12:31:18.171865Z',
   '2026-10-25T12:31:18.141536Z',
   '2026-10-25T12:31:18.173245Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -657,8 +657,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '023858d7-0627-4dc7-8c26-cbcffae66bcf',
   '023858d7-0627-4dc7-8c26-cbcffae66bcf',
   '023858d7-0627-4dc7-8c26-cbcffae66bcf',
   json_build_object('sub', '023858d7-0627-4dc7-8c26-cbcffae66bcf', 'email', 'khaliphathioub4@gmail.com')::jsonb,
@@ -666,8 +667,7 @@ INSERT INTO auth.identities (
   '2026-10-25T10:45:24.421869Z',
   '2026-10-25T10:45:24.401292Z',
   '2026-10-25T12:49:10.110582Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -712,8 +712,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'd7f6b93a-4279-467a-ac46-07e0043890b0',
   'd7f6b93a-4279-467a-ac46-07e0043890b0',
   'd7f6b93a-4279-467a-ac46-07e0043890b0',
   json_build_object('sub', 'd7f6b93a-4279-467a-ac46-07e0043890b0', 'email', 'lamanelo124@gmail.com')::jsonb,
@@ -721,8 +722,7 @@ INSERT INTO auth.identities (
   '2026-10-25T00:22:36.576495Z',
   '2026-10-25T00:22:36.544657Z',
   '2026-10-31T19:08:46.338688Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -758,7 +758,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Kang Lassana Samaté ","is_active":false,"matricule":"ETU196","niveau":"L1","phone":null,"role":"etudiant","statut_inscription":"en_attente","username":"samate.lassana"}'::jsonb,
   '2026-10-24T23:21:19.140546Z',
-  '2026-10-24T23:35:22.602436Z',
+  '2026-11-06T22:57:47.465654Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -767,17 +767,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'b8d6e7ab-c840-4b19-9e17-4eec1569959d',
   'b8d6e7ab-c840-4b19-9e17-4eec1569959d',
   'b8d6e7ab-c840-4b19-9e17-4eec1569959d',
   json_build_object('sub', 'b8d6e7ab-c840-4b19-9e17-4eec1569959d', 'email', 'samatekanglassana@gmail.com')::jsonb,
   'email',
   '2026-10-24T23:21:19.189201Z',
   '2026-10-24T23:21:19.140546Z',
-  '2026-10-24T23:35:22.602436Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-06T22:57:47.465654Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -791,7 +791,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-24T23:21:19.140546Z',
-  '2026-10-24T23:35:22.602436Z'
+  '2026-11-06T22:57:47.465654Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -822,8 +822,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '2892bc97-5d0f-4282-8476-208df7500734',
   '2892bc97-5d0f-4282-8476-208df7500734',
   '2892bc97-5d0f-4282-8476-208df7500734',
   json_build_object('sub', '2892bc97-5d0f-4282-8476-208df7500734', 'email', 'hamidousadio16@gmail.com')::jsonb,
@@ -831,8 +832,7 @@ INSERT INTO auth.identities (
   '2026-10-24T21:28:59.879614Z',
   '2026-10-24T21:28:59.85153Z',
   '2026-10-24T21:28:59.880729Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -877,8 +877,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '6a53bd85-9094-49dd-8806-c084a1690ceb',
   '6a53bd85-9094-49dd-8806-c084a1690ceb',
   '6a53bd85-9094-49dd-8806-c084a1690ceb',
   json_build_object('sub', '6a53bd85-9094-49dd-8806-c084a1690ceb', 'email', 'kady.ba@has-academie.online')::jsonb,
@@ -886,8 +887,7 @@ INSERT INTO auth.identities (
   '2026-10-24T21:13:54.911572Z',
   '2026-10-24T21:13:54.881114Z',
   '2026-11-01T14:05:19.919517Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -932,8 +932,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '4e25d586-3323-48f0-9937-37758c57d7cc',
   '4e25d586-3323-48f0-9937-37758c57d7cc',
   '4e25d586-3323-48f0-9937-37758c57d7cc',
   json_build_object('sub', '4e25d586-3323-48f0-9937-37758c57d7cc', 'email', 'woury3757@gmail.com')::jsonb,
@@ -941,8 +942,7 @@ INSERT INTO auth.identities (
   '2026-10-24T20:45:27.064087Z',
   '2026-10-24T20:45:27.058227Z',
   '2026-10-25T11:57:40.181739Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -987,8 +987,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '71c9e5d2-0bcf-42ee-82e7-2555c174eb37',
   '71c9e5d2-0bcf-42ee-82e7-2555c174eb37',
   '71c9e5d2-0bcf-42ee-82e7-2555c174eb37',
   json_build_object('sub', '71c9e5d2-0bcf-42ee-82e7-2555c174eb37', 'email', 'ndickoug87@gmail.com')::jsonb,
@@ -996,8 +997,7 @@ INSERT INTO auth.identities (
   '2026-10-24T20:45:26.82027Z',
   '2026-10-24T20:45:26.808043Z',
   '2026-10-24T20:45:26.821159Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -1042,8 +1042,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '4c6865cc-0fbc-4c74-8f0d-8d78d995d4da',
   '4c6865cc-0fbc-4c74-8f0d-8d78d995d4da',
   '4c6865cc-0fbc-4c74-8f0d-8d78d995d4da',
   json_build_object('sub', '4c6865cc-0fbc-4c74-8f0d-8d78d995d4da', 'email', 'madinaba96@gmail.com')::jsonb,
@@ -1051,8 +1052,7 @@ INSERT INTO auth.identities (
   '2026-10-24T20:43:26.789964Z',
   '2026-10-24T20:43:26.763236Z',
   '2026-10-24T20:43:26.790903Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -1097,8 +1097,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'dce46c7e-0973-4e4b-9a0e-c130e864da00',
   'dce46c7e-0973-4e4b-9a0e-c130e864da00',
   'dce46c7e-0973-4e4b-9a0e-c130e864da00',
   json_build_object('sub', 'dce46c7e-0973-4e4b-9a0e-c130e864da00', 'email', 'seck280807@gmail.com')::jsonb,
@@ -1106,8 +1107,7 @@ INSERT INTO auth.identities (
   '2026-10-24T20:30:00.20734Z',
   '2026-10-24T20:30:00.184897Z',
   '2026-10-24T20:32:50.8507Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -1143,7 +1143,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"NB-MPI","email_verified":true,"filiere":"MPI","full_name":"Mohamed El Habib SAKHO","is_active":true,"matricule":"ETU191","niveau":"NB","role":"etudiant","statut_inscription":"valide","username":"fearless"}'::jsonb,
   '2026-10-24T19:59:13.919292Z',
-  '2026-10-24T20:22:25.823476Z',
+  '2026-11-11T17:02:36.698877Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -1152,17 +1152,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '923c2406-aeb7-44c9-8f02-3f4403e75338',
   '923c2406-aeb7-44c9-8f02-3f4403e75338',
   '923c2406-aeb7-44c9-8f02-3f4403e75338',
   json_build_object('sub', '923c2406-aeb7-44c9-8f02-3f4403e75338', 'email', 'habibsakho402@gmail.com')::jsonb,
   'email',
   '2026-10-24T19:59:13.931906Z',
   '2026-10-24T19:59:13.919292Z',
-  '2026-10-24T20:22:25.823476Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T17:02:36.698877Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -1176,7 +1176,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-24T19:59:13.919292Z',
-  '2026-10-24T20:22:25.823476Z'
+  '2026-11-11T17:02:36.698877Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -1198,7 +1198,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"NB-MPI","email_verified":true,"filiere":"MPI","full_name":"Mohamet Diop ","is_active":true,"matricule":"ETU190","niveau":"NB","role":"etudiant","statut_inscription":"valide","username":"diop.mohamet1"}'::jsonb,
   '2026-10-24T19:56:57.351707Z',
-  '2026-11-04T14:23:31.838091Z',
+  '2026-11-06T22:55:29.932663Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -1207,17 +1207,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '881b9ef4-f2d8-438d-8a15-e04a0ea5c0ed',
   '881b9ef4-f2d8-438d-8a15-e04a0ea5c0ed',
   '881b9ef4-f2d8-438d-8a15-e04a0ea5c0ed',
   json_build_object('sub', '881b9ef4-f2d8-438d-8a15-e04a0ea5c0ed', 'email', 'diopsadikh94@gmail.com')::jsonb,
   'email',
   '2026-10-24T19:56:57.37825Z',
   '2026-10-24T19:56:57.351707Z',
-  '2026-11-04T14:23:31.838091Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-06T22:55:29.932663Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -1231,7 +1231,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-24T19:56:57.351707Z',
-  '2026-11-04T14:23:31.838091Z'
+  '2026-11-06T22:55:29.932663Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -1262,8 +1262,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '80f5d08d-7f53-4483-8ded-5e7236f72b09',
   '80f5d08d-7f53-4483-8ded-5e7236f72b09',
   '80f5d08d-7f53-4483-8ded-5e7236f72b09',
   json_build_object('sub', '80f5d08d-7f53-4483-8ded-5e7236f72b09', 'email', 'awacheikhba301@gmail.com')::jsonb,
@@ -1271,8 +1272,7 @@ INSERT INTO auth.identities (
   '2026-10-24T19:41:23.173433Z',
   '2026-10-24T19:41:23.109696Z',
   '2026-10-24T21:11:40.128882Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -1317,8 +1317,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '8249b763-5e5d-4209-ac2a-98007cdd7e48',
   '8249b763-5e5d-4209-ac2a-98007cdd7e48',
   '8249b763-5e5d-4209-ac2a-98007cdd7e48',
   json_build_object('sub', '8249b763-5e5d-4209-ac2a-98007cdd7e48', 'email', 'diengpenda098@gmail.com')::jsonb,
@@ -1326,8 +1327,7 @@ INSERT INTO auth.identities (
   '2026-10-24T19:13:40.014629Z',
   '2026-10-24T19:13:39.971276Z',
   '2026-10-24T22:58:00.121094Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -1372,8 +1372,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'ac376703-ef8a-4400-ace7-7f73d684ef77',
   'ac376703-ef8a-4400-ace7-7f73d684ef77',
   'ac376703-ef8a-4400-ace7-7f73d684ef77',
   json_build_object('sub', 'ac376703-ef8a-4400-ace7-7f73d684ef77', 'email', 'ousmanesamb267@gmail.com')::jsonb,
@@ -1381,8 +1382,7 @@ INSERT INTO auth.identities (
   '2026-10-24T18:38:53.218273Z',
   '2026-10-24T18:38:53.18905Z',
   '2026-10-24T20:23:04.817758Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -1427,8 +1427,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '2bf8ba17-74d5-45f3-871e-47e78a0e4cdc',
   '2bf8ba17-74d5-45f3-871e-47e78a0e4cdc',
   '2bf8ba17-74d5-45f3-871e-47e78a0e4cdc',
   json_build_object('sub', '2bf8ba17-74d5-45f3-871e-47e78a0e4cdc', 'email', 'binetaniane.17@gmail.com')::jsonb,
@@ -1436,8 +1437,7 @@ INSERT INTO auth.identities (
   '2026-10-24T18:37:26.966869Z',
   '2026-10-24T18:37:26.953784Z',
   '2026-10-24T20:58:45.653731Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -1482,8 +1482,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '38d002ed-9e9e-4f2d-b1d5-bd6952cd7343',
   '38d002ed-9e9e-4f2d-b1d5-bd6952cd7343',
   '38d002ed-9e9e-4f2d-b1d5-bd6952cd7343',
   json_build_object('sub', '38d002ed-9e9e-4f2d-b1d5-bd6952cd7343', 'email', '1ndoyebabacar2023@gmail.com')::jsonb,
@@ -1491,8 +1492,7 @@ INSERT INTO auth.identities (
   '2026-10-24T18:34:48.361484Z',
   '2026-10-24T18:34:48.354943Z',
   '2026-10-27T21:04:52.558965Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -1537,8 +1537,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'd8498fea-2c8d-4862-a53c-91cb5e7e7a50',
   'd8498fea-2c8d-4862-a53c-91cb5e7e7a50',
   'd8498fea-2c8d-4862-a53c-91cb5e7e7a50',
   json_build_object('sub', 'd8498fea-2c8d-4862-a53c-91cb5e7e7a50', 'email', 'seynaboudiop36912@gmail.com')::jsonb,
@@ -1546,8 +1547,7 @@ INSERT INTO auth.identities (
   '2026-10-24T18:34:33.671638Z',
   '2026-10-24T18:34:33.646621Z',
   '2026-10-24T20:42:17.233003Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -1592,8 +1592,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'b3f24f0d-b240-4bc0-99e2-f75920a63889',
   'b3f24f0d-b240-4bc0-99e2-f75920a63889',
   'b3f24f0d-b240-4bc0-99e2-f75920a63889',
   json_build_object('sub', 'b3f24f0d-b240-4bc0-99e2-f75920a63889', 'email', 'antadiopbebe3@gmail.com')::jsonb,
@@ -1601,8 +1602,7 @@ INSERT INTO auth.identities (
   '2026-10-24T18:29:13.851365Z',
   '2026-10-24T18:29:13.830043Z',
   '2026-10-24T18:29:13.852614Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -1638,7 +1638,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"NB-MPI","email_verified":true,"filiere":"MPI","full_name":"AWA SECK ","is_active":true,"matricule":"ETU181","niveau":"NB","role":"etudiant","statut_inscription":"valide","username":"dcipyukd"}'::jsonb,
   '2026-10-24T18:17:14.388866Z',
-  '2026-10-28T19:45:09.727707Z',
+  '2026-11-06T23:49:53.715911Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -1647,17 +1647,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'c92a57fb-9d32-4512-9b47-d0f0538101a9',
   'c92a57fb-9d32-4512-9b47-d0f0538101a9',
   'c92a57fb-9d32-4512-9b47-d0f0538101a9',
   json_build_object('sub', 'c92a57fb-9d32-4512-9b47-d0f0538101a9', 'email', 'hawaseck01012005@gmail.com')::jsonb,
   'email',
   '2026-10-24T18:17:14.412073Z',
   '2026-10-24T18:17:14.388866Z',
-  '2026-10-28T19:45:09.727707Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-06T23:49:53.715911Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -1671,7 +1671,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-24T18:17:14.388866Z',
-  '2026-10-28T19:45:09.727707Z'
+  '2026-11-06T23:49:53.715911Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -1702,8 +1702,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '4462a19b-deea-4914-9aa1-c0ebcda8ee7b',
   '4462a19b-deea-4914-9aa1-c0ebcda8ee7b',
   '4462a19b-deea-4914-9aa1-c0ebcda8ee7b',
   json_build_object('sub', '4462a19b-deea-4914-9aa1-c0ebcda8ee7b', 'email', 'imamassanethiam6@gmail.com')::jsonb,
@@ -1711,8 +1712,7 @@ INSERT INTO auth.identities (
   '2026-10-24T18:07:52.680276Z',
   '2026-10-24T18:07:52.662347Z',
   '2026-10-24T20:29:46.945212Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -1748,7 +1748,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"NB-MPI","email_verified":true,"filiere":"MPI","full_name":"Fatoumata Baro ","is_active":true,"matricule":"ETU178","niveau":"NB","role":"etudiant","statut_inscription":"valide","username":"fb0863"}'::jsonb,
   '2026-10-24T17:55:19.768455Z',
-  '2026-10-24T20:45:45.309607Z',
+  '2026-11-06T22:55:02.774836Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -1757,17 +1757,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'b4752f93-ad49-4e12-be7a-ee332719f57d',
   'b4752f93-ad49-4e12-be7a-ee332719f57d',
   'b4752f93-ad49-4e12-be7a-ee332719f57d',
   json_build_object('sub', 'b4752f93-ad49-4e12-be7a-ee332719f57d', 'email', 'fatoumatabaro69@gmail.com')::jsonb,
   'email',
   '2026-10-24T17:55:19.794768Z',
   '2026-10-24T17:55:19.768455Z',
-  '2026-10-24T20:45:45.309607Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-06T22:55:02.774836Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -1781,7 +1781,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-24T17:55:19.768455Z',
-  '2026-10-24T20:45:45.309607Z'
+  '2026-11-06T22:55:02.774836Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -1812,8 +1812,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'fbd0ef98-9f03-43df-a4dd-c73a61e42ab9',
   'fbd0ef98-9f03-43df-a4dd-c73a61e42ab9',
   'fbd0ef98-9f03-43df-a4dd-c73a61e42ab9',
   json_build_object('sub', 'fbd0ef98-9f03-43df-a4dd-c73a61e42ab9', 'email', 'fatoualledieng0@gmail.com')::jsonb,
@@ -1821,8 +1822,7 @@ INSERT INTO auth.identities (
   '2026-10-24T17:54:12.362135Z',
   '2026-10-24T17:54:12.306607Z',
   '2026-10-24T18:20:24.751526Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -1867,8 +1867,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'edd3b2b8-88f4-4d4b-a649-b8363b2aecdd',
   'edd3b2b8-88f4-4d4b-a649-b8363b2aecdd',
   'edd3b2b8-88f4-4d4b-a649-b8363b2aecdd',
   json_build_object('sub', 'edd3b2b8-88f4-4d4b-a649-b8363b2aecdd', 'email', 'fayec7129@gmail.com')::jsonb,
@@ -1876,8 +1877,7 @@ INSERT INTO auth.identities (
   '2026-10-24T17:31:52.71733Z',
   '2026-10-24T17:31:52.714805Z',
   '2026-11-04T21:00:59.443928Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -1922,8 +1922,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '6bb6b477-25ed-4b72-9004-af18894d3416',
   '6bb6b477-25ed-4b72-9004-af18894d3416',
   '6bb6b477-25ed-4b72-9004-af18894d3416',
   json_build_object('sub', '6bb6b477-25ed-4b72-9004-af18894d3416', 'email', 'penda0763@gmail.com')::jsonb,
@@ -1931,8 +1932,7 @@ INSERT INTO auth.identities (
   '2026-10-24T17:31:45.982668Z',
   '2026-10-24T17:31:45.977459Z',
   '2026-10-25T00:08:10.620867Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -1977,8 +1977,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'ecbdef9f-6b05-4287-8175-40ea79f679ef',
   'ecbdef9f-6b05-4287-8175-40ea79f679ef',
   'ecbdef9f-6b05-4287-8175-40ea79f679ef',
   json_build_object('sub', 'ecbdef9f-6b05-4287-8175-40ea79f679ef', 'email', 'mouhamadoubabakane@gmail.com')::jsonb,
@@ -1986,8 +1987,7 @@ INSERT INTO auth.identities (
   '2026-10-24T17:31:01.58948Z',
   '2026-10-24T17:31:01.561876Z',
   '2026-10-24T21:23:14.71337Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -2032,8 +2032,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '1e3bc712-a19d-4216-8e23-a2ce3c522f0d',
   '1e3bc712-a19d-4216-8e23-a2ce3c522f0d',
   '1e3bc712-a19d-4216-8e23-a2ce3c522f0d',
   json_build_object('sub', '1e3bc712-a19d-4216-8e23-a2ce3c522f0d', 'email', 'mouhamedrikudo77@gmail.com')::jsonb,
@@ -2041,8 +2042,7 @@ INSERT INTO auth.identities (
   '2026-10-24T17:10:00.058362Z',
   '2026-10-24T17:10:00.055597Z',
   '2026-10-31T20:21:56.103545Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -2087,8 +2087,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '2f6c032a-3726-42a9-985c-4d81902080b8',
   '2f6c032a-3726-42a9-985c-4d81902080b8',
   '2f6c032a-3726-42a9-985c-4d81902080b8',
   json_build_object('sub', '2f6c032a-3726-42a9-985c-4d81902080b8', 'email', 'bafanta005@gmail.com')::jsonb,
@@ -2096,8 +2097,7 @@ INSERT INTO auth.identities (
   '2026-10-24T17:09:49.757704Z',
   '2026-10-24T17:09:49.73217Z',
   '2026-10-24T17:13:15.527021Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -2142,8 +2142,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'c5768bad-b1e3-48a7-819f-6c1e9b7b9d46',
   'c5768bad-b1e3-48a7-819f-6c1e9b7b9d46',
   'c5768bad-b1e3-48a7-819f-6c1e9b7b9d46',
   json_build_object('sub', 'c5768bad-b1e3-48a7-819f-6c1e9b7b9d46', 'email', 'bpenda764@gmail.com')::jsonb,
@@ -2151,8 +2152,7 @@ INSERT INTO auth.identities (
   '2026-10-24T17:05:59.326039Z',
   '2026-10-24T17:05:59.310006Z',
   '2026-10-24T20:54:09.772517Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -2197,8 +2197,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'd49562d6-9035-4aa5-81a3-5bdc988933a6',
   'd49562d6-9035-4aa5-81a3-5bdc988933a6',
   'd49562d6-9035-4aa5-81a3-5bdc988933a6',
   json_build_object('sub', 'd49562d6-9035-4aa5-81a3-5bdc988933a6', 'email', 'amadoutidianembodji70@gmail.com')::jsonb,
@@ -2206,8 +2207,7 @@ INSERT INTO auth.identities (
   '2026-10-24T17:03:23.084586Z',
   '2026-10-24T17:03:23.070509Z',
   '2026-10-27T23:44:37.383321Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -2252,8 +2252,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '9cbea623-8498-49a8-8910-bc52c6fb5e10',
   '9cbea623-8498-49a8-8910-bc52c6fb5e10',
   '9cbea623-8498-49a8-8910-bc52c6fb5e10',
   json_build_object('sub', '9cbea623-8498-49a8-8910-bc52c6fb5e10', 'email', 'juni0909.az.099@gmail.com')::jsonb,
@@ -2261,8 +2262,7 @@ INSERT INTO auth.identities (
   '2026-10-24T16:55:59.321475Z',
   '2026-10-24T16:55:59.297328Z',
   '2026-10-24T18:21:59.392421Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -2307,8 +2307,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'eb1b9eb8-6ba4-4287-9e2d-a554ecce866c',
   'eb1b9eb8-6ba4-4287-9e2d-a554ecce866c',
   'eb1b9eb8-6ba4-4287-9e2d-a554ecce866c',
   json_build_object('sub', 'eb1b9eb8-6ba4-4287-9e2d-a554ecce866c', 'email', 'coumbaleye535@gmail.com')::jsonb,
@@ -2316,8 +2317,7 @@ INSERT INTO auth.identities (
   '2026-10-24T16:52:45.865909Z',
   '2026-10-24T16:52:45.830904Z',
   '2026-10-24T16:54:01.845132Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -2362,8 +2362,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'e17f373d-8128-4304-a17d-75c15ccd53fa',
   'e17f373d-8128-4304-a17d-75c15ccd53fa',
   'e17f373d-8128-4304-a17d-75c15ccd53fa',
   json_build_object('sub', 'e17f373d-8128-4304-a17d-75c15ccd53fa', 'email', 'baldepasha12@gmail.com')::jsonb,
@@ -2371,8 +2372,7 @@ INSERT INTO auth.identities (
   '2026-10-24T16:52:09.37697Z',
   '2026-10-24T16:52:09.321181Z',
   '2026-10-28T19:51:56.945033Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -2417,8 +2417,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '16372942-5939-47e2-89c6-e83259338e11',
   '16372942-5939-47e2-89c6-e83259338e11',
   '16372942-5939-47e2-89c6-e83259338e11',
   json_build_object('sub', '16372942-5939-47e2-89c6-e83259338e11', 'email', 'bambindeyependa@gmail.com')::jsonb,
@@ -2426,8 +2427,7 @@ INSERT INTO auth.identities (
   '2026-10-24T16:51:10.404961Z',
   '2026-10-24T16:51:10.386468Z',
   '2026-10-24T21:17:35.468201Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -2463,7 +2463,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"NB-SML","email_verified":true,"filiere":"SML","full_name":"Ndeye Fatim Diop ","is_active":true,"matricule":"ETU159","niveau":"NB","role":"etudiant","statut_inscription":"valide","username":"n01725820262"}'::jsonb,
   '2026-10-24T16:18:03.242216Z',
-  '2026-10-29T19:11:31.402852Z',
+  '2026-11-10T06:27:06.188998Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -2472,17 +2472,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '049a2b85-d620-40e2-96be-405db987072b',
   '049a2b85-d620-40e2-96be-405db987072b',
   '049a2b85-d620-40e2-96be-405db987072b',
   json_build_object('sub', '049a2b85-d620-40e2-96be-405db987072b', 'email', 'fatimbabadiop7@gmail.com')::jsonb,
   'email',
   '2026-10-24T16:18:03.281097Z',
   '2026-10-24T16:18:03.242216Z',
-  '2026-10-29T19:11:31.402852Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T06:27:06.188998Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -2496,7 +2496,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-24T16:18:03.242216Z',
-  '2026-10-29T19:11:31.402852Z'
+  '2026-11-10T06:27:06.188998Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -2518,7 +2518,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Oumy Dramé ","is_active":true,"matricule":"ETU157","niveau":"L1","phone":"+221 785063015","role":"etudiant","statut_inscription":"valide","username":"oumy"}'::jsonb,
   '2026-10-24T14:07:36.670421Z',
-  '2026-11-04T22:36:30.41104Z',
+  '2026-11-10T23:48:22.708786Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -2527,17 +2527,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'b08134f3-8d5b-4b60-bef1-bca68eabee14',
   'b08134f3-8d5b-4b60-bef1-bca68eabee14',
   'b08134f3-8d5b-4b60-bef1-bca68eabee14',
   json_build_object('sub', 'b08134f3-8d5b-4b60-bef1-bca68eabee14', 'email', 'drame.oumy@uam.edu.sn')::jsonb,
   'email',
   '2026-10-24T14:07:36.708492Z',
   '2026-10-24T14:07:36.670421Z',
-  '2026-11-04T22:36:30.41104Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T23:48:22.708786Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -2551,7 +2551,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-24T14:07:36.670421Z',
-  '2026-11-04T22:36:30.41104Z'
+  '2026-11-10T23:48:22.708786Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -2582,8 +2582,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'd17ba4e0-20f0-4bf6-8fda-1b777f7f4f04',
   'd17ba4e0-20f0-4bf6-8fda-1b777f7f4f04',
   'd17ba4e0-20f0-4bf6-8fda-1b777f7f4f04',
   json_build_object('sub', 'd17ba4e0-20f0-4bf6-8fda-1b777f7f4f04', 'email', 'fayemameawa2@gmail.com')::jsonb,
@@ -2591,8 +2592,7 @@ INSERT INTO auth.identities (
   '2026-10-23T19:19:01.26161Z',
   '2026-10-23T19:19:01.229391Z',
   '2026-10-31T08:07:12.657344Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -2628,7 +2628,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Aïssatou Thior ","is_active":true,"matricule":"ETU155","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"sata24"}'::jsonb,
   '2026-10-23T09:59:17.454851Z',
-  '2026-11-03T20:59:26.496566Z',
+  '2026-11-11T20:58:16.14123Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -2637,17 +2637,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'f61fc6d9-8515-4e36-9407-5269a76d6444',
   'f61fc6d9-8515-4e36-9407-5269a76d6444',
   'f61fc6d9-8515-4e36-9407-5269a76d6444',
   json_build_object('sub', 'f61fc6d9-8515-4e36-9407-5269a76d6444', 'email', 'thior.aissatou@uam.edu.sn')::jsonb,
   'email',
   '2026-10-23T09:59:17.489143Z',
   '2026-10-23T09:59:17.454851Z',
-  '2026-11-03T20:59:26.496566Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T20:58:16.14123Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -2661,7 +2661,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-23T09:59:17.454851Z',
-  '2026-11-03T20:59:26.496566Z'
+  '2026-11-11T20:58:16.14123Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -2683,7 +2683,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-SML","email_verified":true,"filiere":"SML","full_name":"Marie Henriette Katia Mbengue","is_active":true,"matricule":"ETU154","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"katia"}'::jsonb,
   '2026-10-22T20:35:14.285707Z',
-  '2026-10-26T22:03:41.431124Z',
+  '2026-11-09T20:03:49.574705Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -2692,17 +2692,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '7b234e27-2f8c-4a2f-a7e6-e2e0db886364',
   '7b234e27-2f8c-4a2f-a7e6-e2e0db886364',
   '7b234e27-2f8c-4a2f-a7e6-e2e0db886364',
   json_build_object('sub', '7b234e27-2f8c-4a2f-a7e6-e2e0db886364', 'email', 'mbengue.katia@uam.edu.sn')::jsonb,
   'email',
   '2026-10-22T20:35:14.314161Z',
   '2026-10-22T20:35:14.285707Z',
-  '2026-10-26T22:03:41.431124Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-09T20:03:49.574705Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -2716,7 +2716,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-22T20:35:14.285707Z',
-  '2026-10-26T22:03:41.431124Z'
+  '2026-11-09T20:03:49.574705Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -2738,7 +2738,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Khadidiatou ba","is_active":true,"matricule":"ETU153","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"603489"}'::jsonb,
   '2026-10-21T13:37:02.487306Z',
-  '2026-11-01T19:16:09.099483Z',
+  '2026-11-11T13:41:40.28126Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -2747,17 +2747,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '2f684033-0132-40a4-823b-bda64c83334c',
   '2f684033-0132-40a4-823b-bda64c83334c',
   '2f684033-0132-40a4-823b-bda64c83334c',
   json_build_object('sub', '2f684033-0132-40a4-823b-bda64c83334c', 'email', 'ba.khadidiatou@uam.edu.sn')::jsonb,
   'email',
   '2026-10-21T13:37:02.505272Z',
   '2026-10-21T13:37:02.487306Z',
-  '2026-11-01T19:16:09.099483Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T13:41:40.28126Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -2771,7 +2771,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-21T13:37:02.487306Z',
-  '2026-11-01T19:16:09.099483Z'
+  '2026-11-11T13:41:40.28126Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -2802,8 +2802,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'ce394516-7db5-456b-8b57-880ff5cc28f5',
   'ce394516-7db5-456b-8b57-880ff5cc28f5',
   'ce394516-7db5-456b-8b57-880ff5cc28f5',
   json_build_object('sub', 'ce394516-7db5-456b-8b57-880ff5cc28f5', 'email', 'mballofaty0@gmail.com')::jsonb,
@@ -2811,8 +2812,7 @@ INSERT INTO auth.identities (
   '2026-10-20T21:41:23.955874Z',
   '2026-10-20T21:41:23.886794Z',
   '2026-10-20T23:00:31.846771Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -2848,7 +2848,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Saliou Hanne","is_active":true,"matricule":"ETU151","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"hsaliou"}'::jsonb,
   '2026-10-20T20:46:35.272469Z',
-  '2026-11-04T20:44:04.330484Z',
+  '2026-11-10T22:18:56.331124Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -2857,17 +2857,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '160f9542-f553-475f-bad0-04cae659790e',
   '160f9542-f553-475f-bad0-04cae659790e',
   '160f9542-f553-475f-bad0-04cae659790e',
   json_build_object('sub', '160f9542-f553-475f-bad0-04cae659790e', 'email', 'shanne849@gmail.com')::jsonb,
   'email',
   '2026-10-20T20:46:35.303686Z',
   '2026-10-20T20:46:35.272469Z',
-  '2026-11-04T20:44:04.330484Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T22:18:56.331124Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -2881,7 +2881,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-20T20:46:35.272469Z',
-  '2026-11-04T20:44:04.330484Z'
+  '2026-11-10T22:18:56.331124Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -2901,9 +2901,9 @@ INSERT INTO auth.users (
   '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im',
   '2026-10-20T15:06:34.44289Z',
   '{"provider":"email","providers":["email"]}'::jsonb,
-  '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Adjara Sall","is_active":true,"matricule":"ETU150","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"adja"}'::jsonb,
+  '{"classe":"L2-MPI","date_expiration_paiement":"2026-12-12T23:59:59.000Z","date_validation_paiement":"2026-11-11T19:57:43.747Z","email_verified":true,"filiere":"MPI","full_name":"Adjara Sall","is_active":true,"matricule":"ETU150","niveau":"L2","role":"etudiant","statut_inscription":"valide","statut_paiement":"a_jour","username":"adja"}'::jsonb,
   '2026-10-20T15:06:34.402018Z',
-  '2026-11-03T23:01:02.43268Z',
+  '2026-11-11T19:57:44.137628Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -2912,17 +2912,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'aa60c182-347b-4f38-aea9-5d2cad74ef33',
   'aa60c182-347b-4f38-aea9-5d2cad74ef33',
   'aa60c182-347b-4f38-aea9-5d2cad74ef33',
   json_build_object('sub', 'aa60c182-347b-4f38-aea9-5d2cad74ef33', 'email', 'adjarasall91@gmail.com')::jsonb,
   'email',
   '2026-10-20T15:06:34.44289Z',
   '2026-10-20T15:06:34.402018Z',
-  '2026-11-03T23:01:02.43268Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T19:57:44.137628Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -2936,7 +2936,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-20T15:06:34.402018Z',
-  '2026-11-03T23:01:02.43268Z'
+  '2026-11-11T19:57:44.137628Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -2967,8 +2967,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '8a68badb-107f-40df-a154-b8a71cd1c3b7',
   '8a68badb-107f-40df-a154-b8a71cd1c3b7',
   '8a68badb-107f-40df-a154-b8a71cd1c3b7',
   json_build_object('sub', '8a68badb-107f-40df-a154-b8a71cd1c3b7', 'email', 'fatimg826@gmail.com')::jsonb,
@@ -2976,8 +2977,7 @@ INSERT INTO auth.identities (
   '2026-10-19T21:23:38.218055Z',
   '2026-10-19T21:23:38.1668Z',
   '2026-10-30T20:34:36.085922Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -3013,7 +3013,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Khadidiatou DIAW","is_active":true,"matricule":"ETU147","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"705560"}'::jsonb,
   '2026-10-19T20:59:55.016769Z',
-  '2026-11-04T09:26:10.065645Z',
+  '2026-11-10T12:06:23.704247Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -3022,17 +3022,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '736cdfb6-4c97-4ca9-8ba7-8ee7564c3be0',
   '736cdfb6-4c97-4ca9-8ba7-8ee7564c3be0',
   '736cdfb6-4c97-4ca9-8ba7-8ee7564c3be0',
   json_build_object('sub', '736cdfb6-4c97-4ca9-8ba7-8ee7564c3be0', 'email', 'diaw.khadidiatou@uam.edu.sn')::jsonb,
   'email',
   '2026-10-19T20:59:55.030319Z',
   '2026-10-19T20:59:55.016769Z',
-  '2026-11-04T09:26:10.065645Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T12:06:23.704247Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -3046,7 +3046,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-19T20:59:55.016769Z',
-  '2026-11-04T09:26:10.065645Z'
+  '2026-11-10T12:06:23.704247Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -3077,8 +3077,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'b64814cb-6315-4fdf-89cb-c2098cc269d1',
   'b64814cb-6315-4fdf-89cb-c2098cc269d1',
   'b64814cb-6315-4fdf-89cb-c2098cc269d1',
   json_build_object('sub', 'b64814cb-6315-4fdf-89cb-c2098cc269d1', 'email', 'aichadiouma24@gmail.com')::jsonb,
@@ -3086,8 +3087,7 @@ INSERT INTO auth.identities (
   '2026-10-19T20:48:32.503221Z',
   '2026-10-19T20:48:32.480397Z',
   '2026-11-03T22:48:57.545213Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -3123,7 +3123,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-SML","email_verified":true,"filiere":"SML","full_name":"Marieme Diagne","is_active":true,"matricule":"ETU143","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"meeriam"}'::jsonb,
   '2026-10-17T19:56:00.128217Z',
-  '2026-11-02T23:13:52.310593Z',
+  '2026-11-12T00:05:26.193935Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -3132,17 +3132,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '8436f5ff-8415-450a-959e-4b55f61fe78d',
   '8436f5ff-8415-450a-959e-4b55f61fe78d',
   '8436f5ff-8415-450a-959e-4b55f61fe78d',
   json_build_object('sub', '8436f5ff-8415-450a-959e-4b55f61fe78d', 'email', 'mamadisgne@gmail.com')::jsonb,
   'email',
   '2026-10-17T19:56:00.147526Z',
   '2026-10-17T19:56:00.128217Z',
-  '2026-11-02T23:13:52.310593Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-12T00:05:26.193935Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -3156,7 +3156,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-17T19:56:00.128217Z',
-  '2026-11-02T23:13:52.310593Z'
+  '2026-11-12T00:05:26.193935Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -3178,7 +3178,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Papa Saliou Dia","is_active":true,"matricule":"ETU142","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"bayezalle"}'::jsonb,
   '2026-10-17T18:51:26.08766Z',
-  '2026-10-19T10:51:52.084775Z',
+  '2026-11-12T10:21:41.818296Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -3187,17 +3187,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'db6aa134-77bc-48a3-995a-be19cbe4602d',
   'db6aa134-77bc-48a3-995a-be19cbe4602d',
   'db6aa134-77bc-48a3-995a-be19cbe4602d',
   json_build_object('sub', 'db6aa134-77bc-48a3-995a-be19cbe4602d', 'email', 'salioudia751@gmail.com')::jsonb,
   'email',
   '2026-10-17T18:51:26.13092Z',
   '2026-10-17T18:51:26.08766Z',
-  '2026-10-19T10:51:52.084775Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-12T10:21:41.818296Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -3211,7 +3211,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-17T18:51:26.08766Z',
-  '2026-10-19T10:51:52.084775Z'
+  '2026-11-12T10:21:41.818296Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -3233,7 +3233,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Xavier Biaye ","is_active":true,"matricule":"ETU141","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"xavier"}'::jsonb,
   '2026-10-17T08:47:07.035727Z',
-  '2026-10-22T21:03:10.091935Z',
+  '2026-11-10T10:05:35.611378Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -3242,17 +3242,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '390347e4-91e9-4463-a542-e69074e2b7ad',
   '390347e4-91e9-4463-a542-e69074e2b7ad',
   '390347e4-91e9-4463-a542-e69074e2b7ad',
   json_build_object('sub', '390347e4-91e9-4463-a542-e69074e2b7ad', 'email', 'biayexavier08@gmail.com')::jsonb,
   'email',
   '2026-10-17T08:47:07.071251Z',
   '2026-10-17T08:47:07.035727Z',
-  '2026-10-22T21:03:10.091935Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T10:05:35.611378Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -3266,7 +3266,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-17T08:47:07.035727Z',
-  '2026-10-22T21:03:10.091935Z'
+  '2026-11-10T10:05:35.611378Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -3297,8 +3297,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '5306695b-ecbe-4598-91a3-ab1b92fcefe6',
   '5306695b-ecbe-4598-91a3-ab1b92fcefe6',
   '5306695b-ecbe-4598-91a3-ab1b92fcefe6',
   json_build_object('sub', '5306695b-ecbe-4598-91a3-ab1b92fcefe6', 'email', 'msarr8502@gmail.com')::jsonb,
@@ -3306,8 +3307,7 @@ INSERT INTO auth.identities (
   '2026-10-16T23:04:14.474039Z',
   '2026-10-16T23:04:14.448022Z',
   '2026-10-21T09:37:27.457434Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -3352,8 +3352,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '28575297-db3c-48fe-a83a-55c601bfd063',
   '28575297-db3c-48fe-a83a-55c601bfd063',
   '28575297-db3c-48fe-a83a-55c601bfd063',
   json_build_object('sub', '28575297-db3c-48fe-a83a-55c601bfd063', 'email', 'famam0702@gmail.com')::jsonb,
@@ -3361,8 +3362,7 @@ INSERT INTO auth.identities (
   '2026-10-16T21:42:06.964352Z',
   '2026-10-16T21:42:06.940153Z',
   '2026-10-28T21:38:27.494514Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -3398,7 +3398,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Mouhamadou Diop","is_active":true,"matricule":"ETU138","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"momo"}'::jsonb,
   '2026-10-16T21:15:04.795071Z',
-  '2026-11-04T21:27:05.548197Z',
+  '2026-11-10T19:43:37.082727Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -3407,17 +3407,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '5d426167-ba15-4d58-8efc-5debd6455be1',
   '5d426167-ba15-4d58-8efc-5debd6455be1',
   '5d426167-ba15-4d58-8efc-5debd6455be1',
   json_build_object('sub', '5d426167-ba15-4d58-8efc-5debd6455be1', 'email', 'mouhamadoudiop911@gmail.com')::jsonb,
   'email',
   '2026-10-16T21:15:04.821104Z',
   '2026-10-16T21:15:04.795071Z',
-  '2026-11-04T21:27:05.548197Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T19:43:37.082727Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -3431,7 +3431,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-16T21:15:04.795071Z',
-  '2026-11-04T21:27:05.548197Z'
+  '2026-11-10T19:43:37.082727Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -3453,7 +3453,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Sokhna Maïmouna Gueye ","is_active":true,"matricule":"ETU137","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"smgueye"}'::jsonb,
   '2026-10-16T21:05:53.272052Z',
-  '2026-10-20T22:16:14.593205Z',
+  '2026-11-10T21:55:17.289665Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -3462,17 +3462,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '44a5a9be-459b-49ce-ada1-20a1117af8ad',
   '44a5a9be-459b-49ce-ada1-20a1117af8ad',
   '44a5a9be-459b-49ce-ada1-20a1117af8ad',
   json_build_object('sub', '44a5a9be-459b-49ce-ada1-20a1117af8ad', 'email', 'maimounag259@gmail.com')::jsonb,
   'email',
   '2026-10-16T21:05:53.295005Z',
   '2026-10-16T21:05:53.272052Z',
-  '2026-10-20T22:16:14.593205Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T21:55:17.289665Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -3486,7 +3486,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-16T21:05:53.272052Z',
-  '2026-10-20T22:16:14.593205Z'
+  '2026-11-10T21:55:17.289665Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -3508,7 +3508,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Anta Diaw","is_active":true,"matricule":"ETU136","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"d77"}'::jsonb,
   '2026-10-16T20:59:11.682092Z',
-  '2026-11-03T22:14:45.539853Z',
+  '2026-11-06T21:39:53.68248Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -3517,17 +3517,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '38c4b95f-f469-475f-a0cd-3cd1e89a6136',
   '38c4b95f-f469-475f-a0cd-3cd1e89a6136',
   '38c4b95f-f469-475f-a0cd-3cd1e89a6136',
   json_build_object('sub', '38c4b95f-f469-475f-a0cd-3cd1e89a6136', 'email', 'diaw.anta1@uam.edu.sn')::jsonb,
   'email',
   '2026-10-16T20:59:11.70263Z',
   '2026-10-16T20:59:11.682092Z',
-  '2026-11-03T22:14:45.539853Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-06T21:39:53.68248Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -3541,7 +3541,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-16T20:59:11.682092Z',
-  '2026-11-03T22:14:45.539853Z'
+  '2026-11-06T21:39:53.68248Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -3563,7 +3563,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Sene mbene ","is_active":true,"matricule":"ETU135","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"mbene1"}'::jsonb,
   '2026-10-16T19:54:38.499658Z',
-  '2026-10-30T21:10:51.35098Z',
+  '2026-11-08T20:45:37.583825Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -3572,17 +3572,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '267929f8-fd69-4fdb-a333-b22228e606e7',
   '267929f8-fd69-4fdb-a333-b22228e606e7',
   '267929f8-fd69-4fdb-a333-b22228e606e7',
   json_build_object('sub', '267929f8-fd69-4fdb-a333-b22228e606e7', 'email', 'soxnambenesene@gmail.com')::jsonb,
   'email',
   '2026-10-16T19:54:38.545649Z',
   '2026-10-16T19:54:38.499658Z',
-  '2026-10-30T21:10:51.35098Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-08T20:45:37.583825Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -3596,7 +3596,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-16T19:54:38.499658Z',
-  '2026-10-30T21:10:51.35098Z'
+  '2026-11-08T20:45:37.583825Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -3618,7 +3618,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Medoune Mbao","is_active":true,"matricule":"ETU134","niveau":"L1","phone":"+221 76 010 09 00","role":"etudiant","statut_inscription":"valide","username":"medoune"}'::jsonb,
   '2026-10-16T19:08:11.118634Z',
-  '2026-11-03T21:07:10.551857Z',
+  '2026-11-10T20:09:33.410672Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -3627,17 +3627,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'e303b8e5-11fa-4284-a2e2-2f3aae06d1c1',
   'e303b8e5-11fa-4284-a2e2-2f3aae06d1c1',
   'e303b8e5-11fa-4284-a2e2-2f3aae06d1c1',
   json_build_object('sub', 'e303b8e5-11fa-4284-a2e2-2f3aae06d1c1', 'email', 'medounembao935@gmail.com')::jsonb,
   'email',
   '2026-10-16T19:08:11.163899Z',
   '2026-10-16T19:08:11.118634Z',
-  '2026-11-03T21:07:10.551857Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T20:09:33.410672Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -3651,7 +3651,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-16T19:08:11.118634Z',
-  '2026-11-03T21:07:10.551857Z'
+  '2026-11-10T20:09:33.410672Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -3673,7 +3673,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Amy Ndao ","is_active":true,"matricule":"ETU133","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"amy"}'::jsonb,
   '2026-10-16T18:17:43.71732Z',
-  '2026-11-03T21:35:15.009299Z',
+  '2026-11-09T21:19:08.639724Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -3682,17 +3682,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'cb016c2f-a891-45e5-9247-df0d798aa775',
   'cb016c2f-a891-45e5-9247-df0d798aa775',
   'cb016c2f-a891-45e5-9247-df0d798aa775',
   json_build_object('sub', 'cb016c2f-a891-45e5-9247-df0d798aa775', 'email', 'ndao.amy@uam.edu.sn')::jsonb,
   'email',
   '2026-10-16T18:17:43.75588Z',
   '2026-10-16T18:17:43.71732Z',
-  '2026-11-03T21:35:15.009299Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-09T21:19:08.639724Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -3706,7 +3706,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-16T18:17:43.71732Z',
-  '2026-11-03T21:35:15.009299Z'
+  '2026-11-09T21:19:08.639724Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -3728,7 +3728,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Ramatoulaye Ly","is_active":true,"matricule":"ETU132","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"ramadou"}'::jsonb,
   '2026-10-16T07:40:45.934845Z',
-  '2026-11-04T18:52:32.695086Z',
+  '2026-11-11T21:35:36.113671Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -3737,17 +3737,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '5e75518c-b278-4267-89a6-f03f9f592d30',
   '5e75518c-b278-4267-89a6-f03f9f592d30',
   '5e75518c-b278-4267-89a6-f03f9f592d30',
   json_build_object('sub', '5e75518c-b278-4267-89a6-f03f9f592d30', 'email', 'ly.ramatoulaye@uam.edu.sn')::jsonb,
   'email',
   '2026-10-16T07:40:45.999448Z',
   '2026-10-16T07:40:45.934845Z',
-  '2026-11-04T18:52:32.695086Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T21:35:36.113671Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -3761,7 +3761,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-16T07:40:45.934845Z',
-  '2026-11-04T18:52:32.695086Z'
+  '2026-11-11T21:35:36.113671Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -3783,7 +3783,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Lucie Aline Paul Mbaye","is_active":true,"matricule":"ETU131","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"lucie"}'::jsonb,
   '2026-10-16T02:04:49.534613Z',
-  '2026-10-26T23:54:13.15753Z',
+  '2026-11-11T16:28:02.334956Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -3792,17 +3792,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'eca088ab-fed1-4ef6-90af-a326d5962430',
   'eca088ab-fed1-4ef6-90af-a326d5962430',
   'eca088ab-fed1-4ef6-90af-a326d5962430',
   json_build_object('sub', 'eca088ab-fed1-4ef6-90af-a326d5962430', 'email', 'mbayelucie0@gmail.com')::jsonb,
   'email',
   '2026-10-16T02:04:49.568536Z',
   '2026-10-16T02:04:49.534613Z',
-  '2026-10-26T23:54:13.15753Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T16:28:02.334956Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -3816,7 +3816,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-16T02:04:49.534613Z',
-  '2026-10-26T23:54:13.15753Z'
+  '2026-11-11T16:28:02.334956Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -3847,8 +3847,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'e9474367-f3be-44f0-94f7-91e9840e3942',
   'e9474367-f3be-44f0-94f7-91e9840e3942',
   'e9474367-f3be-44f0-94f7-91e9840e3942',
   json_build_object('sub', 'e9474367-f3be-44f0-94f7-91e9840e3942', 'email', 'fatimawane1306@gmail.com')::jsonb,
@@ -3856,8 +3857,7 @@ INSERT INTO auth.identities (
   '2026-10-15T21:04:14.592981Z',
   '2026-10-15T21:04:14.571388Z',
   '2026-10-15T23:38:41.636419Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -3893,7 +3893,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Fatoumata WANE","is_active":true,"matricule":"ETU128","niveau":"L2","phone":"+221 77 551 81 96","role":"etudiant","statut_inscription":"valide","username":"fatoumata"}'::jsonb,
   '2026-10-15T20:53:39.23359Z',
-  '2026-11-03T21:21:05.76942Z',
+  '2026-11-10T21:03:27.730645Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -3902,17 +3902,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '9035e168-a828-40fa-98a2-a197a2483674',
   '9035e168-a828-40fa-98a2-a197a2483674',
   '9035e168-a828-40fa-98a2-a197a2483674',
   json_build_object('sub', '9035e168-a828-40fa-98a2-a197a2483674', 'email', 'wane.fatoumata@uam.edu.sn')::jsonb,
   'email',
   '2026-10-15T20:53:39.266652Z',
   '2026-10-15T20:53:39.23359Z',
-  '2026-11-03T21:21:05.76942Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T21:03:27.730645Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -3926,7 +3926,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-15T20:53:39.23359Z',
-  '2026-11-03T21:21:05.76942Z'
+  '2026-11-10T21:03:27.730645Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -3948,7 +3948,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Maleye Gueye","is_active":true,"matricule":"ETU127","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"frankie21"}'::jsonb,
   '2026-10-15T20:40:07.780144Z',
-  '2026-11-03T23:01:55.593889Z',
+  '2026-11-11T13:32:06.903521Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -3957,17 +3957,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'cb1d2c21-e03a-4fe5-80b3-eaa5a1644247',
   'cb1d2c21-e03a-4fe5-80b3-eaa5a1644247',
   'cb1d2c21-e03a-4fe5-80b3-eaa5a1644247',
   json_build_object('sub', 'cb1d2c21-e03a-4fe5-80b3-eaa5a1644247', 'email', 'maleyegueye21@gmail.com')::jsonb,
   'email',
   '2026-10-15T20:40:07.811292Z',
   '2026-10-15T20:40:07.780144Z',
-  '2026-11-03T23:01:55.593889Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T13:32:06.903521Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -3981,7 +3981,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-15T20:40:07.780144Z',
-  '2026-11-03T23:01:55.593889Z'
+  '2026-11-11T13:32:06.903521Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -4003,7 +4003,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-SML","email_verified":true,"filiere":"SML","full_name":"seydina Alioune Gueye","is_active":true,"matricule":"ETU126","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"seydina"}'::jsonb,
   '2026-10-15T16:12:51.240084Z',
-  '2026-10-29T20:55:31.148291Z',
+  '2026-11-07T21:52:43.205079Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -4012,17 +4012,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'de622bff-08ad-4a9f-b3e4-bd7cb7e6ba67',
   'de622bff-08ad-4a9f-b3e4-bd7cb7e6ba67',
   'de622bff-08ad-4a9f-b3e4-bd7cb7e6ba67',
   json_build_object('sub', 'de622bff-08ad-4a9f-b3e4-bd7cb7e6ba67', 'email', 'seydinaps1@gmail.com')::jsonb,
   'email',
   '2026-10-15T16:12:51.264807Z',
   '2026-10-15T16:12:51.240084Z',
-  '2026-10-29T20:55:31.148291Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-07T21:52:43.205079Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -4036,7 +4036,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-15T16:12:51.240084Z',
-  '2026-10-29T20:55:31.148291Z'
+  '2026-11-07T21:52:43.205079Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -4058,7 +4058,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Sokhna Faty Mbacke ","is_active":true,"matricule":"ETU125","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"sfm"}'::jsonb,
   '2026-10-15T16:04:14.110076Z',
-  '2026-11-04T19:23:54.601488Z',
+  '2026-11-10T21:07:58.970585Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -4067,17 +4067,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'cf2463a0-9bc4-4c48-a22c-ef8f9e067cb0',
   'cf2463a0-9bc4-4c48-a22c-ef8f9e067cb0',
   'cf2463a0-9bc4-4c48-a22c-ef8f9e067cb0',
   json_build_object('sub', 'cf2463a0-9bc4-4c48-a22c-ef8f9e067cb0', 'email', 'sokhnafatym93@gmail.com')::jsonb,
   'email',
   '2026-10-15T16:04:14.149781Z',
   '2026-10-15T16:04:14.110076Z',
-  '2026-11-04T19:23:54.601488Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T21:07:58.970585Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -4091,7 +4091,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-15T16:04:14.110076Z',
-  '2026-11-04T19:23:54.601488Z'
+  '2026-11-10T21:07:58.970585Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -4113,7 +4113,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Ndeye Diouma Diouf","is_active":true,"matricule":"ETU124","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"nd.diouf"}'::jsonb,
   '2026-10-15T14:38:18.477199Z',
-  '2026-10-29T23:13:58.694503Z',
+  '2026-11-10T22:57:17.281175Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -4122,17 +4122,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '9f9c150c-b72b-4827-8c96-efdd714b8301',
   '9f9c150c-b72b-4827-8c96-efdd714b8301',
   '9f9c150c-b72b-4827-8c96-efdd714b8301',
   json_build_object('sub', '9f9c150c-b72b-4827-8c96-efdd714b8301', 'email', 'dioufndeyejuma2611@gmail.com')::jsonb,
   'email',
   '2026-10-15T14:38:18.521888Z',
   '2026-10-15T14:38:18.477199Z',
-  '2026-10-29T23:13:58.694503Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T22:57:17.281175Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -4146,7 +4146,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-15T14:38:18.477199Z',
-  '2026-10-29T23:13:58.694503Z'
+  '2026-11-10T22:57:17.281175Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -4168,7 +4168,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Falilou DIOUF","is_active":true,"matricule":"ETU123","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"falilou"}'::jsonb,
   '2026-10-15T12:32:38.930617Z',
-  '2026-10-21T22:20:17.180817Z',
+  '2026-11-10T11:01:20.635051Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -4177,17 +4177,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'dc4eabf5-fc30-4153-bdfa-2ece39766af1',
   'dc4eabf5-fc30-4153-bdfa-2ece39766af1',
   'dc4eabf5-fc30-4153-bdfa-2ece39766af1',
   json_build_object('sub', 'dc4eabf5-fc30-4153-bdfa-2ece39766af1', 'email', 'diouf.faliloulahi@uam.edu.sn')::jsonb,
   'email',
   '2026-10-15T12:32:38.953413Z',
   '2026-10-15T12:32:38.930617Z',
-  '2026-10-21T22:20:17.180817Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T11:01:20.635051Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -4201,7 +4201,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-15T12:32:38.930617Z',
-  '2026-10-21T22:20:17.180817Z'
+  '2026-11-10T11:01:20.635051Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -4223,7 +4223,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"sadakh NDour ","is_active":true,"matricule":"ETU122","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"z-30"}'::jsonb,
   '2026-10-15T12:19:44.992452Z',
-  '2026-11-04T18:39:00.952535Z',
+  '2026-11-11T21:45:44.616347Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -4232,17 +4232,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'b644108e-1571-4700-a0b0-b50c41e5a9cd',
   'b644108e-1571-4700-a0b0-b50c41e5a9cd',
   'b644108e-1571-4700-a0b0-b50c41e5a9cd',
   json_build_object('sub', 'b644108e-1571-4700-a0b0-b50c41e5a9cd', 'email', 'ndour.sadakh@uam.edu.sn')::jsonb,
   'email',
   '2026-10-15T12:19:45.016702Z',
   '2026-10-15T12:19:44.992452Z',
-  '2026-11-04T18:39:00.952535Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T21:45:44.616347Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -4256,7 +4256,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-15T12:19:44.992452Z',
-  '2026-11-04T18:39:00.952535Z'
+  '2026-11-11T21:45:44.616347Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -4278,7 +4278,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Alima Traoré ","is_active":true,"matricule":"ETU121","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"sadiya"}'::jsonb,
   '2026-10-15T12:12:51.053126Z',
-  '2026-10-30T16:31:55.940827Z',
+  '2026-11-12T01:48:34.685813Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -4287,17 +4287,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'dc575fdc-9aa5-4350-bcbd-0134aa582532',
   'dc575fdc-9aa5-4350-bcbd-0134aa582532',
   'dc575fdc-9aa5-4350-bcbd-0134aa582532',
   json_build_object('sub', 'dc575fdc-9aa5-4350-bcbd-0134aa582532', 'email', 'traore.alima@uam.edu.sn')::jsonb,
   'email',
   '2026-10-15T12:12:51.081895Z',
   '2026-10-15T12:12:51.053126Z',
-  '2026-10-30T16:31:55.940827Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-12T01:48:34.685813Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -4311,7 +4311,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-15T12:12:51.053126Z',
-  '2026-10-30T16:31:55.940827Z'
+  '2026-11-12T01:48:34.685813Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -4333,7 +4333,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Adama Diouf","is_active":true,"matricule":"ETU120","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"adama00"}'::jsonb,
   '2026-10-14T23:33:57.80968Z',
-  '2026-11-04T19:06:35.724386Z',
+  '2026-11-11T20:06:53.44012Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -4342,17 +4342,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '6c4c60ca-86fc-4523-8839-1ab38f2dd0eb',
   '6c4c60ca-86fc-4523-8839-1ab38f2dd0eb',
   '6c4c60ca-86fc-4523-8839-1ab38f2dd0eb',
   json_build_object('sub', '6c4c60ca-86fc-4523-8839-1ab38f2dd0eb', 'email', 'ad5660481@gmail.com')::jsonb,
   'email',
   '2026-10-14T23:33:57.831621Z',
   '2026-10-14T23:33:57.80968Z',
-  '2026-11-04T19:06:35.724386Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T20:06:53.44012Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -4366,7 +4366,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-14T23:33:57.80968Z',
-  '2026-11-04T19:06:35.724386Z'
+  '2026-11-11T20:06:53.44012Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -4397,8 +4397,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '4fdb86ff-ca45-47f8-bf38-b3e89bb4e1a5',
   '4fdb86ff-ca45-47f8-bf38-b3e89bb4e1a5',
   '4fdb86ff-ca45-47f8-bf38-b3e89bb4e1a5',
   json_build_object('sub', '4fdb86ff-ca45-47f8-bf38-b3e89bb4e1a5', 'email', 'fatimagueye101@gmail.com')::jsonb,
@@ -4406,8 +4407,7 @@ INSERT INTO auth.identities (
   '2026-10-14T23:21:29.705447Z',
   '2026-10-14T23:21:29.67755Z',
   '2026-10-21T21:35:25.69945Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -4443,7 +4443,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Mbaye Ndiaye ","is_active":true,"matricule":"ETU118","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"mbayemn"}'::jsonb,
   '2026-10-14T22:27:21.387267Z',
-  '2026-11-04T22:23:05.002764Z',
+  '2026-11-11T19:24:44.918074Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -4452,17 +4452,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '91cfadd0-4b41-41a1-b91c-c1e1e55f88ab',
   '91cfadd0-4b41-41a1-b91c-c1e1e55f88ab',
   '91cfadd0-4b41-41a1-b91c-c1e1e55f88ab',
   json_build_object('sub', '91cfadd0-4b41-41a1-b91c-c1e1e55f88ab', 'email', 'ndiaye.mbaye1@uam.edu.sn')::jsonb,
   'email',
   '2026-10-14T22:27:21.409709Z',
   '2026-10-14T22:27:21.387267Z',
-  '2026-11-04T22:23:05.002764Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T19:24:44.918074Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -4476,7 +4476,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-14T22:27:21.387267Z',
-  '2026-11-04T22:23:05.002764Z'
+  '2026-11-11T19:24:44.918074Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -4498,7 +4498,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Mariétou Thiam ","is_active":true,"matricule":"ETU117","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"marietou20."}'::jsonb,
   '2026-10-14T21:25:36.275453Z',
-  '2026-11-04T21:11:27.805875Z',
+  '2026-11-12T10:27:33.412461Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -4507,17 +4507,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '94147106-c808-40fa-a242-be5da3750456',
   '94147106-c808-40fa-a242-be5da3750456',
   '94147106-c808-40fa-a242-be5da3750456',
   json_build_object('sub', '94147106-c808-40fa-a242-be5da3750456', 'email', 'thiam.marietou@uam.edu.sn')::jsonb,
   'email',
   '2026-10-14T21:25:36.29275Z',
   '2026-10-14T21:25:36.275453Z',
-  '2026-11-04T21:11:27.805875Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-12T10:27:33.412461Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -4531,7 +4531,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-14T21:25:36.275453Z',
-  '2026-11-04T21:11:27.805875Z'
+  '2026-11-12T10:27:33.412461Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -4553,7 +4553,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Mama Diagne Samb","is_active":true,"matricule":"ETU116","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"704907"}'::jsonb,
   '2026-10-14T21:10:33.209825Z',
-  '2026-11-03T22:12:11.632202Z',
+  '2026-11-10T19:53:06.547104Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -4562,17 +4562,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'b93154dc-074d-4dfa-a6fa-76c527eba59f',
   'b93154dc-074d-4dfa-a6fa-76c527eba59f',
   'b93154dc-074d-4dfa-a6fa-76c527eba59f',
   json_build_object('sub', 'b93154dc-074d-4dfa-a6fa-76c527eba59f', 'email', 'samb.diagne@uam.edu.sn')::jsonb,
   'email',
   '2026-10-14T21:10:33.232757Z',
   '2026-10-14T21:10:33.209825Z',
-  '2026-11-03T22:12:11.632202Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T19:53:06.547104Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -4586,7 +4586,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-14T21:10:33.209825Z',
-  '2026-11-03T22:12:11.632202Z'
+  '2026-11-10T19:53:06.547104Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -4608,7 +4608,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Maimouna Diop","is_active":true,"matricule":"ETU115","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"maimounajoop"}'::jsonb,
   '2026-10-14T20:57:46.275382Z',
-  '2026-11-04T20:24:10.502211Z',
+  '2026-11-11T19:41:14.483708Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -4617,17 +4617,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '5780b613-8d29-45a2-98e4-d5635bda38af',
   '5780b613-8d29-45a2-98e4-d5635bda38af',
   '5780b613-8d29-45a2-98e4-d5635bda38af',
   json_build_object('sub', '5780b613-8d29-45a2-98e4-d5635bda38af', 'email', 'maimounahijab@gmail.com')::jsonb,
   'email',
   '2026-10-14T20:57:46.315484Z',
   '2026-10-14T20:57:46.275382Z',
-  '2026-11-04T20:24:10.502211Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T19:41:14.483708Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -4641,7 +4641,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-14T20:57:46.275382Z',
-  '2026-11-04T20:24:10.502211Z'
+  '2026-11-11T19:41:14.483708Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -4663,7 +4663,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Nafi Camara","is_active":true,"matricule":"ETU114","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"704905"}'::jsonb,
   '2026-10-14T19:42:26.799147Z',
-  '2026-11-05T13:28:25.628146Z',
+  '2026-11-10T19:56:34.687508Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -4672,17 +4672,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '4cf8b6ca-0a1f-4ee0-b6f0-637c79edd92b',
   '4cf8b6ca-0a1f-4ee0-b6f0-637c79edd92b',
   '4cf8b6ca-0a1f-4ee0-b6f0-637c79edd92b',
   json_build_object('sub', '4cf8b6ca-0a1f-4ee0-b6f0-637c79edd92b', 'email', 'camara.nafi@uam.edu.sn')::jsonb,
   'email',
   '2026-10-14T19:42:26.817384Z',
   '2026-10-14T19:42:26.799147Z',
-  '2026-11-05T13:28:25.628146Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T19:56:34.687508Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -4696,7 +4696,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-14T19:42:26.799147Z',
-  '2026-11-05T13:28:25.628146Z'
+  '2026-11-10T19:56:34.687508Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -4718,7 +4718,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Birane Dia","is_active":true,"matricule":"ETU113","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"dia205"}'::jsonb,
   '2026-10-14T19:40:39.548342Z',
-  '2026-11-04T22:21:05.402707Z',
+  '2026-11-11T19:59:59.929683Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -4727,17 +4727,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '1bc3438f-c3c7-4374-8a0b-27adb4c637ee',
   '1bc3438f-c3c7-4374-8a0b-27adb4c637ee',
   '1bc3438f-c3c7-4374-8a0b-27adb4c637ee',
   json_build_object('sub', '1bc3438f-c3c7-4374-8a0b-27adb4c637ee', 'email', 'diabirane86@gmail.com')::jsonb,
   'email',
   '2026-10-14T19:40:39.581554Z',
   '2026-10-14T19:40:39.548342Z',
-  '2026-11-04T22:21:05.402707Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T19:59:59.929683Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -4751,7 +4751,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-14T19:40:39.548342Z',
-  '2026-11-04T22:21:05.402707Z'
+  '2026-11-11T19:59:59.929683Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -4782,8 +4782,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'e76c4fa1-fb30-43ff-ab77-5d50b6b13431',
   'e76c4fa1-fb30-43ff-ab77-5d50b6b13431',
   'e76c4fa1-fb30-43ff-ab77-5d50b6b13431',
   json_build_object('sub', 'e76c4fa1-fb30-43ff-ab77-5d50b6b13431', 'email', 'marietoudiengquenrema@gmail.com')::jsonb,
@@ -4791,8 +4792,7 @@ INSERT INTO auth.identities (
   '2026-10-14T17:27:09.389499Z',
   '2026-10-14T17:27:09.35736Z',
   '2026-10-14T17:28:43.456782Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -4837,8 +4837,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '9a618491-f124-4445-a3c9-dd2c739b03ff',
   '9a618491-f124-4445-a3c9-dd2c739b03ff',
   '9a618491-f124-4445-a3c9-dd2c739b03ff',
   json_build_object('sub', '9a618491-f124-4445-a3c9-dd2c739b03ff', 'email', 'diallo.lamine1@uam.edu.sn')::jsonb,
@@ -4846,8 +4847,7 @@ INSERT INTO auth.identities (
   '2026-10-14T16:22:45.812075Z',
   '2026-10-14T16:22:45.793967Z',
   '2026-10-14T16:23:15.776354Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -4883,7 +4883,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Cheikh tidiane fall ","is_active":true,"matricule":"ETU110","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"cfall"}'::jsonb,
   '2026-10-14T16:06:27.695175Z',
-  '2026-11-04T21:45:11.780469Z',
+  '2026-11-11T12:33:00.520078Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -4892,17 +4892,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'dd7741bb-6dfa-4d63-b3c7-7c7104694ae6',
   'dd7741bb-6dfa-4d63-b3c7-7c7104694ae6',
   'dd7741bb-6dfa-4d63-b3c7-7c7104694ae6',
   json_build_object('sub', 'dd7741bb-6dfa-4d63-b3c7-7c7104694ae6', 'email', 'cheikhtidianefall992@gmail.com')::jsonb,
   'email',
   '2026-10-14T16:06:27.701092Z',
   '2026-10-14T16:06:27.695175Z',
-  '2026-11-04T21:45:11.780469Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T12:33:00.520078Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -4916,7 +4916,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-14T16:06:27.695175Z',
-  '2026-11-04T21:45:11.780469Z'
+  '2026-11-11T12:33:00.520078Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -4938,7 +4938,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Cheikh Fall ","is_active":true,"matricule":"ETU109","niveau":"L1","phone":"+221 77 551 81 96","role":"etudiant","statut_inscription":"valide","username":"soyezfous"}'::jsonb,
   '2026-10-14T16:03:07.2655Z',
-  '2026-11-03T21:34:30.371248Z',
+  '2026-11-11T12:50:44.345201Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -4947,17 +4947,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '64e8a6b0-974d-40f9-ad36-442b3f2ccbc6',
   '64e8a6b0-974d-40f9-ad36-442b3f2ccbc6',
   '64e8a6b0-974d-40f9-ad36-442b3f2ccbc6',
   json_build_object('sub', '64e8a6b0-974d-40f9-ad36-442b3f2ccbc6', 'email', 'fall.cheikh2@uam.edu.sn')::jsonb,
   'email',
   '2026-10-14T16:03:07.308272Z',
   '2026-10-14T16:03:07.2655Z',
-  '2026-11-03T21:34:30.371248Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T12:50:44.345201Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -4971,7 +4971,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-14T16:03:07.2655Z',
-  '2026-11-03T21:34:30.371248Z'
+  '2026-11-11T12:50:44.345201Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -4993,7 +4993,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Ndeye Khady Thiam ","is_active":true,"matricule":"ETU108","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"soxnakhadijah"}'::jsonb,
   '2026-10-14T12:38:54.292163Z',
-  '2026-11-03T21:13:40.746577Z',
+  '2026-11-05T21:11:16.722859Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -5002,17 +5002,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '9a986e56-48bd-4218-98f1-6f3800c47731',
   '9a986e56-48bd-4218-98f1-6f3800c47731',
   '9a986e56-48bd-4218-98f1-6f3800c47731',
   json_build_object('sub', '9a986e56-48bd-4218-98f1-6f3800c47731', 'email', 'thiamndeyekhady230@gmail.com')::jsonb,
   'email',
   '2026-10-14T12:38:54.332311Z',
   '2026-10-14T12:38:54.292163Z',
-  '2026-11-03T21:13:40.746577Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-05T21:11:16.722859Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -5026,7 +5026,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-14T12:38:54.292163Z',
-  '2026-11-03T21:13:40.746577Z'
+  '2026-11-05T21:11:16.722859Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -5048,7 +5048,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MIASS","email_verified":true,"filiere":"MIASS","full_name":"NDIAYE MAHMODANE ","is_active":true,"matricule":"ETU107","niveau":"L1","phone":"+221 76 187 95 55","role":"etudiant","statut_inscription":"valide","username":"al_mahmoud"}'::jsonb,
   '2026-10-13T23:37:00.097485Z',
-  '2026-11-02T22:47:28.086613Z',
+  '2026-11-11T14:44:42.302513Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -5057,17 +5057,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '7d0c0e46-d9cf-4665-b32a-8628eeb79c4b',
   '7d0c0e46-d9cf-4665-b32a-8628eeb79c4b',
   '7d0c0e46-d9cf-4665-b32a-8628eeb79c4b',
   json_build_object('sub', '7d0c0e46-d9cf-4665-b32a-8628eeb79c4b', 'email', 'mahmodanendiaye5932@gmail.com')::jsonb,
   'email',
   '2026-10-13T23:37:00.127396Z',
   '2026-10-13T23:37:00.097485Z',
-  '2026-11-02T22:47:28.086613Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T14:44:42.302513Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -5081,7 +5081,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-13T23:37:00.097485Z',
-  '2026-11-02T22:47:28.086613Z'
+  '2026-11-11T14:44:42.302513Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -5103,7 +5103,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Mouhamed wade","is_active":true,"matricule":"ETU106","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"mouhamed"}'::jsonb,
   '2026-10-13T23:00:28.315261Z',
-  '2026-11-04T22:27:55.504306Z',
+  '2026-11-10T20:09:07.818988Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -5112,17 +5112,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '139dfaa5-7fe4-4ed1-b864-e058affb6333',
   '139dfaa5-7fe4-4ed1-b864-e058affb6333',
   '139dfaa5-7fe4-4ed1-b864-e058affb6333',
   json_build_object('sub', '139dfaa5-7fe4-4ed1-b864-e058affb6333', 'email', 'wade.mouhamed@uam.edu.sn')::jsonb,
   'email',
   '2026-10-13T23:00:28.327087Z',
   '2026-10-13T23:00:28.315261Z',
-  '2026-11-04T22:27:55.504306Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T20:09:07.818988Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -5136,7 +5136,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-13T23:00:28.315261Z',
-  '2026-11-04T22:27:55.504306Z'
+  '2026-11-10T20:09:07.818988Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -5158,7 +5158,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Coura Niang Ba","is_active":true,"matricule":"ETU105","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"apecsy76"}'::jsonb,
   '2026-10-13T22:27:47.862946Z',
-  '2026-11-03T23:21:19.129582Z',
+  '2026-11-11T19:21:32.860375Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -5167,17 +5167,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '9e122fa2-f168-41f2-85ae-6b5b0eb96c65',
   '9e122fa2-f168-41f2-85ae-6b5b0eb96c65',
   '9e122fa2-f168-41f2-85ae-6b5b0eb96c65',
   json_build_object('sub', '9e122fa2-f168-41f2-85ae-6b5b0eb96c65', 'email', 'bacouraniang2006@gmail.com')::jsonb,
   'email',
   '2026-10-13T22:27:47.902129Z',
   '2026-10-13T22:27:47.862946Z',
-  '2026-11-03T23:21:19.129582Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T19:21:32.860375Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -5191,7 +5191,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-13T22:27:47.862946Z',
-  '2026-11-03T23:21:19.129582Z'
+  '2026-11-11T19:21:32.860375Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -5222,8 +5222,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '943bab01-ff76-401d-a62c-3de9b4548b01',
   '943bab01-ff76-401d-a62c-3de9b4548b01',
   '943bab01-ff76-401d-a62c-3de9b4548b01',
   json_build_object('sub', '943bab01-ff76-401d-a62c-3de9b4548b01', 'email', 'adamawadiarra@gmail.com')::jsonb,
@@ -5231,8 +5232,7 @@ INSERT INTO auth.identities (
   '2026-10-13T22:02:23.290489Z',
   '2026-10-13T22:02:23.248381Z',
   '2026-10-28T21:05:06.673398Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -5277,8 +5277,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '8ae02db6-f604-438d-83c7-16a91aad9ced',
   '8ae02db6-f604-438d-83c7-16a91aad9ced',
   '8ae02db6-f604-438d-83c7-16a91aad9ced',
   json_build_object('sub', '8ae02db6-f604-438d-83c7-16a91aad9ced', 'email', 'gaye.fatim@uam.edu.sn')::jsonb,
@@ -5286,8 +5287,7 @@ INSERT INTO auth.identities (
   '2026-10-13T21:53:24.340845Z',
   '2026-10-13T21:53:24.301335Z',
   '2026-10-19T20:30:17.111406Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -5323,7 +5323,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Adjiratou khemesse Faye","is_active":true,"matricule":"ETU102","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"akfaye"}'::jsonb,
   '2026-10-13T21:17:08.796417Z',
-  '2026-11-03T21:33:02.44712Z',
+  '2026-11-08T22:54:12.73297Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -5332,17 +5332,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'e51f229f-192b-4f62-a6e0-a97fbadaff78',
   'e51f229f-192b-4f62-a6e0-a97fbadaff78',
   'e51f229f-192b-4f62-a6e0-a97fbadaff78',
   json_build_object('sub', 'e51f229f-192b-4f62-a6e0-a97fbadaff78', 'email', 'fayeadjiratoukhemesse@gmail.com')::jsonb,
   'email',
   '2026-10-13T21:17:08.807255Z',
   '2026-10-13T21:17:08.796417Z',
-  '2026-11-03T21:33:02.44712Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-08T22:54:12.73297Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -5356,7 +5356,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-13T21:17:08.796417Z',
-  '2026-11-03T21:33:02.44712Z'
+  '2026-11-08T22:54:12.73297Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -5378,7 +5378,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Adama Mariama Mbaye","is_active":true,"matricule":"ETU101","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"mariamasoda"}'::jsonb,
   '2026-10-13T21:15:57.852872Z',
-  '2026-11-01T21:58:58.615836Z',
+  '2026-11-09T20:13:03.857151Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -5387,17 +5387,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '4276fce0-ffb6-4ddc-b900-82242127be2b',
   '4276fce0-ffb6-4ddc-b900-82242127be2b',
   '4276fce0-ffb6-4ddc-b900-82242127be2b',
   json_build_object('sub', '4276fce0-ffb6-4ddc-b900-82242127be2b', 'email', 'adamamariamambaye@gmail.com')::jsonb,
   'email',
   '2026-10-13T21:15:57.862962Z',
   '2026-10-13T21:15:57.852872Z',
-  '2026-11-01T21:58:58.615836Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-09T20:13:03.857151Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -5411,7 +5411,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-13T21:15:57.852872Z',
-  '2026-11-01T21:58:58.615836Z'
+  '2026-11-09T20:13:03.857151Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -5433,7 +5433,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"BA Oumou Awa","is_active":true,"matricule":"ETU100","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"oumouba19"}'::jsonb,
   '2026-10-13T21:14:51.741165Z',
-  '2026-11-03T21:11:15.230548Z',
+  '2026-11-10T21:08:24.370574Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -5442,17 +5442,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '09d5955c-1bfd-4446-b8b7-f1f2737e4df5',
   '09d5955c-1bfd-4446-b8b7-f1f2737e4df5',
   '09d5955c-1bfd-4446-b8b7-f1f2737e4df5',
   json_build_object('sub', '09d5955c-1bfd-4446-b8b7-f1f2737e4df5', 'email', 'bahoumouawa195@gmail.com')::jsonb,
   'email',
   '2026-10-13T21:14:51.748316Z',
   '2026-10-13T21:14:51.741165Z',
-  '2026-11-03T21:11:15.230548Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T21:08:24.370574Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -5466,7 +5466,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-13T21:14:51.741165Z',
-  '2026-11-03T21:11:15.230548Z'
+  '2026-11-10T21:08:24.370574Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -5497,8 +5497,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '2b0f75af-30bb-4b6a-93d2-8ef0bb639a09',
   '2b0f75af-30bb-4b6a-93d2-8ef0bb639a09',
   '2b0f75af-30bb-4b6a-93d2-8ef0bb639a09',
   json_build_object('sub', '2b0f75af-30bb-4b6a-93d2-8ef0bb639a09', 'email', 'rokhaya132005@gmail.com')::jsonb,
@@ -5506,8 +5507,7 @@ INSERT INTO auth.identities (
   '2026-10-13T21:11:20.400035Z',
   '2026-10-13T21:11:20.36494Z',
   '2026-11-01T21:10:46.868084Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -5543,7 +5543,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Aliou Konté ","is_active":true,"matricule":"ETU098","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"alioukonte"}'::jsonb,
   '2026-10-13T21:10:09.525433Z',
-  '2026-11-04T00:23:50.858087Z',
+  '2026-11-11T23:50:23.072021Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -5552,17 +5552,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'e9b17b3c-7f14-4118-b13a-e84a3e6b5b1a',
   'e9b17b3c-7f14-4118-b13a-e84a3e6b5b1a',
   'e9b17b3c-7f14-4118-b13a-e84a3e6b5b1a',
   json_build_object('sub', 'e9b17b3c-7f14-4118-b13a-e84a3e6b5b1a', 'email', 'alioukonte2006@gmail.com')::jsonb,
   'email',
   '2026-10-13T21:10:09.538895Z',
   '2026-10-13T21:10:09.525433Z',
-  '2026-11-04T00:23:50.858087Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T23:50:23.072021Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -5576,7 +5576,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-13T21:10:09.525433Z',
-  '2026-11-04T00:23:50.858087Z'
+  '2026-11-11T23:50:23.072021Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -5607,8 +5607,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'fa76db76-e0c3-4d10-96a3-aaa9702841f4',
   'fa76db76-e0c3-4d10-96a3-aaa9702841f4',
   'fa76db76-e0c3-4d10-96a3-aaa9702841f4',
   json_build_object('sub', 'fa76db76-e0c3-4d10-96a3-aaa9702841f4', 'email', 'thiernosalmanabarry11@gmail.com')::jsonb,
@@ -5616,8 +5617,7 @@ INSERT INTO auth.identities (
   '2026-10-13T20:54:04.784861Z',
   '2026-10-13T20:54:04.777777Z',
   '2026-10-14T17:02:54.772273Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -5653,7 +5653,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Fatime Mbengue","is_active":true,"matricule":"ETU096","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"fatima"}'::jsonb,
   '2026-10-13T20:52:32.018951Z',
-  '2026-11-03T23:01:02.416065Z',
+  '2026-11-10T22:55:45.234724Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -5662,17 +5662,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '44dc3d35-1e27-4350-83c9-70209137cbc1',
   '44dc3d35-1e27-4350-83c9-70209137cbc1',
   '44dc3d35-1e27-4350-83c9-70209137cbc1',
   json_build_object('sub', '44dc3d35-1e27-4350-83c9-70209137cbc1', 'email', 'fatimembengue501@gmail.com')::jsonb,
   'email',
   '2026-10-13T20:52:32.021518Z',
   '2026-10-13T20:52:32.018951Z',
-  '2026-11-03T23:01:02.416065Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T22:55:45.234724Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -5686,7 +5686,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-13T20:52:32.018951Z',
-  '2026-11-03T23:01:02.416065Z'
+  '2026-11-10T22:55:45.234724Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -5708,7 +5708,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Ndeye khady Thiam ","is_active":true,"matricule":"ETU095","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"ndeyekhady"}'::jsonb,
   '2026-10-13T20:52:10.262312Z',
-  '2026-11-03T21:28:43.841222Z',
+  '2026-11-11T15:59:32.567249Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -5717,17 +5717,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'ab0b66c8-9962-4734-bb8e-69703122177c',
   'ab0b66c8-9962-4734-bb8e-69703122177c',
   'ab0b66c8-9962-4734-bb8e-69703122177c',
   json_build_object('sub', 'ab0b66c8-9962-4734-bb8e-69703122177c', 'email', 'tndeyekhady35@gmail.com')::jsonb,
   'email',
   '2026-10-13T20:52:10.276649Z',
   '2026-10-13T20:52:10.262312Z',
-  '2026-11-03T21:28:43.841222Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T15:59:32.567249Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -5741,7 +5741,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-13T20:52:10.262312Z',
-  '2026-11-03T21:28:43.841222Z'
+  '2026-11-11T15:59:32.567249Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -5772,8 +5772,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '6f1f69ac-bc24-40f1-b186-43073f2999d5',
   '6f1f69ac-bc24-40f1-b186-43073f2999d5',
   '6f1f69ac-bc24-40f1-b186-43073f2999d5',
   json_build_object('sub', '6f1f69ac-bc24-40f1-b186-43073f2999d5', 'email', 'anissadiedhiou@gmail.com')::jsonb,
@@ -5781,8 +5782,7 @@ INSERT INTO auth.identities (
   '2026-10-13T20:26:41.565001Z',
   '2026-10-13T20:26:41.529747Z',
   '2026-10-26T21:54:20.600056Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -5818,7 +5818,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Ndeye Aïcha Diouf ","is_active":true,"matricule":"ETU093","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"aicha12"}'::jsonb,
   '2026-10-13T20:05:54.546358Z',
-  '2026-10-31T20:39:55.428749Z',
+  '2026-11-10T20:51:52.019313Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -5827,17 +5827,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '4aa582f3-f29c-480c-aaa7-f75a45238d0b',
   '4aa582f3-f29c-480c-aaa7-f75a45238d0b',
   '4aa582f3-f29c-480c-aaa7-f75a45238d0b',
   json_build_object('sub', '4aa582f3-f29c-480c-aaa7-f75a45238d0b', 'email', 'diouf.aicha1@uam.edu.sn')::jsonb,
   'email',
   '2026-10-13T20:05:54.577132Z',
   '2026-10-13T20:05:54.546358Z',
-  '2026-10-31T20:39:55.428749Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T20:51:52.019313Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -5851,7 +5851,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-13T20:05:54.546358Z',
-  '2026-10-31T20:39:55.428749Z'
+  '2026-11-10T20:51:52.019313Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -5873,7 +5873,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Amy Ndiaye ","is_active":true,"matricule":"ETU092","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"705286"}'::jsonb,
   '2026-10-13T19:56:32.363611Z',
-  '2026-11-04T21:09:11.065193Z',
+  '2026-11-10T20:13:50.318818Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -5882,17 +5882,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'da7d7f4c-e0c0-4f9a-9f5d-2f7e8903acec',
   'da7d7f4c-e0c0-4f9a-9f5d-2f7e8903acec',
   'da7d7f4c-e0c0-4f9a-9f5d-2f7e8903acec',
   json_build_object('sub', 'da7d7f4c-e0c0-4f9a-9f5d-2f7e8903acec', 'email', 'myachou077@gmail.com')::jsonb,
   'email',
   '2026-10-13T19:56:32.399706Z',
   '2026-10-13T19:56:32.363611Z',
-  '2026-11-04T21:09:11.065193Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T20:13:50.318818Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -5906,7 +5906,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-13T19:56:32.363611Z',
-  '2026-11-04T21:09:11.065193Z'
+  '2026-11-10T20:13:50.318818Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -5928,7 +5928,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Alex Mendy","is_active":true,"matricule":"ETU091","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"705291"}'::jsonb,
   '2026-10-13T19:48:50.676202Z',
-  '2026-11-04T22:49:21.75333Z',
+  '2026-11-11T19:23:39.366833Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -5937,17 +5937,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '97d036b9-97f4-4089-b9f2-8543ec1899c0',
   '97d036b9-97f4-4089-b9f2-8543ec1899c0',
   '97d036b9-97f4-4089-b9f2-8543ec1899c0',
   json_build_object('sub', '97d036b9-97f4-4089-b9f2-8543ec1899c0', 'email', 'mendya434@gmail.com')::jsonb,
   'email',
   '2026-10-13T19:48:50.695975Z',
   '2026-10-13T19:48:50.676202Z',
-  '2026-11-04T22:49:21.75333Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T19:23:39.366833Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -5961,7 +5961,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-13T19:48:50.676202Z',
-  '2026-11-04T22:49:21.75333Z'
+  '2026-11-11T19:23:39.366833Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -5983,7 +5983,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-SML","email_verified":true,"filiere":"SML","full_name":"Ndeye diogob ndiaye","is_active":true,"matricule":"ETU090","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"-ndeye"}'::jsonb,
   '2026-10-13T19:22:55.909006Z',
-  '2026-11-03T21:30:04.335527Z',
+  '2026-11-10T20:39:30.918283Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -5992,17 +5992,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'b6c3a5b9-69c0-427a-8258-c8d2e945d32d',
   'b6c3a5b9-69c0-427a-8258-c8d2e945d32d',
   'b6c3a5b9-69c0-427a-8258-c8d2e945d32d',
   json_build_object('sub', 'b6c3a5b9-69c0-427a-8258-c8d2e945d32d', 'email', 'ndiaye.diogob@uam.edu.sn')::jsonb,
   'email',
   '2026-10-13T19:22:55.926794Z',
   '2026-10-13T19:22:55.909006Z',
-  '2026-11-03T21:30:04.335527Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T20:39:30.918283Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -6016,7 +6016,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-13T19:22:55.909006Z',
-  '2026-11-03T21:30:04.335527Z'
+  '2026-11-10T20:39:30.918283Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -6038,7 +6038,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"bio":"Enseignant-chercheur en Économie, Finance des entreprises et Gestion financière pour la filière MIASS.","email_verified":true,"full_name":"El Hadji Mamour Seynabou Diop","phone":"+221 77 668 89 77","role":"professeur","specialite":"Economie","username":"mamour"}'::jsonb,
   '2026-10-13T19:00:40.683054Z',
-  '2026-11-03T15:42:16.049314Z',
+  '2026-11-07T15:19:42.974739Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -6047,17 +6047,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '9d739ed7-daa9-457d-bcc0-88595a4692e1',
   '9d739ed7-daa9-457d-bcc0-88595a4692e1',
   '9d739ed7-daa9-457d-bcc0-88595a4692e1',
   json_build_object('sub', '9d739ed7-daa9-457d-bcc0-88595a4692e1', 'email', 'mamour@has.sn')::jsonb,
   'email',
   '2026-10-13T19:00:40.689581Z',
   '2026-10-13T19:00:40.683054Z',
-  '2026-11-03T15:42:16.049314Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-07T15:19:42.974739Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -6071,7 +6071,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-13T19:00:40.683054Z',
-  '2026-11-03T15:42:16.049314Z'
+  '2026-11-07T15:19:42.974739Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -6102,8 +6102,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '1fcb760a-9ce5-4c3a-8a30-f89c7a621665',
   '1fcb760a-9ce5-4c3a-8a30-f89c7a621665',
   '1fcb760a-9ce5-4c3a-8a30-f89c7a621665',
   json_build_object('sub', '1fcb760a-9ce5-4c3a-8a30-f89c7a621665', 'email', 'mamenasratabane05@gmail.com')::jsonb,
@@ -6111,8 +6112,7 @@ INSERT INTO auth.identities (
   '2026-10-13T18:59:12.990324Z',
   '2026-10-13T18:59:12.968682Z',
   '2026-10-15T21:16:24.447615Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -6148,7 +6148,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Abdou Salam GUEYE ","is_active":true,"matricule":"ETU087","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"salam-gye26"}'::jsonb,
   '2026-10-13T16:49:54.075903Z',
-  '2026-10-31T17:13:42.430752Z',
+  '2026-11-10T21:10:41.08581Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -6157,17 +6157,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '42d78047-94c4-4ca8-85d6-47af754d1f12',
   '42d78047-94c4-4ca8-85d6-47af754d1f12',
   '42d78047-94c4-4ca8-85d6-47af754d1f12',
   json_build_object('sub', '42d78047-94c4-4ca8-85d6-47af754d1f12', 'email', 'gabdousalam3@gmail.com')::jsonb,
   'email',
   '2026-10-13T16:49:54.090466Z',
   '2026-10-13T16:49:54.075903Z',
-  '2026-10-31T17:13:42.430752Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T21:10:41.08581Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -6181,7 +6181,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-13T16:49:54.075903Z',
-  '2026-10-31T17:13:42.430752Z'
+  '2026-11-10T21:10:41.08581Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -6203,7 +6203,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-SML","email_verified":true,"filiere":"SML","full_name":"Mame Diarra Diané","is_active":true,"matricule":"ETU086","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"diarra"}'::jsonb,
   '2026-10-13T16:19:04.506771Z',
-  '2026-11-03T21:22:02.322038Z',
+  '2026-11-10T23:58:49.120724Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -6212,17 +6212,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '41025b70-26b6-465c-b595-7b62da72347a',
   '41025b70-26b6-465c-b595-7b62da72347a',
   '41025b70-26b6-465c-b595-7b62da72347a',
   json_build_object('sub', '41025b70-26b6-465c-b595-7b62da72347a', 'email', 'diarra201204@gmail.com')::jsonb,
   'email',
   '2026-10-13T16:19:04.536378Z',
   '2026-10-13T16:19:04.506771Z',
-  '2026-11-03T21:22:02.322038Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T23:58:49.120724Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -6236,7 +6236,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-13T16:19:04.506771Z',
-  '2026-11-03T21:22:02.322038Z'
+  '2026-11-10T23:58:49.120724Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -6258,7 +6258,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Sokhna Aminata Ndoye ","is_active":true,"matricule":"ETU085","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"12345"}'::jsonb,
   '2026-10-13T14:57:35.794825Z',
-  '2026-10-29T22:33:16.511799Z',
+  '2026-11-10T21:21:00.739137Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -6267,17 +6267,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '8374e7c9-4666-4e8a-a0e3-2c56a18359d2',
   '8374e7c9-4666-4e8a-a0e3-2c56a18359d2',
   '8374e7c9-4666-4e8a-a0e3-2c56a18359d2',
   json_build_object('sub', '8374e7c9-4666-4e8a-a0e3-2c56a18359d2', 'email', 'ndoyesokhnaaminata848@gmail.com')::jsonb,
   'email',
   '2026-10-13T14:57:35.819905Z',
   '2026-10-13T14:57:35.794825Z',
-  '2026-10-29T22:33:16.511799Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T21:21:00.739137Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -6291,7 +6291,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-13T14:57:35.794825Z',
-  '2026-10-29T22:33:16.511799Z'
+  '2026-11-10T21:21:00.739137Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -6313,7 +6313,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Ndeye amy Ndour ","is_active":true,"matricule":"ETU084","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"ndour-2"}'::jsonb,
   '2026-10-13T10:20:18.536561Z',
-  '2026-11-04T21:05:55.989941Z',
+  '2026-11-10T22:13:03.920989Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -6322,17 +6322,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'f260a19f-eb4d-4820-9599-1e635424f4ad',
   'f260a19f-eb4d-4820-9599-1e635424f4ad',
   'f260a19f-eb4d-4820-9599-1e635424f4ad',
   json_build_object('sub', 'f260a19f-eb4d-4820-9599-1e635424f4ad', 'email', 'ndeyeamytout@gmail.com')::jsonb,
   'email',
   '2026-10-13T10:20:18.556823Z',
   '2026-10-13T10:20:18.536561Z',
-  '2026-11-04T21:05:55.989941Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T22:13:03.920989Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -6346,7 +6346,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-13T10:20:18.536561Z',
-  '2026-11-04T21:05:55.989941Z'
+  '2026-11-10T22:13:03.920989Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -6368,7 +6368,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Adama DIALLO ","is_active":true,"matricule":"ETU083","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"705528has"}'::jsonb,
   '2026-10-13T10:17:57.733374Z',
-  '2026-11-03T22:03:40.113486Z',
+  '2026-11-10T20:31:22.132718Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -6377,17 +6377,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '76b49629-01e3-4854-b0a9-60cc22aebb6a',
   '76b49629-01e3-4854-b0a9-60cc22aebb6a',
   '76b49629-01e3-4854-b0a9-60cc22aebb6a',
   json_build_object('sub', '76b49629-01e3-4854-b0a9-60cc22aebb6a', 'email', 'adiallo211204@gmail.com')::jsonb,
   'email',
   '2026-10-13T10:17:57.746018Z',
   '2026-10-13T10:17:57.733374Z',
-  '2026-11-03T22:03:40.113486Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T20:31:22.132718Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -6401,7 +6401,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-13T10:17:57.733374Z',
-  '2026-11-03T22:03:40.113486Z'
+  '2026-11-10T20:31:22.132718Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -6423,7 +6423,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Seynabou Diop ","is_active":true,"matricule":"ETU082","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"seynabou"}'::jsonb,
   '2026-10-13T10:06:22.016333Z',
-  '2026-11-03T21:27:35.889238Z',
+  '2026-11-09T19:56:51.025187Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -6432,17 +6432,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'e5291a48-2e2c-4aa2-8912-fd86460ae9ff',
   'e5291a48-2e2c-4aa2-8912-fd86460ae9ff',
   'e5291a48-2e2c-4aa2-8912-fd86460ae9ff',
   json_build_object('sub', 'e5291a48-2e2c-4aa2-8912-fd86460ae9ff', 'email', 'diop.seynabou3@uam.edu.sn')::jsonb,
   'email',
   '2026-10-13T10:06:22.04423Z',
   '2026-10-13T10:06:22.016333Z',
-  '2026-11-03T21:27:35.889238Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-09T19:56:51.025187Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -6456,7 +6456,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-13T10:06:22.016333Z',
-  '2026-11-03T21:27:35.889238Z'
+  '2026-11-09T19:56:51.025187Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -6478,7 +6478,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Mouhamad SECK","is_active":true,"matricule":"ETU081","niveau":"L2","phone":"+221 77 277 90 52","role":"etudiant","statut_inscription":"valide","username":"lelouchvb"}'::jsonb,
   '2026-10-12T23:41:51.006562Z',
-  '2026-11-03T21:06:28.339548Z',
+  '2026-11-11T18:40:35.493143Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -6487,17 +6487,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '89dc26db-56c2-4f19-910a-cf9980e8ba21',
   '89dc26db-56c2-4f19-910a-cf9980e8ba21',
   '89dc26db-56c2-4f19-910a-cf9980e8ba21',
   json_build_object('sub', '89dc26db-56c2-4f19-910a-cf9980e8ba21', 'email', 'mouhakmo97@gmail.com')::jsonb,
   'email',
   '2026-10-12T23:41:51.045909Z',
   '2026-10-12T23:41:51.006562Z',
-  '2026-11-03T21:06:28.339548Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T18:40:35.493143Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -6511,7 +6511,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T23:41:51.006562Z',
-  '2026-11-03T21:06:28.339548Z'
+  '2026-11-11T18:40:35.493143Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -6542,8 +6542,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '4290bc22-de02-4303-8afd-40b65ae1bbbf',
   '4290bc22-de02-4303-8afd-40b65ae1bbbf',
   '4290bc22-de02-4303-8afd-40b65ae1bbbf',
   json_build_object('sub', '4290bc22-de02-4303-8afd-40b65ae1bbbf', 'email', 'cissecheikhahmadoubamba2024@gmail.com')::jsonb,
@@ -6551,8 +6552,7 @@ INSERT INTO auth.identities (
   '2026-10-12T23:14:11.197302Z',
   '2026-10-12T23:14:11.17324Z',
   '2026-10-23T19:28:14.522669Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -6588,7 +6588,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-SML","email_verified":true,"filiere":"SML","full_name":"Sokhna Séne Ndiogou ","is_active":true,"matricule":"ETU079","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"sokhna"}'::jsonb,
   '2026-10-12T23:01:32.270811Z',
-  '2026-11-02T21:06:41.854058Z',
+  '2026-11-06T20:59:38.533166Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -6597,17 +6597,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'c8ae1ce8-8d86-4f14-a48f-2876e63c56ac',
   'c8ae1ce8-8d86-4f14-a48f-2876e63c56ac',
   'c8ae1ce8-8d86-4f14-a48f-2876e63c56ac',
   json_build_object('sub', 'c8ae1ce8-8d86-4f14-a48f-2876e63c56ac', 'email', 'sokhnasenendiogou@gmail.com')::jsonb,
   'email',
   '2026-10-12T23:01:32.305925Z',
   '2026-10-12T23:01:32.270811Z',
-  '2026-11-02T21:06:41.854058Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-06T20:59:38.533166Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -6621,7 +6621,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T23:01:32.270811Z',
-  '2026-11-02T21:06:41.854058Z'
+  '2026-11-06T20:59:38.533166Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -6643,7 +6643,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Mame Diarra DIA","is_active":true,"matricule":"ETU078","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"mdd"}'::jsonb,
   '2026-10-12T22:56:15.71221Z',
-  '2026-10-29T22:28:18.580503Z',
+  '2026-11-07T10:37:38.926501Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -6652,17 +6652,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '470faba5-4da2-43dc-aab5-2e29c7b008c8',
   '470faba5-4da2-43dc-aab5-2e29c7b008c8',
   '470faba5-4da2-43dc-aab5-2e29c7b008c8',
   json_build_object('sub', '470faba5-4da2-43dc-aab5-2e29c7b008c8', 'email', 'mamediarra051004@gmail.com')::jsonb,
   'email',
   '2026-10-12T22:56:15.748506Z',
   '2026-10-12T22:56:15.71221Z',
-  '2026-10-29T22:28:18.580503Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-07T10:37:38.926501Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -6676,7 +6676,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T22:56:15.71221Z',
-  '2026-10-29T22:28:18.580503Z'
+  '2026-11-07T10:37:38.926501Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -6698,7 +6698,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Waly Faye","is_active":true,"matricule":"ETU077","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"fayebirame"}'::jsonb,
   '2026-10-12T22:51:19.964576Z',
-  '2026-11-03T22:37:12.229657Z',
+  '2026-11-10T22:58:18.380581Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -6707,17 +6707,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'a1e13511-8768-4241-be2d-c6c7bdd1a9e6',
   'a1e13511-8768-4241-be2d-c6c7bdd1a9e6',
   'a1e13511-8768-4241-be2d-c6c7bdd1a9e6',
   json_build_object('sub', 'a1e13511-8768-4241-be2d-c6c7bdd1a9e6', 'email', 'walyf316@gmail.com')::jsonb,
   'email',
   '2026-10-12T22:51:19.98006Z',
   '2026-10-12T22:51:19.964576Z',
-  '2026-11-03T22:37:12.229657Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T22:58:18.380581Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -6731,7 +6731,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T22:51:19.964576Z',
-  '2026-11-03T22:37:12.229657Z'
+  '2026-11-10T22:58:18.380581Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -6753,7 +6753,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Baye Ngagne Mboup","is_active":true,"matricule":"ETU076","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"mboup"}'::jsonb,
   '2026-10-12T22:41:48.227995Z',
-  '2026-11-03T20:59:44.540728Z',
+  '2026-11-10T21:01:32.086068Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -6762,17 +6762,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '3f6aab15-b401-4f58-aa22-c0d97938569b',
   '3f6aab15-b401-4f58-aa22-c0d97938569b',
   '3f6aab15-b401-4f58-aa22-c0d97938569b',
   json_build_object('sub', '3f6aab15-b401-4f58-aa22-c0d97938569b', 'email', 'mboupbayengagne@gmail.com')::jsonb,
   'email',
   '2026-10-12T22:41:48.231273Z',
   '2026-10-12T22:41:48.227995Z',
-  '2026-11-03T20:59:44.540728Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T21:01:32.086068Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -6786,7 +6786,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T22:41:48.227995Z',
-  '2026-11-03T20:59:44.540728Z'
+  '2026-11-10T21:01:32.086068Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -6808,7 +6808,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Cheikhouna Lo","is_active":true,"matricule":"ETU075","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"saatuubaa"}'::jsonb,
   '2026-10-12T22:41:39.264222Z',
-  '2026-11-04T21:55:13.320295Z',
+  '2026-11-12T11:27:36.162181Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -6817,17 +6817,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '4fc79fc1-4150-4e05-bb23-e764c2a05e9f',
   '4fc79fc1-4150-4e05-bb23-e764c2a05e9f',
   '4fc79fc1-4150-4e05-bb23-e764c2a05e9f',
   json_build_object('sub', '4fc79fc1-4150-4e05-bb23-e764c2a05e9f', 'email', 'locheikhouna99@gmail.com')::jsonb,
   'email',
   '2026-10-12T22:41:39.273644Z',
   '2026-10-12T22:41:39.264222Z',
-  '2026-11-04T21:55:13.320295Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-12T11:27:36.162181Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -6841,7 +6841,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T22:41:39.264222Z',
-  '2026-11-04T21:55:13.320295Z'
+  '2026-11-12T11:27:36.162181Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -6863,7 +6863,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Ndeye Mbodji","is_active":true,"matricule":"ETU074","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"ndeye_mbodji"}'::jsonb,
   '2026-10-12T22:40:03.860462Z',
-  '2026-11-03T21:08:22.296508Z',
+  '2026-11-10T21:05:41.340695Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -6872,17 +6872,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '9c0ac362-bf7d-4c62-8e89-9b2a92c26673',
   '9c0ac362-bf7d-4c62-8e89-9b2a92c26673',
   '9c0ac362-bf7d-4c62-8e89-9b2a92c26673',
   json_build_object('sub', '9c0ac362-bf7d-4c62-8e89-9b2a92c26673', 'email', 'mbodjindeye80@gmail.com')::jsonb,
   'email',
   '2026-10-12T22:40:03.869152Z',
   '2026-10-12T22:40:03.860462Z',
-  '2026-11-03T21:08:22.296508Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T21:05:41.340695Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -6896,7 +6896,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T22:40:03.860462Z',
-  '2026-11-03T21:08:22.296508Z'
+  '2026-11-10T21:05:41.340695Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -6918,7 +6918,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Astou Wade ","is_active":true,"matricule":"ETU073","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"wade.astou"}'::jsonb,
   '2026-10-12T22:40:03.193328Z',
-  '2026-11-03T22:54:53.844352Z',
+  '2026-11-10T21:01:51.826406Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -6927,17 +6927,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'f2edffd2-b649-4075-ab75-28fd59bfaea2',
   'f2edffd2-b649-4075-ab75-28fd59bfaea2',
   'f2edffd2-b649-4075-ab75-28fd59bfaea2',
   json_build_object('sub', 'f2edffd2-b649-4075-ab75-28fd59bfaea2', 'email', 'astouwade985@gmail.com')::jsonb,
   'email',
   '2026-10-12T22:40:03.201356Z',
   '2026-10-12T22:40:03.193328Z',
-  '2026-11-03T22:54:53.844352Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T21:01:51.826406Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -6951,7 +6951,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T22:40:03.193328Z',
-  '2026-11-03T22:54:53.844352Z'
+  '2026-11-10T21:01:51.826406Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -6973,7 +6973,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-SML","email_verified":true,"filiere":"SML","full_name":"Habybatou Diallo","is_active":true,"matricule":"ETU072","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"habybatou.d"}'::jsonb,
   '2026-10-12T22:37:32.07526Z',
-  '2026-11-02T00:20:25.276458Z',
+  '2026-11-07T21:16:57.790608Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -6982,17 +6982,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '03b3d532-9fa5-47e4-bdfc-44d06947bfc4',
   '03b3d532-9fa5-47e4-bdfc-44d06947bfc4',
   '03b3d532-9fa5-47e4-bdfc-44d06947bfc4',
   json_build_object('sub', '03b3d532-9fa5-47e4-bdfc-44d06947bfc4', 'email', 'diallo.habybatou@uam.edu.sn')::jsonb,
   'email',
   '2026-10-12T22:37:32.096154Z',
   '2026-10-12T22:37:32.07526Z',
-  '2026-11-02T00:20:25.276458Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-07T21:16:57.790608Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -7006,7 +7006,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T22:37:32.07526Z',
-  '2026-11-02T00:20:25.276458Z'
+  '2026-11-07T21:16:57.790608Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -7028,7 +7028,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Amadou Diang DIALLO","is_active":true,"matricule":"ETU071","niveau":"L2","phone":"","role":"etudiant","statut_inscription":"valide","username":"ame"}'::jsonb,
   '2026-10-12T22:33:08.918417Z',
-  '2026-11-04T21:14:17.776127Z',
+  '2026-11-10T20:52:21.433658Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -7037,17 +7037,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '637b2827-cfb6-4acc-a406-c48ac1a0cddc',
   '637b2827-cfb6-4acc-a406-c48ac1a0cddc',
   '637b2827-cfb6-4acc-a406-c48ac1a0cddc',
   json_build_object('sub', '637b2827-cfb6-4acc-a406-c48ac1a0cddc', 'email', 'amadoudd0920@gmail.com')::jsonb,
   'email',
   '2026-10-12T22:33:08.936237Z',
   '2026-10-12T22:33:08.918417Z',
-  '2026-11-04T21:14:17.776127Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T20:52:21.433658Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -7061,7 +7061,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T22:33:08.918417Z',
-  '2026-11-04T21:14:17.776127Z'
+  '2026-11-10T20:52:21.433658Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -7083,7 +7083,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-SML","email_verified":true,"filiere":"SML","full_name":"Mareme Mballo","is_active":true,"matricule":"ETU070","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"603689"}'::jsonb,
   '2026-10-12T22:31:00.102979Z',
-  '2026-11-03T21:07:52.995473Z',
+  '2026-11-12T10:38:24.83217Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -7092,17 +7092,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'c9dd657d-8460-42e4-b196-03262e85b07d',
   'c9dd657d-8460-42e4-b196-03262e85b07d',
   'c9dd657d-8460-42e4-b196-03262e85b07d',
   json_build_object('sub', 'c9dd657d-8460-42e4-b196-03262e85b07d', 'email', 'marememballo03@gmail.com')::jsonb,
   'email',
   '2026-10-12T22:31:00.112429Z',
   '2026-10-12T22:31:00.102979Z',
-  '2026-11-03T21:07:52.995473Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-12T10:38:24.83217Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -7116,7 +7116,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T22:31:00.102979Z',
-  '2026-11-03T21:07:52.995473Z'
+  '2026-11-12T10:38:24.83217Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -7138,7 +7138,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-SML","email_verified":true,"filiere":"SML","full_name":"Ndeye Magatte ba","is_active":true,"matricule":"ETU069","niveau":"L2","phone":"+221 77 551 81 96","role":"etudiant","statut_inscription":"valide","username":"magui"}'::jsonb,
   '2026-10-12T22:29:51.986212Z',
-  '2026-11-01T20:56:02.867418Z',
+  '2026-11-07T20:14:57.4645Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -7147,17 +7147,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'c6b5526b-773d-4c9e-b0df-c25f005f6146',
   'c6b5526b-773d-4c9e-b0df-c25f005f6146',
   'c6b5526b-773d-4c9e-b0df-c25f005f6146',
   json_build_object('sub', 'c6b5526b-773d-4c9e-b0df-c25f005f6146', 'email', 'mba386767@gmail.com')::jsonb,
   'email',
   '2026-10-12T22:29:52.00818Z',
   '2026-10-12T22:29:51.986212Z',
-  '2026-11-01T20:56:02.867418Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-07T20:14:57.4645Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -7171,7 +7171,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T22:29:51.986212Z',
-  '2026-11-01T20:56:02.867418Z'
+  '2026-11-07T20:14:57.4645Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -7202,8 +7202,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '3b8c8056-5671-47a7-9e66-81614a610c51',
   '3b8c8056-5671-47a7-9e66-81614a610c51',
   '3b8c8056-5671-47a7-9e66-81614a610c51',
   json_build_object('sub', '3b8c8056-5671-47a7-9e66-81614a610c51', 'email', 'ramsessbodian34@gmail.com')::jsonb,
@@ -7211,8 +7212,7 @@ INSERT INTO auth.identities (
   '2026-10-12T22:28:05.901709Z',
   '2026-10-12T22:28:05.888005Z',
   '2026-11-02T21:13:20.690194Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -7248,7 +7248,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Marie Thérèse Mbengue ","is_active":true,"matricule":"ETU067","niveau":"L2","phone":"+221 785925983","role":"etudiant","statut_inscription":"valide","username":"mmbengue"}'::jsonb,
   '2026-10-12T22:24:33.040103Z',
-  '2026-11-03T21:00:15.436771Z',
+  '2026-11-10T21:05:54.963043Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -7257,17 +7257,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '86e61ed2-5c07-4702-8f96-5a833d62fce2',
   '86e61ed2-5c07-4702-8f96-5a833d62fce2',
   '86e61ed2-5c07-4702-8f96-5a833d62fce2',
   json_build_object('sub', '86e61ed2-5c07-4702-8f96-5a833d62fce2', 'email', 'marietheresembengue78@gmail.com')::jsonb,
   'email',
   '2026-10-12T22:24:33.060033Z',
   '2026-10-12T22:24:33.040103Z',
-  '2026-11-03T21:00:15.436771Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T21:05:54.963043Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -7281,7 +7281,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T22:24:33.040103Z',
-  '2026-11-03T21:00:15.436771Z'
+  '2026-11-10T21:05:54.963043Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -7303,7 +7303,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Mouhamed Dieye","is_active":true,"matricule":"ETU066","niveau":"L1","phone":"+221 78 820 63 38","role":"etudiant","statut_inscription":"valide","username":"dieye_mouhamed.05"}'::jsonb,
   '2026-10-12T22:18:54.511365Z',
-  '2026-11-04T00:26:09.150882Z',
+  '2026-11-10T20:01:58.004959Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -7312,17 +7312,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '8accd962-6ada-40a3-a956-d2c5c5f85931',
   '8accd962-6ada-40a3-a956-d2c5c5f85931',
   '8accd962-6ada-40a3-a956-d2c5c5f85931',
   json_build_object('sub', '8accd962-6ada-40a3-a956-d2c5c5f85931', 'email', 'alaminedieye12@gmail.com')::jsonb,
   'email',
   '2026-10-12T22:18:54.549581Z',
   '2026-10-12T22:18:54.511365Z',
-  '2026-11-04T00:26:09.150882Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T20:01:58.004959Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -7336,7 +7336,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T22:18:54.511365Z',
-  '2026-11-04T00:26:09.150882Z'
+  '2026-11-10T20:01:58.004959Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -7358,7 +7358,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Baye Talla Diop","is_active":true,"matricule":"ETU065","niveau":"L1","phone":"+221 77 551 81 96","role":"etudiant","statut_inscription":"valide","username":"bayetalla"}'::jsonb,
   '2026-10-12T22:09:08.684909Z',
-  '2026-11-04T09:52:44.612094Z',
+  '2026-11-08T19:59:47.781241Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -7367,17 +7367,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '04f5eef4-89c1-4a5b-8256-872fd7ce73ea',
   '04f5eef4-89c1-4a5b-8256-872fd7ce73ea',
   '04f5eef4-89c1-4a5b-8256-872fd7ce73ea',
   json_build_object('sub', '04f5eef4-89c1-4a5b-8256-872fd7ce73ea', 'email', 'diopbayetalla3@gmail.com')::jsonb,
   'email',
   '2026-10-12T22:09:08.699777Z',
   '2026-10-12T22:09:08.684909Z',
-  '2026-11-04T09:52:44.612094Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-08T19:59:47.781241Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -7391,7 +7391,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T22:09:08.684909Z',
-  '2026-11-04T09:52:44.612094Z'
+  '2026-11-08T19:59:47.781241Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -7413,7 +7413,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Aissata Alhousseynou Dia","is_active":true,"matricule":"ETU064","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"aisha"}'::jsonb,
   '2026-10-12T22:07:26.387832Z',
-  '2026-11-04T21:00:43.210448Z',
+  '2026-11-10T16:38:31.404971Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -7422,17 +7422,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '005bec73-17d3-419b-aad6-e716d413e918',
   '005bec73-17d3-419b-aad6-e716d413e918',
   '005bec73-17d3-419b-aad6-e716d413e918',
   json_build_object('sub', '005bec73-17d3-419b-aad6-e716d413e918', 'email', 'aissataalhousseynoud@gmail.com')::jsonb,
   'email',
   '2026-10-12T22:07:26.402101Z',
   '2026-10-12T22:07:26.387832Z',
-  '2026-11-04T21:00:43.210448Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T16:38:31.404971Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -7446,7 +7446,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T22:07:26.387832Z',
-  '2026-11-04T21:00:43.210448Z'
+  '2026-11-10T16:38:31.404971Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -7468,7 +7468,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-SML","email_verified":true,"filiere":"SML","full_name":"Maty Thiongane","is_active":true,"matricule":"ETU063","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"m.thiongane"}'::jsonb,
   '2026-10-12T22:05:21.035869Z',
-  '2026-11-05T00:03:53.456706Z',
+  '2026-11-11T23:41:39.624424Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -7477,17 +7477,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '9c7da3cb-7269-4c93-befb-6372eee057d5',
   '9c7da3cb-7269-4c93-befb-6372eee057d5',
   '9c7da3cb-7269-4c93-befb-6372eee057d5',
   json_build_object('sub', '9c7da3cb-7269-4c93-befb-6372eee057d5', 'email', 'thiongane.maty@uam.edu.sn')::jsonb,
   'email',
   '2026-10-12T22:05:21.054394Z',
   '2026-10-12T22:05:21.035869Z',
-  '2026-11-05T00:03:53.456706Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T23:41:39.624424Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -7501,7 +7501,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T22:05:21.035869Z',
-  '2026-11-05T00:03:53.456706Z'
+  '2026-11-11T23:41:39.624424Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -7523,7 +7523,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"AÏSSATOU DIOUF","is_active":true,"matricule":"ETU062","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"kim_95"}'::jsonb,
   '2026-10-12T22:01:49.481035Z',
-  '2026-11-04T21:00:18.572708Z',
+  '2026-11-08T20:59:15.533297Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -7532,17 +7532,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '75937c43-6c73-4289-bb6b-f5eb26e6409d',
   '75937c43-6c73-4289-bb6b-f5eb26e6409d',
   '75937c43-6c73-4289-bb6b-f5eb26e6409d',
   json_build_object('sub', '75937c43-6c73-4289-bb6b-f5eb26e6409d', 'email', 'diouf.aissatou3@uam.edu.sn')::jsonb,
   'email',
   '2026-10-12T22:01:49.495968Z',
   '2026-10-12T22:01:49.481035Z',
-  '2026-11-04T21:00:18.572708Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-08T20:59:15.533297Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -7556,7 +7556,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T22:01:49.481035Z',
-  '2026-11-04T21:00:18.572708Z'
+  '2026-11-08T20:59:15.533297Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -7578,7 +7578,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Papa Amadou Mbaye","is_active":true,"matricule":"ETU061","niveau":"L1","phone":"+221 77 551 81 96","role":"etudiant","statut_inscription":"valide","username":"papambaye"}'::jsonb,
   '2026-10-12T21:59:57.542524Z',
-  '2026-11-03T22:13:37.932443Z',
+  '2026-11-11T19:28:43.86502Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -7587,17 +7587,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '27827d30-0654-4b0d-84fd-10f0452b2a50',
   '27827d30-0654-4b0d-84fd-10f0452b2a50',
   '27827d30-0654-4b0d-84fd-10f0452b2a50',
   json_build_object('sub', '27827d30-0654-4b0d-84fd-10f0452b2a50', 'email', 'papaamadoumbaye411@gmail.com')::jsonb,
   'email',
   '2026-10-12T21:59:57.561046Z',
   '2026-10-12T21:59:57.542524Z',
-  '2026-11-03T22:13:37.932443Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T19:28:43.86502Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -7611,7 +7611,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T21:59:57.542524Z',
-  '2026-11-03T22:13:37.932443Z'
+  '2026-11-11T19:28:43.86502Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -7633,7 +7633,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Arona Sy","is_active":true,"matricule":"ETU060","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"sy.arona"}'::jsonb,
   '2026-10-12T21:53:50.483385Z',
-  '2026-11-03T21:37:51.992892Z',
+  '2026-11-11T21:28:01.538671Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -7642,17 +7642,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '8191e434-fc2e-41d3-9b4a-fb25c98547cb',
   '8191e434-fc2e-41d3-9b4a-fb25c98547cb',
   '8191e434-fc2e-41d3-9b4a-fb25c98547cb',
   json_build_object('sub', '8191e434-fc2e-41d3-9b4a-fb25c98547cb', 'email', 'sy.arona@uam.edu.sn')::jsonb,
   'email',
   '2026-10-12T21:53:50.486082Z',
   '2026-10-12T21:53:50.483385Z',
-  '2026-11-03T21:37:51.992892Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T21:28:01.538671Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -7666,7 +7666,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T21:53:50.483385Z',
-  '2026-11-03T21:37:51.992892Z'
+  '2026-11-11T21:28:01.538671Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -7688,7 +7688,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Aminata Séne","is_active":true,"matricule":"ETU059","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"aminata"}'::jsonb,
   '2026-10-12T21:53:46.726899Z',
-  '2026-11-04T18:20:01.95768Z',
+  '2026-11-10T20:29:25.504913Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -7697,17 +7697,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '40a2332e-81b3-489f-b6fd-3b838b3ff656',
   '40a2332e-81b3-489f-b6fd-3b838b3ff656',
   '40a2332e-81b3-489f-b6fd-3b838b3ff656',
   json_build_object('sub', '40a2332e-81b3-489f-b6fd-3b838b3ff656', 'email', 'aminatasene930@gmail.com')::jsonb,
   'email',
   '2026-10-12T21:53:46.734817Z',
   '2026-10-12T21:53:46.726899Z',
-  '2026-11-04T18:20:01.95768Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T20:29:25.504913Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -7721,7 +7721,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T21:53:46.726899Z',
-  '2026-11-04T18:20:01.95768Z'
+  '2026-11-10T20:29:25.504913Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -7743,7 +7743,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Maïmouna Diagne","is_active":true,"matricule":"ETU058","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"mounass_baby"}'::jsonb,
   '2026-10-12T21:51:47.422502Z',
-  '2026-11-04T21:18:59.843379Z',
+  '2026-11-12T11:00:28.696135Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -7752,17 +7752,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'f02134ae-b1ee-42ff-a9b2-e97572e62359',
   'f02134ae-b1ee-42ff-a9b2-e97572e62359',
   'f02134ae-b1ee-42ff-a9b2-e97572e62359',
   json_build_object('sub', 'f02134ae-b1ee-42ff-a9b2-e97572e62359', 'email', 'diagne.maimouna1@uam.edu.sn')::jsonb,
   'email',
   '2026-10-12T21:51:47.427097Z',
   '2026-10-12T21:51:47.422502Z',
-  '2026-11-04T21:18:59.843379Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-12T11:00:28.696135Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -7776,7 +7776,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T21:51:47.422502Z',
-  '2026-11-04T21:18:59.843379Z'
+  '2026-11-12T11:00:28.696135Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -7798,7 +7798,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"ELIMANE NDIAYE","is_active":true,"matricule":"ETU057","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"michael"}'::jsonb,
   '2026-10-12T21:51:36.938914Z',
-  '2026-11-04T13:35:45.892533Z',
+  '2026-11-06T21:38:17.702139Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -7807,17 +7807,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '8e5b655c-e1db-4619-a125-cf8060ccd7b5',
   '8e5b655c-e1db-4619-a125-cf8060ccd7b5',
   '8e5b655c-e1db-4619-a125-cf8060ccd7b5',
   json_build_object('sub', '8e5b655c-e1db-4619-a125-cf8060ccd7b5', 'email', 'limzojr21@gmail.com')::jsonb,
   'email',
   '2026-10-12T21:51:36.941427Z',
   '2026-10-12T21:51:36.938914Z',
-  '2026-11-04T13:35:45.892533Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-06T21:38:17.702139Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -7831,7 +7831,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T21:51:36.938914Z',
-  '2026-11-04T13:35:45.892533Z'
+  '2026-11-06T21:38:17.702139Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -7853,7 +7853,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-SML","email_verified":true,"filiere":"SML","full_name":"Sokhna Fatimatou Ndiaye","is_active":true,"matricule":"ETU056","niveau":"L1","phone":"+221 78 739 67 32","role":"etudiant","statut_inscription":"valide","username":"sokhna_fatimatou"}'::jsonb,
   '2026-10-12T21:51:33.18539Z',
-  '2026-11-04T21:11:02.887239Z',
+  '2026-11-10T20:04:12.74586Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -7862,17 +7862,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'f2f22602-c195-427d-92d7-38c18675d659',
   'f2f22602-c195-427d-92d7-38c18675d659',
   'f2f22602-c195-427d-92d7-38c18675d659',
   json_build_object('sub', 'f2f22602-c195-427d-92d7-38c18675d659', 'email', 'sokhnafatimatoundiaye@gmail.com')::jsonb,
   'email',
   '2026-10-12T21:51:33.18902Z',
   '2026-10-12T21:51:33.18539Z',
-  '2026-11-04T21:11:02.887239Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T20:04:12.74586Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -7886,7 +7886,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T21:51:33.18539Z',
-  '2026-11-04T21:11:02.887239Z'
+  '2026-11-10T20:04:12.74586Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -7908,7 +7908,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Mouhamadou Lamine Khouma","is_active":true,"matricule":"ETU055","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"khouma"}'::jsonb,
   '2026-10-12T21:50:35.250914Z',
-  '2026-11-04T23:16:29.046039Z',
+  '2026-11-10T23:12:58.699018Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -7917,17 +7917,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '7691fd0e-7341-4b91-94b9-31cb7ec4b9fd',
   '7691fd0e-7341-4b91-94b9-31cb7ec4b9fd',
   '7691fd0e-7341-4b91-94b9-31cb7ec4b9fd',
   json_build_object('sub', '7691fd0e-7341-4b91-94b9-31cb7ec4b9fd', 'email', 'laminekhoumajr@gmail.com')::jsonb,
   'email',
   '2026-10-12T21:50:35.253891Z',
   '2026-10-12T21:50:35.250914Z',
-  '2026-11-04T23:16:29.046039Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T23:12:58.699018Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -7941,7 +7941,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T21:50:35.250914Z',
-  '2026-11-04T23:16:29.046039Z'
+  '2026-11-10T23:12:58.699018Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -7963,7 +7963,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"ndeye sene","is_active":true,"matricule":"ETU054","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"ndeye_sene"}'::jsonb,
   '2026-10-12T21:49:32.041867Z',
-  '2026-11-03T21:41:24.294705Z',
+  '2026-11-06T21:38:11.985735Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -7972,17 +7972,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'bd024872-a14e-4783-8d1a-d2c479104dc9',
   'bd024872-a14e-4783-8d1a-d2c479104dc9',
   'bd024872-a14e-4783-8d1a-d2c479104dc9',
   json_build_object('sub', 'bd024872-a14e-4783-8d1a-d2c479104dc9', 'email', 'senen7090@gmail.com')::jsonb,
   'email',
   '2026-10-12T21:49:32.044514Z',
   '2026-10-12T21:49:32.041867Z',
-  '2026-11-03T21:41:24.294705Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-06T21:38:11.985735Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -7996,7 +7996,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T21:49:32.041867Z',
-  '2026-11-03T21:41:24.294705Z'
+  '2026-11-06T21:38:11.985735Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -8018,7 +8018,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Ndeye sokhna","is_active":true,"matricule":"ETU053","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"ndeyesokhnaniang"}'::jsonb,
   '2026-10-12T21:49:08.450521Z',
-  '2026-11-04T18:04:43.996598Z',
+  '2026-11-10T12:07:31.693235Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -8027,17 +8027,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '6a248d88-3548-4aa4-a273-09a696bacb4e',
   '6a248d88-3548-4aa4-a273-09a696bacb4e',
   '6a248d88-3548-4aa4-a273-09a696bacb4e',
   json_build_object('sub', '6a248d88-3548-4aa4-a273-09a696bacb4e', 'email', 'niang.ndeyesokhna95@gmail.com')::jsonb,
   'email',
   '2026-10-12T21:49:08.453021Z',
   '2026-10-12T21:49:08.450521Z',
-  '2026-11-04T18:04:43.996598Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T12:07:31.693235Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -8051,7 +8051,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T21:49:08.450521Z',
-  '2026-11-04T18:04:43.996598Z'
+  '2026-11-10T12:07:31.693235Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -8073,7 +8073,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-SML","email_verified":true,"filiere":"SML","full_name":"Mody Sy","is_active":true,"matricule":"ETU052","niveau":"L1","phone":"+221 78 305 75 11","role":"etudiant","statut_inscription":"valide","username":"mody221"}'::jsonb,
   '2026-10-12T21:49:06.389434Z',
-  '2026-11-03T21:32:40.415259Z',
+  '2026-11-06T21:34:20.856538Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -8082,17 +8082,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '370b51ec-ad8e-4c34-9a03-1827a0705253',
   '370b51ec-ad8e-4c34-9a03-1827a0705253',
   '370b51ec-ad8e-4c34-9a03-1827a0705253',
   json_build_object('sub', '370b51ec-ad8e-4c34-9a03-1827a0705253', 'email', 'modysy602@gmail.com')::jsonb,
   'email',
   '2026-10-12T21:49:06.393812Z',
   '2026-10-12T21:49:06.389434Z',
-  '2026-11-03T21:32:40.415259Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-06T21:34:20.856538Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -8106,7 +8106,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T21:49:06.389434Z',
-  '2026-11-03T21:32:40.415259Z'
+  '2026-11-06T21:34:20.856538Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -8137,8 +8137,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '67a3c209-52c1-4d97-9b50-1bead0f31586',
   '67a3c209-52c1-4d97-9b50-1bead0f31586',
   '67a3c209-52c1-4d97-9b50-1bead0f31586',
   json_build_object('sub', '67a3c209-52c1-4d97-9b50-1bead0f31586', 'email', 'mouhamadoulaminediarra493@gmail.com')::jsonb,
@@ -8146,8 +8147,7 @@ INSERT INTO auth.identities (
   '2026-10-12T21:48:57.861814Z',
   '2026-10-12T21:48:57.845293Z',
   '2026-11-01T18:11:37.280838Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -8183,7 +8183,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Ngoné Gueye","is_active":true,"matricule":"ETU050","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"ngonee"}'::jsonb,
   '2026-10-12T21:48:21.230171Z',
-  '2026-10-30T22:18:28.166727Z',
+  '2026-11-11T00:45:50.863063Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -8192,17 +8192,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '655621a9-ef44-4570-8cbb-f4ccf5c9ac12',
   '655621a9-ef44-4570-8cbb-f4ccf5c9ac12',
   '655621a9-ef44-4570-8cbb-f4ccf5c9ac12',
   json_build_object('sub', '655621a9-ef44-4570-8cbb-f4ccf5c9ac12', 'email', 'ngomodi1606@gmail.com')::jsonb,
   'email',
   '2026-10-12T21:48:21.238482Z',
   '2026-10-12T21:48:21.230171Z',
-  '2026-10-30T22:18:28.166727Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T00:45:50.863063Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -8216,7 +8216,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T21:48:21.230171Z',
-  '2026-10-30T22:18:28.166727Z'
+  '2026-11-11T00:45:50.863063Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -8238,7 +8238,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Anta NIANG","is_active":true,"matricule":"ETU049","niveau":"L1","phone":"+221 78  732 20 22","role":"etudiant","statut_inscription":"valide","username":"niang.anta"}'::jsonb,
   '2026-10-12T21:46:26.974451Z',
-  '2026-11-04T21:08:21.527666Z',
+  '2026-11-11T21:27:28.968033Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -8247,17 +8247,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '3aed59c1-c1ad-441e-8228-c7f0707e8373',
   '3aed59c1-c1ad-441e-8228-c7f0707e8373',
   '3aed59c1-c1ad-441e-8228-c7f0707e8373',
   json_build_object('sub', '3aed59c1-c1ad-441e-8228-c7f0707e8373', 'email', 'niang.anta1@uam.edu.sn')::jsonb,
   'email',
   '2026-10-12T21:46:26.986503Z',
   '2026-10-12T21:46:26.974451Z',
-  '2026-11-04T21:08:21.527666Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T21:27:28.968033Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -8271,7 +8271,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T21:46:26.974451Z',
-  '2026-11-04T21:08:21.527666Z'
+  '2026-11-11T21:27:28.968033Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -8293,7 +8293,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Massaer Dieng","is_active":true,"matricule":"ETU048","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"dieng"}'::jsonb,
   '2026-10-12T21:40:43.440507Z',
-  '2026-11-04T23:25:03.828281Z',
+  '2026-11-11T20:55:06.502044Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -8302,17 +8302,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'd77f08fb-cd01-4251-bd72-acdc03610ea7',
   'd77f08fb-cd01-4251-bd72-acdc03610ea7',
   'd77f08fb-cd01-4251-bd72-acdc03610ea7',
   json_build_object('sub', 'd77f08fb-cd01-4251-bd72-acdc03610ea7', 'email', 'dieng.massaer@uam.edu.sn')::jsonb,
   'email',
   '2026-10-12T21:40:43.44971Z',
   '2026-10-12T21:40:43.440507Z',
-  '2026-11-04T23:25:03.828281Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T20:55:06.502044Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -8326,7 +8326,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T21:40:43.440507Z',
-  '2026-11-04T23:25:03.828281Z'
+  '2026-11-11T20:55:06.502044Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -8357,8 +8357,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'ef732641-26b5-4111-976a-aeb8eb4ba5bd',
   'ef732641-26b5-4111-976a-aeb8eb4ba5bd',
   'ef732641-26b5-4111-976a-aeb8eb4ba5bd',
   json_build_object('sub', 'ef732641-26b5-4111-976a-aeb8eb4ba5bd', 'email', 'abdoulrazaddiallo@gmail.com')::jsonb,
@@ -8366,8 +8367,7 @@ INSERT INTO auth.identities (
   '2026-10-12T21:38:48.306387Z',
   '2026-10-12T21:38:48.283218Z',
   '2026-10-28T20:03:38.941384Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -8403,7 +8403,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"WADE Rokhaya ","is_active":true,"matricule":"ETU046","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"rokhaya"}'::jsonb,
   '2026-10-12T21:37:59.292596Z',
-  '2026-11-04T21:07:11.190042Z',
+  '2026-11-11T14:46:46.731657Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -8412,17 +8412,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'ebc2f28d-a962-43bf-ba05-96e9048d743a',
   'ebc2f28d-a962-43bf-ba05-96e9048d743a',
   'ebc2f28d-a962-43bf-ba05-96e9048d743a',
   json_build_object('sub', 'ebc2f28d-a962-43bf-ba05-96e9048d743a', 'email', 'rokhaya171206@gmail.com')::jsonb,
   'email',
   '2026-10-12T21:37:59.313859Z',
   '2026-10-12T21:37:59.292596Z',
-  '2026-11-04T21:07:11.190042Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T14:46:46.731657Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -8436,7 +8436,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T21:37:59.292596Z',
-  '2026-11-04T21:07:11.190042Z'
+  '2026-11-11T14:46:46.731657Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -8458,7 +8458,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-SML","email_verified":true,"filiere":"SML","full_name":"Daouda THIAM","is_active":true,"matricule":"ETU045","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"d.thiam"}'::jsonb,
   '2026-10-12T21:30:01.156588Z',
-  '2026-11-03T21:26:05.573645Z',
+  '2026-11-09T20:57:26.248318Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -8467,17 +8467,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'ec7dd83c-ca56-49b0-a9bc-62388c8087c4',
   'ec7dd83c-ca56-49b0-a9bc-62388c8087c4',
   'ec7dd83c-ca56-49b0-a9bc-62388c8087c4',
   json_build_object('sub', 'ec7dd83c-ca56-49b0-a9bc-62388c8087c4', 'email', 'd.thiam.sn@gmail.com')::jsonb,
   'email',
   '2026-10-12T21:30:01.176419Z',
   '2026-10-12T21:30:01.156588Z',
-  '2026-11-03T21:26:05.573645Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-09T20:57:26.248318Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -8491,7 +8491,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T21:30:01.156588Z',
-  '2026-11-03T21:26:05.573645Z'
+  '2026-11-09T20:57:26.248318Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -8522,8 +8522,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'c39f69f8-9dab-4c26-b88b-5785beb72f64',
   'c39f69f8-9dab-4c26-b88b-5785beb72f64',
   'c39f69f8-9dab-4c26-b88b-5785beb72f64',
   json_build_object('sub', 'c39f69f8-9dab-4c26-b88b-5785beb72f64', 'email', 'anneibrahima2005@gmail.com')::jsonb,
@@ -8531,8 +8532,7 @@ INSERT INTO auth.identities (
   '2026-10-12T21:05:12.700958Z',
   '2026-10-12T21:05:12.674198Z',
   '2026-10-12T22:08:38.324609Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -8577,8 +8577,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '1edede3e-0652-436b-bca2-55c2676925f7',
   '1edede3e-0652-436b-bca2-55c2676925f7',
   '1edede3e-0652-436b-bca2-55c2676925f7',
   json_build_object('sub', '1edede3e-0652-436b-bca2-55c2676925f7', 'email', 'salimatacisse2005@gmail.com')::jsonb,
@@ -8586,8 +8587,7 @@ INSERT INTO auth.identities (
   '2026-10-12T21:00:17.041136Z',
   '2026-10-12T21:00:16.9999Z',
   '2026-10-23T22:26:36.264511Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -8623,7 +8623,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MIASS","email_verified":true,"filiere":"MIASS","full_name":"NDEYE MARIE KA ","is_active":true,"matricule":"ETU042","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"1818"}'::jsonb,
   '2026-10-12T10:29:34.204827Z',
-  '2026-11-03T21:05:01.885643Z',
+  '2026-11-10T21:10:50.744174Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -8632,17 +8632,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '463ffbf8-815b-4de0-b889-c1129e40c88a',
   '463ffbf8-815b-4de0-b889-c1129e40c88a',
   '463ffbf8-815b-4de0-b889-c1129e40c88a',
   json_build_object('sub', '463ffbf8-815b-4de0-b889-c1129e40c88a', 'email', 'ka.marie@uam.edu.sn')::jsonb,
   'email',
   '2026-10-12T10:29:34.238689Z',
   '2026-10-12T10:29:34.204827Z',
-  '2026-11-03T21:05:01.885643Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T21:10:50.744174Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -8656,7 +8656,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T10:29:34.204827Z',
-  '2026-11-03T21:05:01.885643Z'
+  '2026-11-10T21:10:50.744174Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -8678,7 +8678,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Mamadou Diaw","is_active":true,"matricule":"ETU041","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"mamadoudiaw1105"}'::jsonb,
   '2026-10-12T02:04:16.72318Z',
-  '2026-11-04T21:06:47.476071Z',
+  '2026-11-11T13:53:48.406587Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -8687,17 +8687,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'ac6691ba-e512-403e-b110-724dac65e285',
   'ac6691ba-e512-403e-b110-724dac65e285',
   'ac6691ba-e512-403e-b110-724dac65e285',
   json_build_object('sub', 'ac6691ba-e512-403e-b110-724dac65e285', 'email', 'mamadoudiaw1105@gmail.com')::jsonb,
   'email',
   '2026-10-12T02:04:16.770764Z',
   '2026-10-12T02:04:16.72318Z',
-  '2026-11-04T21:06:47.476071Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T13:53:48.406587Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -8711,7 +8711,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-12T02:04:16.72318Z',
-  '2026-11-04T21:06:47.476071Z'
+  '2026-11-11T13:53:48.406587Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -8733,7 +8733,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Sokhna faty Sarr","is_active":true,"matricule":"ETU040","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"sfsarr"}'::jsonb,
   '2026-10-11T23:01:15.538578Z',
-  '2026-11-02T21:38:51.178628Z',
+  '2026-11-09T21:02:05.007206Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -8742,17 +8742,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '6761074f-7ec8-4422-8d17-852bfea22307',
   '6761074f-7ec8-4422-8d17-852bfea22307',
   '6761074f-7ec8-4422-8d17-852bfea22307',
   json_build_object('sub', '6761074f-7ec8-4422-8d17-852bfea22307', 'email', 'sarrsokhnafaty5@gmail.com')::jsonb,
   'email',
   '2026-10-11T23:01:15.60204Z',
   '2026-10-11T23:01:15.538578Z',
-  '2026-11-02T21:38:51.178628Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-09T21:02:05.007206Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -8766,7 +8766,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-11T23:01:15.538578Z',
-  '2026-11-02T21:38:51.178628Z'
+  '2026-11-09T21:02:05.007206Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -8788,7 +8788,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Dame Sarr","is_active":true,"matricule":"ETU039","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"damesarr"}'::jsonb,
   '2026-10-11T00:08:38.918468Z',
-  '2026-11-03T21:35:35.2234Z',
+  '2026-11-11T19:53:42.348618Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -8797,17 +8797,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'da97cd20-df47-4487-b5ee-4af47b102127',
   'da97cd20-df47-4487-b5ee-4af47b102127',
   'da97cd20-df47-4487-b5ee-4af47b102127',
   json_build_object('sub', 'da97cd20-df47-4487-b5ee-4af47b102127', 'email', 'sarrdame173@gmail.com')::jsonb,
   'email',
   '2026-10-11T00:08:38.935083Z',
   '2026-10-11T00:08:38.918468Z',
-  '2026-11-03T21:35:35.2234Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T19:53:42.348618Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -8821,7 +8821,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-11T00:08:38.918468Z',
-  '2026-11-03T21:35:35.2234Z'
+  '2026-11-11T19:53:42.348618Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -8843,7 +8843,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-SML","email_verified":true,"filiere":"SML","full_name":"Marie Astou","is_active":true,"matricule":"ETU038","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"mariesd"}'::jsonb,
   '2026-10-10T19:51:43.983844Z',
-  '2026-11-04T22:38:22.138643Z',
+  '2026-11-11T22:53:55.782504Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -8852,17 +8852,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '985f3a4b-bf6c-48e8-9ac4-21fb8d75347a',
   '985f3a4b-bf6c-48e8-9ac4-21fb8d75347a',
   '985f3a4b-bf6c-48e8-9ac4-21fb8d75347a',
   json_build_object('sub', '985f3a4b-bf6c-48e8-9ac4-21fb8d75347a', 'email', 'mariediouf219@gmail.com')::jsonb,
   'email',
   '2026-10-10T19:51:44.003423Z',
   '2026-10-10T19:51:43.983844Z',
-  '2026-11-04T22:38:22.138643Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T22:53:55.782504Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -8876,7 +8876,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-10T19:51:43.983844Z',
-  '2026-11-04T22:38:22.138643Z'
+  '2026-11-11T22:53:55.782504Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -8898,7 +8898,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Ndeye Guittè Ndongo ","is_active":true,"matricule":"ETU037","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"ladivanoire"}'::jsonb,
   '2026-10-10T19:20:12.278727Z',
-  '2026-11-02T22:26:13.608804Z',
+  '2026-11-09T22:16:54.943132Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -8907,17 +8907,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '508aae24-828f-43a0-b817-76faa077be97',
   '508aae24-828f-43a0-b817-76faa077be97',
   '508aae24-828f-43a0-b817-76faa077be97',
   json_build_object('sub', '508aae24-828f-43a0-b817-76faa077be97', 'email', 'ndeyeguitte05@gmail.com')::jsonb,
   'email',
   '2026-10-10T19:20:12.286612Z',
   '2026-10-10T19:20:12.278727Z',
-  '2026-11-02T22:26:13.608804Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-09T22:16:54.943132Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -8931,7 +8931,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-10T19:20:12.278727Z',
-  '2026-11-02T22:26:13.608804Z'
+  '2026-11-09T22:16:54.943132Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -8953,7 +8953,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Soro BA","is_active":true,"matricule":"ETU036","niveau":"L1","phone":"+221761730723","role":"etudiant","statut_inscription":"valide","username":"sba"}'::jsonb,
   '2026-10-10T19:18:58.711614Z',
-  '2026-11-04T22:05:29.464183Z',
+  '2026-11-08T21:46:33.961688Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -8962,17 +8962,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'a0c61bc9-54a8-45c7-84f6-1df18614c798',
   'a0c61bc9-54a8-45c7-84f6-1df18614c798',
   'a0c61bc9-54a8-45c7-84f6-1df18614c798',
   json_build_object('sub', 'a0c61bc9-54a8-45c7-84f6-1df18614c798', 'email', 'soro21ba@gmail.com')::jsonb,
   'email',
   '2026-10-10T19:18:58.740459Z',
   '2026-10-10T19:18:58.711614Z',
-  '2026-11-04T22:05:29.464183Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-08T21:46:33.961688Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -8986,7 +8986,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-10T19:18:58.711614Z',
-  '2026-11-04T22:05:29.464183Z'
+  '2026-11-08T21:46:33.961688Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -9008,7 +9008,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Aissata Gangue ","is_active":true,"matricule":"ETU035","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"aissata2026"}'::jsonb,
   '2026-10-10T18:42:30.197405Z',
-  '2026-11-03T21:59:10.810162Z',
+  '2026-11-09T20:10:34.984541Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -9017,17 +9017,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'a45ede70-153d-4696-8831-971a5b88fd95',
   'a45ede70-153d-4696-8831-971a5b88fd95',
   'a45ede70-153d-4696-8831-971a5b88fd95',
   json_build_object('sub', 'a45ede70-153d-4696-8831-971a5b88fd95', 'email', 'aissatagangue283@gmail.com')::jsonb,
   'email',
   '2026-10-10T18:42:30.231326Z',
   '2026-10-10T18:42:30.197405Z',
-  '2026-11-03T21:59:10.810162Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-09T20:10:34.984541Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -9041,7 +9041,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-10T18:42:30.197405Z',
-  '2026-11-03T21:59:10.810162Z'
+  '2026-11-09T20:10:34.984541Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -9063,7 +9063,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Mariame Sam","is_active":true,"matricule":"ETU034","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"mariame"}'::jsonb,
   '2026-10-10T11:41:29.890004Z',
-  '2026-11-02T21:00:29.404179Z',
+  '2026-11-06T21:22:28.981503Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -9072,17 +9072,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '38057638-7577-49ca-bd58-515404fae332',
   '38057638-7577-49ca-bd58-515404fae332',
   '38057638-7577-49ca-bd58-515404fae332',
   json_build_object('sub', '38057638-7577-49ca-bd58-515404fae332', 'email', 'sammariame385@gmail.com')::jsonb,
   'email',
   '2026-10-10T11:41:29.896287Z',
   '2026-10-10T11:41:29.890004Z',
-  '2026-11-02T21:00:29.404179Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-06T21:22:28.981503Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -9096,7 +9096,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-10T11:41:29.890004Z',
-  '2026-11-02T21:00:29.404179Z'
+  '2026-11-06T21:22:28.981503Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -9127,8 +9127,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '92ce1233-b254-47ce-a0c0-304a4a6dcd94',
   '92ce1233-b254-47ce-a0c0-304a4a6dcd94',
   '92ce1233-b254-47ce-a0c0-304a4a6dcd94',
   json_build_object('sub', '92ce1233-b254-47ce-a0c0-304a4a6dcd94', 'email', 'ibou@has-academie.online')::jsonb,
@@ -9136,8 +9137,7 @@ INSERT INTO auth.identities (
   '2026-10-10T11:40:36.80238Z',
   '2026-10-10T11:40:36.765702Z',
   '2026-10-19T16:13:24.843537Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -9182,8 +9182,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '75788cf3-00dc-4e55-b25f-6d49b56fcc33',
   '75788cf3-00dc-4e55-b25f-6d49b56fcc33',
   '75788cf3-00dc-4e55-b25f-6d49b56fcc33',
   json_build_object('sub', '75788cf3-00dc-4e55-b25f-6d49b56fcc33', 'email', 'seck.gueye@uam.edu.sn')::jsonb,
@@ -9191,8 +9192,7 @@ INSERT INTO auth.identities (
   '2026-10-10T03:21:43.40849Z',
   '2026-10-10T03:21:43.369955Z',
   '2026-11-02T21:44:03.925025Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -9228,7 +9228,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-SML","email_verified":true,"filiere":"SML","full_name":"Kadja komé","is_active":true,"matricule":"ETU032","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"kasey"}'::jsonb,
   '2026-10-10T01:20:21.141728Z',
-  '2026-11-02T00:27:57.834693Z',
+  '2026-11-07T23:09:12.177111Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -9237,17 +9237,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '7dcef529-4439-4f9b-9601-c25aa6eb2eeb',
   '7dcef529-4439-4f9b-9601-c25aa6eb2eeb',
   '7dcef529-4439-4f9b-9601-c25aa6eb2eeb',
   json_build_object('sub', '7dcef529-4439-4f9b-9601-c25aa6eb2eeb', 'email', 'komekadia00@gmail.com')::jsonb,
   'email',
   '2026-10-10T01:20:21.167839Z',
   '2026-10-10T01:20:21.141728Z',
-  '2026-11-02T00:27:57.834693Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-07T23:09:12.177111Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -9261,7 +9261,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-10T01:20:21.141728Z',
-  '2026-11-02T00:27:57.834693Z'
+  '2026-11-07T23:09:12.177111Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -9292,8 +9292,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '2ef5a0df-0084-4054-b66d-d95ecd49239f',
   '2ef5a0df-0084-4054-b66d-d95ecd49239f',
   '2ef5a0df-0084-4054-b66d-d95ecd49239f',
   json_build_object('sub', '2ef5a0df-0084-4054-b66d-d95ecd49239f', 'email', 'loo34982@gmail.com')::jsonb,
@@ -9301,8 +9302,7 @@ INSERT INTO auth.identities (
   '2026-10-09T23:20:13.514305Z',
   '2026-10-09T23:20:13.495956Z',
   '2026-10-22T19:16:50.903321Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -9347,8 +9347,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'ab092b9a-1acf-478c-91b0-a774cffc944a',
   'ab092b9a-1acf-478c-91b0-a774cffc944a',
   'ab092b9a-1acf-478c-91b0-a774cffc944a',
   json_build_object('sub', 'ab092b9a-1acf-478c-91b0-a774cffc944a', 'email', 'mbengue.masse@uam.edu.sn')::jsonb,
@@ -9356,8 +9357,7 @@ INSERT INTO auth.identities (
   '2026-10-09T23:12:22.523581Z',
   '2026-10-09T23:12:22.498529Z',
   '2026-10-31T22:30:07.401035Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -9393,7 +9393,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Aminata NDAO","is_active":true,"matricule":"ETU029","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"andao"}'::jsonb,
   '2026-10-09T21:47:01.053481Z',
-  '2026-11-03T21:10:25.918184Z',
+  '2026-11-11T21:53:58.90814Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -9402,17 +9402,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '82ae28d1-28c2-4032-b20d-64f2f617c358',
   '82ae28d1-28c2-4032-b20d-64f2f617c358',
   '82ae28d1-28c2-4032-b20d-64f2f617c358',
   json_build_object('sub', '82ae28d1-28c2-4032-b20d-64f2f617c358', 'email', 'ndao.aminata2@uam.edu.sn')::jsonb,
   'email',
   '2026-10-09T21:47:01.088484Z',
   '2026-10-09T21:47:01.053481Z',
-  '2026-11-03T21:10:25.918184Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T21:53:58.90814Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -9426,7 +9426,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-09T21:47:01.053481Z',
-  '2026-11-03T21:10:25.918184Z'
+  '2026-11-11T21:53:58.90814Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -9448,7 +9448,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Mame Diarra Sylla","is_active":true,"matricule":"ETU028","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"toulahiebony"}'::jsonb,
   '2026-10-09T21:41:14.350848Z',
-  '2026-11-04T18:45:37.356416Z',
+  '2026-11-10T21:10:47.475882Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -9457,17 +9457,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '7c3e9856-c287-4487-80f2-902b5e9789a4',
   '7c3e9856-c287-4487-80f2-902b5e9789a4',
   '7c3e9856-c287-4487-80f2-902b5e9789a4',
   json_build_object('sub', '7c3e9856-c287-4487-80f2-902b5e9789a4', 'email', 'sylla.diarra@uam.edu.sn')::jsonb,
   'email',
   '2026-10-09T21:41:14.383787Z',
   '2026-10-09T21:41:14.350848Z',
-  '2026-11-04T18:45:37.356416Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T21:10:47.475882Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -9481,7 +9481,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-09T21:41:14.350848Z',
-  '2026-11-04T18:45:37.356416Z'
+  '2026-11-10T21:10:47.475882Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -9503,7 +9503,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Mouhamed Ndiour ","is_active":true,"matricule":"ETU027","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"shop_123"}'::jsonb,
   '2026-10-09T21:21:05.626056Z',
-  '2026-11-04T21:45:09.158631Z',
+  '2026-11-11T21:37:47.55851Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -9512,17 +9512,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '95bdb602-d2f5-4896-86ff-25c30a5b9d4b',
   '95bdb602-d2f5-4896-86ff-25c30a5b9d4b',
   '95bdb602-d2f5-4896-86ff-25c30a5b9d4b',
   json_build_object('sub', '95bdb602-d2f5-4896-86ff-25c30a5b9d4b', 'email', 'm.ndiour2006@gmail.com')::jsonb,
   'email',
   '2026-10-09T21:21:05.641421Z',
   '2026-10-09T21:21:05.626056Z',
-  '2026-11-04T21:45:09.158631Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T21:37:47.55851Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -9536,7 +9536,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-09T21:21:05.626056Z',
-  '2026-11-04T21:45:09.158631Z'
+  '2026-11-11T21:37:47.55851Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -9558,7 +9558,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Khadim rassoul diop","is_active":true,"matricule":"ETU026","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"bamba"}'::jsonb,
   '2026-10-09T21:10:39.327293Z',
-  '2026-11-03T21:16:11.02982Z',
+  '2026-11-08T14:16:18.164285Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -9567,17 +9567,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '3f7c32ad-d4ed-49dc-b60e-0bf9066a5072',
   '3f7c32ad-d4ed-49dc-b60e-0bf9066a5072',
   '3f7c32ad-d4ed-49dc-b60e-0bf9066a5072',
   json_build_object('sub', '3f7c32ad-d4ed-49dc-b60e-0bf9066a5072', 'email', 'diop.rassoul@uam.edu.sn')::jsonb,
   'email',
   '2026-10-09T21:10:39.351252Z',
   '2026-10-09T21:10:39.327293Z',
-  '2026-11-03T21:16:11.02982Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-08T14:16:18.164285Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -9591,7 +9591,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-09T21:10:39.327293Z',
-  '2026-11-03T21:16:11.02982Z'
+  '2026-11-08T14:16:18.164285Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -9613,7 +9613,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Cheikh Diop","is_active":true,"matricule":"ETU025","niveau":"L2","phone":"776809380","role":"etudiant","statut_inscription":"valide","username":"cmd07"}'::jsonb,
   '2026-10-09T21:06:16.933531Z',
-  '2026-11-04T13:30:34.221598Z',
+  '2026-11-11T10:05:44.372458Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -9622,17 +9622,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '132c4257-dc79-4353-8873-3587178528fc',
   '132c4257-dc79-4353-8873-3587178528fc',
   '132c4257-dc79-4353-8873-3587178528fc',
   json_build_object('sub', '132c4257-dc79-4353-8873-3587178528fc', 'email', 'cdiop683@gmail.com')::jsonb,
   'email',
   '2026-10-09T21:06:16.963099Z',
   '2026-10-09T21:06:16.933531Z',
-  '2026-11-04T13:30:34.221598Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T10:05:44.372458Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -9646,7 +9646,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-09T21:06:16.933531Z',
-  '2026-11-04T13:30:34.221598Z'
+  '2026-11-11T10:05:44.372458Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -9668,7 +9668,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Seyni Diop","is_active":true,"matricule":"ETU024","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"2209"}'::jsonb,
   '2026-10-09T17:55:44.127495Z',
-  '2026-11-03T21:53:40.816025Z',
+  '2026-11-09T19:21:17.45259Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -9677,17 +9677,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'b9e0a565-ba91-4017-b70b-99c837079dd2',
   'b9e0a565-ba91-4017-b70b-99c837079dd2',
   'b9e0a565-ba91-4017-b70b-99c837079dd2',
   json_build_object('sub', 'b9e0a565-ba91-4017-b70b-99c837079dd2', 'email', 'seyni0379@gmail.com')::jsonb,
   'email',
   '2026-10-09T17:55:44.165536Z',
   '2026-10-09T17:55:44.127495Z',
-  '2026-11-03T21:53:40.816025Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-09T19:21:17.45259Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -9701,7 +9701,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-09T17:55:44.127495Z',
-  '2026-11-03T21:53:40.816025Z'
+  '2026-11-09T19:21:17.45259Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -9732,8 +9732,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'c2eb757f-3a40-43fb-ba6a-a619d1eb4ebe',
   'c2eb757f-3a40-43fb-ba6a-a619d1eb4ebe',
   'c2eb757f-3a40-43fb-ba6a-a619d1eb4ebe',
   json_build_object('sub', 'c2eb757f-3a40-43fb-ba6a-a619d1eb4ebe', 'email', 'nianganta852@gmail.com')::jsonb,
@@ -9741,8 +9742,7 @@ INSERT INTO auth.identities (
   '2026-10-09T10:58:14.462978Z',
   '2026-10-09T10:58:14.424793Z',
   '2026-10-19T10:14:28.785755Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -9778,7 +9778,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Khoudia Niang ","is_active":true,"matricule":"ETU022","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"linguere"}'::jsonb,
   '2026-10-08T14:51:02.528573Z',
-  '2026-11-03T21:04:54.137069Z',
+  '2026-11-10T20:59:46.147449Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -9787,17 +9787,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '59daff07-1107-4e74-8d78-8a6d9cb7d523',
   '59daff07-1107-4e74-8d78-8a6d9cb7d523',
   '59daff07-1107-4e74-8d78-8a6d9cb7d523',
   json_build_object('sub', '59daff07-1107-4e74-8d78-8a6d9cb7d523', 'email', 'niang.khoudia1@uam.edu.sn')::jsonb,
   'email',
   '2026-10-08T14:51:02.539947Z',
   '2026-10-08T14:51:02.528573Z',
-  '2026-11-03T21:04:54.137069Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T20:59:46.147449Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -9811,7 +9811,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-08T14:51:02.528573Z',
-  '2026-11-03T21:04:54.137069Z'
+  '2026-11-10T20:59:46.147449Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -9833,7 +9833,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Fatimata Anne","is_active":true,"matricule":"ETU021","niveau":"L1","phone":"766179112","role":"etudiant","statut_inscription":"valide","username":"tima_sama10"}'::jsonb,
   '2026-10-08T14:39:50.126478Z',
-  '2026-11-03T21:11:18.357838Z',
+  '2026-11-10T19:57:08.487309Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -9842,17 +9842,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '546058fa-e39e-4b73-8d9a-8fbc5a71d164',
   '546058fa-e39e-4b73-8d9a-8fbc5a71d164',
   '546058fa-e39e-4b73-8d9a-8fbc5a71d164',
   json_build_object('sub', '546058fa-e39e-4b73-8d9a-8fbc5a71d164', 'email', 'fatimataanne18@gmail.com')::jsonb,
   'email',
   '2026-10-08T14:39:50.142839Z',
   '2026-10-08T14:39:50.126478Z',
-  '2026-11-03T21:11:18.357838Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T19:57:08.487309Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -9866,7 +9866,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-08T14:39:50.126478Z',
-  '2026-11-03T21:11:18.357838Z'
+  '2026-11-10T19:57:08.487309Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -9886,9 +9886,9 @@ INSERT INTO auth.users (
   '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im',
   '2026-10-08T14:38:54.329845Z',
   '{"provider":"email","providers":["email"]}'::jsonb,
-  '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Khoumba Diallo","is_active":true,"matricule":"ETU020","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"kdiallo"}'::jsonb,
+  '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Khoumba Diallo","is_active":true,"matricule":"ETU020","niveau":"L1","phone":"+221 78 265 04 45","role":"etudiant","statut_inscription":"valide","username":"kdiallo"}'::jsonb,
   '2026-10-08T14:38:54.314817Z',
-  '2026-11-03T23:37:48.77221Z',
+  '2026-11-10T20:07:45.902866Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -9897,17 +9897,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '581fa71e-5fd8-4ec4-b75e-f244db773616',
   '581fa71e-5fd8-4ec4-b75e-f244db773616',
   '581fa71e-5fd8-4ec4-b75e-f244db773616',
   json_build_object('sub', '581fa71e-5fd8-4ec4-b75e-f244db773616', 'email', 'cd5649829@gmail.com')::jsonb,
   'email',
   '2026-10-08T14:38:54.329845Z',
   '2026-10-08T14:38:54.314817Z',
-  '2026-11-03T23:37:48.77221Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T20:07:45.902866Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -9921,7 +9921,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-08T14:38:54.314817Z',
-  '2026-11-03T23:37:48.77221Z'
+  '2026-11-10T20:07:45.902866Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -9943,7 +9943,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"SOULEYMANE MBAYE ","is_active":true,"matricule":"ETU019","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"ghost"}'::jsonb,
   '2026-10-08T14:32:32.406538Z',
-  '2026-10-28T12:24:35.380256Z',
+  '2026-11-06T17:29:56.132687Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -9952,17 +9952,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '90d92bc9-dfd0-46e7-99cc-9ddb2239a798',
   '90d92bc9-dfd0-46e7-99cc-9ddb2239a798',
   '90d92bc9-dfd0-46e7-99cc-9ddb2239a798',
   json_build_object('sub', '90d92bc9-dfd0-46e7-99cc-9ddb2239a798', 'email', 'mbayesouleymaneofficiel@gmail.com')::jsonb,
   'email',
   '2026-10-08T14:32:32.415094Z',
   '2026-10-08T14:32:32.406538Z',
-  '2026-10-28T12:24:35.380256Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-06T17:29:56.132687Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -9976,7 +9976,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-08T14:32:32.406538Z',
-  '2026-10-28T12:24:35.380256Z'
+  '2026-11-06T17:29:56.132687Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -9996,9 +9996,9 @@ INSERT INTO auth.users (
   '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im',
   '2026-10-08T14:29:26.436396Z',
   '{"provider":"email","providers":["email"]}'::jsonb,
-  '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Aminata Diop ","is_active":true,"matricule":"ETU018","niveau":"L2","phone":"","role":"etudiant","statut_inscription":"valide","username":"bint"}'::jsonb,
+  '{"classe":"L2-MPI","date_expiration_paiement":"2026-12-12T23:59:59.000Z","date_validation_paiement":"2026-11-11T19:58:17.847Z","email_verified":true,"filiere":"MPI","full_name":"Aminata Diop ","is_active":true,"matricule":"ETU018","niveau":"L2","phone":"","role":"etudiant","statut_inscription":"valide","statut_paiement":"a_jour","username":"bint"}'::jsonb,
   '2026-10-08T14:29:26.385616Z',
-  '2026-11-04T00:04:38.998887Z',
+  '2026-11-11T19:58:18.124095Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -10007,17 +10007,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '5e397bd5-8405-488b-a41a-b5d673335f07',
   '5e397bd5-8405-488b-a41a-b5d673335f07',
   '5e397bd5-8405-488b-a41a-b5d673335f07',
   json_build_object('sub', '5e397bd5-8405-488b-a41a-b5d673335f07', 'email', 'wahbbint05@gmail.com')::jsonb,
   'email',
   '2026-10-08T14:29:26.436396Z',
   '2026-10-08T14:29:26.385616Z',
-  '2026-11-04T00:04:38.998887Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T19:58:18.124095Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -10031,7 +10031,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-08T14:29:26.385616Z',
-  '2026-11-04T00:04:38.998887Z'
+  '2026-11-11T19:58:18.124095Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -10053,7 +10053,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Adama Ndiaye","is_active":true,"matricule":"ETU017","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"adama"}'::jsonb,
   '2026-10-08T14:05:35.151081Z',
-  '2026-11-03T21:31:31.658067Z',
+  '2026-11-10T20:05:03.045796Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -10062,17 +10062,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '105b430e-e93d-4ae5-a4c7-96f9d560b5bb',
   '105b430e-e93d-4ae5-a4c7-96f9d560b5bb',
   '105b430e-e93d-4ae5-a4c7-96f9d560b5bb',
   json_build_object('sub', '105b430e-e93d-4ae5-a4c7-96f9d560b5bb', 'email', 'adamandiaye6002@gmail.com')::jsonb,
   'email',
   '2026-10-08T14:05:35.172888Z',
   '2026-10-08T14:05:35.151081Z',
-  '2026-11-03T21:31:31.658067Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T20:05:03.045796Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -10086,7 +10086,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-08T14:05:35.151081Z',
-  '2026-11-03T21:31:31.658067Z'
+  '2026-11-10T20:05:03.045796Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -10108,7 +10108,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MIASS","email_verified":true,"filiere":"MIASS","full_name":"Adama Thiaré","is_active":true,"matricule":"ETU016","niveau":"L2","phone":"","role":"etudiant","statut_inscription":"valide","username":"adamathiare"}'::jsonb,
   '2026-10-08T14:00:35.311016Z',
-  '2026-11-04T00:03:30.932914Z',
+  '2026-11-10T22:49:35.187607Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -10117,17 +10117,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'c314adca-3bf8-4ebc-90c7-7a2f1c0de9cc',
   'c314adca-3bf8-4ebc-90c7-7a2f1c0de9cc',
   'c314adca-3bf8-4ebc-90c7-7a2f1c0de9cc',
   json_build_object('sub', 'c314adca-3bf8-4ebc-90c7-7a2f1c0de9cc', 'email', 'thiareadama2005@gmail.com')::jsonb,
   'email',
   '2026-10-08T14:00:35.353084Z',
   '2026-10-08T14:00:35.311016Z',
-  '2026-11-04T00:03:30.932914Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T22:49:35.187607Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -10141,7 +10141,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-08T14:00:35.311016Z',
-  '2026-11-04T00:03:30.932914Z'
+  '2026-11-10T22:49:35.187607Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -10161,9 +10161,9 @@ INSERT INTO auth.users (
   '$2a$10$wRmr446fxs2vNyHC1qALTejGFYdhVjKe57wzBW15UiTdwW0yBC.im',
   '2026-10-08T13:58:31.162057Z',
   '{"provider":"email","providers":["email"]}'::jsonb,
-  '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Mame diarra Ndiaye ","is_active":true,"matricule":"ETU015","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"maryam"}'::jsonb,
+  '{"classe":"L1-MPI","date_expiration_paiement":"2026-12-12T23:59:59.000Z","date_validation_paiement":"2026-11-11T22:25:53.734Z","email_verified":true,"filiere":"MPI","full_name":"Mame diarra Ndiaye ","is_active":true,"matricule":"ETU015","niveau":"L1","original_username":"maryam","role":"etudiant","statut_inscription":"valide","statut_paiement":"a_jour","username":"maryam"}'::jsonb,
   '2026-10-08T13:58:31.159249Z',
-  '2026-11-04T00:22:25.960158Z',
+  '2026-11-11T22:25:54.003007Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -10172,17 +10172,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'fb3c536f-2e45-47d6-8a16-adc1228fcfda',
   'fb3c536f-2e45-47d6-8a16-adc1228fcfda',
   'fb3c536f-2e45-47d6-8a16-adc1228fcfda',
   json_build_object('sub', 'fb3c536f-2e45-47d6-8a16-adc1228fcfda', 'email', 'ndiaye.diarra7@uam.edu.sn')::jsonb,
   'email',
   '2026-10-08T13:58:31.162057Z',
   '2026-10-08T13:58:31.159249Z',
-  '2026-11-04T00:22:25.960158Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T22:25:54.003007Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -10196,7 +10196,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-08T13:58:31.159249Z',
-  '2026-11-04T00:22:25.960158Z'
+  '2026-11-11T22:25:54.003007Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -10218,7 +10218,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"fatou diouf","is_active":true,"matricule":"ETU014","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"fdiouf"}'::jsonb,
   '2026-10-08T13:58:30.705672Z',
-  '2026-11-03T22:03:31.920685Z',
+  '2026-11-10T22:37:13.325243Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -10227,17 +10227,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'e05c149c-3177-45e0-8aef-2b9e8c735316',
   'e05c149c-3177-45e0-8aef-2b9e8c735316',
   'e05c149c-3177-45e0-8aef-2b9e8c735316',
   json_build_object('sub', 'e05c149c-3177-45e0-8aef-2b9e8c735316', 'email', 'fd15122006@gmail.com')::jsonb,
   'email',
   '2026-10-08T13:58:30.721631Z',
   '2026-10-08T13:58:30.705672Z',
-  '2026-11-03T22:03:31.920685Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T22:37:13.325243Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -10251,7 +10251,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-08T13:58:30.705672Z',
-  '2026-11-03T22:03:31.920685Z'
+  '2026-11-10T22:37:13.325243Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -10273,7 +10273,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Aïssatou sow ba","is_active":true,"matricule":"ETU013","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"aicha"}'::jsonb,
   '2026-10-08T13:52:34.580104Z',
-  '2026-11-03T15:47:40.082311Z',
+  '2026-11-12T10:47:07.285869Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -10282,17 +10282,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'c90d8eaf-b2e2-4c72-85a2-7ff1fa5fbad7',
   'c90d8eaf-b2e2-4c72-85a2-7ff1fa5fbad7',
   'c90d8eaf-b2e2-4c72-85a2-7ff1fa5fbad7',
   json_build_object('sub', 'c90d8eaf-b2e2-4c72-85a2-7ff1fa5fbad7', 'email', 'aichaba221b@gmail.com')::jsonb,
   'email',
   '2026-10-08T13:52:34.58652Z',
   '2026-10-08T13:52:34.580104Z',
-  '2026-11-03T15:47:40.082311Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-12T10:47:07.285869Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -10306,7 +10306,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-08T13:52:34.580104Z',
-  '2026-11-03T15:47:40.082311Z'
+  '2026-11-12T10:47:07.285869Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -10337,8 +10337,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '4e6e708e-6f7a-488c-aaaa-6b134d9487e7',
   '4e6e708e-6f7a-488c-aaaa-6b134d9487e7',
   '4e6e708e-6f7a-488c-aaaa-6b134d9487e7',
   json_build_object('sub', '4e6e708e-6f7a-488c-aaaa-6b134d9487e7', 'email', 'lilolise19@gmail.com')::jsonb,
@@ -10346,8 +10347,7 @@ INSERT INTO auth.identities (
   '2026-10-08T13:51:35.743729Z',
   '2026-10-08T13:51:35.737499Z',
   '2026-10-22T19:42:34.139964Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -10383,7 +10383,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"AMADOU BARRO","is_active":true,"matricule":"ETU011","niveau":"L1","role":"etudiant","statut_inscription":"valide","username":"amadoubarro"}'::jsonb,
   '2026-10-08T13:50:10.089219Z',
-  '2026-11-03T23:35:21.037006Z',
+  '2026-11-10T20:06:37.319866Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -10392,17 +10392,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '5593c977-dd8a-46d5-998f-a519cec437ef',
   '5593c977-dd8a-46d5-998f-a519cec437ef',
   '5593c977-dd8a-46d5-998f-a519cec437ef',
   json_build_object('sub', '5593c977-dd8a-46d5-998f-a519cec437ef', 'email', 'amadoubarro85@gmail.com')::jsonb,
   'email',
   '2026-10-08T13:50:10.092912Z',
   '2026-10-08T13:50:10.089219Z',
-  '2026-11-03T23:35:21.037006Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-10T20:06:37.319866Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -10416,7 +10416,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-08T13:50:10.089219Z',
-  '2026-11-03T23:35:21.037006Z'
+  '2026-11-10T20:06:37.319866Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -10438,7 +10438,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-SML","email_verified":true,"filiere":"SML","full_name":"Fatimata dia","is_active":true,"matricule":"ETU010","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"dia"}'::jsonb,
   '2026-10-08T13:49:56.77502Z',
-  '2026-10-31T21:03:57.941024Z',
+  '2026-11-11T17:16:52.337917Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -10447,17 +10447,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '776e3680-4acc-4641-81dc-3e1958e749ee',
   '776e3680-4acc-4641-81dc-3e1958e749ee',
   '776e3680-4acc-4641-81dc-3e1958e749ee',
   json_build_object('sub', '776e3680-4acc-4641-81dc-3e1958e749ee', 'email', 'fiafatima346@gmail.com')::jsonb,
   'email',
   '2026-10-08T13:49:56.805655Z',
   '2026-10-08T13:49:56.77502Z',
-  '2026-10-31T21:03:57.941024Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T17:16:52.337917Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -10471,7 +10471,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-08T13:49:56.77502Z',
-  '2026-10-31T21:03:57.941024Z'
+  '2026-11-11T17:16:52.337917Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -10493,7 +10493,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Amina Soumare","is_active":true,"matricule":"ETU009","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"amina.smr"}'::jsonb,
   '2026-10-08T13:49:09.744861Z',
-  '2026-11-03T22:59:38.053552Z',
+  '2026-11-05T23:07:12.932958Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -10502,17 +10502,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '3b2aca0a-d840-40a8-87aa-9ef6b6c7a59a',
   '3b2aca0a-d840-40a8-87aa-9ef6b6c7a59a',
   '3b2aca0a-d840-40a8-87aa-9ef6b6c7a59a',
   json_build_object('sub', '3b2aca0a-d840-40a8-87aa-9ef6b6c7a59a', 'email', 'aminabaye13@gmail.com')::jsonb,
   'email',
   '2026-10-08T13:49:09.748197Z',
   '2026-10-08T13:49:09.744861Z',
-  '2026-11-03T22:59:38.053552Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-05T23:07:12.932958Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -10526,7 +10526,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-08T13:49:09.744861Z',
-  '2026-11-03T22:59:38.053552Z'
+  '2026-11-05T23:07:12.932958Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -10548,7 +10548,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Ndeye Aïda tall ","is_active":true,"matricule":"ETU008","niveau":"L2","role":"etudiant","statut_inscription":"valide","username":"tall2005"}'::jsonb,
   '2026-10-08T13:47:58.584019Z',
-  '2026-11-03T21:00:15.507687Z',
+  '2026-11-11T10:42:31.181577Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -10557,17 +10557,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '56b4b793-b911-43fa-ab9a-5798072bd318',
   '56b4b793-b911-43fa-ab9a-5798072bd318',
   '56b4b793-b911-43fa-ab9a-5798072bd318',
   json_build_object('sub', '56b4b793-b911-43fa-ab9a-5798072bd318', 'email', 'ndeyeaidatall61@gmail.com')::jsonb,
   'email',
   '2026-10-08T13:47:58.592306Z',
   '2026-10-08T13:47:58.584019Z',
-  '2026-11-03T21:00:15.507687Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T10:42:31.181577Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -10581,7 +10581,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-08T13:47:58.584019Z',
-  '2026-11-03T21:00:15.507687Z'
+  '2026-11-11T10:42:31.181577Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -10603,7 +10603,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L2-MPI","email_verified":true,"filiere":"MPI","full_name":"Malick Soyibou Niang ","is_active":true,"matricule":"ETU007","niveau":"L2","phone":"+221 77 2944334","role":"etudiant","statut_inscription":"valide","username":"milk"}'::jsonb,
   '2026-10-08T13:47:52.217145Z',
-  '2026-11-03T22:56:33.969435Z',
+  '2026-11-12T07:03:31.359025Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -10612,17 +10612,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'eac941ca-892b-4b8b-ac84-a15d41cfd86f',
   'eac941ca-892b-4b8b-ac84-a15d41cfd86f',
   'eac941ca-892b-4b8b-ac84-a15d41cfd86f',
   json_build_object('sub', 'eac941ca-892b-4b8b-ac84-a15d41cfd86f', 'email', 'malickniang5010@gmail.com')::jsonb,
   'email',
   '2026-10-08T13:47:52.251843Z',
   '2026-10-08T13:47:52.217145Z',
-  '2026-11-03T22:56:33.969435Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-12T07:03:31.359025Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -10636,7 +10636,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-08T13:47:52.217145Z',
-  '2026-11-03T22:56:33.969435Z'
+  '2026-11-12T07:03:31.359025Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -10658,7 +10658,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"classe":"L1-MPI","email_verified":true,"filiere":"MPI","full_name":"Papa Ibrahima SAMB ","is_active":true,"matricule":"ETU002","niveau":"L1","phone":"+221 75 650 20 17","role":"etudiant","statut_inscription":"valide","username":"pis"}'::jsonb,
   '2026-10-07T04:16:25.453978Z',
-  '2026-11-02T20:45:44.663392Z',
+  '2026-11-12T10:36:13.15743Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -10667,17 +10667,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'e07a4dfb-8c6b-4e32-8746-fdbac02a22a3',
   'e07a4dfb-8c6b-4e32-8746-fdbac02a22a3',
   'e07a4dfb-8c6b-4e32-8746-fdbac02a22a3',
   json_build_object('sub', 'e07a4dfb-8c6b-4e32-8746-fdbac02a22a3', 'email', 'samb.papa@uam.edu.sn')::jsonb,
   'email',
   '2026-10-07T04:16:25.483667Z',
   '2026-10-07T04:16:25.453978Z',
-  '2026-11-02T20:45:44.663392Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-12T10:36:13.15743Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -10691,7 +10691,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-07T04:16:25.453978Z',
-  '2026-11-02T20:45:44.663392Z'
+  '2026-11-12T10:36:13.15743Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -10722,8 +10722,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'b3624bdb-2544-4995-989d-fc38e478d256',
   'b3624bdb-2544-4995-989d-fc38e478d256',
   'b3624bdb-2544-4995-989d-fc38e478d256',
   json_build_object('sub', 'b3624bdb-2544-4995-989d-fc38e478d256', 'email', 'kalidou.ba@has-academie.online')::jsonb,
@@ -10731,8 +10732,7 @@ INSERT INTO auth.identities (
   '2026-10-02T21:16:01.541604Z',
   '2026-10-02T21:16:01.537189Z',
   '2026-10-02T21:18:06.382005Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -10768,7 +10768,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"bio":"Ingénieur Informatique, initiation à la programmation Python et Langage C.","email_verified":true,"full_name":"Pape Thiam","phone":"+221 78 731 84 27","role":"professeur","specialite":"Informatique","username":"pape"}'::jsonb,
   '2026-10-02T21:16:01.354729Z',
-  '2026-11-04T20:55:48.115379Z',
+  '2026-11-09T00:14:18.614336Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -10777,17 +10777,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '5bfff82c-62a6-48d4-801f-9e9ac5421df5',
   '5bfff82c-62a6-48d4-801f-9e9ac5421df5',
   '5bfff82c-62a6-48d4-801f-9e9ac5421df5',
   json_build_object('sub', '5bfff82c-62a6-48d4-801f-9e9ac5421df5', 'email', 'pape.thiam@has-academie.online')::jsonb,
   'email',
   '2026-10-02T21:16:01.357554Z',
   '2026-10-02T21:16:01.354729Z',
-  '2026-11-04T20:55:48.115379Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-09T00:14:18.614336Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -10801,7 +10801,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-02T21:16:01.354729Z',
-  '2026-11-04T20:55:48.115379Z'
+  '2026-11-09T00:14:18.614336Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -10832,8 +10832,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '0ffa8cbd-6c98-409a-948d-0988754c1b32',
   '0ffa8cbd-6c98-409a-948d-0988754c1b32',
   '0ffa8cbd-6c98-409a-948d-0988754c1b32',
   json_build_object('sub', '0ffa8cbd-6c98-409a-948d-0988754c1b32', 'email', 'diop.sow@has-academie.online')::jsonb,
@@ -10841,8 +10842,7 @@ INSERT INTO auth.identities (
   '2026-10-02T21:16:01.163387Z',
   '2026-10-02T21:16:01.160538Z',
   '2026-10-02T21:18:06.167757Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -10878,7 +10878,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"bio":"Physicien et chimiste, spécialiste en Mécanique Analytique, thermodynamique, électromagnétisme et chimie.","email_verified":true,"full_name":"Ndiogou Ndiaye","phone":"+221 77 277 27 09","role":"professeur","specialite":"Physique","username":"ndiogou"}'::jsonb,
   '2026-10-02T21:16:00.977982Z',
-  '2026-11-04T23:56:58.323867Z',
+  '2026-11-11T19:33:34.32679Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -10887,17 +10887,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '25013b47-9a78-4f97-8552-977450abdad2',
   '25013b47-9a78-4f97-8552-977450abdad2',
   '25013b47-9a78-4f97-8552-977450abdad2',
   json_build_object('sub', '25013b47-9a78-4f97-8552-977450abdad2', 'email', 'ndiogou.ndiaye@has-academie.online')::jsonb,
   'email',
   '2026-10-02T21:16:00.981498Z',
   '2026-10-02T21:16:00.977982Z',
-  '2026-11-04T23:56:58.323867Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T19:33:34.32679Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -10911,7 +10911,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-02T21:16:00.977982Z',
-  '2026-11-04T23:56:58.323867Z'
+  '2026-11-11T19:33:34.32679Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -10942,8 +10942,9 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '32e74ddd-3e79-410a-8a87-4bfdff1fc099',
   '32e74ddd-3e79-410a-8a87-4bfdff1fc099',
   '32e74ddd-3e79-410a-8a87-4bfdff1fc099',
   json_build_object('sub', '32e74ddd-3e79-410a-8a87-4bfdff1fc099', 'email', 'ibrahima.anne@has-academie.online')::jsonb,
@@ -10951,8 +10952,7 @@ INSERT INTO auth.identities (
   '2026-10-02T21:16:00.797884Z',
   '2026-10-02T21:16:00.795039Z',
   '2026-10-19T17:36:27.91026Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -10988,7 +10988,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"bio":"Directeur de l''académie et enseignant-chercheur en Mathématiques pures et appliquées. Spécialiste de l''analyse réelle, complexe et modélisation numérique stochastique.","email_verified":true,"full_name":"Pape Ibrahima Samb","phone":"+221 75 650 20 17","role":"professeur","specialite":"Math","username":"halilsamb"}'::jsonb,
   '2026-10-02T21:16:00.564827Z',
-  '2026-11-03T20:55:54.846833Z',
+  '2026-11-11T16:14:59.363489Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -10997,17 +10997,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  '4ca84133-856c-4e87-8ca5-31eabe0fcc23',
   '4ca84133-856c-4e87-8ca5-31eabe0fcc23',
   '4ca84133-856c-4e87-8ca5-31eabe0fcc23',
   json_build_object('sub', '4ca84133-856c-4e87-8ca5-31eabe0fcc23', 'email', 'pape.samb@has-academie.online')::jsonb,
   'email',
   '2026-10-02T21:16:00.583416Z',
   '2026-10-02T21:16:00.564827Z',
-  '2026-11-03T20:55:54.846833Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-11T16:14:59.363489Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -11021,7 +11021,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-10-02T21:16:00.564827Z',
-  '2026-11-03T20:55:54.846833Z'
+  '2026-11-11T16:14:59.363489Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -11043,7 +11043,7 @@ INSERT INTO auth.users (
   '{"provider":"email","providers":["email"]}'::jsonb,
   '{"email_verified":true,"full_name":"Administration HAS","is_active":true,"matricule":"ADM001","role":"admin","username":"halil"}'::jsonb,
   '2026-09-29T13:42:28.120492Z',
-  '2026-11-05T13:45:58.416228Z',
+  '2026-11-12T01:02:15.490992Z',
   ''
 ) ON CONFLICT (id) DO UPDATE SET
   raw_user_meta_data = EXCLUDED.raw_user_meta_data,
@@ -11052,17 +11052,17 @@ INSERT INTO auth.users (
 
 -- Identité email pour connexion immédiate
 INSERT INTO auth.identities (
-  id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
+  id, provider_id, user_id, identity_data, provider, last_sign_in_at, created_at, updated_at
 ) VALUES (
+  'b4f9e070-f403-40eb-97df-9a79f491e999',
   'b4f9e070-f403-40eb-97df-9a79f491e999',
   'b4f9e070-f403-40eb-97df-9a79f491e999',
   json_build_object('sub', 'b4f9e070-f403-40eb-97df-9a79f491e999', 'email', 'halil@has-academie.online')::jsonb,
   'email',
   '2026-09-29T13:56:58.689628Z',
   '2026-09-29T13:42:28.120492Z',
-  '2026-11-05T13:45:58.416228Z'
-) ON CONFLICT (id) DO UPDATE SET
-  identity_data = EXCLUDED.identity_data;
+  '2026-11-12T01:02:15.490992Z'
+) ON CONFLICT DO NOTHING;
 
 INSERT INTO public.profiles (
   id, email, username, full_name, role, matricule, telephone, is_active, created_at, updated_at
@@ -11076,7 +11076,7 @@ INSERT INTO public.profiles (
   '',
   TRUE,
   '2026-09-29T13:42:28.120492Z',
-  '2026-11-05T13:45:58.416228Z'
+  '2026-11-12T01:02:15.490992Z'
 ) ON CONFLICT (id) DO UPDATE SET
   email = EXCLUDED.email,
   username = EXCLUDED.username,
@@ -11319,10 +11319,9 @@ INSERT INTO "communiques" ("id", "titre", "contenu", "image", "fichier_pdf", "au
 
 -- >>> chat_messages.sql <<<
 -- ============================================================
--- Données sauvegardées pour : chat_messages (8 lignes)
+-- Données sauvegardées pour : chat_messages (7 lignes)
 -- ============================================================
 
-INSERT INTO "chat_messages" ("id", "user_id", "message", "created_at") VALUES (41, 1, '[[salon:salon-l2]] [[sender:1||Administration HAS||admin||admin@has.sn||%2Fimages%2Flogo-has.jpg]] CV', '2026-10-13T23:00:43.013409+00:00') ON CONFLICT DO NOTHING;
 INSERT INTO "chat_messages" ("id", "user_id", "message", "created_at") VALUES (42, 1, '[[salon:salon-l1]] [[sender:64e8a6b0-974d-40f9-ad36-442b3f2ccbc6||Cheikh Fall ||etudiant||fall.cheikh2@uam.edu.sn||]] Platform extraordinaire 👏👏👏', '2026-10-14T16:12:35.576313+00:00') ON CONFLICT DO NOTHING;
 INSERT INTO "chat_messages" ("id", "user_id", "message", "created_at") VALUES (43, 1, '[[salon:salon-l1]] [[sender:64e8a6b0-974d-40f9-ad36-442b3f2ccbc6||Cheikh Fall ||etudiant||fall.cheikh2@uam.edu.sn||]] Donc d''après l''emploi du temps, ce soir on a cours de langage C nous les L1 MPI ???', '2026-10-14T16:13:53.949177+00:00') ON CONFLICT DO NOTHING;
 INSERT INTO "chat_messages" ("id", "user_id", "message", "created_at") VALUES (44, 1, '[[salon:salon-l1]] [[sender:5bfff82c-62a6-48d4-801f-9e9ac5421df5||Pape Thiam||professeur||pape.thiam@has-academie.online||]] Salam a tous, oui effectuvement vous aurez langage C', '2026-10-14T19:37:16.175438+00:00') ON CONFLICT DO NOTHING;
@@ -11333,7 +11332,7 @@ INSERT INTO "chat_messages" ("id", "user_id", "message", "created_at") VALUES (4
 
 -- >>> logs.sql <<<
 -- ============================================================
--- Données sauvegardées pour : logs (75 lignes)
+-- Données sauvegardées pour : logs (80 lignes)
 -- ============================================================
 
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (3, NULL, 'TEST', NULL, '2026-10-10T14:05:06.630336') ON CONFLICT DO NOTHING;
@@ -11357,17 +11356,29 @@ INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALU
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (260, NULL, 'DEL_SEANCE:seance-has-l1-partage-info', 'deleted', '2026-10-19T14:20:31.354904') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (319, NULL, 'DEL_SEANCE:seance-1792346216246-6fe', 'deleted', '2026-10-19T14:33:42.428637') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (508, NULL, 'EDT_SEANCES_SYNC', 'EDT synchronisé avec succès : 12 séance(s) par direction@halil-academie.com', '2026-10-19T17:00:38.592175') ON CONFLICT DO NOTHING;
+INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (830, NULL, 'EDT_SEANCES_SYNC', 'EDT synchronisé avec succès : 11 séance(s) par pape.samb@has-academie.online', '2026-11-06T19:23:24.094774') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (381, NULL, 'EDT_SEANCES_SYNC', 'EDT synchronisé avec succès : 12 séance(s) par direction@halil-academie.com', '2026-10-19T16:17:03.566431') ON CONFLICT DO NOTHING;
+INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (856, NULL, 'MEET:seance-has-l2-analyse4', 'https://meet.google.com/eeo-gxdq-qvv', '2026-11-10T19:07:01.326612') ON CONFLICT DO NOTHING;
+INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (857, NULL, 'MEET:seance-has-l2-proba', 'https://meet.google.com/nhv-qteu-wga', '2026-11-10T19:07:01.326612') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (647, NULL, 'EDT_SEANCES_SYNC', 'EDT synchronisé avec succès : 13 séance(s) par direction@halil-academie.com', '2026-10-25T17:59:07.606128') ON CONFLICT DO NOTHING;
+INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (858, NULL, 'MEET:seance-has-l2-chimie-org', 'https://meet.google.com/ptd-ushf-pfo', '2026-11-10T19:07:01.326612') ON CONFLICT DO NOTHING;
+INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (859, NULL, 'MEET:seance-has-l2-chimie-inorg', 'https://meet.google.com/rfi-erbc-ogj', '2026-11-10T19:07:01.326612') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (122, NULL, 'DEL_COURSE:cr-1791977919272', 'deleted', '2026-10-14T12:54:04.667259') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (123, NULL, 'DEL_COURSE:cr-1791977809089', 'deleted', '2026-10-14T12:54:07.841852') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (124, NULL, 'DEL_COURSE:cr-1791933565513', 'deleted', '2026-10-14T12:54:10.967296') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (125, NULL, 'DEL_COURSE:cr-1791985846348', 'deleted', '2026-10-14T13:52:05.232674') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (451, NULL, 'EDT_SEANCES_SYNC', 'EDT synchronisé avec succès : 12 séance(s) par direction@halil-academie.com', '2026-10-19T16:53:50.838324') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (127, NULL, 'DEL_COURSE:cr-1791985637548', 'deleted', '2026-10-14T13:55:21.73354') ON CONFLICT DO NOTHING;
+INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (860, NULL, 'MEET:seance-has-l2-electromag', 'https://meet.google.com/kxx-rqyv-xha', '2026-11-10T19:07:01.326612') ON CONFLICT DO NOTHING;
+INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (861, NULL, 'MEET:seance-has-l1-magneto', 'https://meet.google.com/zro-gapg-bvp', '2026-11-10T19:07:01.326612') ON CONFLICT DO NOTHING;
+INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (862, NULL, 'MEET:seance-has-l1-langage-c', 'https://meet.google.com/gkp-shab-gco', '2026-11-10T19:07:01.326612') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (392, NULL, 'EDT_SEANCES_SYNC', 'EDT synchronisé avec succès : 11 séance(s) par direction@halil-academie.com', '2026-10-19T16:18:28.348646') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (519, NULL, 'EDT_SEANCES_SYNC', 'EDT synchronisé avec succès : 12 séance(s) par direction@halil-academie.com', '2026-10-19T17:01:30.602736') ON CONFLICT DO NOTHING;
+INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (863, NULL, 'MEET:seance-has-l1-finance', 'https://meet.google.com/qoy-xmfm-qoj', '2026-11-10T19:07:01.326612') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (218, NULL, 'DEL_SEANCE:seance-has-l2-partage-info', 'deleted', '2026-10-18T17:56:22.964848') ON CONFLICT DO NOTHING;
+INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (864, NULL, 'MEET:seance-has-l1-analyse2-lundi', 'https://meet.google.com/kaj-wvqs-xsk', '2026-11-10T19:07:01.326612') ON CONFLICT DO NOTHING;
+INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (865, NULL, 'MEET:seance-1793047340744-q7a', 'https://meet.google.com/fbw-oxyv-iqm', '2026-11-10T19:07:01.326612') ON CONFLICT DO NOTHING;
+INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (866, NULL, 'EDT_SEANCES_SYNC', 'EDT synchronisé avec succès : 11 séance(s) par ndiogou.ndiaye@has-academie.online', '2026-11-10T19:07:01.469284') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (462, NULL, 'EDT_SEANCES_SYNC', 'EDT synchronisé avec succès : 12 séance(s) par direction@halil-academie.com', '2026-10-19T16:55:01.812273') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (661, NULL, 'EDT_SEANCES_SYNC', 'EDT synchronisé avec succès : 14 séance(s) par direction@halil-academie.com', '2026-10-25T17:59:33.813816') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (74, NULL, 'MEETS_RESET_ALL', 'Tous les liens Meet ont été purgés. Les profs les créeront au moment voulu.', '2026-10-14T00:47:04.855994') ON CONFLICT DO NOTHING;
@@ -11381,40 +11392,33 @@ INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALU
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (662, NULL, 'DEL_SEANCE:seance-1792951169521-csg', 'deleted', '2026-10-26T20:38:12.628378') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (721, NULL, 'EDT_SEANCES_SYNC', 'EDT synchronisé avec succès : 11 séance(s) par direction@halil-academie.com', '2026-10-26T20:42:25.931333') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (796, NULL, 'EDT_SEANCES_SYNC', 'EDT synchronisé avec succès : 11 séance(s) par direction@halil-academie.com', '2026-11-02T20:47:59.784829') ON CONFLICT DO NOTHING;
+INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (818, NULL, 'EDT_SEANCES_SYNC', 'EDT synchronisé avec succès : 11 séance(s) par ndiogou.ndiaye@has-academie.online', '2026-11-05T20:39:02.954571') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (742, NULL, 'EDT_SEANCES_SYNC', 'EDT synchronisé avec succès : 11 séance(s) par direction@halil-academie.com', '2026-10-30T15:39:23.609452') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (676, NULL, 'DEL_SEANCE:seance-has-l1-algebre2-vendredi', 'deleted', '2026-10-26T20:38:25.431881') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (688, NULL, 'EDT_SEANCES_SYNC', 'EDT synchronisé avec succès : 12 séance(s) par direction@halil-academie.com', '2026-10-26T20:38:29.154287') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (700, NULL, 'EDT_SEANCES_SYNC', 'EDT synchronisé avec succès : 11 séance(s) par direction@halil-academie.com', '2026-10-26T20:38:40.565608') ON CONFLICT DO NOTHING;
+INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (842, NULL, 'EDT_SEANCES_SYNC', 'EDT synchronisé avec succès : 11 séance(s) par ndiogou.ndiaye@has-academie.online', '2026-11-07T17:48:49.195376') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (775, NULL, 'EDT_SEANCES_SYNC', 'EDT synchronisé avec succès : 11 séance(s) par ndiogou.ndiaye@has-academie.online', '2026-10-31T20:59:52.077152') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (577, NULL, 'EDT_SEANCES_SYNC', 'EDT synchronisé avec succès : 12 séance(s) par pape.samb@has-academie.online', '2026-10-19T20:41:43.861703') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (578, NULL, 'DEL_SEANCE:seance-has-l1-analyse2', 'deleted', '2026-10-19T20:48:25.967397') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (675, NULL, 'EDT_SEANCES_SYNC', 'EDT synchronisé avec succès : 13 séance(s) par direction@halil-academie.com', '2026-10-26T20:38:16.667122') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (732, NULL, 'EDT_SEANCES_SYNC', 'EDT synchronisé avec succès : 11 séance(s) par ndiogou.ndiaye@has-academie.online', '2026-10-29T20:48:33.348865') ON CONFLICT DO NOTHING;
-INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (798, NULL, 'MEET:seance-has-l2-analyse4', 'https://meet.google.com/eeo-gxdq-qvv', '2026-11-03T21:00:03.241791') ON CONFLICT DO NOTHING;
-INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (799, NULL, 'MEET:seance-has-l2-proba', 'https://meet.google.com/nhv-qteu-wga', '2026-11-03T21:00:03.241791') ON CONFLICT DO NOTHING;
-INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (800, NULL, 'MEET:seance-has-l2-chimie-org', 'https://meet.google.com/tiu-oqvz-nde', '2026-11-03T21:00:03.241791') ON CONFLICT DO NOTHING;
-INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (801, NULL, 'MEET:seance-has-l2-chimie-inorg', 'https://meet.google.com/rfi-erbc-ogj', '2026-11-03T21:00:03.241791') ON CONFLICT DO NOTHING;
-INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (802, NULL, 'MEET:seance-has-l2-electromag', 'https://meet.google.com/udw-owrn-rex', '2026-11-03T21:00:03.241791') ON CONFLICT DO NOTHING;
-INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (803, NULL, 'MEET:seance-has-l1-magneto', 'https://meet.google.com/jmp-ktxr-ywk', '2026-11-03T21:00:03.241791') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (588, NULL, 'EDT_SEANCES_SYNC', 'EDT synchronisé avec succès : 11 séance(s) par direction@halil-academie.com', '2026-10-19T20:48:29.68873') ON CONFLICT DO NOTHING;
-INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (804, NULL, 'MEET:seance-has-l1-langage-c', 'https://meet.google.com/gkp-shab-gco', '2026-11-03T21:00:03.241791') ON CONFLICT DO NOTHING;
-INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (805, NULL, 'MEET:seance-has-l1-finance', 'https://meet.google.com/qoy-xmfm-qoj', '2026-11-03T21:00:03.241791') ON CONFLICT DO NOTHING;
-INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (806, NULL, 'MEET:seance-has-l1-analyse2-lundi', 'https://meet.google.com/kaj-wvqs-xsk', '2026-11-03T21:00:03.241791') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (689, NULL, 'DEL_SEANCE:seance-1792951138920-ym9', 'deleted', '2026-10-26T20:38:36.77915') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (807, NULL, 'EDT_SEANCES_SYNC', 'EDT synchronisé avec succès : 11 séance(s) par ndiogou.ndiaye@has-academie.online', '2026-11-03T21:00:03.406095') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (753, NULL, 'EDT_SEANCES_SYNC', 'EDT synchronisé avec succès : 11 séance(s) par direction@halil-academie.com', '2026-10-30T19:31:48.773567') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (599, NULL, 'EDT_SEANCES_SYNC', 'EDT synchronisé avec succès : 11 séance(s) par ndiogou.ndiaye@has-academie.online', '2026-10-20T20:56:03.208197') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (701, NULL, 'DEL_SEANCE:seance-1792951144653-hh4', 'deleted', '2026-10-26T20:38:41.613561') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (711, NULL, 'EDT_SEANCES_SYNC', 'EDT synchronisé avec succès : 10 séance(s) par direction@halil-academie.com', '2026-10-26T20:38:44.71877') ON CONFLICT DO NOTHING;
-INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (763, NULL, 'MEET:seance-1793047340744-q7a', 'https://meet.google.com/kaj-wvqs-xsk', '2026-10-30T19:31:54.618824') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (764, NULL, 'EDT_SEANCES_SYNC', 'EDT synchronisé avec succès : 11 séance(s) par direction@halil-academie.com', '2026-10-30T19:31:54.957672') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (786, NULL, 'EDT_SEANCES_SYNC', 'EDT synchronisé avec succès : 11 séance(s) par ndiogou.ndiaye@has-academie.online', '2026-11-01T20:31:45.660783') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (611, NULL, 'EDT_SEANCES_SYNC', 'EDT synchronisé avec succès : 11 séance(s) par pape.samb@has-academie.online', '2026-10-23T19:27:55.278108') ON CONFLICT DO NOTHING;
 INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (622, NULL, 'EDT_SEANCES_SYNC', 'EDT synchronisé avec succès : 11 séance(s) par direction@halil-academie.com', '2026-10-25T17:58:53.32422') ON CONFLICT DO NOTHING;
+INSERT INTO "logs" ("id", "user_id", "action", "description", "created_at") VALUES (854, NULL, 'EDT_SEANCES_SYNC', 'EDT synchronisé avec succès : 11 séance(s) par ndiogou.ndiaye@has-academie.online', '2026-11-07T20:14:00.743779') ON CONFLICT DO NOTHING;
 
 -- >>> verification_codes.sql <<<
 -- ============================================================
--- Données sauvegardées pour : verification_codes (424 lignes)
+-- Données sauvegardées pour : verification_codes (449 lignes)
 -- ============================================================
 
 INSERT INTO "verification_codes" ("id", "email", "code", "type", "expires_at", "verified", "attempts", "created_at") VALUES ('3bb16e02-9f5e-4d82-b506-04945367499f', 'fatimataanne18@gmail.com', '822615', 'signup_2fa', '2026-10-08T14:48:22.869+00:00', TRUE, 0, '2026-10-08T14:38:23.153753+00:00') ON CONFLICT DO NOTHING;
@@ -11841,6 +11845,31 @@ INSERT INTO "verification_codes" ("id", "email", "code", "type", "expires_at", "
 INSERT INTO "verification_codes" ("id", "email", "code", "type", "expires_at", "verified", "attempts", "created_at") VALUES ('b2add73d-d1a5-451d-b725-bd4079aa32d9', 'mamenasratabane05@gmail.com', '405403', 'signup_2fa', '2026-11-03T21:20:37.101+00:00', TRUE, 0, '2026-11-03T21:10:37.404027+00:00') ON CONFLICT DO NOTHING;
 INSERT INTO "verification_codes" ("id", "email", "code", "type", "expires_at", "verified", "attempts", "created_at") VALUES ('7c62aa1d-b9a5-4cc8-8dd5-41dff7657fad', 'tabane.nasra@uam.edu.sn', '863365', 'signup_2fa', '2026-11-03T21:24:54.683+00:00', TRUE, 0, '2026-11-03T21:14:54.993882+00:00') ON CONFLICT DO NOTHING;
 INSERT INTO "verification_codes" ("id", "email", "code", "type", "expires_at", "verified", "attempts", "created_at") VALUES ('e4cbbe24-aaab-4d3a-b87f-1187f02a434e', 'mbacmb10@gmail.com', '953400', 'signup_2fa', '2026-11-04T11:02:55.919+00:00', TRUE, 0, '2026-11-04T10:52:56.441208+00:00') ON CONFLICT DO NOTHING;
+INSERT INTO "verification_codes" ("id", "email", "code", "type", "expires_at", "verified", "attempts", "created_at") VALUES ('f179b18d-37e1-4bf7-b180-d858a22ff48a', 'mbacmb10@gmail.com', '100258', 'signup_2fa', '2026-11-05T14:11:35.999+00:00', FALSE, 1, '2026-11-05T14:01:36.792753+00:00') ON CONFLICT DO NOTHING;
+INSERT INTO "verification_codes" ("id", "email", "code", "type", "expires_at", "verified", "attempts", "created_at") VALUES ('1c81ae86-a297-4cca-b7a2-4134c3bd4419', 'mbacmb10@gmail.com', '362030', 'signup_2fa', '2026-11-05T14:14:24.01+00:00', FALSE, 0, '2026-11-05T14:04:24.672786+00:00') ON CONFLICT DO NOTHING;
+INSERT INTO "verification_codes" ("id", "email", "code", "type", "expires_at", "verified", "attempts", "created_at") VALUES ('d3c91b5f-ac9f-4b1a-b078-72ba6d16d9ca', 'mbackmb10@gmail.com', '219153', 'signup_2fa', '2026-11-05T14:19:07.791+00:00', FALSE, 0, '2026-11-05T14:09:08.569264+00:00') ON CONFLICT DO NOTHING;
+INSERT INTO "verification_codes" ("id", "email", "code", "type", "expires_at", "verified", "attempts", "created_at") VALUES ('86724cdc-587b-4707-af4d-8ae6c39a7a71', 'mbackemb912@gmail.com', '713848', 'signup_2fa', '2026-11-05T14:19:54.468+00:00', FALSE, 0, '2026-11-05T14:09:54.781999+00:00') ON CONFLICT DO NOTHING;
+INSERT INTO "verification_codes" ("id", "email", "code", "type", "expires_at", "verified", "attempts", "created_at") VALUES ('648ef907-672b-45f2-83b2-5bd0d28e8d5f', 'mbengue.mbacke@uam.edu.sn', '821463', 'signup_2fa', '2026-11-06T10:43:15.229+00:00', FALSE, 0, '2026-11-06T10:33:15.999381+00:00') ON CONFLICT DO NOTHING;
+INSERT INTO "verification_codes" ("id", "email", "code", "type", "expires_at", "verified", "attempts", "created_at") VALUES ('dfb33d40-30ad-4313-a9f2-28013a092a8f', 'mariamakessod704@gmail.com', '812703', 'signup_2fa', '2026-11-06T21:53:36.201+00:00', FALSE, 0, '2026-11-06T21:43:36.80643+00:00') ON CONFLICT DO NOTHING;
+INSERT INTO "verification_codes" ("id", "email", "code", "type", "expires_at", "verified", "attempts", "created_at") VALUES ('ddbaf632-9b61-46f2-9873-62b545a83eee', 'mamadouseck17112006@gmail.com', '170007', 'signup_2fa', '2026-11-06T23:12:03.349+00:00', FALSE, 0, '2026-11-06T23:02:04.170995+00:00') ON CONFLICT DO NOTHING;
+INSERT INTO "verification_codes" ("id", "email", "code", "type", "expires_at", "verified", "attempts", "created_at") VALUES ('204e121c-e69a-48e2-8dc3-55775769cb5b', 'mamadouseck17112006@gmail.com', '961648', 'signup_2fa', '2026-11-06T23:13:59.022+00:00', FALSE, 0, '2026-11-06T23:03:59.535728+00:00') ON CONFLICT DO NOTHING;
+INSERT INTO "verification_codes" ("id", "email", "code", "type", "expires_at", "verified", "attempts", "created_at") VALUES ('50511c06-c980-4032-9efc-e2446ba2adb9', 'mamadouseck17112006@gmail.com', '287358', 'signup_2fa', '2026-11-07T10:09:17.744+00:00', FALSE, 0, '2026-11-07T09:59:18.705984+00:00') ON CONFLICT DO NOTHING;
+INSERT INTO "verification_codes" ("id", "email", "code", "type", "expires_at", "verified", "attempts", "created_at") VALUES ('26f2ed48-0eec-47f5-8533-bf4e0538f353', 'mamadouseck17112006@gmail.com', '602524', 'signup_2fa', '2026-11-07T10:10:27.167+00:00', FALSE, 0, '2026-11-07T10:00:27.53781+00:00') ON CONFLICT DO NOTHING;
+INSERT INTO "verification_codes" ("id", "email", "code", "type", "expires_at", "verified", "attempts", "created_at") VALUES ('7da1d848-b613-4037-b50d-3cb3778e6d80', 'mamadouseck1706@icloud.com', '930089', 'signup_2fa', '2026-11-07T10:12:28.106+00:00', FALSE, 0, '2026-11-07T10:02:28.798495+00:00') ON CONFLICT DO NOTHING;
+INSERT INTO "verification_codes" ("id", "email", "code", "type", "expires_at", "verified", "attempts", "created_at") VALUES ('f085ee51-f074-4c78-a746-d11e9e3d2623', 'mamadouszck17112006@gmail.com', '869639', 'signup_2fa', '2026-11-09T06:24:59.669+00:00', FALSE, 0, '2026-11-09T06:15:00.578891+00:00') ON CONFLICT DO NOTHING;
+INSERT INTO "verification_codes" ("id", "email", "code", "type", "expires_at", "verified", "attempts", "created_at") VALUES ('cdff319a-db98-41b4-b0ea-759bad4a008a', 'mamadouseck17112006@gmail.com', '497378', 'signup_2fa', '2026-11-09T06:26:05.298+00:00', FALSE, 0, '2026-11-09T06:16:05.647834+00:00') ON CONFLICT DO NOTHING;
+INSERT INTO "verification_codes" ("id", "email", "code", "type", "expires_at", "verified", "attempts", "created_at") VALUES ('73734203-9b6f-4a20-a1df-f8c1d8d4010e', 'tidianeomarseme@gmail.com', '428216', 'signup_2fa', '2026-11-11T17:32:40.925+00:00', FALSE, 0, '2026-11-11T17:22:41.754626+00:00') ON CONFLICT DO NOTHING;
+INSERT INTO "verification_codes" ("id", "email", "code", "type", "expires_at", "verified", "attempts", "created_at") VALUES ('a94987b4-8e2b-4c34-900f-0890abcdfab3', 'seme.omar@uam.edu.sn', '692902', 'signup_2fa', '2026-11-11T17:35:15.341+00:00', FALSE, 0, '2026-11-11T17:25:16.178676+00:00') ON CONFLICT DO NOTHING;
+INSERT INTO "verification_codes" ("id", "email", "code", "type", "expires_at", "verified", "attempts", "created_at") VALUES ('b433f29d-485c-435a-aa52-f44721488d1d', 'seme.omar@uam.edu.sn', '532399', 'signup_2fa', '2026-11-11T17:36:51.295+00:00', FALSE, 0, '2026-11-11T17:26:51.985688+00:00') ON CONFLICT DO NOTHING;
+INSERT INTO "verification_codes" ("id", "email", "code", "type", "expires_at", "verified", "attempts", "created_at") VALUES ('19c99097-3f75-4233-b963-702b3e521dc3', 'badji.oulimatou@uam.edu.sn', '396944', 'signup_2fa', '2026-11-11T20:22:33.333+00:00', FALSE, 0, '2026-11-11T20:12:33.896733+00:00') ON CONFLICT DO NOTHING;
+INSERT INTO "verification_codes" ("id", "email", "code", "type", "expires_at", "verified", "attempts", "created_at") VALUES ('cf83e819-ffeb-4251-9f74-e6c2e786b7ff', 'badji.oulimatou@uam.edu.sn', '460856', 'signup_2fa', '2026-11-11T20:27:34.513+00:00', FALSE, 0, '2026-11-11T20:17:35.287405+00:00') ON CONFLICT DO NOTHING;
+INSERT INTO "verification_codes" ("id", "email", "code", "type", "expires_at", "verified", "attempts", "created_at") VALUES ('d40b2252-a2e7-4637-b1b1-84aa60377f26', 'oulimatourosebadji@gmail.com', '281266', 'signup_2fa', '2026-11-11T20:30:18.51+00:00', FALSE, 0, '2026-11-11T20:20:19.22386+00:00') ON CONFLICT DO NOTHING;
+INSERT INTO "verification_codes" ("id", "email", "code", "type", "expires_at", "verified", "attempts", "created_at") VALUES ('2264a285-a875-4991-b6d4-491272c8a4a0', 'oulimatourosebadji@gmail.com', '582119', 'signup_2fa', '2026-11-11T20:32:11.481+00:00', FALSE, 0, '2026-11-11T20:22:11.98501+00:00') ON CONFLICT DO NOTHING;
+INSERT INTO "verification_codes" ("id", "email", "code", "type", "expires_at", "verified", "attempts", "created_at") VALUES ('6a8254e9-7b70-4cff-ae26-3646f168d57d', 'oulimatourosebadji@gmail.com', '985425', 'signup_2fa', '2026-11-11T20:36:12.531+00:00', FALSE, 0, '2026-11-11T20:26:12.858258+00:00') ON CONFLICT DO NOTHING;
+INSERT INTO "verification_codes" ("id", "email", "code", "type", "expires_at", "verified", "attempts", "created_at") VALUES ('fca80fc0-3b40-40bc-903f-38e053ee2433', 'badji.oulimatou@uam.edu.sn', '809860', 'signup_2fa', '2026-11-11T21:51:48.153+00:00', FALSE, 0, '2026-11-11T21:41:48.842867+00:00') ON CONFLICT DO NOTHING;
+INSERT INTO "verification_codes" ("id", "email", "code", "type", "expires_at", "verified", "attempts", "created_at") VALUES ('e3a5cac6-2a78-4843-9da5-bb3da09256e6', 'badji.oulimatou@uam.edu.sn', '570203', 'signup_2fa', '2026-11-11T23:17:27.415+00:00', FALSE, 0, '2026-11-11T23:07:28.280349+00:00') ON CONFLICT DO NOTHING;
+INSERT INTO "verification_codes" ("id", "email", "code", "type", "expires_at", "verified", "attempts", "created_at") VALUES ('86648ad4-c2cc-414b-babf-4dd38a5c780a', 'oulimatourosebadji@gmail.com', '391688', 'signup_2fa', '2026-11-11T23:18:54.732+00:00', FALSE, 0, '2026-11-11T23:08:55.181758+00:00') ON CONFLICT DO NOTHING;
+INSERT INTO "verification_codes" ("id", "email", "code", "type", "expires_at", "verified", "attempts", "created_at") VALUES ('b67381a3-b9dd-4c83-9014-0612fc2e4326', 'oulimatourosebadji@gmail.com', '392693', 'signup_2fa', '2026-11-11T23:20:26.454+00:00', FALSE, 0, '2026-11-11T23:10:27.164946+00:00') ON CONFLICT DO NOTHING;
 
 -- ==============================================================================
 -- C. SYNCHRONISATION DES SÉQUENCES D'AUTO-INCRÉMENTATION

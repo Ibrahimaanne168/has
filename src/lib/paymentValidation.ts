@@ -36,6 +36,7 @@ export function addOneMonth(dateInput: Date | string | number): Date {
 }
 
 /**
+ * Formate une date en français long (ex: "10 novembre 2026").
  * Formate une date en français long (ex: "12 novembre 2026").
  */
 export function formatPaymentDateFull(dateInput: Date | string | number | null | undefined): string {
@@ -52,6 +53,7 @@ export function formatPaymentDateFull(dateInput: Date | string | number | null |
 }
 
 /**
+ * Formate une date en format court JJ/MM/AAAA (ex: "10/11/2026").
  * Formate une date en format court JJ/MM/AAAA (ex: "12/11/2026").
  */
 export function formatPaymentDateShort(dateInput: Date | string | number | null | undefined): string {
@@ -80,10 +82,12 @@ export function calculateNextRenewalExpiration(
   if (currentExpiration) {
     const exp = new Date(currentExpiration);
     if (!isNaN(exp.getTime()) && exp.getTime() > referenceDate.getTime()) {
+      return addOneMonth(exp).toISOString();
       const baseDate = exp.getTime() < minFirstCycle.getTime() ? minFirstCycle : exp;
       return addOneMonth(baseDate).toISOString();
     }
   }
+  return addOneMonth(referenceDate).toISOString();
   const base = referenceDate.getTime() < minFirstCycle.getTime() ? minFirstCycle : referenceDate;
   return addOneMonth(base).toISOString();
 }
@@ -160,6 +164,9 @@ export function getStudentPaymentStatus(
     expDate = addOneMonth(now);
   }
 
+  // 3. Calcul des jours restants
+  const diffMs = expDate.getTime() - now.getTime();
+  const daysRemaining = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
   // Harmonisation de la limite officielle demandée par l'administration : 12 novembre 2026.
   // Permet à tous les étudiants de la première cohorte d'octobre d'avoir leur échéance au 12 novembre (au lieu du 7 nov).
   const minOfficialLimit = new Date(OFFICIAL_FIRST_CYCLE_EXPIRATION_ISO);

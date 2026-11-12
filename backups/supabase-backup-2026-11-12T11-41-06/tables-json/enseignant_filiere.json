@@ -1,0 +1,78 @@
+[
+  {
+    "enseignant_id": 1,
+    "filiere_id": 1
+  },
+  {
+    "enseignant_id": 1,
+    "filiere_id": 2
+  },
+  {
+    "enseignant_id": 1,
+    "filiere_id": 3
+  },
+  {
+    "enseignant_id": 2,
+    "filiere_id": 1
+  },
+  {
+    "enseignant_id": 2,
+    "filiere_id": 2
+  },
+  {
+    "enseignant_id": 2,
+    "filiere_id": 3
+  },
+  {
+    "enseignant_id": 3,
+    "filiere_id": 1
+  },
+  {
+    "enseignant_id": 3,
+    "filiere_id": 2
+  },
+  {
+    "enseignant_id": 4,
+    "filiere_id": 1
+  },
+  {
+    "enseignant_id": 4,
+    "filiere_id": 2
+  },
+  {
+    "enseignant_id": 5,
+    "filiere_id": 1
+  },
+  {
+    "enseignant_id": 5,
+    "filiere_id": 2
+  },
+  {
+    "enseignant_id": 5,
+    "filiere_id": 3
+  },
+  {
+    "enseignant_id": 6,
+    "filiere_id": 1
+  },
+  {
+    "enseignant_id": 6,
+    "filiere_id": 2
+  },
+  {
+    "enseignant_id": 7,
+    "filiere_id": 3
+  },
+  {
+    "enseignant_id": 8,
+    "filiere_id": 1
+  },
+  {
+    "enseignant_id": 8,
+    "filiere_id": 2
+  },
+  {
+    "enseignant_id": 8,
+    "filiere_id": 3
+  }
+]
