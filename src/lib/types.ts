@@ -261,3 +261,26 @@ export interface AuditLog {
   created_at: string;
   user?: Profile;
 }
+
+export interface MarketplaceItem {
+  id: string;
+  title: string;
+  description: string;
+  price: number; // en FCFA
+  currency: string; // "FCFA"
+  cover_image_url: string; // Vignette / Mockup Chariow
+  pdf_url?: string | null;
+  professeur_id?: string | null;
+  professeur_name: string;
+  professeur_phone: string; // Numéro WhatsApp avec indicatif (+221...)
+  professeur_avatar?: string | null;
+  matiere?: string;
+  niveau?: "L1" | "L2" | "Tous" | string;
+  pages_count?: number;
+  badge?: string; // ex: "Best-Seller", "Nouveau", "Essentiel Examen"
+  is_active: boolean;
+  featured?: boolean;
+  created_at: string;
+  updated_at?: string;
+}
+

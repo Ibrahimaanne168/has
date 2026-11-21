@@ -5,7 +5,7 @@ import Link from "next/link";
 import {
   Users, BookOpen, GraduationCap, MessageSquare, FileText, BarChart3,
   ArrowRight, Shield, TrendingUp, Calendar, Bell, ShieldCheck, Sparkles,
-  UserCheck, AlertTriangle,
+  UserCheck, AlertTriangle, ShoppingBag,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/Button";
@@ -93,8 +93,9 @@ export default function AdminDashboard() {
         {/* Actions rapides Admin */}
         <div className="bg-white dark:bg-[#111821] rounded-xl border border-slate-200/90 dark:border-[#263241] p-6 shadow-xs dark:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.4)] space-y-4">
           <h2 className="font-serif text-lg font-bold text-[#0f2744] dark:text-[#F5F7FA]">Actions Administratives Rapides</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-6 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
             {[
+              { label: "Marketplace PDF", href: "/admin/marketplace", icon: <ShoppingBag className="w-5 h-5 text-[#e0521c]" /> },
               { label: "Liste des Étudiants", href: "/admin/etudiants", icon: <GraduationCap className="w-5 h-5 text-blue-600 dark:text-cyan-400" /> },
               { label: "Valider Inscriptions", href: "/admin/inscriptions", icon: <UserCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> },
               { label: "Gérer les comptes", href: "/admin/comptes", icon: <Users className="w-5 h-5" /> },

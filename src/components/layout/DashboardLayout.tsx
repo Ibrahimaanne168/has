@@ -26,6 +26,7 @@ import {
   UserCheck,
   Film,
   ExternalLink,
+  ShoppingBag,
 } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { NotificationBanner } from "@/components/ui/NotificationBanner";
@@ -106,6 +107,7 @@ export function DashboardLayout({
 
   const adminNav: NavItem[] = [
     { label: "Supervision Globale", href: "/admin", icon: <BarChart3 className="w-5 h-5" /> },
+    { label: "Marketplace PDF", href: "/admin/marketplace", icon: <ShoppingBag className="w-5 h-5" />, badge: "Vente" },
     { label: "Validation Inscriptions", href: "/admin/inscriptions", icon: <UserCheck className="w-5 h-5" /> },
     { label: "Liste des Étudiants", href: "/admin/etudiants", icon: <GraduationCap className="w-5 h-5" /> },
     { label: "Gestion des Comptes", href: "/admin/comptes", icon: <Users className="w-5 h-5" /> },

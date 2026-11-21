@@ -16,6 +16,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/Button";
 import { ContactSection } from "@/components/home/ContactSection";
 import { MatieresSection } from "@/components/home/MatieresSection";
+import { MarketplaceSection } from "@/components/marketplace/MarketplaceSection";
 
 export default function HomePage() {
   return (
@@ -168,6 +169,11 @@ export default function HomePage() {
         {/* 3. MATIÈRES EN LIGNE (2 espaces : Matières L1 & Matières L2)    */}
         {/* ================================================================ */}
         <MatieresSection />
+
+        {/* ================================================================ */}
+        {/* 3bis. MARKETPLACE — Vente de Fascicules & Ressources Profs       */}
+        {/* ================================================================ */}
+        <MarketplaceSection />
 
         {/* ================================================================ */}
         {/* 4. MOT DU DIRECTEUR (Photo 1:1, texte soigné et sobre)           */}

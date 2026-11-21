@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { UserPlus, LogIn, Menu, X } from "lucide-react";
+import { UserPlus, LogIn, Menu, X, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
@@ -62,6 +62,16 @@ export function Navbar() {
               className="text-xs sm:text-sm font-medium text-slate-600 dark:text-[#AAB4C0] hover:text-[#0f2744] dark:hover:text-[#F5F7FA] transition-colors"
             >
               Matières
+            </Link>
+            <Link
+              href="/marketplace"
+              className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#e0521c] hover:text-[#c44314] transition-colors px-2.5 py-1 rounded-full bg-[#e0521c]/10 dark:bg-[#e0521c]/20 border border-[#e0521c]/30"
+            >
+              <ShoppingBag className="w-3.5 h-3.5" />
+              <span>Marketplace</span>
+              <span className="px-1.5 py-0.2 rounded-full bg-[#e0521c] text-white text-[9px] font-extrabold uppercase tracking-wide">
+                PDF
+              </span>
             </Link>
             <Link
               href="/#mot-directeur"
@@ -124,6 +134,19 @@ export function Navbar() {
               className="flex items-center px-3 py-2 text-xs font-medium text-slate-700 dark:text-[#AAB4C0] hover:text-[#0f2744] dark:hover:text-[#F5F7FA] hover:bg-slate-50 dark:hover:bg-[#151D27] rounded-md transition-colors"
             >
               Matières
+            </Link>
+            <Link
+              href="/marketplace"
+              onClick={close}
+              className="flex items-center justify-between px-3 py-2 text-xs font-bold text-[#e0521c] bg-[#e0521c]/10 dark:bg-[#e0521c]/20 rounded-md transition-colors border border-[#e0521c]/20"
+            >
+              <div className="flex items-center gap-2">
+                <ShoppingBag className="w-4 h-4" />
+                <span>Marketplace &amp; Fascicules</span>
+              </div>
+              <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded-full bg-[#e0521c] text-white">
+                PDF
+              </span>
             </Link>
             <Link
               href="/#mot-directeur"
