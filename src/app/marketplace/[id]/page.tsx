@@ -172,20 +172,36 @@ export default function MarketplaceProductPage() {
         ? `phone=${encodeURIComponent(cleanIdent)}`
         : `code=${encodeURIComponent(cleanIdent)}`;
 
-      const res = await fetch(`/api/marketplace/download?itemId=${encodeURIComponent(item.id)}&${queryParam}`);
+      const downloadUrl = `/api/marketplace/download?itemId=${encodeURIComponent(item.id)}&${queryParam}`;
+      const res = await fetch(downloadUrl);
 
       if (res.ok) {
         setDownloadCheckMsg({
           type: "success",
-          text: "✓ Commande validée par l'administrateur ! Téléchargement en cours...",
+          text: "✓ Commande validée ! Votre document PDF est en cours de téléchargement sur votre appareil...",
         });
-        window.location.href = `/api/marketplace/download?itemId=${encodeURIComponent(item.id)}&${queryParam}`;
+
+        // Déclenchement d'un VRAI téléchargement de fichier physique
+        const blob = await res.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.style.display = "none";
+        a.href = blobUrl;
+        const safeDocTitle = item.title.replace(/[^a-zA-Z0-9_\-]/g, "_");
+        a.download = `${safeDocTitle}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+
+        setTimeout(() => {
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(blobUrl);
+        }, 3000);
       } else {
         const data = await res.json().catch(() => ({}));
         if (res.status === 403) {
           setDownloadCheckMsg({
             type: "pending",
-            text: "Votre commande est bien reçue mais en attente de validation par l'administration après vérification de votre paiement.",
+            text: "Votre commande est bien reçue mais toujours en attente de validation par l'administration après confirmation de votre paiement.",
           });
         } else {
           setDownloadCheckMsg({
@@ -197,7 +213,7 @@ export default function MarketplaceProductPage() {
     } catch {
       setDownloadCheckMsg({
         type: "error",
-        text: "Erreur de connexion au serveur de vérification.",
+        text: "Erreur de connexion au serveur de téléchargement.",
       });
     } finally {
       setDownloadCheckLoading(false);

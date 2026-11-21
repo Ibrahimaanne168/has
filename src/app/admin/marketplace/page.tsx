@@ -699,12 +699,23 @@ export default function AdminMarketplacePage() {
                                 </button>
                               </div>
                             ) : o.status === "valide" ? (
-                              <button
-                                onClick={() => handleRejectDownload(o)}
-                                className="text-[11px] text-red-500 hover:underline cursor-pointer"
-                              >
-                                Révoquer
-                              </button>
+                              <div className="flex items-center justify-end gap-2">
+                                <a
+                                  href={`/api/marketplace/download?orderId=${encodeURIComponent(o.id)}`}
+                                  download
+                                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 font-bold hover:bg-emerald-100 text-[11px]"
+                                  title="Télécharger le fichier PDF validé"
+                                >
+                                  <Download className="w-3 h-3" />
+                                  <span>PDF ({o.download_count} DL)</span>
+                                </a>
+                                <button
+                                  onClick={() => handleRejectDownload(o)}
+                                  className="text-[11px] text-red-500 hover:underline cursor-pointer"
+                                >
+                                  Révoquer
+                                </button>
+                              </div>
                             ) : (
                               <button
                                 onClick={() => handleValidateDownload(o)}
