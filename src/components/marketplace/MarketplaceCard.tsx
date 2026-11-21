@@ -12,9 +12,14 @@ import {
   ShieldCheck,
   Eye,
   X,
+  Clock,
+  Download,
+  AlertCircle,
+  Phone,
+  Mail,
 } from "lucide-react";
-import { MarketplaceItem } from "@/lib/types";
-import { generateWhatsAppOrderUrl } from "@/lib/marketplaceStorage";
+import { MarketplaceItem, MarketplaceOrder } from "@/lib/types";
+import { generateWhatsAppOrderUrl, createMarketplaceOrder } from "@/lib/marketplaceStorage";
 
 interface MarketplaceCardProps {
   item: MarketplaceItem;
@@ -37,7 +42,113 @@ export function WhatsAppIcon({ className = "w-4 h-4" }: { className?: string }) 
 
 export function MarketplaceCard({ item, featured = false }: MarketplaceCardProps) {
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [orderModalOpen, setOrderModalOpen] = useState(false);
+
+  // Formulaire de commande
+  const [buyerName, setBuyerName] = useState("");
+  const [buyerEmail, setBuyerEmail] = useState("");
+  const [buyerPhone, setBuyerPhone] = useState("");
+  const [orderSubmitted, setOrderSubmitted] = useState<MarketplaceOrder | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Vérification de téléchargement
+  const [downloadCheckLoading, setDownloadCheckLoading] = useState(false);
+  const [downloadCheckMsg, setDownloadCheckMsg] = useState<{ type: "success" | "pending" | "error"; text: string } | null>(null);
+
   const whatsappUrl = generateWhatsAppOrderUrl(item);
+
+  // Pré-remplissage avec l'utilisateur connecté si présent
+  const handleOpenOrder = () => {
+    if (typeof window !== "undefined") {
+      try {
+        const student = localStorage.getItem("has_current_student_profile_v2");
+        if (student) {
+          const parsed = JSON.parse(student);
+          if (parsed.full_name) setBuyerName(parsed.full_name);
+          if (parsed.email) setBuyerEmail(parsed.email);
+          if (parsed.phone || parsed.telephone) setBuyerPhone(parsed.phone || parsed.telephone);
+        }
+      } catch {}
+    }
+    setOrderSubmitted(null);
+    setDownloadCheckMsg(null);
+    setOrderModalOpen(true);
+  };
+
+  const handleOrderSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!buyerName.trim() || !buyerEmail.trim() || !buyerPhone.trim()) {
+      alert("Veuillez renseigner votre nom, email et téléphone pour enregistrer la commande.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const order = await createMarketplaceOrder({
+        item,
+        buyerName: buyerName.trim(),
+        buyerEmail: buyerEmail.trim(),
+        buyerPhone: buyerPhone.trim(),
+      });
+
+      setOrderSubmitted(order);
+
+      // Ouvrir WhatsApp dans un nouvel onglet avec message personnalisé contenant le numéro de commande
+      const phoneClean = item.professeur_phone.replace(/[^0-9]/g, "");
+      const finalPhone = phoneClean.length === 9 ? "221" + phoneClean : phoneClean;
+      const formattedPrice = item.price.toLocaleString("fr-FR");
+      const waMsg = `Bonjour Professeur ${item.professeur_name},\n\nJe souhaite commander votre document sur HAS :\n📄 *${item.title}*\n💰 *Prix :* ${formattedPrice} ${item.currency || "FCFA"}\n👤 *Acheteur :* ${buyerName.trim()} (${buyerEmail.trim()})\n🔖 *Réf Commande :* #${order.id}\n\nMerci de m'indiquer la démarche pour régler afin que l'administration valide mon téléchargement.`;
+      
+      const customWaUrl = `https://wa.me/${finalPhone}?text=${encodeURIComponent(waMsg)}`;
+      window.open(customWaUrl, "_blank");
+    } catch (err) {
+      console.error(err);
+      alert("Erreur lors de l'enregistrement de la commande.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleCheckDownloadStatus = async () => {
+    if (!buyerEmail.trim()) {
+      alert("Veuillez renseigner votre adresse email pour vérifier votre accès.");
+      return;
+    }
+
+    setDownloadCheckLoading(true);
+    setDownloadCheckMsg(null);
+
+    try {
+      const res = await fetch(`/api/marketplace/download?itemId=${encodeURIComponent(item.id)}&email=${encodeURIComponent(buyerEmail.trim())}`);
+      if (res.ok) {
+        setDownloadCheckMsg({
+          type: "success",
+          text: "Votre accès est validé par l'administration ! Téléchargement en cours...",
+        });
+        window.location.href = `/api/marketplace/download?itemId=${encodeURIComponent(item.id)}&email=${encodeURIComponent(buyerEmail.trim())}`;
+      } else {
+        const data = await res.json().catch(() => ({}));
+        if (res.status === 403) {
+          setDownloadCheckMsg({
+            type: "pending",
+            text: "Votre commande est bien enregistrée mais toujours EN ATTENTE de validation par l'administration HAS après vérification du règlement.",
+          });
+        } else {
+          setDownloadCheckMsg({
+            type: "error",
+            text: data.error || "Aucune commande validée trouvée pour cet email.",
+          });
+        }
+      }
+    } catch (err) {
+      setDownloadCheckMsg({
+        type: "error",
+        text: "Erreur de connexion au serveur de vérification.",
+      });
+    } finally {
+      setDownloadCheckLoading(false);
+    }
+  };
 
   return (
     <>
@@ -142,7 +253,7 @@ export function MarketplaceCard({ item, featured = false }: MarketplaceCardProps
           </div>
 
           {/* ============================================================== */}
-          {/* PRIX ET BOUTON WHATSAPP STYLE CHARIOW                          */}
+          {/* PRIX ET BOUTON COMMANDER                                       */}
           {/* ============================================================== */}
           <div className="pt-3 border-t border-slate-100 dark:border-[#263241] space-y-3">
             <div className="flex items-baseline justify-between">
@@ -160,23 +271,196 @@ export function MarketplaceCard({ item, featured = false }: MarketplaceCardProps
 
               <div className="flex items-center gap-1 text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">
                 <ShieldCheck className="w-3.5 h-3.5" />
-                <span>Vérifié HAS</span>
+                <span>Validation Admin</span>
               </div>
             </div>
 
-            {/* BOUTON COMMANDER WHATSAPP */}
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs sm:text-sm shadow-[0_2px_10px_-2px_rgba(37,211,102,0.4)] transition-all transform active:scale-98"
+            {/* BOUTON COMMANDER AVEC VALIDATION ADMIN */}
+            <button
+              onClick={handleOpenOrder}
+              className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs sm:text-sm shadow-[0_2px_10px_-2px_rgba(37,211,102,0.4)] transition-all transform active:scale-98 cursor-pointer"
             >
               <WhatsAppIcon className="w-4 h-4 text-white shrink-0" />
-              <span>Commander sur WhatsApp</span>
-            </a>
+              <span>Commander via WhatsApp</span>
+            </button>
           </div>
         </div>
       </div>
+
+      {/* ============================================================== */}
+      {/* MODAL DE COMMANDE & ENREGISTREMENT DE VALIDATION ADMIN          */}
+      {/* ============================================================== */}
+      {orderModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white dark:bg-[#111821] rounded-2xl max-w-md w-full overflow-hidden shadow-2xl border border-slate-200 dark:border-[#263241] p-6 space-y-5 my-8">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#263241]">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-[#25D366]/15 text-[#25D366] flex items-center justify-center">
+                  <WhatsAppIcon className="w-5 h-5 text-[#25D366]" />
+                </div>
+                <div>
+                  <h3 className="font-serif font-bold text-base text-[#0f2744] dark:text-[#F5F7FA]">
+                    Commander le document
+                  </h3>
+                  <span className="text-[11px] text-slate-400 block font-medium">Validation administrative requise</span>
+                </div>
+              </div>
+              <button
+                onClick={() => setOrderModalOpen(false)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Récapitulatif du document */}
+            <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200/80 dark:border-[#263241] flex items-center gap-3">
+              <div className="w-12 h-12 rounded-lg bg-slate-800 overflow-hidden shrink-0">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={item.cover_image_url} alt={item.title} className="w-full h-full object-cover" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <h4 className="font-serif font-bold text-xs text-[#0f2744] dark:text-white line-clamp-1">
+                  {item.title}
+                </h4>
+                <p className="text-[11px] text-slate-500 dark:text-[#AAB4C0]">
+                  Par Prof. {item.professeur_name}
+                </p>
+                <span className="text-xs font-black text-[#e0521c]">
+                  {item.price.toLocaleString("fr-FR")} {item.currency || "FCFA"}
+                </span>
+              </div>
+            </div>
+
+            {/* Note d'information sur la validation de l'admin */}
+            <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 flex items-start gap-2.5 text-xs text-amber-900 dark:text-amber-200">
+              <Clock className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+              <p className="leading-relaxed">
+                <strong>Fonctionnement :</strong> Votre commande est enregistrée dans le système HAS. Après avoir contacté l&apos;enseignant et réglé par Wave / OM, <strong>l&apos;administrateur valide le téléchargement</strong> pour débloquer votre accès au document PDF.
+              </p>
+            </div>
+
+            {orderSubmitted ? (
+              /* Écran de succès après enregistrement */
+              <div className="space-y-4 pt-2">
+                <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 text-center space-y-2">
+                  <CheckCircle2 className="w-8 h-8 text-emerald-600 dark:text-emerald-400 mx-auto" />
+                  <h4 className="font-serif font-bold text-emerald-900 dark:text-emerald-200 text-sm">
+                    Demande de commande enregistrée !
+                  </h4>
+                  <p className="text-xs text-emerald-700 dark:text-emerald-300 leading-relaxed">
+                    La discussion WhatsApp s&apos;est ouverte avec Prof. <strong>{item.professeur_name}</strong>.
+                    Une fois votre règlement vérifié, l&apos;administration validera votre téléchargement.
+                  </p>
+                  <div className="pt-1 text-[11px] font-mono text-slate-500">
+                    Réf : #{orderSubmitted.id}
+                  </div>
+                </div>
+
+                <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-[#263241]">
+                  <button
+                    onClick={handleCheckDownloadStatus}
+                    disabled={downloadCheckLoading}
+                    className="w-full py-2.5 rounded-xl bg-[#0f2744] hover:bg-[#1a3d66] text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>{downloadCheckLoading ? "Vérification en cours..." : "Vérifier si l'admin a validé mon téléchargement"}</span>
+                  </button>
+
+                  {downloadCheckMsg && (
+                    <div
+                      className={`p-3 rounded-lg text-xs leading-relaxed ${
+                        downloadCheckMsg.type === "success"
+                          ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
+                          : downloadCheckMsg.type === "pending"
+                          ? "bg-amber-50 text-amber-800 border border-amber-200"
+                          : "bg-red-50 text-red-800 border border-red-200"
+                      }`}
+                    >
+                      {downloadCheckMsg.text}
+                    </div>
+                  )}
+
+                  <button
+                    onClick={() => setOrderModalOpen(false)}
+                    className="w-full py-2 text-xs font-semibold text-slate-500 hover:text-slate-700 dark:text-[#AAB4C0]"
+                  >
+                    Fermer cette fenêtre
+                  </button>
+                </div>
+              </div>
+            ) : (
+              /* Formulaire de coordonnées acheteur */
+              <form onSubmit={handleOrderSubmit} className="space-y-3.5">
+                <div>
+                  <label className="text-xs font-bold text-slate-700 dark:text-[#F5F7FA] block mb-1">
+                    Votre Nom &amp; Prénom <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <input
+                      type="text"
+                      required
+                      placeholder="Ex: Cheikh Anta Diop"
+                      value={buyerName}
+                      onChange={(e) => setBuyerName(e.target.value)}
+                      className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] text-slate-900 dark:text-white focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-slate-700 dark:text-[#F5F7FA] block mb-1">
+                    Votre Adresse Email <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <input
+                      type="email"
+                      required
+                      placeholder="exemple@email.com"
+                      value={buyerEmail}
+                      onChange={(e) => setBuyerEmail(e.target.value)}
+                      className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] text-slate-900 dark:text-white focus:outline-none"
+                    />
+                  </div>
+                  <span className="text-[10px] text-slate-400 mt-0.5 block">
+                    Sert à activer votre droit de téléchargement une fois validé.
+                  </span>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-slate-700 dark:text-[#F5F7FA] block mb-1">
+                    Votre Numéro WhatsApp <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <input
+                      type="text"
+                      required
+                      placeholder="+221 77 000 00 00"
+                      value={buyerPhone}
+                      onChange={(e) => setBuyerPhone(e.target.value)}
+                      className="w-full pl-9 pr-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] text-slate-900 dark:text-white focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full py-3 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md cursor-pointer transition-all active:scale-98"
+                  >
+                    <WhatsAppIcon className="w-4 h-4 text-white" />
+                    <span>{isSubmitting ? "Enregistrement..." : "Commander et ouvrir WhatsApp"}</span>
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* ============================================================== */}
       {/* MODAL D'APERÇU DÉTAILLÉ DU DOCUMENT                           */}
@@ -191,7 +475,7 @@ export function MarketplaceCard({ item, featured = false }: MarketplaceCardProps
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
               <button
                 onClick={() => setDetailsOpen(false)}
-                className="absolute top-3 right-3 p-2 rounded-full bg-black/60 hover:bg-black/90 text-white transition-colors"
+                className="absolute top-3 right-3 p-2 rounded-full bg-black/60 hover:bg-black/90 text-white transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -252,11 +536,11 @@ export function MarketplaceCard({ item, featured = false }: MarketplaceCardProps
                 </div>
                 <div className="flex items-center gap-2 p-2 rounded-lg bg-slate-50 dark:bg-[#151D27]">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>{item.pages_count || "Plusieurs dizaines"} de pages</span>
+                  <span>{item.pages_count ? `${item.pages_count} pages` : "Support complet"}</span>
                 </div>
                 <div className="flex items-center gap-2 p-2 rounded-lg bg-slate-50 dark:bg-[#151D27]">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>Envoi direct WhatsApp / Mail</span>
+                  <span>Validation admin requise</span>
                 </div>
                 <div className="flex items-center gap-2 p-2 rounded-lg bg-slate-50 dark:bg-[#151D27]">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
@@ -274,15 +558,16 @@ export function MarketplaceCard({ item, featured = false }: MarketplaceCardProps
                   </span>
                 </div>
 
-                <a
-                  href={whatsappUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-sm shadow-md transition-all"
+                <button
+                  onClick={() => {
+                    setDetailsOpen(false);
+                    handleOpenOrder();
+                  }}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-sm shadow-md transition-all cursor-pointer"
                 >
                   <WhatsAppIcon className="w-4 h-4 text-white" />
                   <span>Commander maintenant</span>
-                </a>
+                </button>
               </div>
             </div>
           </div>

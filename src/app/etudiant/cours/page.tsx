@@ -22,6 +22,9 @@ import { Cours, Matiere } from "@/lib/types";
 import { downloadOrOpenDocument } from "@/lib/fileDownload";
 import { PdfViewerModal } from "@/components/ui/PdfViewerModal";
 import { DriveRecordingsBanner } from "@/components/cours/DriveRecordingsBanner";
+import { getStoredMarketplaceOrders } from "@/lib/marketplaceStorage";
+import { MarketplaceOrder } from "@/lib/types";
+import { ShoppingBag, CheckCircle2, Clock, ShieldCheck } from "lucide-react";
 
 export default function EtudiantCoursPage() {
   const { user } = useCurrentUser();
@@ -31,11 +34,20 @@ export default function EtudiantCoursPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedMatiere, setSelectedMatiere] = useState<string>("all");
   const [onlyFavorites, setOnlyFavorites] = useState(false);
+  const [myOrders, setMyOrders] = useState<MarketplaceOrder[]>([]);
 
   useEffect(() => {
     // 1. Chargement instantané depuis le cache local
     setCourses(getStoredCourses());
     setMatieres(getStoredMatieres());
+
+    const userEmail = (user.email || "").toLowerCase();
+    const allOrders = getStoredMarketplaceOrders();
+    if (userEmail) {
+      setMyOrders(allOrders.filter((o) => o.buyer_email.toLowerCase() === userEmail));
+    } else {
+      setMyOrders(allOrders);
+    }
 
     // 2. Synchronisation en arrière-plan avec le serveur / Supabase (multi-appareils)
     syncCoursesWithServer().then((synced) => {
@@ -47,10 +59,20 @@ export default function EtudiantCoursPage() {
     const handleUpdate = () => {
       setCourses(getStoredCourses());
       setMatieres(getStoredMatieres());
+      const updatedOrders = getStoredMarketplaceOrders();
+      if (userEmail) {
+        setMyOrders(updatedOrders.filter((o) => o.buyer_email.toLowerCase() === userEmail));
+      } else {
+        setMyOrders(updatedOrders);
+      }
     };
     window.addEventListener("has_academic_storage_updated", handleUpdate);
-    return () => window.removeEventListener("has_academic_storage_updated", handleUpdate);
-  }, []);
+    window.addEventListener("has_marketplace_orders_updated", handleUpdate);
+    return () => {
+      window.removeEventListener("has_academic_storage_updated", handleUpdate);
+      window.removeEventListener("has_marketplace_orders_updated", handleUpdate);
+    };
+  }, [user.email]);
 
   const [activeNiveauTab, setActiveNiveauTab] = useState<"all" | "NB" | "L1" | "L2">("all");
 
@@ -190,6 +212,88 @@ export default function EtudiantCoursPage() {
           userNiveau={userNiveau}
           variant="card"
         />
+
+        {/* Section Fascicules & Documents commandés sur le Marketplace */}
+        {myOrders.length > 0 && (
+          <div className="bg-white dark:bg-[#111821] p-5 rounded-xl border border-slate-200/90 dark:border-[#263241] shadow-xs space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <ShoppingBag className="w-4 h-4 text-[#e0521c]" />
+                <h3 className="font-serif font-bold text-sm text-[#0f2744] dark:text-[#F5F7FA]">
+                  Mes Fascicules &amp; Commandes Marketplace ({myOrders.length})
+                </h3>
+              </div>
+              <a
+                href="/marketplace"
+                className="text-[11px] font-bold text-[#e0521c] hover:underline uppercase tracking-wider"
+              >
+                Explorer la boutique &rarr;
+              </a>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {myOrders.map((ord) => {
+                const downloadUrl = `/api/marketplace/download?orderId=${encodeURIComponent(ord.id)}`;
+
+                return (
+                  <div
+                    key={ord.id}
+                    className="p-3.5 rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200/80 dark:border-[#263241] flex flex-col justify-between space-y-2.5"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <span className="font-serif font-bold text-xs text-[#0f2744] dark:text-white line-clamp-1">
+                          {ord.item_title}
+                        </span>
+                        <span className="text-[10px] text-slate-400 font-mono">
+                          Réf #{ord.id} · {ord.item_price.toLocaleString("fr-FR")} FCFA
+                        </span>
+                      </div>
+
+                      {ord.status === "valide" ? (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 text-[10px] font-bold shrink-0">
+                          <CheckCircle2 className="w-3 h-3" />
+                          <span>Validé</span>
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 text-[10px] font-bold shrink-0">
+                          <Clock className="w-3 h-3 animate-spin" />
+                          <span>En attente admin</span>
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="pt-2 border-t border-slate-200/60 dark:border-[#263241] flex items-center justify-between">
+                      <span className="text-[10px] text-slate-500">
+                        {ord.status === "valide"
+                          ? `Validé par ${ord.validated_by || "l'administration"}`
+                          : "En attente de validation par l'administration"}
+                      </span>
+
+                      {ord.status === "valide" ? (
+                        <a
+                          href={downloadUrl}
+                          target="_blank"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs transition-colors"
+                        >
+                          <Download className="w-3.5 h-3.5" />
+                          <span>Télécharger le PDF</span>
+                        </a>
+                      ) : (
+                        <button
+                          disabled
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-200 dark:bg-[#263241] text-slate-400 text-xs font-semibold cursor-not-allowed"
+                        >
+                          <span>Téléchargement verrouillé</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Barre de Recherche & Filtres géométrique */}
         <div className="bg-white dark:bg-[#111821] p-4 rounded-xl border border-slate-200/90 dark:border-[#263241] shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] dark:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.4)] flex flex-col md:flex-row gap-3 items-center justify-between">

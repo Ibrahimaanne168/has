@@ -88,6 +88,7 @@ export function DashboardLayout({
   const etudiantNav: NavItem[] = [
     { label: "Vue d'ensemble", href: "/etudiant", icon: <LayoutDashboard className="w-5 h-5" /> },
     { label: "Cours & Supports", href: "/etudiant/cours", icon: <BookOpen className="w-5 h-5" /> },
+    { label: "Marketplace PDF", href: "/marketplace", icon: <ShoppingBag className="w-5 h-5" />, badge: "Boutique" },
     { label: "Emploi du temps", href: "/etudiant/edt", icon: <Calendar className="w-5 h-5" /> },
     { label: "Communiqués", href: "/etudiant/communiques", icon: <Bell className="w-5 h-5" />, badge: "Important" },
     { label: "Corps Professoral", href: "/etudiant/professeurs", icon: <Users className="w-5 h-5" /> },

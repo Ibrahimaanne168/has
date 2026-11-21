@@ -284,3 +284,25 @@ export interface MarketplaceItem {
   updated_at?: string;
 }
 
+export type MarketplaceOrderStatus = "en_attente" | "valide" | "refuse";
+
+export interface MarketplaceOrder {
+  id: string;
+  item_id: string;
+  item_title: string;
+  item_price: number;
+  item_pdf_url?: string | null;
+  buyer_name: string;
+  buyer_email: string;
+  buyer_phone: string;
+  buyer_user_id?: string | null;
+  status: MarketplaceOrderStatus;
+  validated_at?: string | null;
+  validated_by?: string | null;
+  notes?: string | null;
+  download_count: number;
+  created_at: string;
+  updated_at?: string;
+}
+
+

@@ -27,8 +27,6 @@ export function MarketplaceSection() {
     .filter((i) => i.is_active !== false)
     .slice(0, 3);
 
-  if (displayItems.length === 0) return null;
-
   return (
     <section id="marketplace" className="py-16 sm:py-24 bg-[#F8FAFC] dark:bg-[#0E131B] border-b border-slate-200/80 dark:border-[#263241] transition-colors relative">
       <div className="max-w-6xl mx-auto px-4 sm:px-8 lg:px-10">
@@ -45,7 +43,7 @@ export function MarketplaceSection() {
             <p className="mt-3 text-slate-600 dark:text-[#AAB4C0] text-sm sm:text-base leading-relaxed">
               Procurez-vous les supports PDF de haute valeur rédigés par vos enseignants :
               recueils d&apos;examens décortiqués, formulaires et synthèses méthodologiques.
-              Commandez directement sur WhatsApp auprès de chaque professeur.
+              Commandez directement sur WhatsApp auprès de chaque professeur avec validation de l&apos;administration.
             </p>
           </div>
 
@@ -61,12 +59,33 @@ export function MarketplaceSection() {
           </Link>
         </div>
 
-        {/* Grille des fascicules */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {displayItems.map((item) => (
-            <MarketplaceCard key={item.id} item={item} featured={item.featured} />
-          ))}
-        </div>
+        {/* Grille des fascicules ou état d'attente */}
+        {displayItems.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {displayItems.map((item) => (
+              <MarketplaceCard key={item.id} item={item} featured={item.featured} />
+            ))}
+          </div>
+        ) : (
+          <div className="p-8 sm:p-12 rounded-2xl bg-white dark:bg-[#111821] border border-slate-200/90 dark:border-[#263241] text-center space-y-4 max-w-2xl mx-auto shadow-xs">
+            <div className="w-12 h-12 rounded-2xl bg-[#0f2744]/10 dark:bg-[#151D27] text-[#0f2744] dark:text-[#F5F7FA] flex items-center justify-center mx-auto">
+              <ShoppingBag className="w-6 h-6 text-[#e0521c]" />
+            </div>
+            <h3 className="font-serif text-lg sm:text-xl font-bold text-[#0f2744] dark:text-[#F5F7FA]">
+              Le catalogue des fascicules est en cours d&apos;enrichissement
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-[#AAB4C0] leading-relaxed">
+              Les enseignants et l&apos;administration préparent les premiers fascicules d&apos;exercices et annales corrigées. Vous pourrez bientôt les commander directement ici avec redirection WhatsApp et téléchargement sécurisé.
+            </p>
+            <div className="pt-2">
+              <Link href="/marketplace">
+                <Button variant="primary" size="sm" className="text-xs font-semibold rounded-xl">
+                  Accéder à l&apos;espace Marketplace
+                </Button>
+              </Link>
+            </div>
+          </div>
+        )}
 
         {/* Bandeau d'appel vers le catalogue complet */}
         <div className="mt-10 p-5 sm:p-6 rounded-2xl bg-white dark:bg-[#111821] border border-slate-200/90 dark:border-[#263241] flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs">

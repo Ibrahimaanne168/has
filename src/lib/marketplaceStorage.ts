@@ -1,7 +1,10 @@
-import { MarketplaceItem } from "@/lib/types";
+import { MarketplaceItem, MarketplaceOrder } from "@/lib/types";
 import { MOCK_MARKETPLACE_ITEMS } from "@/lib/data/marketplace-data";
 
 const STORAGE_KEY = "has_marketplace_items_v1";
+const ORDERS_STORAGE_KEY = "has_marketplace_orders_v1";
+
+const INITIAL_MOCK_ORDERS: MarketplaceOrder[] = [];
 
 /**
  * Nettoie et formate un numéro de téléphone pour WhatsApp (ex: +221 77 551 81 96 -> 221775518196)
@@ -27,6 +30,15 @@ export function generateWhatsAppOrderUrl(item: MarketplaceItem): string {
   return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 }
 
+const DEMO_FAKE_IDS = [
+  "mkt-poo-python-guide",
+  "mkt-analyse-1-pack",
+  "mkt-meca-point-thermo",
+  "mkt-algebre-lineaire-3",
+  "mkt-electromagnetisme-l2",
+  "mkt-sql-bdd-guide",
+];
+
 /**
  * Récupère les articles en cache local ou mock
  */
@@ -38,18 +50,23 @@ export function getStoredMarketplaceItems(): MarketplaceItem[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(MOCK_MARKETPLACE_ITEMS));
-      return MOCK_MARKETPLACE_ITEMS;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
+      return [];
     }
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed;
+    if (Array.isArray(parsed)) {
+      // Éliminer les anciens faux cours de démo
+      const cleaned = parsed.filter((i: MarketplaceItem) => !DEMO_FAKE_IDS.includes(i.id));
+      if (cleaned.length !== parsed.length) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(cleaned));
+      }
+      return cleaned;
     }
   } catch (err) {
     console.warn("[Marketplace] Erreur lecture localStorage:", err);
   }
 
-  return MOCK_MARKETPLACE_ITEMS;
+  return [];
 }
 
 /**
@@ -181,3 +198,165 @@ export async function syncMarketplaceWithServer(): Promise<MarketplaceItem[]> {
   }
   return getStoredMarketplaceItems();
 }
+
+/**
+ * ==============================================================================
+ * GESTION DES COMMANDES & VALIDATION ADMINISTRATIVE DES TÉLÉCHARGEMENTS
+ * ==============================================================================
+ */
+
+export function getStoredMarketplaceOrders(): MarketplaceOrder[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(ORDERS_STORAGE_KEY);
+    if (!raw) {
+      localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify([]));
+      return [];
+    }
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      const cleaned = parsed.filter((o: MarketplaceOrder) => !["ord-demo-01", "ord-demo-02"].includes(o.id));
+      if (cleaned.length !== parsed.length) {
+        localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(cleaned));
+      }
+      return cleaned;
+    }
+  } catch (err) {
+    console.warn("[Orders] Erreur lecture localStorage:", err);
+  }
+  return [];
+}
+
+export function saveStoredMarketplaceOrders(orders: MarketplaceOrder[]): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
+    window.dispatchEvent(new CustomEvent("has_marketplace_orders_updated", { detail: orders }));
+  } catch (err) {
+    console.error("[Orders] Erreur sauvegarde localStorage:", err);
+  }
+}
+
+/**
+ * Enregistre une nouvelle demande d'achat / téléchargement (statut initial: en_attente)
+ */
+export async function createMarketplaceOrder(params: {
+  item: MarketplaceItem;
+  buyerName: string;
+  buyerEmail: string;
+  buyerPhone: string;
+  buyerUserId?: string | null;
+}): Promise<MarketplaceOrder> {
+  const current = getStoredMarketplaceOrders();
+  const newOrder: MarketplaceOrder = {
+    id: `ord-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+    item_id: params.item.id,
+    item_title: params.item.title,
+    item_price: params.item.price,
+    item_pdf_url: params.item.pdf_url || null,
+    buyer_name: params.buyerName.trim(),
+    buyer_email: params.buyerEmail.trim().toLowerCase(),
+    buyer_phone: params.buyerPhone.trim(),
+    buyer_user_id: params.buyerUserId || null,
+    status: "en_attente",
+    validated_at: null,
+    validated_by: null,
+    download_count: 0,
+    created_at: new Date().toISOString(),
+  };
+
+  current.unshift(newOrder);
+  saveStoredMarketplaceOrders(current);
+
+  // Sync API
+  try {
+    await fetch("/api/marketplace/orders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newOrder),
+    });
+  } catch {}
+
+  return newOrder;
+}
+
+/**
+ * L'administrateur valide manuellement le téléchargement du document
+ */
+export async function validateMarketplaceOrder(orderId: string, adminName = "Administration HAS"): Promise<boolean> {
+  const current = getStoredMarketplaceOrders();
+  const idx = current.findIndex((o) => o.id === orderId);
+  if (idx === -1) return false;
+
+  current[idx] = {
+    ...current[idx],
+    status: "valide",
+    validated_at: new Date().toISOString(),
+    validated_by: adminName,
+    updated_at: new Date().toISOString(),
+  };
+
+  saveStoredMarketplaceOrders(current);
+
+  try {
+    await fetch("/api/marketplace/orders", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: orderId,
+        status: "valide",
+        validated_by: adminName,
+      }),
+    });
+  } catch {}
+
+  return true;
+}
+
+/**
+ * L'administrateur refuse ou révoque l'accès
+ */
+export async function rejectMarketplaceOrder(orderId: string): Promise<boolean> {
+  const current = getStoredMarketplaceOrders();
+  const idx = current.findIndex((o) => o.id === orderId);
+  if (idx === -1) return false;
+
+  current[idx] = {
+    ...current[idx],
+    status: "refuse",
+    updated_at: new Date().toISOString(),
+  };
+
+  saveStoredMarketplaceOrders(current);
+
+  try {
+    await fetch("/api/marketplace/orders", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: orderId,
+        status: "refuse",
+      }),
+    });
+  } catch {}
+
+  return true;
+}
+
+/**
+ * Synchronise les commandes avec le serveur
+ */
+export async function syncMarketplaceOrdersWithServer(): Promise<MarketplaceOrder[]> {
+  try {
+    const res = await fetch("/api/marketplace/orders");
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        saveStoredMarketplaceOrders(data);
+        return data;
+      }
+    }
+  } catch {}
+  return getStoredMarketplaceOrders();
+}
+
