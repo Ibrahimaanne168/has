@@ -267,9 +267,11 @@ export interface MarketplaceItem {
   title: string;
   description: string;
   price: number; // en FCFA
+  original_price?: number | null; // Prix barré (ex: 6000 FCFA -> promo Chariow)
   currency: string; // "FCFA"
-  cover_image_url: string; // Vignette / Mockup Chariow
+  cover_image_url: string; // Vignette / Mockup Chariow (fournie par l'admin)
   pdf_url?: string | null;
+  file_size?: string | null; // ex: "2.4 MB"
   professeur_id?: string | null;
   professeur_name: string;
   professeur_phone: string; // Numéro WhatsApp avec indicatif (+221...)
@@ -277,7 +279,7 @@ export interface MarketplaceItem {
   matiere?: string;
   niveau?: "L1" | "L2" | "Tous" | string;
   pages_count?: number;
-  badge?: string; // ex: "Best-Seller", "Nouveau", "Essentiel Examen"
+  badge?: string; // ex: "50% OFF", "Best-Seller"
   is_active: boolean;
   featured?: boolean;
   created_at: string;

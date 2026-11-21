@@ -73,6 +73,8 @@ export default function AdminMarketplacePage() {
   const [formTitle, setFormTitle] = useState("");
   const [formDescription, setFormDescription] = useState("");
   const [formPrice, setFormPrice] = useState("3500");
+  const [formOriginalPrice, setFormOriginalPrice] = useState("");
+  const [formFileSize, setFormFileSize] = useState("2.5 MB");
   const [formProfName, setFormProfName] = useState("");
   const [formProfPhone, setFormProfPhone] = useState("+221 77 551 81 96");
   const [formProfAvatar, setFormProfAvatar] = useState("");
@@ -131,6 +133,8 @@ export default function AdminMarketplacePage() {
     setFormTitle("");
     setFormDescription("");
     setFormPrice("3500");
+    setFormOriginalPrice("");
+    setFormFileSize("2.5 MB");
 
     const defaultProf = profs[0];
     if (defaultProf) {
@@ -147,7 +151,7 @@ export default function AdminMarketplacePage() {
     setFormNiveau("L1");
     setFormPages("80");
     setFormBadge("");
-    setFormCoverUrl("https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&auto=format&fit=crop&q=80");
+    setFormCoverUrl("");
     setFormPdfUrl("");
     setFormIsActive(true);
     setFormFeatured(false);
@@ -159,6 +163,8 @@ export default function AdminMarketplacePage() {
     setFormTitle(item.title);
     setFormDescription(item.description);
     setFormPrice(item.price.toString());
+    setFormOriginalPrice(item.original_price ? item.original_price.toString() : "");
+    setFormFileSize(item.file_size || "2.5 MB");
     setFormProfName(item.professeur_name);
     setFormProfPhone(item.professeur_phone);
     setFormProfAvatar(item.professeur_avatar || "");
@@ -208,6 +214,9 @@ export default function AdminMarketplacePage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    const mb = (file.size / (1024 * 1024)).toFixed(2);
+    setFormFileSize(`${mb} MB`);
+
     setIsUploading(true);
     try {
       const fd = new FormData();
@@ -248,12 +257,20 @@ export default function AdminMarketplacePage() {
       alert("Veuillez renseigner le numéro WhatsApp du professeur.");
       return;
     }
+    if (!formCoverUrl.trim()) {
+      alert("Veuillez renseigner ou téléverser l'image de couverture (mockup) du document.");
+      return;
+    }
+
+    const originalPriceNum = formOriginalPrice.trim() ? parseInt(formOriginalPrice, 10) : null;
 
     const payload: Partial<MarketplaceItem> = {
       ...(editingItem ? { id: editingItem.id } : {}),
       title: formTitle.trim(),
       description: formDescription.trim(),
       price: priceNum,
+      original_price: originalPriceNum && !isNaN(originalPriceNum) ? originalPriceNum : null,
+      file_size: formFileSize.trim() || null,
       currency: "FCFA",
       professeur_name: formProfName.trim(),
       professeur_phone: formProfPhone.trim(),
@@ -262,7 +279,7 @@ export default function AdminMarketplacePage() {
       niveau: formNiveau,
       pages_count: formPages ? parseInt(formPages, 10) : undefined,
       badge: formBadge.trim() || undefined,
-      cover_image_url: formCoverUrl.trim() || "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&auto=format&fit=crop&q=80",
+      cover_image_url: formCoverUrl.trim(),
       pdf_url: formPdfUrl.trim() || null,
       is_active: formIsActive,
       featured: formFeatured,
@@ -522,10 +539,20 @@ export default function AdminMarketplacePage() {
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
 
-                          <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
-                            <span className="px-2 py-0.5 rounded-md bg-white/95 text-[#0f2744] text-[10px] font-black uppercase tracking-wider shadow-xs">
+                          <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 flex-wrap">
+                            <span className="px-2 py-0.5 rounded-md bg-white/95 text-red-600 text-[10px] font-black uppercase tracking-wider shadow-xs">
                               {item.price.toLocaleString("fr-FR")} {item.currency || "FCFA"}
                             </span>
+                            {item.original_price && item.original_price > item.price && (
+                              <span className="px-1.5 py-0.5 rounded-md bg-black/70 text-white/90 text-[10px] line-through font-semibold">
+                                {item.original_price.toLocaleString("fr-FR")}
+                              </span>
+                            )}
+                            {item.original_price && item.original_price > item.price && (
+                              <span className="px-1.5 py-0.5 rounded-md bg-black text-white text-[10px] font-black">
+                                -{Math.round(((item.original_price - item.price) / item.original_price) * 100)}%
+                              </span>
+                            )}
                             {item.niveau && (
                               <span className="px-2 py-0.5 rounded-md bg-[#0f2744]/90 text-white text-[10px] font-bold uppercase tracking-wider">
                                 {item.niveau}
@@ -602,6 +629,15 @@ export default function AdminMarketplacePage() {
                         </a>
 
                         <div className="flex items-center gap-1.5">
+                          <a
+                            href={`/marketplace/${item.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-1.5 rounded-lg text-slate-600 dark:text-[#AAB4C0] hover:bg-slate-100 dark:hover:bg-[#151D27] hover:text-[#0f2744] transition-colors"
+                            title="Voir la vraie page produit (Style Chariow)"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </a>
                           <button
                             onClick={() => openEditModal(item)}
                             className="p-1.5 rounded-lg text-slate-600 dark:text-[#AAB4C0] hover:bg-slate-100 dark:hover:bg-[#151D27] hover:text-[#0f2744] transition-colors cursor-pointer"
@@ -945,8 +981,8 @@ export default function AdminMarketplacePage() {
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-5">
-                {/* 1. Titre & Prix */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {/* 1. Titre & Prix (actuel + barré Chariow) */}
+                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                   <div className="sm:col-span-2 space-y-1">
                     <label className="text-xs font-bold text-slate-700 dark:text-[#F5F7FA]">
                       Titre du document <span className="text-red-500">*</span>
@@ -963,23 +999,39 @@ export default function AdminMarketplacePage() {
 
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-slate-700 dark:text-[#F5F7FA]">
-                      Prix (FCFA) <span className="text-red-500">*</span>
+                      Prix de Vente (FCFA) <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="number"
                       required
                       min="0"
                       step="500"
-                      placeholder="3500"
+                      placeholder="2000"
                       value={formPrice}
                       onChange={(e) => setFormPrice(e.target.value)}
-                      className="w-full px-3.5 py-2 text-xs sm:text-sm font-bold text-[#e0521c] rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] focus:outline-none focus:ring-2 focus:ring-[#0f2744]"
+                      className="w-full px-3.5 py-2 text-xs sm:text-sm font-bold text-red-600 rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] focus:outline-none focus:ring-2 focus:ring-red-500"
                     />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-700 dark:text-[#F5F7FA]">
+                      Prix d&apos;origine barré (Optionnel)
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      step="500"
+                      placeholder="10000"
+                      value={formOriginalPrice}
+                      onChange={(e) => setFormOriginalPrice(e.target.value)}
+                      className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] text-slate-500 line-through focus:outline-none focus:ring-2 focus:ring-[#0f2744]"
+                    />
+                    <p className="text-[10px] text-slate-400">Génère le badge -XX% OFF (Style Chariow)</p>
                   </div>
                 </div>
 
-                {/* 2. Matière & Niveau */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {/* 2. Matière, Niveau & Fichier info */}
+                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-slate-700 dark:text-[#F5F7FA]">
                       Niveau concerné
@@ -1012,6 +1064,28 @@ export default function AdminMarketplacePage() {
                     <label className="text-xs font-bold text-slate-700 dark:text-[#F5F7FA]">
                       Nombre de pages
                     </label>
+                    <input
+                      type="number"
+                      placeholder="51"
+                      value={formPages}
+                      onChange={(e) => setFormPages(e.target.value)}
+                      className="w-full px-3.5 py-2 text-xs rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] text-slate-900 dark:text-white"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-700 dark:text-[#F5F7FA]">
+                      Taille du fichier
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="1.99 MB"
+                      value={formFileSize}
+                      onChange={(e) => setFormFileSize(e.target.value)}
+                      className="w-full px-3.5 py-2 text-xs rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] text-slate-900 dark:text-white"
+                    />
+                  </div>
+                </div>
                     <input
                       type="number"
                       placeholder="84"
