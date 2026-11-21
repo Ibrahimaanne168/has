@@ -7,8 +7,10 @@ import { MarketplaceItem } from "@/lib/types";
 import { getStoredMarketplaceItems, syncMarketplaceWithServer } from "@/lib/marketplaceStorage";
 import { MarketplaceCard } from "./MarketplaceCard";
 import { Button } from "@/components/ui/Button";
+import { useLanguage } from "@/context/LanguageContext";
 
 export function MarketplaceSection() {
+  const { t } = useLanguage();
   const [items, setItems] = useState<MarketplaceItem[]>([]);
 
   useEffect(() => {
@@ -35,15 +37,13 @@ export function MarketplaceSection() {
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#e0521c]/10 dark:bg-[#e0521c]/20 text-[#e0521c] text-[11px] font-bold tracking-wider uppercase mb-3 border border-[#e0521c]/20">
               <ShoppingBag className="w-3.5 h-3.5" />
-              <span>Boutique Académique · Ressources Professeurs</span>
+              <span>{t("mkt_sec_badge")}</span>
             </div>
             <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#0f2744] dark:text-[#F5F7FA] leading-snug">
-              Marketplace HAS : Fascicules &amp; Corrigés Officiels
+              {t("mkt_sec_title")}
             </h2>
             <p className="mt-3 text-slate-600 dark:text-[#AAB4C0] text-sm sm:text-base leading-relaxed">
-              Procurez-vous les supports PDF de haute valeur rédigés par vos enseignants :
-              recueils d&apos;examens décortiqués, formulaires et synthèses méthodologiques.
-              Commandez directement sur WhatsApp auprès de chaque professeur avec validation de l&apos;administration.
+              {t("mkt_sec_desc")}
             </p>
           </div>
 
@@ -54,7 +54,7 @@ export function MarketplaceSection() {
               rightIcon={<ArrowRight className="w-4 h-4 text-[#e0521c]" />}
               className="text-xs sm:text-sm font-semibold rounded-xl bg-white dark:bg-[#111821] border-slate-300 dark:border-[#263241] hover:border-[#0f2744] dark:hover:border-slate-500 shadow-xs"
             >
-              Explorer tout le catalogue
+              {t("mkt_sec_explore")}
             </Button>
           </Link>
         </div>
@@ -72,15 +72,15 @@ export function MarketplaceSection() {
               <ShoppingBag className="w-6 h-6 text-[#e0521c]" />
             </div>
             <h3 className="font-serif text-lg sm:text-xl font-bold text-[#0f2744] dark:text-[#F5F7FA]">
-              Le catalogue des fascicules est en cours d&apos;enrichissement
+              {t("mkt_sec_empty_title")}
             </h3>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-[#AAB4C0] leading-relaxed">
-              Les enseignants et l&apos;administration préparent les premiers fascicules d&apos;exercices et annales corrigées. Vous pourrez bientôt les commander directement ici avec redirection WhatsApp et téléchargement sécurisé.
+              {t("mkt_sec_empty_desc")}
             </p>
             <div className="pt-2">
               <Link href="/marketplace">
                 <Button variant="primary" size="sm" className="text-xs font-semibold rounded-xl">
-                  Accéder à l&apos;espace Marketplace
+                  {t("mkt_sec_access")}
                 </Button>
               </Link>
             </div>
@@ -95,17 +95,17 @@ export function MarketplaceSection() {
             </div>
             <div>
               <h4 className="font-serif text-sm sm:text-base font-bold text-[#0f2744] dark:text-[#F5F7FA]">
-                Plus de fascicules disponibles dans le catalogue
+                {t("mkt_sec_more_title")}
               </h4>
               <p className="text-xs text-slate-500 dark:text-[#AAB4C0]">
-                Mathématiques, Physique, Informatique, MERISE, Algèbre, Analyse matricielle...
+                {t("mkt_sec_more_desc")}
               </p>
             </div>
           </div>
 
           <Link href="/marketplace">
             <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#e0521c] hover:underline uppercase tracking-wider">
-              <span>Voir les autres fascicules</span>
+              <span>{t("mkt_sec_explore")}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </span>
           </Link>

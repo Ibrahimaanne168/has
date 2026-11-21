@@ -24,8 +24,10 @@ import {
   syncMarketplaceWithServer,
 } from "@/lib/marketplaceStorage";
 import { WhatsAppIcon } from "@/components/marketplace/MarketplaceCard";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function MarketplaceProductPage() {
+  const { t } = useLanguage();
   const params = useParams();
   const router = useRouter();
   const productId = params?.id as string;
@@ -101,17 +103,17 @@ export default function MarketplaceProductPage() {
             <FileText className="w-8 h-8" />
           </div>
           <h1 className="font-serif text-2xl font-bold text-[#0f2744] dark:text-[#F5F7FA]">
-            Document introuvable
+            {t("mkt_not_found_title")}
           </h1>
           <p className="text-sm text-slate-500">
-            Ce document n&apos;existe pas ou a été retiré de la vente par l&apos;administration.
+            {t("mkt_not_found_desc")}
           </p>
           <Link
             href="/marketplace"
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0f2744] text-white text-xs font-semibold"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>Retourner au Marketplace</span>
+            <span>{t("mkt_back_catalog")}</span>
           </Link>
         </main>
         <Footer />
@@ -178,7 +180,7 @@ export default function MarketplaceProductPage() {
       if (res.ok) {
         setDownloadCheckMsg({
           type: "success",
-          text: "✓ Commande validée ! Votre document PDF est en cours de téléchargement sur votre appareil...",
+          text: t("mkt_download_success"),
         });
 
         // Déclenchement d'un VRAI téléchargement de fichier physique
@@ -201,12 +203,12 @@ export default function MarketplaceProductPage() {
         if (res.status === 403) {
           setDownloadCheckMsg({
             type: "pending",
-            text: "Votre commande est bien reçue mais toujours en attente de validation par l'administration après confirmation de votre paiement.",
+            text: t("mkt_download_pending"),
           });
         } else {
           setDownloadCheckMsg({
             type: "error",
-            text: data.error || "Aucune commande validée trouvée avec ce code ou numéro.",
+            text: data.error || t("mkt_download_error_prefix"),
           });
         }
       }
@@ -238,7 +240,7 @@ export default function MarketplaceProductPage() {
               className="inline-flex items-center gap-1.5 text-slate-600 dark:text-[#AAB4C0] hover:text-[#0f2744] dark:hover:text-[#e0521c] font-medium transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>Retour au catalogue</span>
+              <span>{t("mkt_back_catalog")}</span>
             </Link>
 
             <span className="text-[11px] font-mono text-slate-400">Réf : {item.id}</span>
@@ -259,7 +261,7 @@ export default function MarketplaceProductPage() {
                 <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-[#AAB4C0] pt-1">
                   <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-semibold">
                     <Download className="w-4 h-4" />
-                    <span>Téléchargeable</span>
+                    <span>{t("mkt_downloadable")}</span>
                   </div>
                   {item.niveau && (
                     <>
@@ -279,7 +281,7 @@ export default function MarketplaceProductPage() {
               {/* SECTION FICHIERS */}
               <div className="space-y-3">
                 <h3 className="font-serif font-bold text-base sm:text-lg text-[#0f2744] dark:text-white">
-                  Fichiers inclus (1)
+                  {t("mkt_files_included")}
                 </h3>
 
                 {/* Carte Fichier PDF avec Icône, Nom, Taille et Bouton Aperçu */}
@@ -305,7 +307,7 @@ export default function MarketplaceProductPage() {
                     }}
                     className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-[#263241] text-xs font-semibold text-slate-700 dark:text-[#F5F7FA] hover:bg-slate-50 dark:hover:bg-[#151D27] shrink-0"
                   >
-                    <span>Détails</span>
+                    <span>{t("mkt_details")}</span>
                     <ChevronRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -314,10 +316,10 @@ export default function MarketplaceProductPage() {
               {/* Description détaillée */}
               <div id="description-section" className="space-y-3 pt-2">
                 <h3 className="font-serif font-bold text-base sm:text-lg text-[#0f2744] dark:text-white">
-                  Description &amp; Sommaire
+                  {t("mkt_description_summary")}
                 </h3>
                 <div className="prose dark:prose-invert max-w-none text-sm text-slate-700 dark:text-[#C5D0DC] leading-relaxed whitespace-pre-line bg-white dark:bg-[#111821] p-5 sm:p-6 rounded-2xl border border-slate-200/80 dark:border-[#263241] shadow-xs">
-                  {item.description || "Aucune description détaillée fournie pour ce fascicule."}
+                  {item.description || t("mkt_no_description")}
                 </div>
               </div>
             </div>
@@ -357,7 +359,7 @@ export default function MarketplaceProductPage() {
                     </span>
                   </div>
                   <p className="text-[11px] text-slate-500 font-medium">
-                    Fascicule officiel HAS · Format PDF haute qualité
+                    {t("mkt_official_badge_notice")}
                   </p>
                 </div>
 
@@ -366,13 +368,13 @@ export default function MarketplaceProductPage() {
                   <div className="space-y-4 p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 text-center">
                     <CheckCircle2 className="w-8 h-8 text-emerald-600 dark:text-emerald-400 mx-auto" />
                     <h4 className="font-serif font-bold text-sm text-emerald-900 dark:text-emerald-200">
-                      Commande envoyée sur WhatsApp !
+                      {t("mkt_order_sent_title")}
                     </h4>
                     <p className="text-xs text-emerald-800 dark:text-emerald-300 leading-relaxed">
-                      La discussion WhatsApp a été ouverte. Dès validation du paiement, vous pouvez télécharger votre document directement ci-dessous.
+                      {t("mkt_order_sent_desc")}
                     </p>
                     <div className="p-2 rounded-xl bg-white dark:bg-[#111821] border border-emerald-200 dark:border-emerald-800 text-xs font-mono">
-                      <span className="text-slate-400 block text-[10px]">Votre Code de commande :</span>
+                      <span className="text-slate-400 block text-[10px]">{t("mkt_your_order_code")}</span>
                       <strong className="text-slate-900 dark:text-white text-sm">#{orderSubmitted.id}</strong>
                     </div>
 
@@ -382,7 +384,7 @@ export default function MarketplaceProductPage() {
                       className="w-full py-3 rounded-xl bg-[#0f2744] hover:bg-[#18395f] text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow-sm transition-all"
                     >
                       <Download className="w-4 h-4" />
-                      <span>{downloadCheckLoading ? "Vérification..." : "Télécharger mon document validé"}</span>
+                      <span>{downloadCheckLoading ? t("mkt_verifying") : t("mkt_download_validated_btn")}</span>
                     </button>
 
                     {downloadCheckMsg && (
@@ -403,12 +405,12 @@ export default function MarketplaceProductPage() {
                   <form onSubmit={handleOrderSubmit} className="space-y-3.5">
                     <div>
                       <label className="text-xs font-bold text-slate-700 dark:text-[#F5F7FA] block mb-1">
-                        Votre Nom complet <span className="text-red-500">*</span>
+                        {t("mkt_your_full_name")} <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
                         required
-                        placeholder="Ex: Ibrahima Diop"
+                        placeholder={t("mkt_placeholder_name")}
                         value={buyerName}
                         onChange={(e) => setBuyerName(e.target.value)}
                         className="w-full px-3.5 py-2.5 text-xs rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0f2744]"
@@ -417,12 +419,12 @@ export default function MarketplaceProductPage() {
 
                     <div>
                       <label className="text-xs font-bold text-slate-700 dark:text-[#F5F7FA] block mb-1">
-                        Votre Numéro WhatsApp <span className="text-red-500">*</span>
+                        {t("mkt_your_whatsapp")} <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
                         required
-                        placeholder="+221 77 000 00 00"
+                        placeholder={t("mkt_placeholder_phone")}
                         value={buyerPhone}
                         onChange={(e) => setBuyerPhone(e.target.value)}
                         className="w-full px-3.5 py-2.5 text-xs rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0f2744]"
@@ -436,7 +438,7 @@ export default function MarketplaceProductPage() {
                       className="w-full py-3 px-6 rounded-xl bg-[#0f2744] hover:bg-[#18395f] dark:bg-[#e0521c] dark:hover:bg-[#c94210] text-white font-black text-sm flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer active:scale-98"
                     >
                       <WhatsAppIcon className="w-4 h-4 text-white" />
-                      <span>{isSubmitting ? "Connexion WhatsApp..." : "Commander via WhatsApp"}</span>
+                      <span>{isSubmitting ? t("mkt_connecting_wa") : t("mkt_connect_whatsapp_btn")}</span>
                     </button>
                   </form>
                 )}
@@ -450,17 +452,17 @@ export default function MarketplaceProductPage() {
                         onClick={() => setShowCheckDownloadInput(true)}
                         className="text-xs text-[#0f2744] dark:text-[#e0521c] hover:underline font-semibold"
                       >
-                        Déjà commandé ? Télécharger avec mon code
+                        {t("mkt_already_ordered_btn")}
                       </button>
                     ) : (
                       <div className="space-y-2 text-left bg-slate-50 dark:bg-[#151D27] p-3 rounded-xl border border-slate-200 dark:border-[#263241]">
                         <label className="text-[11px] font-bold text-slate-700 dark:text-white block">
-                          Code de commande ou Numéro WhatsApp
+                          {t("mkt_enter_code_or_phone")}
                         </label>
                         <div className="flex items-center gap-2">
                           <input
                             type="text"
-                            placeholder="Ex: ord-... ou 77 000 00 00"
+                            placeholder={t("mkt_placeholder_code_or_phone")}
                             value={downloadIdentifier}
                             onChange={(e) => setDownloadIdentifier(e.target.value)}
                             className="flex-1 px-3 py-1.5 text-xs rounded-lg bg-white dark:bg-[#111821] border border-slate-200 dark:border-[#263241]"
@@ -471,7 +473,7 @@ export default function MarketplaceProductPage() {
                             disabled={downloadCheckLoading}
                             className="px-3 py-1.5 rounded-lg bg-[#0f2744] text-white text-xs font-bold hover:bg-[#1a3b66]"
                           >
-                            {downloadCheckLoading ? "..." : "Télécharger"}
+                            {downloadCheckLoading ? "..." : t("mkt_download_btn")}
                           </button>
                         </div>
                       </div>
@@ -496,7 +498,7 @@ export default function MarketplaceProductPage() {
                 {/* Badge réassurance validation */}
                 <div className="p-3 rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200/80 dark:border-[#263241] flex items-center gap-2 text-xs text-slate-500">
                   <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-                  <span>Validation administrative manuelle sécurisée par code.</span>
+                  <span>{t("mkt_admin_guarantee")}</span>
                 </div>
               </div>
             </div>

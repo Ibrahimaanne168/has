@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { MarketplaceItem } from "@/lib/types";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface MarketplaceCardProps {
   item: MarketplaceItem;
@@ -23,6 +24,8 @@ export function WhatsAppIcon({ className = "w-4 h-4" }: { className?: string }) 
 }
 
 export function MarketplaceCard({ item }: MarketplaceCardProps) {
+  const { t } = useLanguage();
+
   // Calcul automatique du pourcentage de réduction si original_price existe
   const discountPercent =
     item.original_price && item.original_price > item.price
@@ -68,7 +71,7 @@ export function MarketplaceCard({ item }: MarketplaceCardProps) {
           </Link>
 
           <p className="text-[10px] sm:text-[11px] text-slate-400 font-medium truncate">
-            Format PDF téléchargeable
+            {t("mkt_downloadable_pdf")}
           </p>
         </div>
 
@@ -93,7 +96,7 @@ export function MarketplaceCard({ item }: MarketplaceCardProps) {
             href={`/marketplace/${item.id}`}
             className="w-full py-2 px-2.5 sm:px-4 rounded-xl bg-[#0f2744] hover:bg-[#1a3a60] dark:bg-[#e0521c] dark:hover:bg-[#c94210] text-white font-bold text-[11px] sm:text-xs flex items-center justify-center transition-all shadow-xs active:scale-98 text-center"
           >
-            Acheter maintenant
+            {t("mkt_buy_now")}
           </Link>
         </div>
       </div>

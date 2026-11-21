@@ -5,10 +5,13 @@ import Link from "next/link";
 import { UserPlus, LogIn, Menu, X, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { LanguageToggle } from "@/components/ui/LanguageToggle";
+import { useLanguage } from "@/context/LanguageContext";
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -44,7 +47,7 @@ export function Navbar() {
                 <span className="sm:hidden font-bold tracking-tight">HAS</span>
               </span>
               <span className="text-[10px] font-bold text-[#e0521c] uppercase tracking-wider hidden sm:block">
-                Maths · Physique · Informatique
+                {t("nav_tagline")}
               </span>
             </div>
           </Link>
@@ -55,20 +58,20 @@ export function Navbar() {
               href="/#presentation"
               className="text-xs sm:text-sm font-medium text-slate-600 dark:text-[#AAB4C0] hover:text-[#0f2744] dark:hover:text-[#F5F7FA] transition-colors"
             >
-              Présentation
+              {t("nav_presentation")}
             </Link>
             <Link
               href="/#matieres"
               className="text-xs sm:text-sm font-medium text-slate-600 dark:text-[#AAB4C0] hover:text-[#0f2744] dark:hover:text-[#F5F7FA] transition-colors"
             >
-              Matières
+              {t("nav_matieres")}
             </Link>
             <Link
               href="/marketplace"
               className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-[#e0521c] hover:text-[#c44314] transition-colors px-2.5 py-1 rounded-full bg-[#e0521c]/10 dark:bg-[#e0521c]/20 border border-[#e0521c]/30"
             >
               <ShoppingBag className="w-3.5 h-3.5" />
-              <span>Marketplace</span>
+              <span>{t("nav_marketplace")}</span>
               <span className="px-1.5 py-0.2 rounded-full bg-[#e0521c] text-white text-[9px] font-extrabold uppercase tracking-wide">
                 PDF
               </span>
@@ -77,33 +80,35 @@ export function Navbar() {
               href="/#mot-directeur"
               className="text-xs sm:text-sm font-medium text-slate-600 dark:text-[#AAB4C0] hover:text-[#0f2744] dark:hover:text-[#F5F7FA] transition-colors"
             >
-              Directeur
+              {t("nav_directeur")}
             </Link>
             <Link
               href="/#contact"
               className="text-xs sm:text-sm font-medium text-slate-600 dark:text-[#AAB4C0] hover:text-[#0f2744] dark:hover:text-[#F5F7FA] transition-colors"
             >
-              Contact
+              {t("nav_contact")}
             </Link>
           </nav>
 
           {/* Actions desktop */}
           <div className="hidden md:flex items-center gap-2.5">
+            <LanguageToggle />
             <ThemeToggle />
             <Link href="/inscription">
               <Button variant="outline" size="sm" className="text-xs rounded-lg font-semibold">
-                Inscription
+                {t("nav_inscription")}
               </Button>
             </Link>
             <Link href="/connexion">
               <Button variant="primary" size="sm" className="text-xs rounded-lg font-semibold">
-                Connexion
+                {t("nav_connexion")}
               </Button>
             </Link>
           </div>
 
-          {/* Mobile right items (ThemeToggle + Hamburger) */}
-          <div className="md:hidden flex items-center gap-2">
+          {/* Mobile right items (LanguageToggle + ThemeToggle + Hamburger) */}
+          <div className="md:hidden flex items-center gap-1.5">
+            <LanguageToggle />
             <ThemeToggle />
             <button
               onClick={() => setMobileMenuOpen((v) => !v)}

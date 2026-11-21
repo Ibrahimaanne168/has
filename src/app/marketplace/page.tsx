@@ -19,8 +19,10 @@ import { Footer } from "@/components/layout/Footer";
 import { MarketplaceCard, WhatsAppIcon } from "@/components/marketplace/MarketplaceCard";
 import { MarketplaceItem } from "@/lib/types";
 import { getStoredMarketplaceItems, syncMarketplaceWithServer } from "@/lib/marketplaceStorage";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function MarketplacePage() {
+  const { t } = useLanguage();
   const [items, setItems] = useState<MarketplaceItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedNiveau, setSelectedNiveau] = useState<string>("all");
@@ -105,7 +107,7 @@ export default function MarketplacePage() {
             {/* Breadcrumb */}
             <div className="flex items-center gap-2 text-xs text-slate-400 mb-4">
               <Link href="/" className="hover:text-white transition-colors">
-                Accueil
+                {t("nav_presentation") === "About Us" ? "Home" : "Accueil"}
               </Link>
               <ChevronRight className="w-3.5 h-3.5" />
               <span className="text-white font-medium">Marketplace &amp; Fascicules</span>
@@ -114,16 +116,15 @@ export default function MarketplacePage() {
             <div className="max-w-3xl space-y-4">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-[#e0521c]/20 text-[#e0521c] text-xs font-bold tracking-wider uppercase border border-[#e0521c]/30">
                 <ShoppingBag className="w-4 h-4" />
-                <span>Boutique Officielle des Enseignants HAS</span>
+                <span>{t("mkt_sec_badge")}</span>
               </div>
 
               <h1 className="font-serif text-3xl sm:text-5xl font-bold text-white tracking-tight leading-tight">
-                Marketplace des Fascicules, TD &amp; Corrigés d&apos;Examen
+                {t("mkt_page_title")}
               </h1>
 
               <p className="text-slate-300 text-sm sm:text-base leading-relaxed max-w-2xl">
-                Accédez aux documents de révision et fiches d&apos;exercices spécialement rédigés par
-                les professeurs de Halil Académie Scientifique. Commande instantanée et directe via WhatsApp avec l&apos;enseignant.
+                {t("mkt_page_desc")}
               </p>
 
               <div className="pt-2 flex flex-wrap items-center gap-4 text-xs text-slate-300 font-medium">
@@ -155,7 +156,7 @@ export default function MarketplacePage() {
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-[#687585]" />
                 <input
                   type="text"
-                  placeholder="Rechercher un fascicule, un prof, une matière..."
+                  placeholder={t("mkt_search_placeholder")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 text-xs sm:text-sm rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] text-slate-900 dark:text-[#F5F7FA] placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0f2744] dark:focus:ring-cyan-500"
@@ -174,7 +175,7 @@ export default function MarketplacePage() {
                         : "text-slate-600 dark:text-[#AAB4C0] hover:text-slate-900"
                     }`}
                   >
-                    Tous
+                    {t("mkt_filter_all_levels")}
                   </button>
                   <button
                     onClick={() => setSelectedNiveau("l1")}
@@ -184,7 +185,7 @@ export default function MarketplacePage() {
                         : "text-slate-600 dark:text-[#AAB4C0] hover:text-slate-900"
                     }`}
                   >
-                    Licence 1
+                    {t("mkt_filter_l1")}
                   </button>
                   <button
                     onClick={() => setSelectedNiveau("l2")}
@@ -194,7 +195,7 @@ export default function MarketplacePage() {
                         : "text-slate-600 dark:text-[#AAB4C0] hover:text-slate-900"
                     }`}
                   >
-                    Licence 2
+                    {t("mkt_filter_l2")}
                   </button>
                 </div>
 
@@ -205,7 +206,7 @@ export default function MarketplacePage() {
                     onChange={(e) => setSelectedMatiere(e.target.value)}
                     className="px-3 py-1.5 text-xs rounded-lg bg-slate-100 dark:bg-[#151D27] border border-slate-200/80 dark:border-[#263241] text-slate-800 dark:text-[#F5F7FA] focus:outline-none"
                   >
-                    <option value="all">Toutes les matières</option>
+                    <option value="all">{t("mkt_filter_all_subjects")}</option>
                     {matieresList.map((m) => (
                       <option key={m} value={m}>
                         {m}
@@ -220,10 +221,10 @@ export default function MarketplacePage() {
                   onChange={(e) => setSortBy(e.target.value as any)}
                   className="px-3 py-1.5 text-xs rounded-lg bg-slate-100 dark:bg-[#151D27] border border-slate-200/80 dark:border-[#263241] text-slate-800 dark:text-[#F5F7FA] focus:outline-none"
                 >
-                  <option value="featured">Recommandés</option>
-                  <option value="price_asc">Prix croissant</option>
-                  <option value="price_desc">Prix décroissant</option>
-                  <option value="recent">Plus récents</option>
+                  <option value="featured">{t("mkt_sort_featured")}</option>
+                  <option value="price_asc">{t("mkt_sort_price_asc")}</option>
+                  <option value="price_desc">{t("mkt_sort_price_desc")}</option>
+                  <option value="recent">{t("mkt_sort_recent")}</option>
                 </select>
               </div>
             </div>
@@ -236,7 +237,7 @@ export default function MarketplacePage() {
         <section className="py-10 sm:py-14 max-w-6xl mx-auto px-4 sm:px-8 lg:px-10">
           <div className="flex items-center justify-between mb-6">
             <p className="text-xs sm:text-sm text-slate-500 dark:text-[#AAB4C0]">
-              Affichage de <strong className="text-slate-900 dark:text-white">{filteredItems.length}</strong> document(s) disponible(s)
+              <strong className="text-slate-900 dark:text-white">{filteredItems.length}</strong> {t("mkt_total_docs")}
             </p>
 
             {(searchQuery || selectedNiveau !== "all" || selectedMatiere !== "all") && (
@@ -248,7 +249,7 @@ export default function MarketplacePage() {
                 }}
                 className="text-xs text-[#e0521c] hover:underline font-semibold"
               >
-                Réinitialiser les filtres
+                {t("mkt_reset_filters")}
               </button>
             )}
           </div>
@@ -259,10 +260,10 @@ export default function MarketplacePage() {
                 <BookOpen className="w-6 h-6" />
               </div>
               <h3 className="font-serif text-lg font-bold text-slate-800 dark:text-[#F5F7FA]">
-                Aucun document ne correspond à vos critères
+                {t("mkt_no_docs_title")}
               </h3>
               <p className="text-xs text-slate-500 dark:text-[#AAB4C0] max-w-md mx-auto">
-                Essayez d&apos;élargir vos termes de recherche ou de retirer certains filtres de matières ou de niveaux.
+                {t("mkt_no_docs_desc")}
               </p>
               <button
                 onClick={() => {
@@ -272,7 +273,7 @@ export default function MarketplacePage() {
                 }}
                 className="px-4 py-2 rounded-xl bg-[#0f2744] text-white text-xs font-semibold"
               >
-                Voir tous les fascicules
+                {t("mkt_view_all_docs")}
               </button>
             </div>
           ) : (
@@ -291,10 +292,10 @@ export default function MarketplacePage() {
           <div className="max-w-5xl mx-auto px-4 sm:px-8 lg:px-10">
             <div className="text-center max-w-xl mx-auto mb-10">
               <span className="text-[#e0521c] text-xs font-bold uppercase tracking-wider block mb-1">
-                Processus Simple &amp; Rapide
+                {t("mkt_guide_badge")}
               </span>
               <h3 className="font-serif text-2xl font-bold text-[#0f2744] dark:text-[#F5F7FA]">
-                Comment commander un document ?
+                {t("mkt_guide_title")}
               </h3>
             </div>
 
@@ -304,10 +305,10 @@ export default function MarketplacePage() {
                   1
                 </div>
                 <h4 className="font-serif font-bold text-base text-[#0f2744] dark:text-[#F5F7FA]">
-                  Sélectionnez le document
+                  {t("mkt_step1_title")}
                 </h4>
                 <p className="text-xs text-slate-600 dark:text-[#AAB4C0] leading-relaxed">
-                  Consultez la description, le sommaire, le nombre de pages et le prix fixé par l&apos;enseignant.
+                  {t("mkt_step1_desc")}
                 </p>
               </div>
 
@@ -316,10 +317,10 @@ export default function MarketplacePage() {
                   <WhatsAppIcon className="w-5 h-5 text-white" />
                 </div>
                 <h4 className="font-serif font-bold text-base text-[#0f2744] dark:text-[#F5F7FA]">
-                  Cliquez sur Commander
+                  {t("mkt_step2_title")}
                 </h4>
                 <p className="text-xs text-slate-600 dark:text-[#AAB4C0] leading-relaxed">
-                  Vous êtes automatiquement redirigé vers la conversation WhatsApp officielle de l&apos;enseignant avec un message pré-rempli.
+                  {t("mkt_step2_desc")}
                 </p>
               </div>
 
@@ -328,10 +329,10 @@ export default function MarketplacePage() {
                   <CheckCircle2 className="w-5 h-5 text-white" />
                 </div>
                 <h4 className="font-serif font-bold text-base text-[#0f2744] dark:text-[#F5F7FA]">
-                  Réception immédiate du PDF
+                  {t("mkt_step3_title")}
                 </h4>
                 <p className="text-xs text-slate-600 dark:text-[#AAB4C0] leading-relaxed">
-                  Réglez en toute sécurité par Wave / Orange Money et recevez immédiatement votre fichier PDF complet.
+                  {t("mkt_step3_desc")}
                 </p>
               </div>
             </div>
