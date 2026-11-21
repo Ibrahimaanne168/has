@@ -13,6 +13,75 @@ export const translations = {
     nav_tagline: "Maths · Physique · Informatique",
     nav_badge_pdf: "PDF",
 
+    // Hero Section
+    hero_kicker: "Renforcement Universitaire d'Excellence · Sénégal",
+    hero_title_prefix: "Halil Académie",
+    hero_title_highlight: "Scientifique",
+    hero_desc:
+      "Donner à chaque étudiant les clés méthodologiques et scientifiques de sa réussite. Accompagnement ciblé et intensif en Mathématiques, Physique et Informatique pour les niveaux Licence 1 & Licence 2.",
+    hero_cta_matieres: "Découvrir les matières",
+    hero_cta_join: "Rejoindre HAS",
+    hero_cta_director: "Mot du Directeur",
+
+    // Section Approche & Piliers
+    approach_kicker: "Notre Approche Pédagogique",
+    approach_title: "Une pédagogie active, centrée sur la pratique",
+    approach_desc:
+      "À Halil Académie Scientifique, chaque étudiant bénéficie d'une attention réelle et d'une méthode rigoureuse pour exceller.",
+    pillar1_title: "Pratique intensive des TD",
+    pillar1_desc:
+      "Résolution méthodique de chaque exercice : nous décortiquons chaque démonstration, formule et algorithme jusqu'à ce que le réflexe soit parfaitement ancré.",
+    pillar2_title: "Examens Antérieurs",
+    pillar2_desc:
+      "Entraînement ciblé sur les véritables sujets d'examen, corrigés pas à pas, pour aborder les épreuves avec sérénité et maîtrise.",
+    pillar3_title: "Soutien des Profs",
+    pillar3_desc:
+      "Encadrement personnalisé par des enseignants dévoués, toujours disponibles pour répondre à vos interrogations et guider votre progression.",
+    values_bold: "Rigueur & Fraternité",
+    values_text:
+      "— les valeurs cardinales qui guident chaque séance et chaque étudiant vers l'excellence académique.",
+
+    // Section Matières
+    matieres_kicker: "Cursus Universitaire",
+    matieres_title: "Nos Matières Enseignées",
+    matieres_desc:
+      "Un programme structuré pour chaque niveau avec un encadrement rigoureux en TD et examens.",
+    tab_l1: "Licence 1 (L1)",
+    tab_l2: "Licence 2 (L2)",
+
+    // Section Mot du Directeur
+    director_kicker: "Mot du Directeur",
+    director_name: "Pape Ibrahima Samb",
+    director_title: "Directeur — HAS",
+    director_quote:
+      "« Notre mission : donner à chaque étudiant les clés méthodologiques et scientifiques de sa réussite. »",
+    director_p1:
+      "Bienvenue à la Halil Académie Scientifique. Notre ambition est d'offrir aux étudiants de Licence 1 et Licence 2 un accompagnement méthodique et de haute rigueur en Mathématiques, Physique et Informatique.",
+    director_p2:
+      "À travers la pratique intensive des travaux dirigés et l'encadrement de nos enseignants dévoués, nous forgeons l'assurance et les compétences nécessaires à votre succès universitaire.",
+
+    // Section Contact
+    contact_kicker: "Formulaire de Contact",
+    contact_title: "Nous Contacter",
+    contact_desc:
+      "Une question sur nos séances de renforcement, les modalités d'inscription ou notre encadrement ? Transmettez-nous votre demande, notre secrétariat vous répondra dans les plus brefs délais.",
+    contact_fullname: "Nom complet",
+    contact_placeholder_name: "Ex. Amadou Diallo",
+    contact_email: "Adresse email",
+    contact_phone: "Numéro de téléphone",
+    contact_subject: "Objet de votre demande",
+    contact_placeholder_subject: "Ex. Renseignements sur les cours de renforcement",
+    contact_message: "Votre message",
+    contact_placeholder_message: "Précisez votre niveau universitaire, vos besoins ou toute question...",
+    contact_btn_send: "Envoyer le message",
+    contact_sending: "Envoi en cours...",
+    contact_city: "Halil Académie Scientifique — Dakar, Sénégal",
+
+    // Footer
+    footer_rights: "Tous droits réservés",
+    footer_contact: "Contact",
+    footer_ent: "Espace ENT",
+
     // Marketplace Global & Card
     mkt_buy_now: "Acheter maintenant",
     mkt_order_whatsapp: "Commander via WhatsApp",
@@ -20,6 +89,7 @@ export const translations = {
     mkt_downloadable_pdf: "Format PDF téléchargeable",
     mkt_official_doc: "Fascicule officiel HAS",
     mkt_off: "OFF",
+    mkt_translated_badge: "Traduit en Anglais par IA",
 
     // Section Marketplace Accueil
     mkt_sec_badge: "Boutique Académique · Ressources Professeurs",
@@ -81,7 +151,8 @@ export const translations = {
     mkt_order_sent_desc:
       "La discussion WhatsApp a été ouverte. Dès validation du paiement, vous pouvez télécharger votre document directement ci-dessous.",
     mkt_your_order_code: "Votre Code de commande :",
-    mkt_download_validated_btn: "Télécharger mon document validé",
+    mkt_download_validated_btn: "Télécharger mon document validé (PDF)",
+    mkt_download_en_btn: "Télécharger en Anglais (Traduction IA)",
     mkt_verifying: "Vérification...",
     mkt_your_full_name: "Votre Nom complet",
     mkt_your_whatsapp: "Votre Numéro WhatsApp",
@@ -112,6 +183,75 @@ export const translations = {
     nav_tagline: "Maths · Physics · Computer Science",
     nav_badge_pdf: "PDF",
 
+    // Hero Section
+    hero_kicker: "Academic Excellence University Tutoring · Senegal",
+    hero_title_prefix: "Halil Academic",
+    hero_title_highlight: "Science",
+    hero_desc:
+      "Equipping every student with the methodological and scientific keys to succeed. Targeted and intensive support in Mathematics, Physics and Computer Science for Bachelor Years 1 & 2.",
+    hero_cta_matieres: "Explore Subjects",
+    hero_cta_join: "Join HAS",
+    hero_cta_director: "Director's Address",
+
+    // Section Approche & Piliers
+    approach_kicker: "Our Pedagogical Approach",
+    approach_title: "Active Learning Focused on Real Practice",
+    approach_desc:
+      "At Halil Academic Science, each student receives genuine individual attention and a rigorous methodology to excel.",
+    pillar1_title: "Intensive Problem-Solving Practice",
+    pillar1_desc:
+      "Methodical resolution of each exercise: we dissect every proof, mathematical formula and algorithm until it becomes second nature.",
+    pillar2_title: "Past Exam Mastery",
+    pillar2_desc:
+      "Targeted preparation using genuine past university exam papers, thoroughly solved step-by-step with exam tips.",
+    pillar3_title: "Dedicated Faculty Mentorship",
+    pillar3_desc:
+      "Personalized guidance by devoted lecturers, always on hand to answer your questions and steer your academic progress.",
+    values_bold: "Rigor & Brotherhood",
+    values_text:
+      "— the foundational values steering each lecture and student toward academic excellence.",
+
+    // Section Matières
+    matieres_kicker: "University Curriculum",
+    matieres_title: "Courses & Subjects Taught",
+    matieres_desc:
+      "A structured syllabus designed for each university year with rigorous exam preparation and exercises.",
+    tab_l1: "Bachelor Year 1 (L1)",
+    tab_l2: "Bachelor Year 2 (L2)",
+
+    // Section Mot du Directeur
+    director_kicker: "Director's Address",
+    director_name: "Pape Ibrahima Samb",
+    director_title: "Director — HAS",
+    director_quote:
+      "“Our mission: empowering every student with the methodological and scientific mastery for success.”",
+    director_p1:
+      "Welcome to Halil Academic Science. Our mission is to provide university students in Bachelor Years 1 and 2 with methodical, high-rigor mentoring in Mathematics, Physics, and Computer Science.",
+    director_p2:
+      "Through intensive problem-solving workshops and close guidance from our devoted faculty, we build the confidence and competence required for your university triumphs.",
+
+    // Section Contact
+    contact_kicker: "Contact Form",
+    contact_title: "Contact Us",
+    contact_desc:
+      "Have a question about our tutoring sessions, enrollment procedures or curriculum? Send us your inquiry, our team will get back to you promptly.",
+    contact_fullname: "Full Name",
+    contact_placeholder_name: "e.g. John Doe",
+    contact_email: "Email Address",
+    contact_phone: "Phone Number",
+    contact_subject: "Subject of Inquiry",
+    contact_placeholder_subject: "e.g. Information about tutoring classes",
+    contact_message: "Your Message",
+    contact_placeholder_message: "Specify your academic year, your learning goals or questions...",
+    contact_btn_send: "Send Message",
+    contact_sending: "Sending...",
+    contact_city: "Halil Academic Science — Dakar, Senegal",
+
+    // Footer
+    footer_rights: "All rights reserved",
+    footer_contact: "Contact",
+    footer_ent: "Student Portal (ENT)",
+
     // Marketplace Global & Card
     mkt_buy_now: "Buy now",
     mkt_order_whatsapp: "Order via WhatsApp",
@@ -119,6 +259,7 @@ export const translations = {
     mkt_downloadable_pdf: "Downloadable PDF format",
     mkt_official_doc: "Official HAS Booklet",
     mkt_off: "OFF",
+    mkt_translated_badge: "AI English Translated",
 
     // Section Marketplace Accueil
     mkt_sec_badge: "Academic Store · Teachers' Resources",
@@ -180,7 +321,8 @@ export const translations = {
     mkt_order_sent_desc:
       "WhatsApp chat has been opened. Once payment is confirmed, you can download your document directly below.",
     mkt_your_order_code: "Your Order Code:",
-    mkt_download_validated_btn: "Download my validated document",
+    mkt_download_validated_btn: "Download my validated document (PDF)",
+    mkt_download_en_btn: "Download in English (AI Translation)",
     mkt_verifying: "Verifying...",
     mkt_your_full_name: "Your Full Name",
     mkt_your_whatsapp: "Your WhatsApp Number",

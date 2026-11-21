@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 import {
@@ -6,9 +8,6 @@ import {
   Users,
   Target,
   Sparkles,
-  Calculator,
-  Atom,
-  Code2,
   GraduationCap,
 } from "lucide-react";
 import { Navbar } from "@/components/layout/Navbar";
@@ -17,8 +16,11 @@ import { Button } from "@/components/ui/Button";
 import { ContactSection } from "@/components/home/ContactSection";
 import { MatieresSection } from "@/components/home/MatieresSection";
 import { MarketplaceSection } from "@/components/marketplace/MarketplaceSection";
+import { useLanguage } from "@/context/LanguageContext";
 
 export default function HomePage() {
+  const { t } = useLanguage();
+
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAFC] dark:bg-[#0B0F14] transition-colors">
       <Navbar />
@@ -32,21 +34,16 @@ export default function HomePage() {
             {/* Kicker */}
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#e0521c]/15 text-[#e0521c] text-[10px] sm:text-[11px] font-bold tracking-wider uppercase mb-3 sm:mb-6 border border-[#e0521c]/30">
               <GraduationCap className="w-3.5 h-3.5" />
-              <span>Renforcement Universitaire d&apos;Excellence · Sénégal</span>
+              <span>{t("hero_kicker")}</span>
             </div>
 
             <h1 className="font-serif text-2xl sm:text-5xl lg:text-6xl font-bold text-white max-w-3xl tracking-tight leading-tight">
-              Halil Académie{" "}
-              <span className="text-[#e0521c]">Scientifique</span>
+              {t("hero_title_prefix")}{" "}
+              <span className="text-[#e0521c]">{t("hero_title_highlight")}</span>
             </h1>
 
             <p className="mt-3 sm:mt-6 text-slate-300 text-sm sm:text-lg leading-relaxed max-w-2xl font-normal">
-              Donner à chaque étudiant les clés méthodologiques et scientifiques
-              de sa réussite. Accompagnement ciblé et intensif en{" "}
-              <strong className="text-white font-medium">Mathématiques</strong>,{" "}
-              <strong className="text-white font-medium">Physique</strong> et{" "}
-              <strong className="text-white font-medium">Informatique</strong> pour les niveaux{" "}
-              <strong className="text-white font-medium">Licence 1 &amp; Licence 2</strong>.
+              {t("hero_desc")}
             </p>
 
             {/* CTAs */}
@@ -58,7 +55,7 @@ export default function HomePage() {
                   rightIcon={<ArrowRight className="w-4 h-4" />}
                   className="w-full sm:w-auto min-h-[42px] sm:min-h-[48px] text-xs sm:text-base font-semibold shadow-none justify-center rounded-lg"
                 >
-                  Découvrir les matières
+                  {t("hero_cta_matieres")}
                 </Button>
               </Link>
 
@@ -68,7 +65,7 @@ export default function HomePage() {
                   size="md"
                   className="w-full sm:w-auto min-h-[42px] sm:min-h-[48px] text-xs sm:text-base font-semibold border-white/30 text-white hover:bg-white/10 justify-center rounded-lg"
                 >
-                  Rejoindre HAS
+                  {t("hero_cta_join")}
                 </Button>
               </Link>
 
@@ -76,7 +73,7 @@ export default function HomePage() {
                 href="/#mot-directeur"
                 className="text-xs sm:text-sm text-slate-300 hover:text-white transition-colors underline underline-offset-4 px-2 py-1.5 min-h-[36px] sm:min-h-[48px] flex items-center justify-center sm:justify-start"
               >
-                Mot du Directeur
+                {t("hero_cta_director")}
               </Link>
             </div>
           </div>
@@ -90,15 +87,13 @@ export default function HomePage() {
             {/* En-tête de section */}
             <div className="max-w-xl mb-12 sm:mb-16">
               <p className="text-[#e0521c] text-[11px] font-bold tracking-wider uppercase mb-3">
-                Notre Approche Pédagogique
+                {t("approach_kicker")}
               </p>
               <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#0f2744] dark:text-[#F5F7FA] leading-snug">
-                Une pédagogie active,
-                <br className="hidden sm:block" /> centrée sur la pratique
+                {t("approach_title")}
               </h2>
               <p className="mt-3 text-slate-500 dark:text-[#AAB4C0] text-sm sm:text-base leading-relaxed">
-                À <strong className="text-slate-800 dark:text-[#F5F7FA] font-semibold">Halil Académie Scientifique</strong>, chaque étudiant
-                bénéficie d&apos;une attention réelle et d&apos;une méthode rigoureuse pour exceller.
+                {t("approach_desc")}
               </p>
             </div>
 
@@ -111,11 +106,10 @@ export default function HomePage() {
                     <Target className="w-5 h-5 text-[#e0521c]" />
                   </div>
                   <h3 className="font-serif text-2xl sm:text-3xl font-bold mb-3 leading-snug text-white dark:text-[#F5F7FA]">
-                    Pratique intensive des TD
+                    {t("pillar1_title")}
                   </h3>
                   <p className="text-slate-300 dark:text-[#AAB4C0] text-sm sm:text-base leading-relaxed">
-                    Résolution méthodique de chaque exercice : nous décortiquons chaque démonstration,
-                    formule et algorithme jusqu&apos;à ce que le réflexe soit parfaitement ancré.
+                    {t("pillar1_desc")}
                   </p>
                 </div>
               </div>
@@ -128,11 +122,10 @@ export default function HomePage() {
                     <BookOpen className="w-4 h-4 text-[#0f2744] dark:text-[#e0521c]" />
                   </div>
                   <h3 className="font-serif text-lg sm:text-xl font-bold text-slate-900 dark:text-[#F5F7FA] mb-2 leading-snug">
-                    Examens Antérieurs
+                    {t("pillar2_title")}
                   </h3>
                   <p className="text-slate-500 dark:text-[#AAB4C0] text-sm leading-relaxed">
-                    Entraînement ciblé sur les véritables sujets d&apos;examen, corrigés pas à pas,
-                    pour aborder les épreuves avec sérénité et maîtrise.
+                    {t("pillar2_desc")}
                   </p>
                 </div>
 
@@ -142,11 +135,10 @@ export default function HomePage() {
                     <Users className="w-4 h-4 text-[#e0521c]" />
                   </div>
                   <h3 className="font-serif text-lg sm:text-xl font-bold text-slate-900 dark:text-[#F5F7FA] mb-2 leading-snug">
-                    Soutien des Profs
+                    {t("pillar3_title")}
                   </h3>
                   <p className="text-slate-500 dark:text-[#AAB4C0] text-sm leading-relaxed">
-                    Encadrement personnalisé par des enseignants dévoués, toujours disponibles
-                    pour répondre à vos interrogations et guider votre progression.
+                    {t("pillar3_desc")}
                   </p>
                 </div>
               </div>
@@ -158,8 +150,8 @@ export default function HomePage() {
                 <Sparkles className="w-4 h-4" />
               </div>
               <p className="text-slate-700 dark:text-[#AAB4C0] text-sm sm:text-base">
-                <strong className="font-bold text-slate-900 dark:text-[#F5F7FA]">Rigueur &amp; Fraternité</strong> —
-                {" "}les valeurs cardinales qui guident chaque séance et chaque étudiant vers l&apos;excellence académique.
+                <strong className="font-bold text-slate-900 dark:text-[#F5F7FA]">{t("values_bold")}</strong>{" "}
+                {t("values_text")}
               </p>
             </div>
           </div>
@@ -193,29 +185,29 @@ export default function HomePage() {
                     />
                   </div>
                   <p className="font-serif text-base font-bold text-[#0f2744] dark:text-[#F5F7FA] mt-3 text-center">
-                    Pape Ibrahima Samb
+                    {t("director_name")}
                   </p>
                   <p className="text-[11px] text-[#e0521c] font-bold uppercase tracking-wider text-center">
-                    Directeur — HAS
+                    {t("director_title")}
                   </p>
                 </div>
 
                 {/* Mot sobre */}
                 <div className="flex-1 flex flex-col justify-center">
                   <p className="text-[#e0521c] text-[11px] font-bold tracking-wider uppercase mb-2">
-                    Mot du Directeur
+                    {t("director_kicker")}
                   </p>
 
                   <blockquote className="font-serif text-xl sm:text-2xl font-bold text-[#0f2744] dark:text-[#F5F7FA] leading-snug mb-4">
-                    « Notre mission : donner à chaque étudiant les clés méthodologiques et scientifiques de sa réussite. »
+                    {t("director_quote")}
                   </blockquote>
 
+                  <p className="text-slate-600 dark:text-[#AAB4C0] text-sm sm:text-base leading-relaxed mb-3">
+                    {t("director_p1")}
+                  </p>
+
                   <p className="text-slate-600 dark:text-[#AAB4C0] text-sm sm:text-base leading-relaxed">
-                    Bienvenue à la <strong className="text-slate-900 dark:text-[#F5F7FA] font-semibold">Halil Académie Scientifique</strong>.
-                    Notre ambition est d&apos;offrir aux étudiants de <strong className="text-slate-900 dark:text-[#F5F7FA] font-semibold">Licence 1 et Licence 2</strong> un accompagnement
-                    méthodique et de haute rigueur en Mathématiques, Physique et Informatique. À travers la pratique intensive
-                    des travaux dirigés et l&apos;encadrement de nos enseignants dévoués, nous forgeons l&apos;assurance et les compétences
-                    nécessaires à votre succès universitaire.
+                    {t("director_p2")}
                   </p>
                 </div>
               </div>

@@ -3,8 +3,11 @@
 import React, { useState } from "react";
 import { Send, CheckCircle2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { useLanguage } from "@/context/LanguageContext";
 
 export function ContactSection() {
+  const { t } = useLanguage();
+
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -59,14 +62,13 @@ export function ContactSection() {
           {/* En-tête */}
           <div className="mb-8">
             <p className="text-[#e0521c] text-[11px] font-bold tracking-wider uppercase mb-2">
-              Formulaire de Contact
+              {t("contact_kicker")}
             </p>
             <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] dark:text-[#F5F7FA] leading-snug">
-              Nous Contacter
+              {t("contact_title")}
             </h2>
             <p className="mt-2 text-slate-500 dark:text-[#AAB4C0] text-xs sm:text-sm leading-relaxed">
-              Une question sur nos séances de renforcement, les modalités d&apos;inscription ou notre encadrement ?
-              Transmettez-nous votre demande, notre secrétariat vous répondra dans les plus brefs délais.
+              {t("contact_desc")}
             </p>
           </div>
 
@@ -89,13 +91,13 @@ export function ContactSection() {
             {/* Nom complet */}
             <div className="flex flex-col gap-1.5">
               <label htmlFor="contact-name" className="text-xs font-semibold text-slate-700 dark:text-[#F5F7FA]">
-                Nom complet <span className="text-[#e0521c]" aria-hidden="true">*</span>
+                {t("contact_fullname")} <span className="text-[#e0521c]" aria-hidden="true">*</span>
               </label>
               <input
                 id="contact-name"
                 type="text"
                 required
-                placeholder="Ex. Amadou Diallo"
+                placeholder={t("contact_placeholder_name")}
                 value={formData.fullName}
                 onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                 className="block w-full rounded-lg border border-slate-200/90 dark:border-[#263241] bg-white dark:bg-[#151D27] px-3.5 py-2.5 text-sm text-slate-900 dark:text-[#F5F7FA] placeholder-slate-400 dark:placeholder-[#687585] focus:border-[#0f2744] dark:focus:border-[#e0521c] focus:outline-none focus:ring-1 focus:ring-[#0f2744] dark:focus:ring-[#e0521c] transition-colors"
@@ -106,7 +108,7 @@ export function ContactSection() {
               {/* Email */}
               <div className="flex flex-col gap-1.5">
                 <label htmlFor="contact-email" className="text-xs font-semibold text-slate-700 dark:text-[#F5F7FA]">
-                  Adresse email <span className="text-[#e0521c]" aria-hidden="true">*</span>
+                  {t("contact_email")} <span className="text-[#e0521c]" aria-hidden="true">*</span>
                 </label>
                 <input
                   id="contact-email"
@@ -122,7 +124,7 @@ export function ContactSection() {
               {/* Téléphone */}
               <div className="flex flex-col gap-1.5">
                 <label htmlFor="contact-phone" className="text-xs font-semibold text-slate-700 dark:text-[#F5F7FA]">
-                  Numéro de téléphone
+                  {t("contact_phone")}
                 </label>
                 <input
                   id="contact-phone"
@@ -138,13 +140,13 @@ export function ContactSection() {
             {/* Objet */}
             <div className="flex flex-col gap-1.5">
               <label htmlFor="contact-subject" className="text-xs font-semibold text-slate-700 dark:text-[#F5F7FA]">
-                Objet de votre demande <span className="text-[#e0521c]" aria-hidden="true">*</span>
+                {t("contact_subject")} <span className="text-[#e0521c]" aria-hidden="true">*</span>
               </label>
               <input
                 id="contact-subject"
                 type="text"
                 required
-                placeholder="Ex. Renseignements sur les cours de renforcement"
+                placeholder={t("contact_placeholder_subject")}
                 value={formData.subject}
                 onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                 className="block w-full rounded-lg border border-slate-200/90 dark:border-[#263241] bg-white dark:bg-[#151D27] px-3.5 py-2.5 text-sm text-slate-900 dark:text-[#F5F7FA] placeholder-slate-400 dark:placeholder-[#687585] focus:border-[#0f2744] dark:focus:border-[#e0521c] focus:outline-none focus:ring-1 focus:ring-[#0f2744] dark:focus:ring-[#e0521c] transition-colors"
@@ -154,7 +156,7 @@ export function ContactSection() {
             {/* Message */}
             <div className="flex flex-col gap-1.5">
               <label htmlFor="contact-message" className="text-xs font-semibold text-slate-700 dark:text-[#F5F7FA]">
-                Votre message <span className="text-[#e0521c]" aria-hidden="true">*</span>
+                {t("contact_message")} <span className="text-[#e0521c]" aria-hidden="true">*</span>
               </label>
               <textarea
                 id="contact-message"
@@ -162,7 +164,7 @@ export function ContactSection() {
                 rows={4}
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                placeholder="Précisez votre niveau universitaire, vos besoins ou toute question..."
+                placeholder={t("contact_placeholder_message")}
                 className="block w-full rounded-lg border border-slate-200/90 dark:border-[#263241] bg-white dark:bg-[#151D27] px-3.5 py-2.5 text-sm text-slate-900 dark:text-[#F5F7FA] placeholder-slate-400 dark:placeholder-[#687585] focus:border-[#0f2744] dark:focus:border-[#e0521c] focus:outline-none focus:ring-1 focus:ring-[#0f2744] dark:focus:ring-[#e0521c] transition-colors resize-none"
               />
             </div>
@@ -176,11 +178,11 @@ export function ContactSection() {
               rightIcon={<Send className="w-4 h-4" />}
               className="w-full justify-center min-h-[46px] text-sm font-semibold mt-2 rounded-lg"
             >
-              Envoyer le message
+              {isLoading ? t("contact_sending") : t("contact_btn_send")}
             </Button>
 
             <p className="text-[11px] text-center text-slate-400 dark:text-[#687585] mt-1">
-              Halil Académie Scientifique — Dakar, Sénégal
+              {t("contact_city")}
             </p>
           </form>
         </div>

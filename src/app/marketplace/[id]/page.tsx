@@ -27,7 +27,7 @@ import { WhatsAppIcon } from "@/components/marketplace/MarketplaceCard";
 import { useLanguage } from "@/context/LanguageContext";
 
 export default function MarketplaceProductPage() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const params = useParams();
   const router = useRouter();
   const productId = params?.id as string;
@@ -174,7 +174,7 @@ export default function MarketplaceProductPage() {
         ? `phone=${encodeURIComponent(cleanIdent)}`
         : `code=${encodeURIComponent(cleanIdent)}`;
 
-      const downloadUrl = `/api/marketplace/download?itemId=${encodeURIComponent(item.id)}&${queryParam}`;
+      const downloadUrl = `/api/marketplace/download?itemId=${encodeURIComponent(item.id)}&${queryParam}&lang=${language}`;
       const res = await fetch(downloadUrl);
 
       if (res.ok) {
@@ -190,7 +190,8 @@ export default function MarketplaceProductPage() {
         a.style.display = "none";
         a.href = blobUrl;
         const safeDocTitle = item.title.replace(/[^a-zA-Z0-9_\-]/g, "_");
-        a.download = `${safeDocTitle}.pdf`;
+        const suffix = language === "en" ? "_EN" : "";
+        a.download = `${safeDocTitle}${suffix}.pdf`;
         document.body.appendChild(a);
         a.click();
 
@@ -384,7 +385,7 @@ export default function MarketplaceProductPage() {
                       className="w-full py-3 rounded-xl bg-[#0f2744] hover:bg-[#18395f] text-white font-bold text-xs flex items-center justify-center gap-2 cursor-pointer shadow-sm transition-all"
                     >
                       <Download className="w-4 h-4" />
-                      <span>{downloadCheckLoading ? t("mkt_verifying") : t("mkt_download_validated_btn")}</span>
+                      <span>{downloadCheckLoading ? t("mkt_verifying") : (language === "en" ? t("mkt_download_en_btn") : t("mkt_download_validated_btn"))}</span>
                     </button>
 
                     {downloadCheckMsg && (

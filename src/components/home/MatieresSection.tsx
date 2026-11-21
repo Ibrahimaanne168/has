@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Calculator, Atom, Code2, Sparkles, BookOpen } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
 
 interface MatiereCategory {
   title: string;
@@ -10,7 +11,7 @@ interface MatiereCategory {
   items: string[];
 }
 
-const MATIERES_L1: MatiereCategory[] = [
+const MATIERES_FR_L1: MatiereCategory[] = [
   {
     title: "Mathématiques L1",
     icon: <Calculator className="w-5 h-5 text-[#0f2744]" />,
@@ -44,7 +45,7 @@ const MATIERES_L1: MatiereCategory[] = [
   },
 ];
 
-const MATIERES_L2: MatiereCategory[] = [
+const MATIERES_FR_L2: MatiereCategory[] = [
   {
     title: "Mathématiques L2",
     icon: <Calculator className="w-5 h-5 text-[#0f2744]" />,
@@ -78,10 +79,82 @@ const MATIERES_L2: MatiereCategory[] = [
   },
 ];
 
+const MATIERES_EN_L1: MatiereCategory[] = [
+  {
+    title: "Mathematics Year 1",
+    icon: <Calculator className="w-5 h-5 text-[#0f2744]" />,
+    iconBg: "bg-[#0f2744]/5 border-[#0f2744]/15",
+    items: [
+      "Calculus 1 (Sequences, Limits & Continuity)",
+      "Linear Algebra 1 (Vector Spaces & Matrices)",
+      "Calculus 2 (Integration & Taylor Expansions)",
+      "Linear Algebra 2 (Determinants & Euclidean Spaces)",
+    ],
+  },
+  {
+    title: "Physics Year 1",
+    icon: <Atom className="w-5 h-5 text-[#e0521c]" />,
+    iconBg: "bg-amber-500/10 border-amber-300/40 text-amber-800",
+    items: [
+      "Point Particle Mechanics",
+      "Electromagnetism (DC & Transient Circuits)",
+      "Geometrical Optics",
+    ],
+  },
+  {
+    title: "Computer Science Year 1",
+    icon: <Code2 className="w-5 h-5 text-emerald-700" />,
+    iconBg: "bg-emerald-50 border-emerald-300/40 text-emerald-800",
+    items: [
+      "Core Python Programming",
+      "C Language & Dynamic Memory",
+      "Algorithms & Fundamental Data Structures",
+    ],
+  },
+];
+
+const MATIERES_EN_L2: MatiereCategory[] = [
+  {
+    title: "Mathematics Year 2",
+    icon: <Calculator className="w-5 h-5 text-[#0f2744]" />,
+    iconBg: "bg-[#0f2744]/5 border-[#0f2744]/15",
+    items: [
+      "Analysis 3 (Infinite Series & Fourier Analysis)",
+      "Linear Algebra 3 (Matrix Diagonalization & Jordan)",
+      "Numerical Matrix Analysis (LU, QR Decompositions)",
+      "Probability & Inferential Statistics",
+    ],
+  },
+  {
+    title: "Physics Year 2",
+    icon: <Atom className="w-5 h-5 text-[#e0521c]" />,
+    iconBg: "bg-amber-500/10 border-amber-300/40 text-amber-800",
+    items: [
+      "Rigid Body Mechanics",
+      "Thermodynamics & Heat Engines",
+      "Magnetostatics & Electromagnetic Induction",
+    ],
+  },
+  {
+    title: "Computer Science Year 2",
+    icon: <Code2 className="w-5 h-5 text-emerald-700" />,
+    iconBg: "bg-emerald-50 border-emerald-300/40 text-emerald-800",
+    items: [
+      "Advanced OOP Python & Software Patterns",
+      "Relational Databases, Schema Design & SQL",
+      "Computer Architecture & Low-Level Systems",
+    ],
+  },
+];
+
 export function MatieresSection() {
+  const { t, language } = useLanguage();
   const [activeSpace, setActiveSpace] = useState<"L1" | "L2">("L1");
 
-  const currentList = activeSpace === "L1" ? MATIERES_L1 : MATIERES_L2;
+  const isEn = language === "en";
+  const listL1 = isEn ? MATIERES_EN_L1 : MATIERES_FR_L1;
+  const listL2 = isEn ? MATIERES_EN_L2 : MATIERES_FR_L2;
+  const currentList = activeSpace === "L1" ? listL1 : listL2;
 
   return (
     <section id="matieres" className="py-16 sm:py-24 bg-[#F8FAFC] dark:bg-[#0B0F14] border-b border-slate-200/80 dark:border-[#263241] transition-colors">
@@ -89,14 +162,14 @@ export function MatieresSection() {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-12 gap-4">
           <div>
             <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-[#0f2744]/8 dark:bg-[#151D27] text-[#0f2744] dark:text-[#e0521c] text-[11px] font-bold tracking-wider uppercase mb-3 border border-[#0f2744]/15 dark:border-[#263241]">
-              Cursus Universitaire
+              {t("matieres_kicker")}
             </div>
             <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#0f2744] dark:text-[#F5F7FA] leading-snug">
-              Nos Matières Enseignées
+              {t("matieres_title")}
             </h2>
           </div>
           <p className="text-slate-500 dark:text-[#AAB4C0] text-sm sm:text-base max-w-md">
-            Un programme structuré pour chaque niveau avec un encadrement rigoureux en TD et examens.
+            {t("matieres_desc")}
           </p>
         </div>
 
@@ -112,7 +185,7 @@ export function MatieresSection() {
             }`}
           >
             <BookOpen className="w-4 h-4 text-[#e0521c] dark:text-white" />
-            <span>Espace Matières Licence 1 (L1)</span>
+            <span>{t("tab_l1")}</span>
           </button>
           <button
             type="button"
@@ -124,7 +197,7 @@ export function MatieresSection() {
             }`}
           >
             <Sparkles className="w-4 h-4 text-[#e0521c] dark:text-white" />
-            <span>Espace Matières Licence 2 (L2)</span>
+            <span>{t("tab_l2")}</span>
           </button>
         </div>
 
