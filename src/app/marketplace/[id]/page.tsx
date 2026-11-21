@@ -139,10 +139,11 @@ export default function MarketplaceProductPage() {
       setOrderSubmitted(order);
 
       // Ouvrir WhatsApp avec message personnalisé
-      const phoneClean = item.professeur_phone.replace(/[^0-9]/g, "");
+      const contactPhone = item.whatsapp_number || item.professeur_phone || "+221 77 551 81 96";
+      const phoneClean = contactPhone.replace(/[^0-9]/g, "");
       const finalPhone = phoneClean.length === 9 ? "221" + phoneClean : phoneClean;
       const formattedPrice = item.price.toLocaleString("fr-FR");
-      const waMsg = `Bonjour Professeur ${item.professeur_name},\n\nJe souhaite commander votre document sur le Marketplace HAS :\n📄 *${item.title}*\n💰 *Prix :* ${formattedPrice} ${item.currency || "FCFA"}\n👤 *Acheteur :* ${buyerName.trim()} (${buyerEmail.trim()})\n🔖 *Réf Commande :* #${order.id}\n\nMerci de m'indiquer la démarche pour effectuer le paiement et que l'administrateur valide mon téléchargement.`;
+      const waMsg = `Bonjour,\n\nJe souhaite commander le document sur le Marketplace HAS :\n📄 *${item.title}*\n💰 *Prix :* ${formattedPrice} ${item.currency || "FCFA"}\n👤 *Acheteur :* ${buyerName.trim()} (${buyerEmail.trim()})\n🔖 *Réf Commande :* #${order.id}\n\nMerci de m'indiquer la démarche pour effectuer le paiement et que l'administrateur valide mon téléchargement.`;
 
       const customWaUrl = `https://wa.me/${finalPhone}?text=${encodeURIComponent(waMsg)}`;
       window.open(customWaUrl, "_blank");
@@ -301,29 +302,24 @@ export default function MarketplaceProductPage() {
                 </div>
               </div>
 
-              {/* Profil de l'enseignant */}
-              <div className="p-5 rounded-2xl bg-white dark:bg-[#111821] border border-slate-200/90 dark:border-[#263241] flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3.5">
-                  <div className="w-12 h-12 rounded-full bg-[#0f2744] text-white flex items-center justify-center overflow-hidden shrink-0">
-                    {item.professeur_avatar ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={item.professeur_avatar} alt={item.professeur_name} className="w-full h-full object-cover" />
-                    ) : (
-                      <User className="w-6 h-6 text-white" />
-                    )}
+              {/* Contact et commande directe WhatsApp */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#111821] border border-slate-200/90 dark:border-[#263241] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
+                    <WhatsAppIcon className="w-5 h-5 text-emerald-600" />
                   </div>
                   <div>
-                    <span className="text-xs text-slate-400 block font-medium">Auteur &amp; Enseignant HAS</span>
-                    <span className="font-serif font-bold text-base text-[#0f2744] dark:text-white">
-                      Prof. {item.professeur_name}
+                    <span className="text-[11px] text-slate-400 block font-medium">Support &amp; Commande Directe</span>
+                    <span className="font-serif font-bold text-sm text-[#0f2744] dark:text-white">
+                      Service Marketplace HAS
                     </span>
                   </div>
                 </div>
 
-                <div className="text-right">
-                  <span className="text-xs text-slate-400 block font-medium">WhatsApp Enseignant</span>
+                <div className="text-left sm:text-right">
+                  <span className="text-[11px] text-slate-400 block font-medium">WhatsApp Commandes</span>
                   <span className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400">
-                    {item.professeur_phone}
+                    {item.whatsapp_number || item.professeur_phone || "+221 77 551 81 96"}
                   </span>
                 </div>
               </div>

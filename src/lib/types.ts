@@ -273,8 +273,9 @@ export interface MarketplaceItem {
   pdf_url?: string | null;
   file_size?: string | null; // ex: "2.4 MB"
   professeur_id?: string | null;
-  professeur_name: string;
-  professeur_phone: string; // Numéro WhatsApp avec indicatif (+221...)
+  professeur_name?: string;
+  professeur_phone?: string; // Numéro WhatsApp avec indicatif (+221...)
+  whatsapp_number?: string; // Numéro WhatsApp direct
   professeur_avatar?: string | null;
   matiere?: string;
   niveau?: "L1" | "L2" | "Tous" | string;

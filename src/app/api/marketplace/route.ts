@@ -57,9 +57,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Titre et prix obligatoires" }, { status: 400 });
     }
 
+    const phone = body.whatsapp_number || body.professeur_phone || "+221 77 551 81 96";
     const item: MarketplaceItem = {
       ...body,
       id: body.id || `mkt-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+      whatsapp_number: phone,
+      professeur_phone: phone,
+      professeur_name: body.professeur_name || "HAS Académie",
+      cover_image_url: body.cover_image_url || "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&auto=format&fit=crop&q=80",
+      file_size: body.file_size || "1.99 MB",
       updated_at: new Date().toISOString(),
       created_at: body.created_at || new Date().toISOString(),
     };

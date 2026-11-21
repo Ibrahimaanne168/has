@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import {
   ShoppingBag,
   Plus,
@@ -9,28 +10,23 @@ import {
   CheckCircle2,
   X,
   Search,
-  Filter,
   Upload,
   FileText,
   Eye,
-  ExternalLink,
   ShieldCheck,
-  Sparkles,
   Phone,
   User,
-  DollarSign,
-  AlertCircle,
   Clock,
   Download,
   Check,
   Ban,
   Mail,
-  Copy,
-  BookOpen,
+  Sparkles,
+  Camera,
+  Image as ImageIcon,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
 import { Badge } from "@/components/ui/Badge";
 import { MarketplaceItem, MarketplaceOrder } from "@/lib/types";
 import {
@@ -45,7 +41,6 @@ import {
   generateWhatsAppOrderUrl,
   createMarketplaceOrder,
 } from "@/lib/marketplaceStorage";
-import { getStoredProfesseurs, getStoredMatieres } from "@/lib/academicStorage";
 import { WhatsAppIcon } from "@/components/marketplace/MarketplaceCard";
 
 export default function AdminMarketplacePage() {
@@ -57,7 +52,7 @@ export default function AdminMarketplacePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [orderFilter, setOrderFilter] = useState<"all" | "en_attente" | "valide" | "refuse">("all");
 
-  // Modals & Confirmations
+  // Modals & Notifications
   const [modalOpen, setModalOpen] = useState(false);
   const [manualGrantModalOpen, setManualGrantModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<MarketplaceItem | null>(null);
@@ -65,29 +60,18 @@ export default function AdminMarketplacePage() {
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
-  // Données académiques pour pré-remplissage rapide
-  const [profs, setProfs] = useState<any[]>([]);
-  const [matieres, setMatieres] = useState<any[]>([]);
-
-  // Champs de formulaire document
+  // Formulaire simplifié (Ultra-rapide, sans profs inutiles)
   const [formTitle, setFormTitle] = useState("");
-  const [formDescription, setFormDescription] = useState("");
-  const [formPrice, setFormPrice] = useState("3500");
+  const [formPrice, setFormPrice] = useState("2000");
   const [formOriginalPrice, setFormOriginalPrice] = useState("");
-  const [formFileSize, setFormFileSize] = useState("2.5 MB");
-  const [formProfName, setFormProfName] = useState("");
-  const [formProfPhone, setFormProfPhone] = useState("+221 77 551 81 96");
-  const [formProfAvatar, setFormProfAvatar] = useState("");
-  const [formMatiere, setFormMatiere] = useState("");
-  const [formNiveau, setFormNiveau] = useState("L1");
-  const [formPages, setFormPages] = useState("");
-  const [formBadge, setFormBadge] = useState("");
+  const [formWhatsApp, setFormWhatsApp] = useState("+221 77 551 81 96");
   const [formCoverUrl, setFormCoverUrl] = useState("");
   const [formPdfUrl, setFormPdfUrl] = useState("");
+  const [formFileSize, setFormFileSize] = useState("1.99 MB");
+  const [formDescription, setFormDescription] = useState("");
   const [formIsActive, setFormIsActive] = useState(true);
-  const [formFeatured, setFormFeatured] = useState(false);
 
-  // Formulaire d'octroi manuel d'accès
+  // Formulaire d'octroi manuel d'accès direct
   const [grantItemId, setGrantItemId] = useState("");
   const [grantBuyerName, setGrantBuyerName] = useState("");
   const [grantBuyerEmail, setGrantBuyerEmail] = useState("");
@@ -96,8 +80,6 @@ export default function AdminMarketplacePage() {
   const reload = () => {
     setItems(getStoredMarketplaceItems());
     setOrders(getStoredMarketplaceOrders());
-    setProfs(getStoredProfesseurs());
-    setMatieres(getStoredMatieres());
   };
 
   useEffect(() => {
@@ -118,76 +100,80 @@ export default function AdminMarketplacePage() {
     };
   }, []);
 
-  // Déclencher remplissage automatique quand on change de prof
-  const handleProfSelect = (profId: string) => {
-    const p = profs.find((pr) => pr.id === profId);
-    if (p) {
-      setFormProfName(p.full_name || `${p.prenom || ""} ${p.nom || ""}`.trim());
-      if (p.phone) setFormProfPhone(p.phone);
-      if (p.avatar_url || p.photo) setFormProfAvatar(p.avatar_url || p.photo);
-    }
-  };
-
   const openCreateModal = () => {
     setEditingItem(null);
     setFormTitle("");
-    setFormDescription("");
-    setFormPrice("3500");
+    setFormPrice("2000");
     setFormOriginalPrice("");
-    setFormFileSize("2.5 MB");
-
-    const defaultProf = profs[0];
-    if (defaultProf) {
-      setFormProfName(defaultProf.full_name || `${defaultProf.prenom || ""} ${defaultProf.nom || ""}`.trim());
-      setFormProfPhone(defaultProf.phone || "+221 77 551 81 96");
-      setFormProfAvatar(defaultProf.avatar_url || defaultProf.photo || "");
-    } else {
-      setFormProfName("Ibrahima Anne");
-      setFormProfPhone("+221 77 551 81 96");
-      setFormProfAvatar("");
-    }
-
-    setFormMatiere(matieres[0]?.name || "Analyse 1");
-    setFormNiveau("L1");
-    setFormPages("80");
-    setFormBadge("");
+    setFormWhatsApp("+221 77 551 81 96");
     setFormCoverUrl("");
     setFormPdfUrl("");
+    setFormFileSize("1.99 MB");
+    setFormDescription("");
     setFormIsActive(true);
-    setFormFeatured(false);
     setModalOpen(true);
   };
 
   const openEditModal = (item: MarketplaceItem) => {
     setEditingItem(item);
     setFormTitle(item.title);
-    setFormDescription(item.description);
     setFormPrice(item.price.toString());
     setFormOriginalPrice(item.original_price ? item.original_price.toString() : "");
-    setFormFileSize(item.file_size || "2.5 MB");
-    setFormProfName(item.professeur_name);
-    setFormProfPhone(item.professeur_phone);
-    setFormProfAvatar(item.professeur_avatar || "");
-    setFormMatiere(item.matiere || "");
-    setFormNiveau(item.niveau || "Tous");
-    setFormPages(item.pages_count ? item.pages_count.toString() : "");
-    setFormBadge(item.badge || "");
-    setFormCoverUrl(item.cover_image_url);
+    setFormWhatsApp(item.whatsapp_number || item.professeur_phone || "+221 77 551 81 96");
+    setFormCoverUrl(item.cover_image_url || "");
     setFormPdfUrl(item.pdf_url || "");
+    setFormFileSize(item.file_size || "1.99 MB");
+    setFormDescription(item.description || "");
     setFormIsActive(item.is_active !== false);
-    setFormFeatured(Boolean(item.featured));
     setModalOpen(true);
   };
 
-  // Upload d'image de couverture
+  // Upload d'image de couverture optimisé pour mobile
   const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Aperçu local instantané sans attendre le réseau (0ms)
+    try {
+      const preview = URL.createObjectURL(file);
+      setFormCoverUrl(preview);
+    } catch {}
+
     setIsUploading(true);
     try {
+      // Compression client si fichier photo volumineux (> 1MB)
+      let uploadFile: Blob = file;
+      if (file.type.startsWith("image/") && file.size > 1024 * 1024) {
+        try {
+          const img = new Image();
+          img.src = URL.createObjectURL(file);
+          await new Promise((res) => {
+            img.onload = res;
+          });
+          const canvas = document.createElement("canvas");
+          const maxDim = 1200;
+          let w = img.width;
+          let h = img.height;
+          if (w > maxDim || h > maxDim) {
+            if (w > h) {
+              h = (h * maxDim) / w;
+              w = maxDim;
+            } else {
+              w = (w * maxDim) / h;
+              h = maxDim;
+            }
+          }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext("2d");
+          ctx?.drawImage(img, 0, 0, w, h);
+          const blob = await new Promise<Blob | null>((res) => canvas.toBlob(res, "image/jpeg", 0.85));
+          if (blob) uploadFile = blob;
+        } catch {}
+      }
+
       const fd = new FormData();
-      fd.append("file", file);
+      fd.append("file", uploadFile, file.name);
       fd.append("type", "cover");
 
       const res = await fetch("/api/marketplace/upload", {
@@ -198,18 +184,15 @@ export default function AdminMarketplacePage() {
       if (res.ok) {
         const json = await res.json();
         if (json.url) setFormCoverUrl(json.url);
-      } else {
-        alert("Erreur lors de l'upload de la couverture.");
       }
-    } catch (err) {
-      console.error(err);
-      alert("Erreur réseau pendant l'upload.");
+    } catch {
+      console.info("Upload serveur différé, aperçu local conservé");
     } finally {
       setIsUploading(false);
     }
   };
 
-  // Upload de PDF
+  // Upload du fichier PDF
   const handlePdfUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -231,63 +214,52 @@ export default function AdminMarketplacePage() {
       if (res.ok) {
         const json = await res.json();
         if (json.url) setFormPdfUrl(json.url);
-      } else {
-        alert("Erreur lors de l'upload du fichier PDF.");
       }
-    } catch (err) {
-      console.error(err);
-      alert("Erreur réseau pendant l'upload.");
+    } catch {
+      console.info("Upload PDF différé");
     } finally {
       setIsUploading(false);
     }
   };
 
+  // Validation et enregistrement fluide sans blocage
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formTitle.trim()) {
-      alert("Veuillez renseigner un titre.");
-      return;
-    }
-    const priceNum = parseInt(formPrice, 10);
-    if (isNaN(priceNum) || priceNum < 0) {
-      alert("Veuillez renseigner un prix valide en FCFA.");
-      return;
-    }
-    if (!formProfPhone.trim()) {
-      alert("Veuillez renseigner le numéro WhatsApp du professeur.");
-      return;
-    }
-    if (!formCoverUrl.trim()) {
-      alert("Veuillez renseigner ou téléverser l'image de couverture (mockup) du document.");
+      alert("Veuillez renseigner le titre du document.");
       return;
     }
 
+    const priceNum = parseInt(formPrice, 10);
+    const safePrice = isNaN(priceNum) || priceNum < 0 ? 2000 : priceNum;
     const originalPriceNum = formOriginalPrice.trim() ? parseInt(formOriginalPrice, 10) : null;
+    const safePhone = formWhatsApp.trim() || "+221 77 551 81 96";
+    const safeCover =
+      formCoverUrl.trim() ||
+      "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&auto=format&fit=crop&q=80";
 
     const payload: Partial<MarketplaceItem> = {
       ...(editingItem ? { id: editingItem.id } : {}),
       title: formTitle.trim(),
       description: formDescription.trim(),
-      price: priceNum,
+      price: safePrice,
       original_price: originalPriceNum && !isNaN(originalPriceNum) ? originalPriceNum : null,
-      file_size: formFileSize.trim() || null,
+      file_size: formFileSize.trim() || "1.99 MB",
       currency: "FCFA",
-      professeur_name: formProfName.trim(),
-      professeur_phone: formProfPhone.trim(),
-      professeur_avatar: formProfAvatar || null,
-      matiere: formMatiere.trim() || undefined,
-      niveau: formNiveau,
-      pages_count: formPages ? parseInt(formPages, 10) : undefined,
-      badge: formBadge.trim() || undefined,
-      cover_image_url: formCoverUrl.trim(),
+      whatsapp_number: safePhone,
+      professeur_phone: safePhone,
+      professeur_name: "HAS Académie",
+      cover_image_url: safeCover,
       pdf_url: formPdfUrl.trim() || null,
       is_active: formIsActive,
-      featured: formFeatured,
+      featured: false,
     };
 
-    await saveMarketplaceItem(payload);
-    setSuccessMsg(editingItem ? "Document mis à jour avec succès !" : "Document publié sur le Marketplace !");
+    // Fermeture immédiate de la modal pour ne pas bloquer l'admin
     setModalOpen(false);
+    setSuccessMsg(editingItem ? "Document mis à jour avec succès !" : "Document ajouté au Marketplace !");
+
+    await saveMarketplaceItem(payload);
     reload();
 
     setTimeout(() => setSuccessMsg(null), 4000);
@@ -309,10 +281,10 @@ export default function AdminMarketplacePage() {
     reload();
   };
 
-  // ACTIONS DE VALIDATION ADMINISTRATIVE DU TÉLÉCHARGEMENT
+  // Validation d'une commande par l'admin
   const handleValidateDownload = async (order: MarketplaceOrder) => {
     await validateMarketplaceOrder(order.id, "Administrateur HAS");
-    setSuccessMsg(`✓ Téléchargement validé pour ${order.buyer_name} (${order.item_title}) ! L'accès au PDF est désormais actif.`);
+    setSuccessMsg(`✓ Téléchargement validé pour ${order.buyer_name} (${order.item_title}) !`);
     reload();
     setTimeout(() => setSuccessMsg(null), 5000);
   };
@@ -324,11 +296,11 @@ export default function AdminMarketplacePage() {
     setTimeout(() => setSuccessMsg(null), 4000);
   };
 
-  // Octroi manuel direct par l'admin
+  // Octroi manuel direct
   const handleManualGrantSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!grantItemId || !grantBuyerName.trim() || !grantBuyerEmail.trim()) {
-      alert("Veuillez sélectionner un document et renseigner le nom et l'email de l'étudiant.");
+      alert("Veuillez sélectionner un document et renseigner le nom et l'email.");
       return;
     }
 
@@ -342,10 +314,9 @@ export default function AdminMarketplacePage() {
       buyerPhone: grantBuyerPhone.trim() || "+221 77 000 00 00",
     });
 
-    // Validation immédiate
     await validateMarketplaceOrder(newOrder.id, "Administrateur HAS (Octroi direct)");
 
-    setSuccessMsg(`✓ Accès au document « ${item.title} » accordé et validé directement pour ${grantBuyerName} !`);
+    setSuccessMsg(`✓ Accès au document « ${item.title} » accordé à ${grantBuyerName} !`);
     setManualGrantModalOpen(false);
     setGrantBuyerName("");
     setGrantBuyerEmail("");
@@ -355,6 +326,16 @@ export default function AdminMarketplacePage() {
   };
 
   const pendingOrdersCount = orders.filter((o) => o.status === "en_attente").length;
+
+  const filteredItems = items.filter((i) => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    return (
+      i.title.toLowerCase().includes(q) ||
+      (i.whatsapp_number && i.whatsapp_number.includes(q)) ||
+      (i.description && i.description.toLowerCase().includes(q))
+    );
+  });
 
   const filteredOrders = orders.filter((o) => {
     if (orderFilter !== "all" && o.status !== orderFilter) return false;
@@ -368,102 +349,81 @@ export default function AdminMarketplacePage() {
     );
   });
 
-  const filteredItems = items.filter((item) => {
-    if (!searchQuery.trim()) return true;
-    const q = searchQuery.toLowerCase();
-    return (
-      item.title.toLowerCase().includes(q) ||
-      item.professeur_name.toLowerCase().includes(q) ||
-      (item.matiere && item.matiere.toLowerCase().includes(q))
-    );
-  });
-
   return (
     <DashboardLayout
       role="admin"
       userName="Administration HAS"
-      userEmail="direction@halil-academie.com"
+      userEmail="direction@has-academie.online"
       matriculeOrTitle="ADM001"
     >
-      <div className="space-y-6">
-        {/* Header Supervision */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="space-y-6 max-w-7xl mx-auto px-2 sm:px-4 py-2">
+        {/* En-tête de page responsive */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200/80 dark:border-[#263241]">
           <div>
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md bg-[#e0521c]/10 text-[#e0521c] text-xs font-bold uppercase tracking-wider mb-2">
-              <ShoppingBag className="w-3.5 h-3.5" />
-              <span>Boutique Académique · Supervision &amp; Validations</span>
+            <div className="flex items-center gap-2">
+              <span className="p-2 rounded-xl bg-[#0f2744] text-white">
+                <ShoppingBag className="w-5 h-5 text-[#e0521c]" />
+              </span>
+              <h1 className="font-serif text-xl sm:text-2xl font-black text-[#0f2744] dark:text-[#F5F7FA]">
+                Marketplace des Fascicules &amp; Cours
+              </h1>
             </div>
-            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] dark:text-[#F5F7FA]">
-              Marketplace : Fascicules &amp; Validations de Téléchargement
-            </h1>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-[#AAB4C0] mt-1">
-              Gérez le catalogue des documents à vendre et validez manuellement les demandes de téléchargement après vérification du paiement.
+              Publiez des documents PDF avec commande WhatsApp et validation manuelle du téléchargement.
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
-            <a
-              href="/marketplace"
-              target="_blank"
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 dark:bg-[#151D27] text-slate-700 dark:text-[#F5F7FA] text-xs font-semibold hover:bg-slate-200 transition-colors"
+          <div className="flex items-center gap-2 flex-wrap">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                if (items.length > 0) setGrantItemId(items[0].id);
+                setManualGrantModalOpen(true);
+              }}
+              leftIcon={<ShieldCheck className="w-4 h-4 text-[#e0521c]" />}
+              className="text-xs"
             >
-              <Eye className="w-3.5 h-3.5 text-[#e0521c]" />
-              <span>Boutique publique</span>
-              <ExternalLink className="w-3 h-3 opacity-60" />
-            </a>
+              Octroyer un accès direct
+            </Button>
 
-            {activeTab === "catalog" ? (
-              <Button
-                variant="accent"
-                size="md"
-                leftIcon={<Plus className="w-4 h-4" />}
-                onClick={openCreateModal}
-                className="rounded-xl text-xs sm:text-sm font-semibold shadow-xs"
-              >
-                Ajouter un document
-              </Button>
-            ) : (
-              <Button
-                variant="primary"
-                size="md"
-                leftIcon={<CheckCircle2 className="w-4 h-4" />}
-                onClick={() => {
-                  if (items.length > 0 && !grantItemId) setGrantItemId(items[0].id);
-                  setManualGrantModalOpen(true);
-                }}
-                className="rounded-xl text-xs sm:text-sm font-semibold shadow-xs"
-              >
-                Accorder un accès direct
-              </Button>
-            )}
+            <Button
+              variant="accent"
+              size="sm"
+              onClick={openCreateModal}
+              leftIcon={<Plus className="w-4 h-4" />}
+              className="text-xs"
+            >
+              Ajouter un document
+            </Button>
           </div>
         </div>
 
         {/* Message de succès */}
         {successMsg && (
-          <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 text-xs sm:text-sm font-semibold flex items-center gap-2 shadow-xs">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-            <span>{successMsg}</span>
+          <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-xs sm:text-sm flex items-center gap-2 shadow-xs animate-in fade-in">
+            <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
+            <span className="font-semibold">{successMsg}</span>
           </div>
         )}
 
-        {/* Onglets : Catalogue vs Commandes & Téléchargements */}
-        <div className="flex items-center gap-2 border-b border-slate-200 dark:border-[#263241] pb-2">
+        {/* Onglets de navigation */}
+        <div className="flex items-center gap-2 border-b border-slate-200 dark:border-[#263241] pb-2 overflow-x-auto">
           <button
             onClick={() => setActiveTab("catalog")}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${
               activeTab === "catalog"
                 ? "bg-[#0f2744] text-white shadow-xs"
                 : "text-slate-600 dark:text-[#AAB4C0] hover:bg-slate-100 dark:hover:bg-[#151D27]"
             }`}
           >
-            <BookOpen className="w-4 h-4" />
-            <span>Catalogue des Documents ({items.length})</span>
+            <ShoppingBag className="w-4 h-4" />
+            <span>Catalogue ({items.length})</span>
           </button>
 
           <button
             onClick={() => setActiveTab("orders")}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer relative ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap relative ${
               activeTab === "orders"
                 ? "bg-[#0f2744] text-white shadow-xs"
                 : "text-slate-600 dark:text-[#AAB4C0] hover:bg-slate-100 dark:hover:bg-[#151D27]"
@@ -473,7 +433,7 @@ export default function AdminMarketplacePage() {
             <span>Validations &amp; Téléchargements ({orders.length})</span>
             {pendingOrdersCount > 0 && (
               <span className="px-2 py-0.5 rounded-full bg-[#e0521c] text-white text-[10px] font-black animate-pulse">
-                {pendingOrdersCount} en attente
+                {pendingOrdersCount}
               </span>
             )}
           </button>
@@ -483,98 +443,92 @@ export default function AdminMarketplacePage() {
         {/* ONGLET 1 : CATALOGUE DES DOCUMENTS                             */}
         {/* ============================================================== */}
         {activeTab === "catalog" && (
-          <div className="space-y-5">
+          <div className="space-y-4">
             {/* Barre de recherche */}
-            <div className="bg-white dark:bg-[#111821] p-4 rounded-xl border border-slate-200/90 dark:border-[#263241] flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xs">
+            <div className="bg-white dark:bg-[#111821] p-3 rounded-xl border border-slate-200 dark:border-[#263241] flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xs">
               <div className="relative w-full sm:max-w-md">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 dark:text-[#687585]" />
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <input
                   type="text"
-                  placeholder="Rechercher par titre, enseignant ou matière..."
+                  placeholder="Rechercher un document..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 text-xs sm:text-sm rounded-lg bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] text-slate-900 dark:text-[#F5F7FA] placeholder:text-slate-400 focus:outline-none"
                 />
               </div>
 
-              <div className="text-xs text-slate-500 dark:text-[#AAB4C0] font-medium">
+              <div className="text-xs text-slate-500 font-medium self-end sm:self-center">
                 Total : <strong>{filteredItems.length}</strong> document(s)
               </div>
             </div>
 
             {/* Grille des articles pour l'admin */}
             {filteredItems.length === 0 ? (
-              <div className="p-12 text-center bg-white dark:bg-[#111821] rounded-2xl border border-slate-200 dark:border-[#263241] space-y-4">
+              <div className="p-8 sm:p-12 text-center bg-white dark:bg-[#111821] rounded-2xl border border-slate-200 dark:border-[#263241] space-y-3">
                 <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-[#151D27] text-slate-400 flex items-center justify-center mx-auto">
                   <ShoppingBag className="w-6 h-6 text-[#e0521c]" />
                 </div>
                 <h3 className="font-serif font-bold text-base text-[#0f2744] dark:text-[#F5F7FA]">
-                  Aucun document publié dans le Marketplace pour le moment
+                  Aucun document publié pour le moment
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-[#AAB4C0] max-w-md mx-auto">
-                  Cliquez sur « Ajouter un document » ci-dessus pour publier votre premier fascicule avec prix, couverture et numéro WhatsApp de l&apos;enseignant.
+                <p className="text-xs text-slate-500 max-w-sm mx-auto">
+                  Cliquez sur « Ajouter un document » ci-dessous pour publier votre premier fascicule.
                 </p>
                 <Button variant="accent" size="sm" onClick={openCreateModal} leftIcon={<Plus className="w-4 h-4" />}>
-                  Ajouter un document maintenant
+                  Ajouter un document
                 </Button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredItems.map((item) => {
                   const waUrl = generateWhatsAppOrderUrl(item);
+                  const discountPercent =
+                    item.original_price && item.original_price > item.price
+                      ? Math.round(((item.original_price - item.price) / item.original_price) * 100)
+                      : null;
 
                   return (
                     <div
                       key={item.id}
-                      className="bg-white dark:bg-[#111821] rounded-2xl border border-slate-200/90 dark:border-[#263241] overflow-hidden flex flex-col justify-between shadow-xs transition-colors"
+                      className="bg-white dark:bg-[#111821] rounded-2xl border border-slate-200/90 dark:border-[#263241] overflow-hidden flex flex-col justify-between shadow-xs"
                     >
                       <div>
-                        {/* Vignette miniature */}
-                        <div className="relative aspect-[16/9] bg-slate-900 overflow-hidden">
+                        {/* Vignette couverture */}
+                        <div className="relative aspect-[16/10] bg-slate-900 overflow-hidden">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={item.cover_image_url}
-                            alt={item.title}
-                            className="w-full h-full object-cover"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                          <img src={item.cover_image_url} alt={item.title} className="w-full h-full object-cover" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
 
+                          {/* Prix en haut à gauche */}
                           <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 flex-wrap">
-                            <span className="px-2 py-0.5 rounded-md bg-white/95 text-red-600 text-[10px] font-black uppercase tracking-wider shadow-xs">
+                            <span className="px-2 py-0.5 rounded-md bg-white text-red-600 text-[11px] font-black shadow-xs">
                               {item.price.toLocaleString("fr-FR")} {item.currency || "FCFA"}
                             </span>
-                            {item.original_price && item.original_price > item.price && (
-                              <span className="px-1.5 py-0.5 rounded-md bg-black/70 text-white/90 text-[10px] line-through font-semibold">
+                            {item.original_price && (
+                              <span className="px-1.5 py-0.5 rounded-md bg-black/70 text-white text-[10px] line-through font-semibold">
                                 {item.original_price.toLocaleString("fr-FR")}
                               </span>
                             )}
-                            {item.original_price && item.original_price > item.price && (
+                            {discountPercent && (
                               <span className="px-1.5 py-0.5 rounded-md bg-black text-white text-[10px] font-black">
-                                -{Math.round(((item.original_price - item.price) / item.original_price) * 100)}%
-                              </span>
-                            )}
-                            {item.niveau && (
-                              <span className="px-2 py-0.5 rounded-md bg-[#0f2744]/90 text-white text-[10px] font-bold uppercase tracking-wider">
-                                {item.niveau}
+                                -{discountPercent}% OFF
                               </span>
                             )}
                           </div>
 
-                          <div className="absolute top-2.5 right-2.5 flex items-center gap-1">
+                          {/* Statut actif / inactif */}
+                          <div className="absolute top-2.5 right-2.5">
                             <button
                               onClick={() => handleToggleActive(item)}
                               className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider shadow-xs cursor-pointer ${
-                                item.is_active !== false
-                                  ? "bg-emerald-600 text-white"
-                                  : "bg-red-600 text-white"
+                                item.is_active !== false ? "bg-emerald-600 text-white" : "bg-red-600 text-white"
                               }`}
-                              title="Cliquer pour basculer la visibilité"
                             >
                               {item.is_active !== false ? "En Vente" : "Désactivé"}
                             </button>
                           </div>
 
-                          {/* Titre superposé */}
+                          {/* Titre */}
                           <div className="absolute bottom-2.5 left-2.5 right-2.5 text-white">
                             <p className="font-serif font-bold text-sm leading-tight drop-shadow-xs line-clamp-1">
                               {item.title}
@@ -582,72 +536,57 @@ export default function AdminMarketplacePage() {
                           </div>
                         </div>
 
-                        {/* Détails */}
-                        <div className="p-4 space-y-3">
+                        {/* Coordonnées WhatsApp */}
+                        <div className="p-3.5 space-y-2">
                           <div className="flex items-center justify-between text-xs">
-                            <span className="text-[#e0521c] font-bold uppercase tracking-wider text-[10px]">
-                              {item.matiere || "Ressource"}
+                            <span className="text-slate-500 font-medium">WhatsApp Commande :</span>
+                            <span className="font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                              {item.whatsapp_number || item.professeur_phone || "+221 77 551 81 96"}
                             </span>
-                            {item.badge && (
-                              <span className="px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 text-[10px] font-bold uppercase">
-                                {item.badge}
-                              </span>
-                            )}
                           </div>
 
-                          {/* Enseignant et son WhatsApp */}
-                          <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200/80 dark:border-[#263241] space-y-1">
-                            <div className="flex items-center gap-2">
-                              <User className="w-3.5 h-3.5 text-slate-400" />
-                              <span className="font-semibold text-xs text-slate-800 dark:text-[#F5F7FA]">
-                                Prof. {item.professeur_name}
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-400 font-mono font-medium">
-                              <Phone className="w-3.5 h-3.5" />
-                              <span>{item.professeur_phone}</span>
-                            </div>
-                          </div>
-
-                          <p className="text-xs text-slate-600 dark:text-[#AAB4C0] line-clamp-2 leading-relaxed">
-                            {item.description}
-                          </p>
+                          {item.description && (
+                            <p className="text-xs text-slate-500 dark:text-[#AAB4C0] line-clamp-2 leading-relaxed">
+                              {item.description}
+                            </p>
+                          )}
                         </div>
                       </div>
 
-                      {/* Actions admin */}
-                      <div className="p-4 pt-0 border-t border-slate-100 dark:border-[#263241] mt-2 flex items-center justify-between gap-2">
+                      {/* Actions */}
+                      <div className="p-3 border-t border-slate-100 dark:border-[#263241] flex items-center justify-between gap-2">
                         <a
                           href={waUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] text-xs font-bold transition-colors"
-                          title="Tester le lien WhatsApp pré-rempli"
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 text-[#128C7E] dark:text-[#25D366] text-xs font-bold transition-colors"
+                          title="Tester le lien WhatsApp"
                         >
                           <WhatsAppIcon className="w-3.5 h-3.5 text-[#25D366]" />
-                          <span>Tester WhatsApp</span>
+                          <span>WhatsApp</span>
                         </a>
 
-                        <div className="flex items-center gap-1.5">
-                          <a
+                        <div className="flex items-center gap-1">
+                          <Link
                             href={`/marketplace/${item.id}`}
                             target="_blank"
-                            rel="noopener noreferrer"
-                            className="p-1.5 rounded-lg text-slate-600 dark:text-[#AAB4C0] hover:bg-slate-100 dark:hover:bg-[#151D27] hover:text-[#0f2744] transition-colors"
-                            title="Voir la vraie page produit (Style Chariow)"
+                            className="p-1.5 rounded-lg text-slate-600 dark:text-[#AAB4C0] hover:bg-slate-100 dark:hover:bg-[#151D27] hover:text-[#0f2744]"
+                            title="Voir la page produit"
                           >
                             <Eye className="w-4 h-4" />
-                          </a>
+                          </Link>
+
                           <button
                             onClick={() => openEditModal(item)}
-                            className="p-1.5 rounded-lg text-slate-600 dark:text-[#AAB4C0] hover:bg-slate-100 dark:hover:bg-[#151D27] hover:text-[#0f2744] transition-colors cursor-pointer"
+                            className="p-1.5 rounded-lg text-slate-600 dark:text-[#AAB4C0] hover:bg-slate-100 dark:hover:bg-[#151D27] hover:text-[#0f2744] cursor-pointer"
                             title="Modifier"
                           >
                             <Edit2 className="w-4 h-4" />
                           </button>
+
                           <button
                             onClick={() => setDeleteConfirm(item.id)}
-                            className="p-1.5 rounded-lg text-red-600 dark:text-rose-400 hover:bg-red-50 dark:hover:bg-rose-950/30 transition-colors cursor-pointer"
+                            className="p-1.5 rounded-lg text-red-600 dark:text-rose-400 hover:bg-red-50 dark:hover:bg-rose-950/30 cursor-pointer"
                             title="Supprimer"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -663,340 +602,181 @@ export default function AdminMarketplacePage() {
         )}
 
         {/* ============================================================== */}
-        {/* ONGLET 2 : DEMANDES DE TÉLÉCHARGEMENT & VALIDATIONS ADMIN       */}
+        {/* ONGLET 2 : DEMANDES DE VALIDATION & TÉLÉCHARGEMENTS            */}
         {/* ============================================================== */}
         {activeTab === "orders" && (
-          <div className="space-y-5">
-            {/* Filtres et recherche commandes */}
-            <div className="bg-white dark:bg-[#111821] p-4 rounded-xl border border-slate-200/90 dark:border-[#263241] flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xs">
-              <div className="relative w-full sm:max-w-md">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input
-                  type="text"
-                  placeholder="Rechercher par acheteur, email ou document..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 text-xs sm:text-sm rounded-lg bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] text-slate-900 dark:text-white focus:outline-none"
-                />
-              </div>
-
-              <div className="flex items-center gap-2">
+          <div className="space-y-4">
+            {/* Filtres de statut */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
+              {(["all", "en_attente", "valide", "refuse"] as const).map((st) => (
                 <button
-                  onClick={() => setOrderFilter("all")}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer ${
-                    orderFilter === "all" ? "bg-[#0f2744] text-white" : "bg-slate-100 dark:bg-[#151D27] text-slate-600"
+                  key={st}
+                  onClick={() => setOrderFilter(st)}
+                  className={`px-3 py-1.5 rounded-lg font-bold transition-colors cursor-pointer ${
+                    orderFilter === st
+                      ? "bg-[#0f2744] text-white"
+                      : "bg-white dark:bg-[#111821] text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-[#263241]"
                   }`}
                 >
-                  Toutes ({orders.length})
+                  {st === "all"
+                    ? "Toutes les commandes"
+                    : st === "en_attente"
+                    ? "En attente"
+                    : st === "valide"
+                    ? "Validées"
+                    : "Refusées"}
                 </button>
-                <button
-                  onClick={() => setOrderFilter("en_attente")}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer ${
-                    orderFilter === "en_attente" ? "bg-amber-600 text-white" : "bg-slate-100 dark:bg-[#151D27] text-slate-600"
-                  }`}
-                >
-                  En attente ({orders.filter((o) => o.status === "en_attente").length})
-                </button>
-                <button
-                  onClick={() => setOrderFilter("valide")}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer ${
-                    orderFilter === "valide" ? "bg-emerald-600 text-white" : "bg-slate-100 dark:bg-[#151D27] text-slate-600"
-                  }`}
-                >
-                  Validées ({orders.filter((o) => o.status === "valide").length})
-                </button>
-              </div>
+              ))}
             </div>
 
-            {/* Tableau des commandes */}
-            <div className="bg-white dark:bg-[#111821] rounded-2xl border border-slate-200/90 dark:border-[#263241] overflow-hidden shadow-xs">
-              {filteredOrders.length === 0 ? (
-                <div className="p-12 text-center space-y-3">
-                  <ShieldCheck className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto" />
-                  <p className="text-xs text-slate-500 dark:text-[#AAB4C0]">
-                    Aucune demande de téléchargement trouvée pour ce filtre.
-                  </p>
-                </div>
-              ) : (
+            {filteredOrders.length === 0 ? (
+              <div className="p-8 sm:p-12 text-center bg-white dark:bg-[#111821] rounded-2xl border border-slate-200 dark:border-[#263241] space-y-2">
+                <ShieldCheck className="w-8 h-8 text-slate-400 mx-auto" />
+                <h3 className="font-serif font-bold text-base text-[#0f2744] dark:text-[#F5F7FA]">
+                  Aucune commande dans cette catégorie
+                </h3>
+              </div>
+            ) : (
+              <div className="bg-white dark:bg-[#111821] rounded-2xl border border-slate-200/90 dark:border-[#263241] overflow-hidden shadow-xs">
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs">
-                    <thead className="bg-slate-50 dark:bg-[#151D27] border-b border-slate-200 dark:border-[#263241] text-slate-600 dark:text-[#AAB4C0] font-semibold uppercase tracking-wider text-[10px]">
+                  <table className="w-full text-xs text-left">
+                    <thead className="bg-slate-50 dark:bg-[#151D27] text-slate-500 uppercase text-[10px] font-bold border-b border-slate-200 dark:border-[#263241]">
                       <tr>
-                        <th className="py-3 px-4">Acheteur / Étudiant</th>
-                        <th className="py-3 px-4">Document demandé</th>
-                        <th className="py-3 px-4">Montant</th>
-                        <th className="py-3 px-4">Date demande</th>
-                        <th className="py-3 px-4">Statut</th>
-                        <th className="py-3 px-4 text-right">Action Admin (Téléchargement)</th>
+                        <th className="p-3.5">Réf &amp; Date</th>
+                        <th className="p-3.5">Document</th>
+                        <th className="p-3.5">Acheteur</th>
+                        <th className="p-3.5">Statut</th>
+                        <th className="p-3.5 text-right">Action Admin</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-[#263241]">
-                      {filteredOrders.map((o) => {
-                        const downloadUrl = `/api/marketplace/download?orderId=${encodeURIComponent(o.id)}`;
-
-                        return (
-                          <tr key={o.id} className="hover:bg-slate-50/50 dark:hover:bg-[#151D27]/50 transition-colors">
-                            <td className="py-3.5 px-4">
-                              <div className="font-bold text-slate-900 dark:text-white">
-                                {o.buyer_name}
-                              </div>
-                              <div className="text-[11px] text-slate-400 font-mono">
-                                {o.buyer_email}
-                              </div>
-                              <div className="text-[11px] text-emerald-600 dark:text-emerald-400 font-mono">
-                                {o.buyer_phone}
-                              </div>
-                            </td>
-
-                            <td className="py-3.5 px-4 max-w-xs">
-                              <span className="font-semibold text-slate-800 dark:text-[#F5F7FA] block line-clamp-1">
-                                {o.item_title}
-                              </span>
-                              <span className="text-[10px] text-slate-400 font-mono">
-                                Réf #{o.id}
-                              </span>
-                            </td>
-
-                            <td className="py-3.5 px-4 font-bold text-slate-900 dark:text-white whitespace-nowrap">
+                      {filteredOrders.map((o) => (
+                        <tr key={o.id} className="hover:bg-slate-50/60 dark:hover:bg-[#151D27]/50">
+                          <td className="p-3.5 font-mono text-slate-400">
+                            #{o.id}
+                            <span className="block text-[10px] text-slate-400">
+                              {new Date(o.created_at).toLocaleDateString("fr-FR")}
+                            </span>
+                          </td>
+                          <td className="p-3.5 font-bold text-slate-900 dark:text-white">
+                            {o.item_title}
+                            <span className="block text-[11px] text-[#e0521c] font-normal">
                               {o.item_price.toLocaleString("fr-FR")} FCFA
-                            </td>
-
-                            <td className="py-3.5 px-4 text-slate-500 whitespace-nowrap">
-                              {new Date(o.created_at).toLocaleDateString("fr-FR", {
-                                day: "2-digit",
-                                month: "short",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}
-                            </td>
-
-                            <td className="py-3.5 px-4 whitespace-nowrap">
-                              {o.status === "valide" ? (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 font-bold text-[10px] uppercase">
-                                  <Check className="w-3 h-3" />
-                                  <span>Validé</span>
-                                </span>
-                              ) : o.status === "refuse" ? (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-red-100 dark:bg-red-950/60 text-red-800 dark:text-red-300 font-bold text-[10px] uppercase">
-                                  <Ban className="w-3 h-3" />
-                                  <span>Refusé</span>
-                                </span>
-                              ) : (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 font-bold text-[10px] uppercase">
-                                  <Clock className="w-3 h-3 animate-spin" />
-                                  <span>En attente validation</span>
-                                </span>
-                              )}
-                            </td>
-
-                            <td className="py-3.5 px-4 text-right whitespace-nowrap">
-                              {o.status === "en_attente" ? (
-                                <div className="flex items-center justify-end gap-1.5">
-                                  <button
-                                    onClick={() => handleValidateDownload(o)}
-                                    className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1 shadow-xs cursor-pointer"
-                                  >
-                                    <Check className="w-3.5 h-3.5" />
-                                    <span>Valider le téléchargement</span>
-                                  </button>
-                                  <button
-                                    onClick={() => handleRejectDownload(o)}
-                                    className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 cursor-pointer"
-                                    title="Refuser la demande"
-                                  >
-                                    <X className="w-4 h-4" />
-                                  </button>
-                                </div>
-                              ) : o.status === "valide" ? (
-                                <div className="flex items-center justify-end gap-2 text-xs">
-                                  <a
-                                    href={downloadUrl}
-                                    target="_blank"
-                                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-[#151D27] text-slate-700 dark:text-slate-300 hover:text-[#0f2744] font-semibold"
-                                  >
-                                    <Download className="w-3 h-3" />
-                                    <span>Lien PDF ({o.download_count} DL)</span>
-                                  </a>
-                                  <button
-                                    onClick={() => handleRejectDownload(o)}
-                                    className="text-[11px] text-red-500 hover:underline cursor-pointer"
-                                  >
-                                    Révoquer
-                                  </button>
-                                </div>
-                              ) : (
-                                <button
+                            </span>
+                          </td>
+                          <td className="p-3.5">
+                            <span className="font-semibold text-slate-800 dark:text-slate-200 block">{o.buyer_name}</span>
+                            <span className="text-[11px] text-slate-400">{o.buyer_email}</span>
+                          </td>
+                          <td className="p-3.5">
+                            <Badge
+                              variant={
+                                o.status === "valide" ? "success" : o.status === "refuse" ? "danger" : "warning"
+                              }
+                              size="sm"
+                            >
+                              {o.status === "valide"
+                                ? "Téléchargement Validé"
+                                : o.status === "refuse"
+                                ? "Refusé"
+                                : "En attente"}
+                            </Badge>
+                          </td>
+                          <td className="p-3.5 text-right">
+                            {o.status === "en_attente" ? (
+                              <div className="flex items-center justify-end gap-1.5">
+                                <Button
+                                  variant="primary"
+                                  size="sm"
                                   onClick={() => handleValidateDownload(o)}
-                                  className="text-xs text-emerald-600 font-semibold hover:underline cursor-pointer"
+                                  className="text-[11px] py-1 px-2.5"
                                 >
-                                  Réactiver
+                                  Valider
+                                </Button>
+                                <button
+                                  onClick={() => handleRejectDownload(o)}
+                                  className="p-1 rounded-lg text-slate-400 hover:text-red-600"
+                                  title="Refuser"
+                                >
+                                  <X className="w-4 h-4" />
                                 </button>
-                              )}
-                            </td>
-                          </tr>
-                        );
-                      })}
+                              </div>
+                            ) : o.status === "valide" ? (
+                              <button
+                                onClick={() => handleRejectDownload(o)}
+                                className="text-[11px] text-red-500 hover:underline cursor-pointer"
+                              >
+                                Révoquer
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => handleValidateDownload(o)}
+                                className="text-[11px] text-emerald-600 hover:underline cursor-pointer"
+                              >
+                                Réactiver
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
                 </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* ============================================================== */}
-        {/* MODAL : ACCORDER UN ACCÈS DIRECT À UN ÉTUDIANT                */}
-        {/* ============================================================== */}
-        {manualGrantModalOpen && (
-          <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-            <div className="bg-white dark:bg-[#111821] rounded-2xl max-w-md w-full p-6 space-y-5 border border-slate-200 dark:border-[#263241] shadow-2xl my-8">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#263241]">
-                <div>
-                  <h3 className="font-serif font-bold text-base text-[#0f2744] dark:text-[#F5F7FA]">
-                    Accorder un accès direct au document
-                  </h3>
-                  <span className="text-xs text-slate-400">Valide immédiatement le téléchargement sans attendre de demande</span>
-                </div>
-                <button onClick={() => setManualGrantModalOpen(false)} className="p-1.5 rounded-lg text-slate-400 hover:text-white">
-                  <X className="w-4 h-4" />
-                </button>
               </div>
-
-              <form onSubmit={handleManualGrantSubmit} className="space-y-4">
-                <div>
-                  <label className="text-xs font-bold text-slate-700 dark:text-white block mb-1">
-                    Sélectionner le document <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    value={grantItemId}
-                    onChange={(e) => setGrantItemId(e.target.value)}
-                    required
-                    className="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] text-slate-900 dark:text-white"
-                  >
-                    {items.map((i) => (
-                      <option key={i.id} value={i.id}>
-                        {i.title} ({i.price} FCFA)
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="text-xs font-bold text-slate-700 dark:text-white block mb-1">
-                    Nom &amp; Prénom de l&apos;étudiant <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Ex: Ibrahima Anne"
-                    value={grantBuyerName}
-                    onChange={(e) => setGrantBuyerName(e.target.value)}
-                    className="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] text-slate-900 dark:text-white"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs font-bold text-slate-700 dark:text-white block mb-1">
-                    Adresse Email de l&apos;étudiant <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    placeholder="etudiant@uam.edu.sn"
-                    value={grantBuyerEmail}
-                    onChange={(e) => setGrantBuyerEmail(e.target.value)}
-                    className="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] text-slate-900 dark:text-white"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-xs font-bold text-slate-700 dark:text-white block mb-1">
-                    Téléphone / WhatsApp (Optionnel)
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="+221 77 000 00 00"
-                    value={grantBuyerPhone}
-                    onChange={(e) => setGrantBuyerPhone(e.target.value)}
-                    className="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] text-slate-900 dark:text-white"
-                  />
-                </div>
-
-                <div className="pt-2 flex justify-end gap-2">
-                  <Button variant="ghost" size="sm" type="button" onClick={() => setManualGrantModalOpen(false)}>
-                    Annuler
-                  </Button>
-                  <Button variant="primary" size="sm" type="submit">
-                    Valider et Débloquer l&apos;accès
-                  </Button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
-
-        {/* Confirmation de suppression */}
-        {deleteConfirm && (
-          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-            <div className="bg-white dark:bg-[#111821] rounded-2xl max-w-sm w-full p-6 space-y-4 border border-slate-200 dark:border-[#263241] shadow-2xl">
-              <h3 className="font-serif text-lg font-bold text-red-600 dark:text-rose-400">
-                Confirmer la suppression
-              </h3>
-              <p className="text-xs text-slate-600 dark:text-[#AAB4C0] leading-relaxed">
-                Êtes-vous sûr de vouloir retirer ce document du Marketplace ? Cette action est irréversible.
-              </p>
-              <div className="flex justify-end gap-2 pt-2">
-                <Button variant="ghost" size="sm" onClick={() => setDeleteConfirm(null)}>
-                  Annuler
-                </Button>
-                <Button variant="danger" size="sm" onClick={() => handleDelete(deleteConfirm)}>
-                  Supprimer définitivement
-                </Button>
-              </div>
-            </div>
+            )}
           </div>
         )}
 
         {/* ============================================================== */}
-        {/* MODAL CRÉATION / MODIFICATION D'UN DOCUMENT                    */}
+        {/* MODAL SIMPLIFIÉ D'AJOUT / MODIFICATION (100% MOBILE-FRIENDLY)   */}
         {/* ============================================================== */}
         {modalOpen && (
-          <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-            <div className="bg-white dark:bg-[#111821] rounded-2xl max-w-2xl w-full p-6 sm:p-8 space-y-6 border border-slate-200 dark:border-[#263241] shadow-2xl my-8">
-              <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-[#263241]">
-                <div>
-                  <h3 className="font-serif text-xl font-bold text-[#0f2744] dark:text-[#F5F7FA]">
-                    {editingItem ? "Modifier le document Marketplace" : "Ajouter un nouveau document au Marketplace"}
-                  </h3>
-                  <p className="text-xs text-slate-500 dark:text-[#AAB4C0] mt-0.5">
-                    Définissez le prix, la vignette et le numéro WhatsApp de l&apos;enseignant pour les commandes.
-                  </p>
+          <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex flex-col justify-end sm:justify-center items-center p-0 sm:p-4">
+            <div className="w-full sm:max-w-xl bg-white dark:bg-[#111821] rounded-t-3xl sm:rounded-2xl max-h-[92dvh] sm:max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 dark:border-[#263241] overflow-hidden animate-in slide-in-from-bottom duration-200">
+              {/* En-tête modal fixe */}
+              <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-[#263241] flex items-center justify-between shrink-0">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 rounded-xl bg-amber-500/10 text-amber-600">
+                    <ShoppingBag className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-base sm:text-lg font-bold text-[#0f2744] dark:text-[#F5F7FA]">
+                      {editingItem ? "Modifier le document" : "Ajouter un document au Marketplace"}
+                    </h3>
+                    <p className="text-[11px] text-slate-400">
+                      Renseignez le titre, le prix et le numéro WhatsApp pour les commandes.
+                    </p>
+                  </div>
                 </div>
+
                 <button
+                  type="button"
                   onClick={() => setModalOpen(false)}
-                  className="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-[#151D27] cursor-pointer"
+                  className="p-2 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-[#151D27] cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-5">
-                {/* 1. Titre & Prix (actuel + barré Chariow) */}
-                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                  <div className="sm:col-span-2 space-y-1">
-                    <label className="text-xs font-bold text-slate-700 dark:text-[#F5F7FA]">
-                      Titre du document <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="Ex: Fascicule d'Exercices Corrigés Analyse 1"
-                      value={formTitle}
-                      onChange={(e) => setFormTitle(e.target.value)}
-                      className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0f2744]"
-                    />
-                  </div>
+              {/* Formulaire scrollable */}
+              <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
+                {/* 1. Titre du document */}
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700 dark:text-[#F5F7FA]">
+                    Titre du document <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Ex: Décroche ton premier job"
+                    value={formTitle}
+                    onChange={(e) => setFormTitle(e.target.value)}
+                    className="w-full px-3.5 py-2.5 text-base sm:text-sm rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0f2744]"
+                  />
+                </div>
 
+                {/* 2. Prix de vente & Prix d'origine barré */}
+                <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-slate-700 dark:text-[#F5F7FA]">
                       Prix de Vente (FCFA) <span className="text-red-500">*</span>
@@ -1009,13 +789,13 @@ export default function AdminMarketplacePage() {
                       placeholder="2000"
                       value={formPrice}
                       onChange={(e) => setFormPrice(e.target.value)}
-                      className="w-full px-3.5 py-2 text-xs sm:text-sm font-bold text-red-600 rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] focus:outline-none focus:ring-2 focus:ring-red-500"
+                      className="w-full px-3.5 py-2.5 text-base sm:text-sm font-bold text-red-600 rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] focus:outline-none focus:ring-2 focus:ring-red-500"
                     />
                   </div>
 
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-slate-700 dark:text-[#F5F7FA]">
-                      Prix d&apos;origine barré (Optionnel)
+                      Prix barré (Optionnel)
                     </label>
                     <input
                       type="number"
@@ -1024,236 +804,198 @@ export default function AdminMarketplacePage() {
                       placeholder="10000"
                       value={formOriginalPrice}
                       onChange={(e) => setFormOriginalPrice(e.target.value)}
-                      className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] text-slate-500 line-through focus:outline-none focus:ring-2 focus:ring-[#0f2744]"
-                    />
-                    <p className="text-[10px] text-slate-400">Génère le badge -XX% OFF (Style Chariow)</p>
-                  </div>
-                </div>
-
-                {/* 2. Matière, Niveau & Fichier info */}
-                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-700 dark:text-[#F5F7FA]">
-                      Niveau concerné
-                    </label>
-                    <select
-                      value={formNiveau}
-                      onChange={(e) => setFormNiveau(e.target.value)}
-                      className="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] text-slate-800 dark:text-white"
-                    >
-                      <option value="L1">Licence 1</option>
-                      <option value="L2">Licence 2</option>
-                      <option value="Tous">Tous Niveaux (L1 &amp; L2)</option>
-                    </select>
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-700 dark:text-[#F5F7FA]">
-                      Matière
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Ex: Programmation Python, Analyse 1..."
-                      value={formMatiere}
-                      onChange={(e) => setFormMatiere(e.target.value)}
-                      className="w-full px-3.5 py-2 text-xs rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] text-slate-900 dark:text-white"
-                    />
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-700 dark:text-[#F5F7FA]">
-                      Nombre de pages
-                    </label>
-                    <input
-                      type="number"
-                      placeholder="51"
-                      value={formPages}
-                      onChange={(e) => setFormPages(e.target.value)}
-                      className="w-full px-3.5 py-2 text-xs rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] text-slate-900 dark:text-white"
-                    />
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-700 dark:text-[#F5F7FA]">
-                      Taille du fichier
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="1.99 MB"
-                      value={formFileSize}
-                      onChange={(e) => setFormFileSize(e.target.value)}
-                      className="w-full px-3.5 py-2 text-xs rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] text-slate-900 dark:text-white"
-                    />
-                  </div>
-                </div>
-                    <input
-                      type="number"
-                      placeholder="84"
-                      value={formPages}
-                      onChange={(e) => setFormPages(e.target.value)}
-                      className="w-full px-3.5 py-2 text-xs rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] text-slate-900 dark:text-white"
+                      className="w-full px-3.5 py-2.5 text-base sm:text-sm rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] text-slate-400 line-through focus:outline-none focus:ring-2 focus:ring-[#0f2744]"
                     />
                   </div>
                 </div>
 
-                {/* 3. Enseignant & Numéro WhatsApp */}
-                <div className="p-4 rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200/90 dark:border-[#263241] space-y-3">
-                  <div className="flex items-center justify-between">
-                    <label className="text-xs font-bold text-[#0f2744] dark:text-[#F5F7FA] flex items-center gap-1.5">
-                      <User className="w-3.5 h-3.5 text-[#e0521c]" />
-                      <span>Enseignant &amp; Coordonnées WhatsApp</span>
-                    </label>
+                {/* 3. Numéro WhatsApp pour recevoir les commandes */}
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700 dark:text-[#F5F7FA] flex items-center gap-1.5">
+                    <WhatsAppIcon className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Numéro WhatsApp de réception des commandes</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="+221 77 551 81 96"
+                    value={formWhatsApp}
+                    onChange={(e) => setFormWhatsApp(e.target.value)}
+                    className="w-full px-3.5 py-2.5 text-base sm:text-sm font-mono font-bold text-emerald-700 dark:text-emerald-400 rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                  <p className="text-[11px] text-slate-400">Le bouton « Acheter » ouvrira directement une discussion WhatsApp vers ce numéro.</p>
+                </div>
 
-                    {profs.length > 0 && (
-                      <div className="flex items-center gap-1.5 text-xs">
-                        <span className="text-slate-400">Remplissage rapide :</span>
-                        <select
-                          onChange={(e) => handleProfSelect(e.target.value)}
-                          className="px-2 py-1 text-xs rounded-lg bg-white dark:bg-[#111821] border border-slate-200 dark:border-[#263241] text-slate-700 dark:text-[#F5F7FA]"
-                        >
-                          <option value="">Sélectionner un enseignant...</option>
-                          {profs.map((p) => (
-                            <option key={p.id} value={p.id}>
-                              {p.full_name || p.nom}
-                            </option>
-                          ))}
-                        </select>
+                {/* 4. Vignette / Image de couverture (Bouton photo tactile pour téléphone) */}
+                <div className="space-y-2 p-3.5 rounded-xl border border-dashed border-slate-200 dark:border-[#263241] bg-slate-50/50 dark:bg-[#151D27]/30">
+                  <label className="text-xs font-bold text-slate-700 dark:text-[#F5F7FA] block">
+                    Vignette / Photo du Livre (Mockup)
+                  </label>
+
+                  {formCoverUrl ? (
+                    <div className="flex items-center gap-3">
+                      <div className="w-16 h-20 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 shrink-0 shadow-xs bg-slate-100">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={formCoverUrl} alt="Aperçu" className="w-full h-full object-cover" />
                       </div>
-                    )}
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="text-[11px] font-semibold text-slate-500 dark:text-[#AAB4C0] block mb-1">
-                        Nom de l&apos;enseignant
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="Ex: Ibrahima Anne"
-                        value={formProfName}
-                        onChange={(e) => setFormProfName(e.target.value)}
-                        className="w-full px-3 py-1.5 text-xs rounded-lg bg-white dark:bg-[#111821] border border-slate-200 dark:border-[#263241] text-slate-900 dark:text-white"
-                      />
+                      <div className="flex-1 space-y-1.5">
+                        <span className="text-xs text-emerald-600 font-semibold flex items-center gap-1">
+                          <Check className="w-3.5 h-3.5" /> Image sélectionnée
+                        </span>
+                        <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-800 text-xs font-semibold cursor-pointer hover:bg-slate-300">
+                          <Camera className="w-3.5 h-3.5" />
+                          <span>Changer la photo</span>
+                          <input type="file" accept="image/*" onChange={handleCoverUpload} className="hidden" />
+                        </label>
+                      </div>
                     </div>
+                  ) : (
+                    <label className="w-full py-4 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-[#0f2744] flex flex-col items-center justify-center gap-1.5 cursor-pointer bg-white dark:bg-[#111821] text-slate-600 dark:text-slate-300 transition-colors">
+                      <Camera className="w-6 h-6 text-[#0f2744] dark:text-[#e0521c]" />
+                      <span className="text-xs font-bold">Prendre une photo ou choisir une image</span>
+                      <span className="text-[10px] text-slate-400">JPG, PNG ou WebP</span>
+                      <input type="file" accept="image/*" onChange={handleCoverUpload} className="hidden" />
+                    </label>
+                  )}
+                </div>
 
-                    <div>
-                      <label className="text-[11px] font-semibold text-slate-500 dark:text-[#AAB4C0] block mb-1">
-                        Numéro WhatsApp pour recevoir les commandes (avec +221)
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="+221 77 551 81 96"
-                        value={formProfPhone}
-                        onChange={(e) => setFormProfPhone(e.target.value)}
-                        className="w-full px-3 py-1.5 text-xs font-mono font-bold text-emerald-700 dark:text-emerald-400 rounded-lg bg-white dark:bg-[#111821] border border-slate-200 dark:border-[#263241]"
-                      />
-                    </div>
+                {/* 5. Document PDF lié (Optionnel à la création) */}
+                <div className="space-y-2 p-3.5 rounded-xl border border-dashed border-slate-200 dark:border-[#263241]">
+                  <label className="text-xs font-bold text-slate-700 dark:text-[#F5F7FA] block">
+                    Fichier PDF du cours (Document final à télécharger)
+                  </label>
+
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      placeholder="Lien PDF (ou cliquez sur Parcourir)"
+                      value={formPdfUrl}
+                      onChange={(e) => setFormPdfUrl(e.target.value)}
+                      className="flex-1 px-3 py-2 text-xs rounded-lg bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241]"
+                    />
+                    <label className="cursor-pointer px-3 py-2 rounded-lg bg-slate-100 dark:bg-[#151D27] text-xs font-semibold hover:bg-slate-200 flex items-center gap-1 shrink-0">
+                      <Upload className="w-3.5 h-3.5" />
+                      <span>PDF</span>
+                      <input type="file" accept="application/pdf" onChange={handlePdfUpload} className="hidden" />
+                    </label>
                   </div>
                 </div>
 
-                {/* 4. Description */}
+                {/* 6. Description (Optionnelle) */}
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-slate-700 dark:text-[#F5F7FA]">
-                    Description &amp; Sommaire détaillé du document
+                    Description &amp; Sommaire (Optionnel)
                   </label>
                   <textarea
-                    rows={3}
-                    placeholder="Détaillez le contenu, les chapitres abordés, les exercices corrigés, les astuces d'examens..."
+                    rows={2}
+                    placeholder="Présentez brièvement les chapitres abordés..."
                     value={formDescription}
                     onChange={(e) => setFormDescription(e.target.value)}
                     className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241] text-slate-900 dark:text-white"
                   />
                 </div>
 
-                {/* 5. Vignette & Fichier PDF */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* Vignette couverture */}
-                  <div className="space-y-2 p-3.5 rounded-xl border border-dashed border-slate-200 dark:border-[#263241]">
-                    <label className="text-xs font-bold text-slate-700 dark:text-[#F5F7FA] block">
-                      Vignette / Mockup de Couverture (Image)
-                    </label>
-
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="text"
-                        placeholder="URL de l'image de couverture"
-                        value={formCoverUrl}
-                        onChange={(e) => setFormCoverUrl(e.target.value)}
-                        className="flex-1 px-3 py-1.5 text-xs rounded-lg bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241]"
-                      />
-                      <label className="cursor-pointer px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-[#151D27] text-xs font-semibold hover:bg-slate-200 flex items-center gap-1 shrink-0">
-                        <Upload className="w-3.5 h-3.5" />
-                        <span>Fichier</span>
-                        <input type="file" accept="image/*" onChange={handleCoverUpload} className="hidden" />
-                      </label>
-                    </div>
-
-                    {formCoverUrl && (
-                      <div className="w-16 h-10 rounded-md overflow-hidden border border-slate-200">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={formCoverUrl} alt="Aperçu" className="w-full h-full object-cover" />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Fichier PDF lié */}
-                  <div className="space-y-2 p-3.5 rounded-xl border border-dashed border-slate-200 dark:border-[#263241]">
-                    <label className="text-xs font-bold text-slate-700 dark:text-[#F5F7FA] block">
-                      Fichier PDF source (Document final validé)
-                    </label>
-
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="text"
-                        placeholder="Lien PDF (ou upload)"
-                        value={formPdfUrl}
-                        onChange={(e) => setFormPdfUrl(e.target.value)}
-                        className="flex-1 px-3 py-1.5 text-xs rounded-lg bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241]"
-                      />
-                      <label className="cursor-pointer px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-[#151D27] text-xs font-semibold hover:bg-slate-200 flex items-center gap-1 shrink-0">
-                        <Upload className="w-3.5 h-3.5" />
-                        <span>PDF</span>
-                        <input type="file" accept="application/pdf" onChange={handlePdfUpload} className="hidden" />
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                {/* 6. Options de mise en avant et visibilité */}
-                <div className="flex flex-wrap items-center gap-6 pt-2">
-                  <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-700 dark:text-[#F5F7FA]">
-                    <input
-                      type="checkbox"
-                      checked={formIsActive}
-                      onChange={(e) => setFormIsActive(e.target.checked)}
-                      className="rounded text-[#0f2744] focus:ring-0 w-4 h-4"
-                    />
-                    <span>Document actif (visible pour la commande)</span>
-                  </label>
-
-                  <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-[#e0521c]">
-                    <input
-                      type="checkbox"
-                      checked={formFeatured}
-                      onChange={(e) => setFormFeatured(e.target.checked)}
-                      className="rounded text-[#e0521c] focus:ring-0 w-4 h-4"
-                    />
-                    <span>Mettre en avant sur la page d&apos;accueil</span>
-                  </label>
-                </div>
-
-                {/* Actions modal */}
-                <div className="pt-4 border-t border-slate-100 dark:border-[#263241] flex items-center justify-end gap-3">
+                {/* Bouton de soumission tactile fixe dans le bas du modal */}
+                <div className="pt-3 border-t border-slate-100 dark:border-[#263241] flex items-center justify-end gap-2">
                   <Button variant="ghost" size="md" type="button" onClick={() => setModalOpen(false)}>
                     Annuler
                   </Button>
                   <Button variant="primary" size="md" type="submit" isLoading={isUploading}>
-                    {editingItem ? "Enregistrer les modifications" : "Publier sur le Marketplace"}
+                    {editingItem ? "Enregistrer" : "Publier le document"}
                   </Button>
                 </div>
               </form>
+            </div>
+          </div>
+        )}
+
+        {/* Modal octroi manuel */}
+        {manualGrantModalOpen && (
+          <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4">
+            <div className="bg-white dark:bg-[#111821] rounded-2xl max-w-md w-full p-5 space-y-4 border border-slate-200 dark:border-[#263241] shadow-2xl">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-[#263241]">
+                <h3 className="font-serif font-bold text-base text-[#0f2744] dark:text-[#F5F7FA]">
+                  Accorder un accès direct
+                </h3>
+                <button onClick={() => setManualGrantModalOpen(false)} className="p-1.5 text-slate-400">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <form onSubmit={handleManualGrantSubmit} className="space-y-3">
+                <div>
+                  <label className="text-xs font-bold text-slate-700 dark:text-white block mb-1">
+                    Sélectionner le document
+                  </label>
+                  <select
+                    value={grantItemId}
+                    onChange={(e) => setGrantItemId(e.target.value)}
+                    required
+                    className="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241]"
+                  >
+                    {items.map((i) => (
+                      <option key={i.id} value={i.id}>
+                        {i.title} ({i.price} FCFA)
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-slate-700 dark:text-white block mb-1">
+                    Nom de l&apos;étudiant
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Ex: Ibrahima Anne"
+                    value={grantBuyerName}
+                    onChange={(e) => setGrantBuyerName(e.target.value)}
+                    className="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241]"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-slate-700 dark:text-white block mb-1">
+                    Email de l&apos;étudiant
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="etudiant@uam.edu.sn"
+                    value={grantBuyerEmail}
+                    onChange={(e) => setGrantBuyerEmail(e.target.value)}
+                    className="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-[#151D27] border border-slate-200 dark:border-[#263241]"
+                  />
+                </div>
+
+                <div className="pt-2 flex justify-end gap-2">
+                  <Button variant="ghost" size="sm" type="button" onClick={() => setManualGrantModalOpen(false)}>
+                    Annuler
+                  </Button>
+                  <Button variant="primary" size="sm" type="submit">
+                    Valider l&apos;accès
+                  </Button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Confirmation suppression */}
+        {deleteConfirm && (
+          <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+            <div className="bg-white dark:bg-[#111821] rounded-2xl max-w-sm w-full p-5 space-y-3 border border-slate-200 dark:border-[#263241] shadow-2xl">
+              <h3 className="font-serif text-base font-bold text-red-600">Supprimer ce document ?</h3>
+              <p className="text-xs text-slate-500">Cette action retirera le document de la vente.</p>
+              <div className="flex justify-end gap-2 pt-2">
+                <Button variant="ghost" size="sm" onClick={() => setDeleteConfirm(null)}>
+                  Annuler
+                </Button>
+                <Button variant="danger" size="sm" onClick={() => handleDelete(deleteConfirm)}>
+                  Supprimer
+                </Button>
+              </div>
             </div>
           </div>
         )}

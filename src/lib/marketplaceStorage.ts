@@ -23,9 +23,9 @@ export function formatWhatsAppNumber(phone: string): string {
  * Construit l'URL WhatsApp avec message prérempli professionnel façon Chariow
  */
 export function generateWhatsAppOrderUrl(item: MarketplaceItem): string {
-  const phone = formatWhatsAppNumber(item.professeur_phone);
+  const phone = formatWhatsAppNumber(item.whatsapp_number || item.professeur_phone || "+221 77 551 81 96");
   const formattedPrice = item.price.toLocaleString("fr-FR");
-  const message = `Bonjour Professeur ${item.professeur_name},\n\nJe souhaite commander votre document sur le Marketplace HAS :\n📄 *${item.title}*\n💰 *Prix :* ${formattedPrice} ${item.currency || "FCFA"}\n🎓 *Niveau :* ${item.niveau || "Tous"}\n\nMerci de m'indiquer la démarche pour effectuer le paiement et recevoir le document PDF.`;
+  const message = `Bonjour,\n\nJe souhaite commander le document sur le Marketplace HAS :\n📄 *${item.title}*\n💰 *Prix :* ${formattedPrice} ${item.currency || "FCFA"}\n\nMerci de m'indiquer la démarche pour effectuer le paiement et recevoir le document PDF.`;
   
   return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 }
@@ -147,13 +147,21 @@ export async function saveMarketplaceItem(item: Partial<MarketplaceItem>): Promi
 
   saveStoredMarketplaceItems(current);
 
-  // Tentative de synchronisation vers l'API serveur si disponible
+  // Synchronisation immédiate vers l'API serveur (en arrière-plan avec timeout pour ne JAMAIS bloquer l'interface)
   try {
-    await fetch("/api/marketplace", {
+    const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+    const timeoutId = controller ? setTimeout(() => controller.abort(), 3500) : null;
+
+    fetch("/api/marketplace", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updatedItem),
-    });
+      signal: controller?.signal,
+    })
+      .catch(() => {})
+      .finally(() => {
+        if (timeoutId) clearTimeout(timeoutId);
+      });
   } catch (err) {
     console.info("[Marketplace] Synchro serveur non bloquante");
   }
