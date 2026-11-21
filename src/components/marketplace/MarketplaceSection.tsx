@@ -59,9 +59,9 @@ export function MarketplaceSection() {
           </Link>
         </div>
 
-        {/* Grille des fascicules ou état d'attente */}
+        {/* Grille des fascicules ou état d'attente (2 colonnes sur mobile) */}
         {displayItems.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6">
             {displayItems.map((item) => (
               <MarketplaceCard key={item.id} item={item} featured={item.featured} />
             ))}

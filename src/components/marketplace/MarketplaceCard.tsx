@@ -2,7 +2,6 @@
 
 import React from "react";
 import Link from "next/link";
-import { FileText, User } from "lucide-react";
 import { MarketplaceItem } from "@/lib/types";
 
 interface MarketplaceCardProps {
@@ -23,7 +22,7 @@ export function WhatsAppIcon({ className = "w-4 h-4" }: { className?: string }) 
   );
 }
 
-export function MarketplaceCard({ item, featured = false }: MarketplaceCardProps) {
+export function MarketplaceCard({ item }: MarketplaceCardProps) {
   // Calcul automatique du pourcentage de réduction si original_price existe
   const discountPercent =
     item.original_price && item.original_price > item.price
@@ -31,76 +30,68 @@ export function MarketplaceCard({ item, featured = false }: MarketplaceCardProps
       : null;
 
   return (
-    <div className="group bg-white dark:bg-[#111821] rounded-2xl border border-slate-200/90 dark:border-[#263241] transition-all duration-300 flex flex-col overflow-hidden hover:shadow-[0_12px_30px_-8px_rgba(15,39,68,0.12)] dark:hover:shadow-[0_12px_30px_-8px_rgba(0,0,0,0.6)]">
+    <div className="group bg-white dark:bg-[#111821] rounded-2xl border border-slate-200/90 dark:border-[#263241] transition-all duration-300 flex flex-col overflow-hidden hover:shadow-[0_12px_28px_-8px_rgba(15,39,68,0.12)] dark:hover:shadow-[0_12px_28px_-8px_rgba(0,0,0,0.6)]">
       {/* ============================================================== */}
-      {/* VIGNETTE STYLE CHARIOW (IMAGE 1)                               */}
+      {/* VIGNETTE 1:1 CONSERVÉE TELLE QUELLE (SANS ROGNAGE NI ÉTIREMENT) */}
       {/* ============================================================== */}
-      <Link href={`/marketplace/${item.id}`} className="relative aspect-[4/3] bg-slate-100 dark:bg-slate-900 overflow-hidden block">
+      <Link
+        href={`/marketplace/${item.id}`}
+        className="relative aspect-square bg-[#0f2744]/[0.03] dark:bg-[#151D27]/60 overflow-hidden block p-2 sm:p-3 flex items-center justify-center"
+      >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={item.cover_image_url}
           alt={item.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-full object-contain drop-shadow-sm transition-transform duration-500 group-hover:scale-105"
         />
 
-        {/* Badge noir de réduction en haut à droite (Style Chariow Image 1) */}
+        {/* Badge réduction avec les couleurs du site (Navy HAS ou Noir) */}
         {(discountPercent || item.badge) && (
-          <div className="absolute top-3 right-3 z-10">
-            <span className="px-2.5 py-1 rounded-md bg-black/90 text-white text-[11px] font-black uppercase tracking-wider shadow-sm">
-              {discountPercent ? `${discountPercent}% OFF` : item.badge}
-            </span>
-          </div>
-        )}
-
-        {/* Badge niveau / matière discret en bas à gauche */}
-        {item.niveau && (
-          <div className="absolute bottom-2.5 left-2.5 z-10">
-            <span className="px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-xs text-white text-[10px] font-bold uppercase tracking-wider">
-              {item.niveau}
+          <div className="absolute top-2 right-2 sm:top-2.5 sm:right-2.5 z-10">
+            <span className="px-2 py-0.5 rounded-md bg-[#0f2744] dark:bg-black/90 text-white text-[9px] sm:text-[10px] font-black uppercase tracking-wider shadow-xs">
+              {discountPercent ? `-${discountPercent}%` : item.badge}
             </span>
           </div>
         )}
       </Link>
 
       {/* ============================================================== */}
-      {/* INFOS DU PRODUIT STYLE CHARIOW (IMAGE 1)                       */}
+      {/* INFOS DU PRODUIT & BOUTON COMMANDE COULEURS DU SITE HAS        */}
       {/* ============================================================== */}
-      <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-4">
-        <div className="space-y-1.5">
+      <div className="p-3 sm:p-4 flex-1 flex flex-col justify-between space-y-2.5 sm:space-y-3">
+        <div className="space-y-1">
           {/* Titre */}
           <Link href={`/marketplace/${item.id}`} className="block">
-            <h3 className="font-serif font-bold text-sm sm:text-base text-slate-900 dark:text-[#F5F7FA] leading-snug line-clamp-2 hover:text-[#e0521c] transition-colors">
+            <h3 className="font-serif font-bold text-xs sm:text-sm text-slate-900 dark:text-[#F5F7FA] leading-snug line-clamp-2 hover:text-[#e0521c] transition-colors">
               {item.title}
             </h3>
           </Link>
 
-          {/* Badge format numérique discret */}
-          <p className="text-[11px] text-slate-500 dark:text-[#AAB4C0] font-medium flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-            <span>Document PDF Téléchargeable</span>
+          <p className="text-[10px] sm:text-[11px] text-slate-400 font-medium truncate">
+            Format PDF téléchargeable
           </p>
         </div>
 
         {/* ============================================================== */}
-        {/* PRIX BARRÉ + PRIX ROUGE VIF + BOUTON JAUNE CHARIOW             */}
+        {/* PRIX BARRÉ + PRIX ACCENT HAS (#e0521c) + BOUTON HAS             */}
         {/* ============================================================== */}
-        <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-[#263241]">
+        <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-[#263241]">
           {/* Ligne de prix */}
-          <div className="flex items-baseline gap-2.5">
+          <div className="flex items-baseline gap-1.5 flex-wrap">
             {item.original_price && (
-              <span className="text-xs sm:text-sm text-slate-400 line-through font-semibold">
-                {item.original_price.toLocaleString("fr-FR")} {item.currency || "FCFA"}
+              <span className="text-[10px] sm:text-xs text-slate-400 line-through font-semibold">
+                {item.original_price.toLocaleString("fr-FR")} F
               </span>
             )}
-            <span className="font-serif text-lg sm:text-xl font-black text-red-600 dark:text-red-500">
+            <span className="font-serif text-sm sm:text-base font-black text-[#e0521c] dark:text-[#ff6b35]">
               {item.price.toLocaleString("fr-FR")} {item.currency || "FCFA"}
             </span>
           </div>
 
-          {/* Grand bouton jaune Chariow : Acheter maintenant -> mène vers la vraie page produit */}
+          {/* Bouton Acheter / Commander aux couleurs de HAS */}
           <Link
             href={`/marketplace/${item.id}`}
-            className="w-full py-2.5 px-4 rounded-xl bg-[#FBBF24] hover:bg-[#F59E0B] text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center transition-all shadow-xs active:scale-98 text-center"
+            className="w-full py-2 px-2.5 sm:px-4 rounded-xl bg-[#0f2744] hover:bg-[#1a3a60] dark:bg-[#e0521c] dark:hover:bg-[#c94210] text-white font-bold text-[11px] sm:text-xs flex items-center justify-center transition-all shadow-xs active:scale-98 text-center"
           >
             Acheter maintenant
           </Link>

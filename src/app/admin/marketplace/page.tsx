@@ -137,7 +137,7 @@ export default function AdminMarketplacePage() {
     try {
       const preview = URL.createObjectURL(file);
       setFormCoverUrl(preview);
-    } catch {}
+    } catch { }
 
     setIsUploading(true);
     try {
@@ -169,7 +169,7 @@ export default function AdminMarketplacePage() {
           ctx?.drawImage(img, 0, 0, w, h);
           const blob = await new Promise<Blob | null>((res) => canvas.toBlob(res, "image/jpeg", 0.85));
           if (blob) uploadFile = blob;
-        } catch {}
+        } catch { }
       }
 
       const fd = new FormData();
@@ -344,7 +344,8 @@ export default function AdminMarketplacePage() {
     return (
       o.item_title.toLowerCase().includes(q) ||
       o.buyer_name.toLowerCase().includes(q) ||
-      o.buyer_email.toLowerCase().includes(q) ||
+      (o.buyer_phone && o.buyer_phone.includes(q)) ||
+      (o.buyer_email && o.buyer_email.toLowerCase().includes(q)) ||
       o.id.toLowerCase().includes(q)
     );
   });
@@ -411,11 +412,10 @@ export default function AdminMarketplacePage() {
         <div className="flex items-center gap-2 border-b border-slate-200 dark:border-[#263241] pb-2 overflow-x-auto">
           <button
             onClick={() => setActiveTab("catalog")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${
-              activeTab === "catalog"
-                ? "bg-[#0f2744] text-white shadow-xs"
-                : "text-slate-600 dark:text-[#AAB4C0] hover:bg-slate-100 dark:hover:bg-[#151D27]"
-            }`}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap ${activeTab === "catalog"
+              ? "bg-[#0f2744] text-white shadow-xs"
+              : "text-slate-600 dark:text-[#AAB4C0] hover:bg-slate-100 dark:hover:bg-[#151D27]"
+              }`}
           >
             <ShoppingBag className="w-4 h-4" />
             <span>Catalogue ({items.length})</span>
@@ -423,11 +423,10 @@ export default function AdminMarketplacePage() {
 
           <button
             onClick={() => setActiveTab("orders")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap relative ${
-              activeTab === "orders"
-                ? "bg-[#0f2744] text-white shadow-xs"
-                : "text-slate-600 dark:text-[#AAB4C0] hover:bg-slate-100 dark:hover:bg-[#151D27]"
-            }`}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer whitespace-nowrap relative ${activeTab === "orders"
+              ? "bg-[#0f2744] text-white shadow-xs"
+              : "text-slate-600 dark:text-[#AAB4C0] hover:bg-slate-100 dark:hover:bg-[#151D27]"
+              }`}
           >
             <ShieldCheck className="w-4 h-4 text-[#e0521c]" />
             <span>Validations &amp; Téléchargements ({orders.length})</span>
@@ -520,9 +519,8 @@ export default function AdminMarketplacePage() {
                           <div className="absolute top-2.5 right-2.5">
                             <button
                               onClick={() => handleToggleActive(item)}
-                              className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider shadow-xs cursor-pointer ${
-                                item.is_active !== false ? "bg-emerald-600 text-white" : "bg-red-600 text-white"
-                              }`}
+                              className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider shadow-xs cursor-pointer ${item.is_active !== false ? "bg-emerald-600 text-white" : "bg-red-600 text-white"
+                                }`}
                             >
                               {item.is_active !== false ? "En Vente" : "Désactivé"}
                             </button>
@@ -612,19 +610,18 @@ export default function AdminMarketplacePage() {
                 <button
                   key={st}
                   onClick={() => setOrderFilter(st)}
-                  className={`px-3 py-1.5 rounded-lg font-bold transition-colors cursor-pointer ${
-                    orderFilter === st
-                      ? "bg-[#0f2744] text-white"
-                      : "bg-white dark:bg-[#111821] text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-[#263241]"
-                  }`}
+                  className={`px-3 py-1.5 rounded-lg font-bold transition-colors cursor-pointer ${orderFilter === st
+                    ? "bg-[#0f2744] text-white"
+                    : "bg-white dark:bg-[#111821] text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-[#263241]"
+                    }`}
                 >
                   {st === "all"
                     ? "Toutes les commandes"
                     : st === "en_attente"
-                    ? "En attente"
-                    : st === "valide"
-                    ? "Validées"
-                    : "Refusées"}
+                      ? "En attente"
+                      : st === "valide"
+                        ? "Validées"
+                        : "Refusées"}
                 </button>
               ))}
             </div>
@@ -678,8 +675,8 @@ export default function AdminMarketplacePage() {
                               {o.status === "valide"
                                 ? "Téléchargement Validé"
                                 : o.status === "refuse"
-                                ? "Refusé"
-                                : "En attente"}
+                                  ? "Refusé"
+                                  : "En attente"}
                             </Badge>
                           </td>
                           <td className="p-3.5 text-right">

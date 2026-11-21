@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
     const local = await readLocalOrders();
     if (email) {
       const cleanEmail = email.trim().toLowerCase();
-      return NextResponse.json(local.filter((o) => o.buyer_email.toLowerCase() === cleanEmail));
+      return NextResponse.json(local.filter((o) => o.buyer_email && o.buyer_email.toLowerCase() === cleanEmail));
     }
     return NextResponse.json(local);
   } catch (err) {
@@ -60,9 +60,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Champs requis manquants" }, { status: 400 });
     }
 
+    const cleanPhone = (body.buyer_phone || "").replace(/[^0-9]/g, "");
+    const safeEmail = body.buyer_email ? body.buyer_email.trim() : `${cleanPhone || "client"}@whatsapp.has`;
+
     const order: MarketplaceOrder = {
       ...body,
       id: body.id || `ord-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      buyer_email: safeEmail,
       status: body.status || "en_attente",
       download_count: body.download_count || 0,
       created_at: body.created_at || new Date().toISOString(),

@@ -50,9 +50,10 @@ CREATE TABLE IF NOT EXISTS public.marketplace_orders (
     item_price INT NOT NULL,
     item_pdf_url TEXT,
     buyer_name VARCHAR(150) NOT NULL,
-    buyer_email VARCHAR(150) NOT NULL,
     buyer_phone VARCHAR(50) NOT NULL,
+    buyer_email VARCHAR(150),
     buyer_user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+    download_code VARCHAR(50),
     status VARCHAR(30) NOT NULL DEFAULT 'en_attente' CHECK (status IN ('en_attente', 'valide', 'refuse')),
     validated_at TIMESTAMPTZ,
     validated_by VARCHAR(150),
@@ -61,6 +62,10 @@ CREATE TABLE IF NOT EXISTS public.marketplace_orders (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Assouplissement des colonnes pour les commandes WhatsApp directes (sans email obligatoire)
+ALTER TABLE public.marketplace_orders ALTER COLUMN buyer_email DROP NOT NULL;
+ALTER TABLE public.marketplace_orders ADD COLUMN IF NOT EXISTS download_code VARCHAR(50);
 
 -- 3. Index pour recherche rapide et tri haute performance
 CREATE INDEX IF NOT EXISTS idx_marketplace_is_active ON public.marketplace_items(is_active);

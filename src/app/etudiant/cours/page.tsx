@@ -44,7 +44,7 @@ export default function EtudiantCoursPage() {
     const userEmail = (user.email || "").toLowerCase();
     const allOrders = getStoredMarketplaceOrders();
     if (userEmail) {
-      setMyOrders(allOrders.filter((o) => o.buyer_email.toLowerCase() === userEmail));
+      setMyOrders(allOrders.filter((o) => o.buyer_email && o.buyer_email.toLowerCase() === userEmail));
     } else {
       setMyOrders(allOrders);
     }
@@ -61,7 +61,7 @@ export default function EtudiantCoursPage() {
       setMatieres(getStoredMatieres());
       const updatedOrders = getStoredMarketplaceOrders();
       if (userEmail) {
-        setMyOrders(updatedOrders.filter((o) => o.buyer_email.toLowerCase() === userEmail));
+        setMyOrders(updatedOrders.filter((o) => o.buyer_email && o.buyer_email.toLowerCase() === userEmail));
       } else {
         setMyOrders(updatedOrders);
       }

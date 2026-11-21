@@ -251,11 +251,14 @@ export function saveStoredMarketplaceOrders(orders: MarketplaceOrder[]): void {
 export async function createMarketplaceOrder(params: {
   item: MarketplaceItem;
   buyerName: string;
-  buyerEmail: string;
   buyerPhone: string;
+  buyerEmail?: string;
   buyerUserId?: string | null;
 }): Promise<MarketplaceOrder> {
   const current = getStoredMarketplaceOrders();
+  const cleanPhone = params.buyerPhone.replace(/[^0-9]/g, "");
+  const safeEmail = params.buyerEmail ? params.buyerEmail.trim().toLowerCase() : `${cleanPhone || "client"}@whatsapp.has`;
+
   const newOrder: MarketplaceOrder = {
     id: `ord-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
     item_id: params.item.id,
@@ -263,7 +266,7 @@ export async function createMarketplaceOrder(params: {
     item_price: params.item.price,
     item_pdf_url: params.item.pdf_url || null,
     buyer_name: params.buyerName.trim(),
-    buyer_email: params.buyerEmail.trim().toLowerCase(),
+    buyer_email: safeEmail,
     buyer_phone: params.buyerPhone.trim(),
     buyer_user_id: params.buyerUserId || null,
     status: "en_attente",

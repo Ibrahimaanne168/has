@@ -296,8 +296,9 @@ export interface MarketplaceOrder {
   item_price: number;
   item_pdf_url?: string | null;
   buyer_name: string;
-  buyer_email: string;
   buyer_phone: string;
+  buyer_email?: string;
+  download_code?: string;
   buyer_user_id?: string | null;
   status: MarketplaceOrderStatus;
   validated_at?: string | null;

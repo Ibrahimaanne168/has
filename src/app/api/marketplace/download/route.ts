@@ -8,12 +8,14 @@ export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   try {
-    const orderId = request.nextUrl.searchParams.get("orderId");
+    const rawOrderId = request.nextUrl.searchParams.get("orderId") || request.nextUrl.searchParams.get("code");
+    const orderId = rawOrderId ? rawOrderId.replace(/^#/, "").trim() : null;
     const itemId = request.nextUrl.searchParams.get("itemId");
+    const phone = request.nextUrl.searchParams.get("phone")?.replace(/[^0-9]/g, "");
     const email = request.nextUrl.searchParams.get("email");
 
-    if (!orderId && (!itemId || !email)) {
-      return NextResponse.json({ error: "Identifiant de commande ou email manquant" }, { status: 400 });
+    if (!orderId && !phone && !email) {
+      return NextResponse.json({ error: "Code de commande ou numéro de téléphone manquant" }, { status: 400 });
     }
 
     let order: MarketplaceOrder | null = null;
@@ -24,6 +26,8 @@ export async function GET(request: NextRequest) {
       let q = supabase.from("marketplace_orders").select("*");
       if (orderId) {
         q = q.eq("id", orderId);
+      } else if (itemId && phone) {
+        q = q.eq("item_id", itemId).ilike("buyer_phone", `%${phone.slice(-9)}%`);
       } else if (itemId && email) {
         q = q.eq("item_id", itemId).ilike("buyer_email", email.trim().toLowerCase());
       }
@@ -38,16 +42,30 @@ export async function GET(request: NextRequest) {
         const raw = await fs.readFile(manifestFile, "utf-8");
         const orders: MarketplaceOrder[] = JSON.parse(raw);
         if (orderId) {
-          order = orders.find((o) => o.id === orderId) || null;
+          order = orders.find((o) => o.id === orderId || o.id.toLowerCase() === orderId.toLowerCase()) || null;
+        } else if (itemId && phone) {
+          order =
+            orders.find(
+              (o) =>
+                o.item_id === itemId &&
+                o.buyer_phone &&
+                o.buyer_phone.replace(/[^0-9]/g, "").includes(phone.slice(-9))
+            ) || null;
         } else if (itemId && email) {
-          order = orders.find((o) => o.item_id === itemId && o.buyer_email.toLowerCase() === email.trim().toLowerCase()) || null;
+          order =
+            orders.find(
+              (o) =>
+                o.item_id === itemId &&
+                o.buyer_email &&
+                o.buyer_email.toLowerCase() === email.trim().toLowerCase()
+            ) || null;
         }
       } catch {}
     }
 
     if (!order) {
       return NextResponse.json(
-        { error: "Aucune commande trouvée pour ce document et cette adresse email." },
+        { error: "Aucune commande trouvée avec ce code ou numéro de téléphone." },
         { status: 404 }
       );
     }
