@@ -44,8 +44,13 @@ export function PdfViewerModal({
         activeBlobUrl = URL.createObjectURL(blob);
         setBlobUrl(activeBlobUrl);
         setLoading(false);
+      } else if (fileUrl.startsWith("http://") || fileUrl.startsWith("https://")) {
+        // Toutes les URLs distantes passent par notre proxy serveur pour éviter CORS Supabase
+        const proxyUrl = `/api/academic/courses/download?url=${encodeURIComponent(fileUrl)}&preview=1`;
+        setBlobUrl(proxyUrl);
+        setLoading(false);
       } else {
-        // Pour les URLs standards
+        // URLs locales / API proxy déjà formées
         setBlobUrl(fileUrl);
         setLoading(false);
       }

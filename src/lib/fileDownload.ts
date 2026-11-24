@@ -58,9 +58,25 @@ export async function downloadOrOpenDocument(
       blobUrl = URL.createObjectURL(blob);
       shouldRevoke = true;
     } else if (fileUrl.startsWith("http://") || fileUrl.startsWith("https://")) {
-      // Tenter un fetch pour obtenir un blob avec le bon nom sous Android / PC
+      // Toujours passer par le proxy serveur pour éviter les blocages CORS Supabase
+      // Le proxy fonctionne aussi bien pour Supabase que pour toutes URLs distantes
+      const proxyUrl = `/api/academic/courses/download?url=${encodeURIComponent(fileUrl)}&name=${encodeURIComponent(fileName)}`;
       try {
-        const response = await fetch(fileUrl, { mode: "cors" });
+        const response = await fetch(proxyUrl);
+        if (response.ok) {
+          const blob = await response.blob();
+          blobUrl = URL.createObjectURL(blob);
+          shouldRevoke = true;
+        } else {
+          blobUrl = fileUrl;
+        }
+      } catch {
+        blobUrl = fileUrl;
+      }
+    } else if (fileUrl.startsWith("/api/")) {
+      // URL déjà proxifiée — fetch direct depuis notre propre serveur
+      try {
+        const response = await fetch(fileUrl);
         if (response.ok) {
           const blob = await response.blob();
           blobUrl = URL.createObjectURL(blob);

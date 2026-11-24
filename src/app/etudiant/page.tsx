@@ -245,13 +245,13 @@ export default function EtudiantDashboard() {
 
                       <button
                         type="button"
-                        onClick={(e) =>
-                          downloadOrOpenDocument(
-                            c.file_url!,
-                            c.file_name || `${(c.title || "cours").replace(/[/\\?%*:|"<>]/g, "_")}.pdf`,
-                            e
-                          )
-                        }
+                        onClick={(e) => {
+                          const name = c.file_name || `${(c.title || "cours").replace(/[/\\?%*:|"<>]/g, "_")}.pdf`;
+                          const proxyUrl = c.id
+                            ? `/api/academic/courses/download?id=${encodeURIComponent(c.id)}&name=${encodeURIComponent(name)}`
+                            : `/api/academic/courses/download?url=${encodeURIComponent(c.file_url!)}&name=${encodeURIComponent(name)}`;
+                          downloadOrOpenDocument(proxyUrl, name, e);
+                        }}
                         title="Télécharger une copie PDF"
                         className="inline-flex items-center justify-center p-2 bg-slate-100 dark:bg-[#1E293B] hover:bg-slate-200 dark:hover:bg-[#263241] text-slate-700 dark:text-[#AAB4C0] hover:text-[#0f2744] dark:hover:text-white rounded-xl transition-all cursor-pointer active:scale-95 border border-slate-200/80 dark:border-[#263241]"
                       >
