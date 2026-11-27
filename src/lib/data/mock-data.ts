@@ -372,6 +372,33 @@ export const MOCK_PROFESSEURS: ProfesseurProfile[] = [
       { id: 10, nom: "Algèbre 1", code: "MAT010", niveau: "NB", classes: ["NB MPI", "NB SML", "NB MIASS"] },
     ],
   },
+  {
+    id: "prof-jp-ndong",
+    user_id: 16,
+    email: "jp.ndong@halil-academie.com",
+    username: "jp",
+    prenom: "Jean Pierre",
+    nom: "Ndong",
+    full_name: "Jean Pierre Ndong (JP)",
+    role: "professeur",
+    phone: "+221 77 000 00 00",
+    matricule: "PROF009",
+    filiere_id: "33333333-3333-3333-3333-333333333333",
+    classe_id: null,
+    bio: "Enseignant-chercheur en Économie générale et microéconomie/macroéconomie pour la filière MIASS (Nouveaux Bacheliers).",
+    specialite: "Economie",
+    avatar_url: null,
+    photo: null,
+    is_active: true,
+    created_at: "2026-11-27T12:00:00Z",
+    updated_at: "2026-11-27T12:00:00Z",
+    niveaux: ["NB", "L1"],
+    classes: ["NB MIASS", "L1 MIASS"],
+    matieres: [
+      { id: 14, nom: "Economie", code: "MAT014", niveau: "NB", classes: ["NB MIASS"] },
+      { id: 14, nom: "Economie Générale", code: "MAT014", niveau: "L1", classes: ["L1 MIASS", "NB MIASS"] },
+    ],
+  },
 ];
 
 export const MOCK_STUDENT: Profile = {

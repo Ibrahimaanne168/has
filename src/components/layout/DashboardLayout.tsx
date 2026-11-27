@@ -66,7 +66,22 @@ export function DashboardLayout({
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [driveModalOpen, setDriveModalOpen] = useState(false);
 
-  // Détection du niveau strict pour l'étudiant (L1 ne voit que L1, L2 que L2)
+  // Détection du niveau strict pour l'étudiant (L1 ne voit que L1, L2 que L2, NB que NB)
+  const isNB = React.useMemo(() => {
+    if (userNiveau && userNiveau.toUpperCase().includes("NB")) return true;
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem("has_current_student_profile_v2");
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          const niv = (parsed.classe?.niveau || parsed.classe?.code || "").toUpperCase();
+          if (niv.includes("NB")) return true;
+        }
+      } catch {}
+    }
+    return false;
+  }, [userNiveau]);
+
   const studentNiveau: "L1" | "L2" = React.useMemo(() => {
     if (userNiveau) return userNiveau.toUpperCase().includes("2") ? "L2" : "L1";
     if (typeof window !== "undefined") {
@@ -84,18 +99,27 @@ export function DashboardLayout({
 
   const studentDrive = DRIVE_RECORDINGS[studentNiveau];
 
-  // Navigation par rôle
-  const etudiantNav: NavItem[] = [
-    { label: "Vue d'ensemble", href: "/etudiant", icon: <LayoutDashboard className="w-5 h-5" /> },
-    { label: "Cours & Supports", href: "/etudiant/cours", icon: <BookOpen className="w-5 h-5" /> },
-    { label: "Marketplace PDF", href: "/marketplace", icon: <ShoppingBag className="w-5 h-5" />, badge: "Boutique" },
-    { label: "Emploi du temps", href: "/etudiant/edt", icon: <Calendar className="w-5 h-5" /> },
-    { label: "Communiqués", href: "/etudiant/communiques", icon: <Bell className="w-5 h-5" />, badge: "Important" },
-    { label: "Corps Professoral", href: "/etudiant/professeurs", icon: <Users className="w-5 h-5" /> },
-    { label: "Messagerie", href: "/etudiant/messages", icon: <MessageSquare className="w-5 h-5" /> },
-    { label: "Chat Général", href: "/etudiant/chat", icon: <MessagesSquare className="w-5 h-5" />, badge: "En direct" },
-    { label: "Mon Profil", href: "/etudiant/profil", icon: <User className="w-5 h-5" /> },
-  ];
+  // Navigation par rôle (interface simplifiée et épurée pour les Nouveaux Bacheliers)
+  const etudiantNav: NavItem[] = isNB
+    ? [
+        { label: "Vue d'ensemble", href: "/etudiant", icon: <LayoutDashboard className="w-5 h-5" /> },
+        { label: "Emploi du temps (Fixe)", href: "/etudiant/edt", icon: <Calendar className="w-5 h-5" />, badge: "Important" },
+        { label: "Cours & Supports", href: "/etudiant/cours", icon: <BookOpen className="w-5 h-5" /> },
+        { label: "Communiqués", href: "/etudiant/communiques", icon: <Bell className="w-5 h-5" /> },
+        { label: "Chat Nouveaux Bacheliers", href: "/etudiant/chat", icon: <MessagesSquare className="w-5 h-5" />, badge: "En direct" },
+        { label: "Mon Profil", href: "/etudiant/profil", icon: <User className="w-5 h-5" /> },
+      ]
+    : [
+        { label: "Vue d'ensemble", href: "/etudiant", icon: <LayoutDashboard className="w-5 h-5" /> },
+        { label: "Cours & Supports", href: "/etudiant/cours", icon: <BookOpen className="w-5 h-5" /> },
+        { label: "Marketplace PDF", href: "/marketplace", icon: <ShoppingBag className="w-5 h-5" />, badge: "Boutique" },
+        { label: "Emploi du temps", href: "/etudiant/edt", icon: <Calendar className="w-5 h-5" /> },
+        { label: "Communiqués", href: "/etudiant/communiques", icon: <Bell className="w-5 h-5" />, badge: "Important" },
+        { label: "Corps Professoral", href: "/etudiant/professeurs", icon: <Users className="w-5 h-5" /> },
+        { label: "Messagerie", href: "/etudiant/messages", icon: <MessageSquare className="w-5 h-5" /> },
+        { label: "Chat Général", href: "/etudiant/chat", icon: <MessagesSquare className="w-5 h-5" />, badge: "En direct" },
+        { label: "Mon Profil", href: "/etudiant/profil", icon: <User className="w-5 h-5" /> },
+      ];
 
   const professeurNav: NavItem[] = [
     { label: "Tableau de bord", href: "/professeur", icon: <LayoutDashboard className="w-5 h-5" /> },
@@ -366,46 +390,48 @@ export function DashboardLayout({
               })}
             </nav>
 
-            {/* Widget Enregistrements Drive — Cloisonnement strict étudiant (L1 que L1, L2 que L2) */}
-            <div className="mt-3 p-3 rounded-xl bg-gradient-to-br from-blue-50/80 via-white to-orange-50/60 dark:from-[#151D27] dark:via-[#151D27] dark:to-[#1e293b] border border-blue-200/70 dark:border-[#263241] shadow-2xs">
-              <div className="flex items-center justify-between gap-1 mb-1">
-                <div className="flex items-center gap-1.5">
-                  <GoogleDriveIcon className="w-3.5 h-3.5" />
-                  <span className="text-xs font-bold text-[#0f2744] dark:text-[#F5F7FA]">
-                    Drive Replays
+            {/* Widget Enregistrements Drive — Masqué pour les Nouveaux Bacheliers pour alléger l'interface */}
+            {!isNB && (
+              <div className="mt-3 p-3 rounded-xl bg-gradient-to-br from-blue-50/80 via-white to-orange-50/60 dark:from-[#151D27] dark:via-[#151D27] dark:to-[#1e293b] border border-blue-200/70 dark:border-[#263241] shadow-2xs">
+                <div className="flex items-center justify-between gap-1 mb-1">
+                  <div className="flex items-center gap-1.5">
+                    <GoogleDriveIcon className="w-3.5 h-3.5" />
+                    <span className="text-xs font-bold text-[#0f2744] dark:text-[#F5F7FA]">
+                      Drive Replays
+                    </span>
+                  </div>
+                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300">
+                    {role === "etudiant" ? `Promo ${studentNiveau}` : "L1 & L2"}
                   </span>
                 </div>
-                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300">
-                  {role === "etudiant" ? `Promo ${studentNiveau}` : "L1 & L2"}
-                </span>
+                <p className="text-[10.5px] text-slate-500 dark:text-[#AAB4C0] leading-tight mb-2">
+                  {role === "professeur"
+                    ? "Déposez vos vidéos de cours pour les étudiants absents."
+                    : `Cours enregistrés de votre promotion (${studentDrive.label}).`}
+                </p>
+                {role === "etudiant" ? (
+                  <a
+                    href={studentDrive.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-1.5 px-2.5 rounded-lg bg-[#0f2744] hover:bg-[#183a62] text-white text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+                  >
+                    <GoogleDriveIcon className="w-3 h-3" />
+                    <span>Ouvrir le Drive {studentNiveau}</span>
+                    <ExternalLink className="w-3 h-3 opacity-70" />
+                  </a>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setDriveModalOpen(true)}
+                    className="w-full py-1.5 px-2.5 rounded-lg bg-[#0f2744] hover:bg-[#183a62] dark:bg-[#e0521c] dark:hover:bg-[#c84418] text-white text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+                  >
+                    <Film className="w-3 h-3" />
+                    <span>Déposer sur le Drive (L1 / L2)</span>
+                  </button>
+                )}
               </div>
-              <p className="text-[10.5px] text-slate-500 dark:text-[#AAB4C0] leading-tight mb-2">
-                {role === "professeur"
-                  ? "Déposez vos vidéos de cours pour les étudiants absents."
-                  : `Cours enregistrés de votre promotion (${studentDrive.label}).`}
-              </p>
-              {role === "etudiant" ? (
-                <a
-                  href={studentDrive.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full py-1.5 px-2.5 rounded-lg bg-[#0f2744] hover:bg-[#183a62] text-white text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
-                >
-                  <GoogleDriveIcon className="w-3 h-3" />
-                  <span>Ouvrir le Drive {studentNiveau}</span>
-                  <ExternalLink className="w-3 h-3 opacity-70" />
-                </a>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setDriveModalOpen(true)}
-                  className="w-full py-1.5 px-2.5 rounded-lg bg-[#0f2744] hover:bg-[#183a62] dark:bg-[#e0521c] dark:hover:bg-[#c84418] text-white text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
-                >
-                  <Film className="w-3 h-3" />
-                  <span>Déposer sur le Drive (L1 / L2)</span>
-                </button>
-              )}
-            </div>
+            )}
 
             <div className="mt-4 pt-3 border-t border-slate-100 dark:border-[#263241]">
               <Link
@@ -462,49 +488,51 @@ export function DashboardLayout({
                   })}
                 </nav>
 
-                {/* Widget Drive Replays Mobile */}
-                <div className="mt-3 p-3 rounded-xl bg-gradient-to-br from-blue-50 via-white to-orange-50 dark:from-[#151D27] dark:to-[#1e293b] border border-blue-200/70 dark:border-[#263241]">
-                  <div className="flex items-center justify-between gap-1 mb-1">
-                    <div className="flex items-center gap-1.5">
-                      <GoogleDriveIcon className="w-3.5 h-3.5" />
-                      <span className="text-xs font-bold text-[#0f2744] dark:text-[#F5F7FA]">
-                        Drive Replays
+                {/* Widget Drive Replays Mobile — Masqué pour NB */}
+                {!isNB && (
+                  <div className="mt-3 p-3 rounded-xl bg-gradient-to-br from-blue-50 via-white to-orange-50 dark:from-[#151D27] dark:to-[#1e293b] border border-blue-200/70 dark:border-[#263241]">
+                    <div className="flex items-center justify-between gap-1 mb-1">
+                      <div className="flex items-center gap-1.5">
+                        <GoogleDriveIcon className="w-3.5 h-3.5" />
+                        <span className="text-xs font-bold text-[#0f2744] dark:text-[#F5F7FA]">
+                          Drive Replays
+                        </span>
+                      </div>
+                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300">
+                        {role === "etudiant" ? `Promo ${studentNiveau}` : "L1 & L2"}
                       </span>
                     </div>
-                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300">
-                      {role === "etudiant" ? `Promo ${studentNiveau}` : "L1 & L2"}
-                    </span>
+                    <p className="text-[11px] text-slate-500 dark:text-[#AAB4C0] mb-2 leading-tight">
+                      {role === "professeur"
+                        ? "Déposez vos enregistrements de cours."
+                        : `Cours enregistrés de votre promotion (${studentDrive.label}).`}
+                    </p>
+                    {role === "etudiant" ? (
+                      <a
+                        href={studentDrive.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full py-1.5 px-2 rounded-lg bg-[#0f2744] dark:bg-[#e0521c] text-white text-xs font-bold flex items-center justify-center gap-1.5"
+                      >
+                        <GoogleDriveIcon className="w-3.5 h-3.5" />
+                        <span>Ouvrir le Drive {studentNiveau}</span>
+                        <ExternalLink className="w-3 h-3 opacity-70" />
+                      </a>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMobileSidebarOpen(false);
+                          setDriveModalOpen(true);
+                        }}
+                        className="w-full py-1.5 px-2 rounded-lg bg-[#0f2744] dark:bg-[#e0521c] text-white text-xs font-bold flex items-center justify-center gap-1.5"
+                      >
+                        <Film className="w-3.5 h-3.5" />
+                        <span>Déposer sur le Drive (L1 / L2)</span>
+                      </button>
+                    )}
                   </div>
-                  <p className="text-[11px] text-slate-500 dark:text-[#AAB4C0] mb-2 leading-tight">
-                    {role === "professeur"
-                      ? "Déposez vos enregistrements de cours."
-                      : `Cours enregistrés de votre promotion (${studentDrive.label}).`}
-                  </p>
-                  {role === "etudiant" ? (
-                    <a
-                      href={studentDrive.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full py-1.5 px-2 rounded-lg bg-[#0f2744] dark:bg-[#e0521c] text-white text-xs font-bold flex items-center justify-center gap-1.5"
-                    >
-                      <GoogleDriveIcon className="w-3.5 h-3.5" />
-                      <span>Ouvrir le Drive {studentNiveau}</span>
-                      <ExternalLink className="w-3 h-3 opacity-70" />
-                    </a>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setMobileSidebarOpen(false);
-                        setDriveModalOpen(true);
-                      }}
-                      className="w-full py-1.5 px-2 rounded-lg bg-[#0f2744] dark:bg-[#e0521c] text-white text-xs font-bold flex items-center justify-center gap-1.5"
-                    >
-                      <Film className="w-3.5 h-3.5" />
-                      <span>Déposer sur le Drive (L1 / L2)</span>
-                    </button>
-                  )}
-                </div>
+                )}
               </div>
 
               <div className="pt-4 border-t border-slate-200 dark:border-[#263241]">

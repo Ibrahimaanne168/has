@@ -1159,6 +1159,84 @@ export const DEFAULT_SEANCES_EDT: SeanceEDT[] = [
     created_at: "2026-10-19T17:00:00.000Z",
     updated_at: "2026-10-19T17:00:00.000Z",
   },
+
+  // --- PROMOTION NOUVEAUX BACHELIERS (Programme intensif de démarrage) ---
+  {
+    id: "seance-has-nb-algo-lundi",
+    classe_id: "promo-nb",
+    classe_nom: "Nouveaux Bacheliers",
+    semestre: "Session Préparatoire",
+    jour: "Lundi",
+    heure_debut: "21:00",
+    heure_fin: "23:00",
+    matiere_nom: "Algorithme et programmation",
+    matiere_code: "MAT011",
+    professeur_nom: "Ibrahima Anne",
+    professeur_id: "32e74ddd-3e79-410a-8a87-4bfdff1fc099",
+    type_seance: "COURS",
+    meet_url: null,
+    niveau: "NB",
+    filieres: ["MPI", "SML", "MIASS"],
+    created_at: "2026-11-27T12:00:00.000Z",
+    updated_at: "2026-11-27T12:00:00.000Z",
+  },
+  {
+    id: "seance-has-nb-analyse1-mercredi",
+    classe_id: "promo-nb",
+    classe_nom: "Nouveaux Bacheliers",
+    semestre: "Session Préparatoire",
+    jour: "Mercredi",
+    heure_debut: "21:00",
+    heure_fin: "23:00",
+    matiere_nom: "Analyse 1",
+    matiere_code: "MAT009",
+    professeur_nom: "Pape Ibrahima Samb",
+    professeur_id: "4ca84133-856c-4e87-8ca5-31eabe0fcc23",
+    type_seance: "COURS",
+    meet_url: null,
+    niveau: "NB",
+    filieres: ["MPI", "SML", "MIASS"],
+    created_at: "2026-11-27T12:00:00.000Z",
+    updated_at: "2026-11-27T12:00:00.000Z",
+  },
+  {
+    id: "seance-has-nb-electricite-vendredi",
+    classe_id: "promo-nb",
+    classe_nom: "Nouveaux Bacheliers",
+    semestre: "Session Préparatoire",
+    jour: "Vendredi",
+    heure_debut: "21:00",
+    heure_fin: "23:00",
+    matiere_nom: "Electricité",
+    matiere_code: "MAT013",
+    professeur_nom: "Ndiogou Ndiaye",
+    professeur_id: "25013b47-9a78-4f97-8552-977450abdad2",
+    type_seance: "COURS",
+    meet_url: null,
+    niveau: "NB",
+    filieres: ["MPI", "SML"], // HORS MIASS
+    created_at: "2026-11-27T12:00:00.000Z",
+    updated_at: "2026-11-27T12:00:00.000Z",
+  },
+  {
+    id: "seance-has-nb-economie-dimanche",
+    classe_id: "promo-nb",
+    classe_nom: "Nouveaux Bacheliers",
+    semestre: "Session Préparatoire",
+    jour: "Dimanche",
+    heure_debut: "21:00",
+    heure_fin: "23:00",
+    matiere_nom: "Economie",
+    matiere_code: "MAT014",
+    professeur_nom: "Jean Pierre Ndong (JP)",
+    professeur_id: "prof-jp-ndong",
+    type_seance: "COURS",
+    meet_url: null,
+    niveau: "NB",
+    filieres: ["MIASS"], // MIASS only
+    created_at: "2026-11-27T12:00:00.000Z",
+    updated_at: "2026-11-27T12:00:00.000Z",
+  },
 ];
 
 export function getDeletedSeanceIds(): string[] {
@@ -1267,7 +1345,7 @@ export async function clearAllMeetLinks(adminEmail?: string): Promise<void> {
 // Purge automatique pour réinitialiser le cache EDT obsolète sur tous les navigateurs étudiants & profs
 if (typeof window !== "undefined") {
   try {
-    const PURGE_FLAG = "has_edt_sync_v7_clean";
+    const PURGE_FLAG = "has_edt_sync_v8_nb_fixed";
     if (!localStorage.getItem(PURGE_FLAG)) {
       localStorage.setItem(PURGE_FLAG, "true");
       localStorage.removeItem(STORAGE_KEYS.MEET_LINKS);

@@ -23,6 +23,7 @@ import {
 import { SeanceEDT, JourSemaine, EmploiDuTemps } from "@/lib/types";
 import { downloadOrOpenDocument } from "@/lib/fileDownload";
 import { DriveRecordingsBanner } from "@/components/cours/DriveRecordingsBanner";
+import { NouveauxBacheliersTimer } from "@/components/cours/NouveauxBacheliersTimer";
 
 const JOURS: JourSemaine[] = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
 
@@ -74,8 +75,8 @@ export default function EtudiantEDTPage() {
   const [edts, setEdts] = useState<EmploiDuTemps[]>([]);
   const [copiedLink, setCopiedLink] = useState<string | null>(null);
 
-  // Niveau et filière de l'étudiant (strictement cloisonné : L1 ne voit que L1, L2 que L2)
-  const userNiveau = (user.classe?.niveau || (user.classe?.code?.startsWith("L2") ? "L2" : "L1")) as "L1" | "L2";
+  // Niveau et filière de l'étudiant (strictement cloisonné : NB, L1 ou L2)
+  const userNiveau = (user.classe?.niveau || (user.classe?.code?.toUpperCase().includes("NB") ? "NB" : user.classe?.code?.startsWith("L2") ? "L2" : "L1")) as "L1" | "L2" | "NB";
   const userFiliere = (user.filiere?.code || (user.classe?.code?.includes("MPI") ? "MPI" : user.classe?.code?.includes("SML") ? "SML" : "MIASS")) as "MPI" | "SML" | "MIASS";
 
   // Filtre d'affichage : "MINE" (ses cours), "ALL" (tous les cours de sa promotion), ou par filière
@@ -103,7 +104,7 @@ export default function EtudiantEDTPage() {
     return () => window.removeEventListener("has_academic_storage_updated", reload);
   }, []);
 
-  // Séances strictement réservées à la promotion de l'étudiant (L1 ou L2)
+  // Séances strictement réservées à la promotion de l'étudiant (NB, L1 ou L2)
   const promoSeances = useMemo(() => {
     return seances.filter((s) => (s.niveau || "L1") === userNiveau);
   }, [seances, userNiveau]);
@@ -138,6 +139,12 @@ export default function EtudiantEDTPage() {
 
   const currentEDT = edts.find((e) => e.classe?.niveau === userNiveau);
 
+  const promotionLabel = userNiveau === "NB"
+    ? "Nouveaux Bacheliers"
+    : userNiveau === "L2"
+    ? "Licence 2"
+    : "Licence 1";
+
   return (
     <DashboardLayout
       role="etudiant"
@@ -147,20 +154,25 @@ export default function EtudiantEDTPage() {
       userNiveau={userNiveau}
     >
       <div className="space-y-6">
+        {/* Timer compte à rebours Nouveaux Bacheliers */}
+        {userNiveau === "NB" && (
+          <NouveauxBacheliersTimer />
+        )}
+
         {/* En-tête officiel */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <Calendar className="w-4 h-4 text-[#e0521c]" />
               <span className="text-[11px] font-bold tracking-wider uppercase text-[#e0521c]">
-                Emploi du Temps — Promotion {userNiveau === "L2" ? "Licence 2" : "Licence 1"}
+                Emploi du Temps — Promotion {promotionLabel}
               </span>
             </div>
             <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#0f2744] dark:text-[#F5F7FA] leading-snug">
-              Tableau des Cours Hebdomadaires
+              {userNiveau === "NB" ? "Planning Fixe des Cours Nouveaux Bacheliers" : "Tableau des Cours Hebdomadaires"}
             </h1>
             <p className="text-xs text-slate-500 dark:text-[#AAB4C0] mt-1">
-              Promotion <strong className="text-[#0f2744] dark:text-[#F5F7FA]">Licence {userNiveau === "L2" ? "2" : "1"}</strong> — Votre filière : <strong className="text-[#e0521c] font-black">{userFiliere}</strong>
+              Promotion <strong className="text-[#0f2744] dark:text-[#F5F7FA]">{promotionLabel}</strong> — Votre filière : <strong className="text-[#e0521c] font-black">{userFiliere}</strong>
             </p>
           </div>
 
@@ -200,7 +212,7 @@ export default function EtudiantEDTPage() {
                   : "bg-slate-100 dark:bg-[#151D27] text-slate-600 dark:text-[#AAB4C0] hover:bg-slate-200"
               }`}
             >
-              Mes cours ({userFiliere} &amp; Tronc Commun)
+              Mes cours ({userFiliere} {userNiveau === "NB" ? "" : "& Tronc Commun"})
             </button>
             <button
               onClick={() => setFilterMode("ALL")}
@@ -210,7 +222,7 @@ export default function EtudiantEDTPage() {
                   : "bg-slate-100 dark:bg-[#151D27] text-slate-600 dark:text-[#AAB4C0] hover:bg-slate-200"
               }`}
             >
-              Tous les cours L{userNiveau === "L2" ? "2" : "1"} ({promoSeances.length})
+              Tous les cours {userNiveau === "NB" ? "NB" : `L${userNiveau === "L2" ? "2" : "1"}`} ({promoSeances.length})
             </button>
             {(["MIASS", "MPI", "SML"] as const).map((fil) => (
               <button
@@ -228,8 +240,10 @@ export default function EtudiantEDTPage() {
           </div>
         </div>
 
-        {/* ── BANNIÈRE ENREGISTREMENTS DRIVE POUR ÉTUDIANTS ABSENTS ── */}
-        <DriveRecordingsBanner role="etudiant" userNiveau={userNiveau} variant="compact" />
+        {/* ── BANNIÈRE ENREGISTREMENTS DRIVE (MASQUÉE POUR NB) ── */}
+        {userNiveau !== "NB" && (
+          <DriveRecordingsBanner role="etudiant" userNiveau={userNiveau} variant="compact" />
+        )}
 
         {/* ── EMPLOI DU TEMPS ÉTUDIANT (TABLEAU SUR PC, CARRÉS PLEINS SUR MOBILE) ── */}
         <div className="bg-white dark:bg-[#111821] rounded-2xl border border-slate-200/90 dark:border-[#263241] shadow-xs overflow-hidden">
@@ -237,7 +251,7 @@ export default function EtudiantEDTPage() {
             <div>
               <h2 className="font-serif text-base font-bold text-[#0f2744] dark:text-[#F5F7FA] flex items-center gap-2">
                 <TableIcon className="w-4 h-4 text-[#e0521c]" />
-                Emploi du Temps Licence {userNiveau === "L2" ? "2" : "1"} ({displayedSeances.length} séance{displayedSeances.length !== 1 ? "s" : ""})
+                Emploi du Temps {promotionLabel} ({displayedSeances.length} séance{displayedSeances.length !== 1 ? "s" : ""})
               </h2>
               <p className="text-xs text-slate-400 dark:text-[#687585]">
                 Du Lundi au Dimanche · Liens Google Meet synchronisés en temps réel

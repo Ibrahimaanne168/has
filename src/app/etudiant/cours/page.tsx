@@ -206,12 +206,14 @@ export default function EtudiantCoursPage() {
           </div>
         </div>
 
-        {/* Vidéothèque & Enregistrements des cours en ligne sur Google Drive (cloisonné à la promotion de l'étudiant) */}
-        <DriveRecordingsBanner
-          role="etudiant"
-          userNiveau={userNiveau}
-          variant="card"
-        />
+        {/* Vidéothèque & Enregistrements des cours en ligne sur Google Drive (cloisonné à la promotion de l'étudiant, masqué pour NB) */}
+        {userNiveau !== "NB" && (
+          <DriveRecordingsBanner
+            role="etudiant"
+            userNiveau={userNiveau}
+            variant="card"
+          />
+        )}
 
         {/* Section Fascicules & Documents commandés sur le Marketplace */}
         {myOrders.length > 0 && (

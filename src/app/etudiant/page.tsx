@@ -28,6 +28,7 @@ import { downloadOrOpenDocument } from "@/lib/fileDownload";
 import { PdfViewerModal } from "@/components/ui/PdfViewerModal";
 import { DriveRecordingsBanner } from "@/components/cours/DriveRecordingsBanner";
 import { PaymentReminderBanner } from "@/components/ui/PaymentReminderBanner";
+import { NouveauxBacheliersTimer } from "@/components/cours/NouveauxBacheliersTimer";
 
 export default function EtudiantDashboard() {
   const { user } = useCurrentUser();
@@ -92,6 +93,13 @@ export default function EtudiantDashboard() {
         <PaymentReminderBanner />
 
         {/* ============================================================================== */}
+        {/* BANNIÈRE COMPTE À REBOURS NOUVEAUX BACHELIERS (TIMER FIXE) */}
+        {/* ============================================================================== */}
+        {userNiveau === "NB" && (
+          <NouveauxBacheliersTimer />
+        )}
+
+        {/* ============================================================================== */}
         {/* BANNIÈRE DE BIENVENUE ÉTUDIANT */}
         {/* ============================================================================== */}
         <div className="bg-[#0f2744] text-white rounded-xl p-6 sm:p-7 relative overflow-hidden shadow-[0_2px_8px_-2px_rgba(15,23,42,0.05)] border border-[#0f2744]">
@@ -101,18 +109,23 @@ export default function EtudiantDashboard() {
             </h1>
 
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
-              Bienvenue sur votre portail d&apos;apprentissage de Halil Académie Scientifique.
-              Consultez les supports officiels déposés par l&apos;administration et restez à jour sur les plannings.
+              {userNiveau === "NB"
+                ? "Bienvenue sur votre portail Nouveaux Bacheliers de Halil Académie Scientifique. Retrouvez ici votre emploi du temps fixe et vos accès directs aux cours en ligne."
+                : "Bienvenue sur votre portail d'apprentissage de Halil Académie Scientifique. Consultez les supports officiels déposés par l'administration et restez à jour sur les plannings."}
             </p>
 
             <div className="pt-1 flex flex-wrap items-center gap-2.5 text-xs text-slate-200">
               <span className="bg-white/10 border border-white/10 px-2.5 py-1 rounded-lg font-mono text-[11px]">
                 Matricule : {user.matricule}
               </span>
+              {userNiveau === "NB" && (
+                <span className="bg-[#e0521c]/30 border border-[#e0521c]/50 text-white px-2.5 py-1 rounded-lg text-[11px] font-bold">
+                  🎓 Promotion Nouveaux Bacheliers
+                </span>
+              )}
             </div>
           </div>
         </div>
-
 
         {/* ============================================================================== */}
         {/* ALERTE OFFICIELLE EMPLOI DU TEMPS */}
@@ -127,10 +140,16 @@ export default function EtudiantDashboard() {
                 Emploi du temps officiel
               </p>
               <h3 className="font-serif text-sm sm:text-base font-bold text-slate-900 dark:text-[#F5F7FA] leading-tight">
-                {hasEDT ? "Planning de la Semaine validé" : "Emploi du temps en cours de finalisation"}
+                {userNiveau === "NB"
+                  ? "Planning fixe des cours Nouveaux Bacheliers"
+                  : hasEDT
+                  ? "Planning de la Semaine validé"
+                  : "Emploi du temps en cours de finalisation"}
               </h3>
               <p className="text-xs text-slate-500 dark:text-[#AAB4C0] mt-0.5">
-                {hasEDT
+                {userNiveau === "NB"
+                  ? "Vos cours se tiennent du Lundi au Dimanche (21h00–23h00) selon votre filière. Cliquez pour voir le tableau complet."
+                  : hasEDT
                   ? `Le planning officiel des cours est validé et disponible pour votre classe (${user.classe?.code || "L1-MPI"}).`
                   : `L'administration publiera prochainement le planning officiel des cours pour la classe ${user.classe?.name || "L1-MPI"}.`}
               </p>
@@ -147,9 +166,11 @@ export default function EtudiantDashboard() {
         </div>
 
         {/* ============================================================================== */}
-        {/* ENREGISTREMENTS & REPLAYS GOOGLE DRIVE (L1 & L2) */}
+        {/* ENREGISTREMENTS & REPLAYS GOOGLE DRIVE (L1 & L2 SEULEMENT — MASQUÉ POUR NB) */}
         {/* ============================================================================== */}
-        <DriveRecordingsBanner role="etudiant" userNiveau={userNiveau} variant="card" />
+        {userNiveau !== "NB" && (
+          <DriveRecordingsBanner role="etudiant" userNiveau={userNiveau} variant="card" />
+        )}
 
         {/* ============================================================================== */}
         {/* DERNIERS COURS PUBLIÉS (Cartes géométriques strictes) */}

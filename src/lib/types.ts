@@ -137,7 +137,7 @@ export interface SeanceEDT {
   created_at: string;
   updated_at?: string;
   // Niveau et filières concernées
-  niveau?: "L1" | "L2" | "L3" | "Master";
+  niveau?: "L1" | "L2" | "L3" | "Master" | "NB";
   filieres?: ("MPI" | "SML" | "MIASS")[];       // [] ou undefined = toutes les filières du niveau
 }
 
